@@ -270,7 +270,11 @@ i{
     .Footer_text:hover::before {
         transform: scaleX(1);
         transform-origin: right;
-    }
+    };
+
+#Footer_heart:hover {
+color: red;
+};
 
 ::selection {
   background-color: #ff69b4; 
