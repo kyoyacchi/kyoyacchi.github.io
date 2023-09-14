@@ -150,6 +150,8 @@ html, body, div, h1, h2, p, a, img {
     margin-top: -50%;
     user-select: none;
     cursor: pointer;
+    padding: 4.5px;
+    background-color: pink;
 }
 
 .Cover .title-wrapper{
