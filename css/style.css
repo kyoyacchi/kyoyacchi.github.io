@@ -152,6 +152,7 @@ html, body, div, h1, h2, p, a, img {
     cursor: pointer;
     padding: 4.5px;
     background-color: pink;
+    box-sizing: border-box;
 }
 
 .Cover .title-wrapper{
