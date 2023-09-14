@@ -487,6 +487,21 @@ try {
    tostcuk.style.margin = "auto"
    document.body.appendChild(tostcuk)
    document.querySelector(".title-wrapper").style.opacity = "0.5"
+  
+  
+  setTimeout(() => {
+    let toast = document.getElementById("info-toast")
+  if (toast){
+    toast.remove()
+  }
+ const title = document.querySelector(".title-wrapper")
+ 
+ if (title){
+   
+ title.style.opacity = "1"
+ }
+    
+  },1300);
   });
   logo.addEventListener("mouseout",() => {
   let toast = document.getElementById("info-toast")
@@ -500,6 +515,29 @@ try {
 }catch(e){
    console.error(e);
  }
+ 
+ 
+ 
+ function shakeIt(){
+let verifi = document.querySelector(".Cover .title.verified svg");
+  if (verifi){
+    verifi.addEventListener("mouseover", () => {
+      verifi.classList.add('fa-shake');
+      setTimeout(() => {
+        verifi.classList.remove("fa-shake");
+      },500)
+    });
+    verifi.addEventListener("mouseout", () => {
+      if (verifi.classList.contains("fa-shake")){
+            verifi.classList.remove("fa-shake");
+      }
+        });
+  }
+  }
+  window.addEventListener("load",() => {
+  shakeIt();
+});
+ 
 </script>
 
 
