@@ -536,8 +536,42 @@ let verifi = document.querySelector(".Cover .title.verified svg");
         });
   }
   }
+  
+  function changeHeartColor (){
+    const heartIcon = document.getElementById('Footer_heart');
+  const colors = ['red', 'pink', 'blue', 'green', 'black'];
+  let currentIndex = 0;
+  let intervalId;
+
+  function changeColor() {
+    heartIcon.style.color = colors[currentIndex];
+    currentIndex = (currentIndex + 1) % colors.length;
+  }
+
+  function startColorChanging() {
+    intervalId = setInterval(changeColor, 200); 
+  }
+
+  function stopColorChanging() {
+    heartIcon.style.color = "";
+    clearInterval(intervalId);
+  }
+
+  heartIcon.addEventListener('mouseenter', () => {
+    startColorChanging();
+    setTimeout(stopColorChanging, 1200);
+  });
+
+  heartIcon.addEventListener('mouseleave', stopColorChanging);
+
+
+
+  }
   window.addEventListener("load",() => {
   shakeIt();
+  changeHeartColor();
+  
+  
 });
  
 </script>
