@@ -374,61 +374,80 @@ document.addEventListener("DOMContentLoaded", async function () {
   const github = "https://avatars.githubusercontent.com/u/63583961";
   
   function showPopUp() {
-   var pop = document.createElement("div");
-var innerDiv = document.createElement("div");
+  var pop = document.createElement("div");
+  var innerDiv = document.createElement("div");
 
-pop.id = "pop";
-innerDiv.className = "pop-inner";
+  pop.id = "pop";
+  innerDiv.className = "pop-inner";
 
-pop.style.position = "fixed";
-pop.style.bottom = '0';
-pop.style.left = '20px';
+  pop.style.position = "fixed";
+  pop.style.bottom = '0';
+  pop.style.left = '20px';
 
-innerDiv.style.backgroundColor = "#333";
-innerDiv.style.padding = "10px";
+  innerDiv.style.backgroundColor = "#333";
+  innerDiv.style.padding = "10px";
 
-innerDiv.textContent = "updated discord profile picture";
-innerDiv.style.color = "white"
-innerDiv.style.userSelect = "none";
+  innerDiv.textContent = "updated discord profile picture";
+  innerDiv.style.color = "white";
+  innerDiv.style.userSelect = "none";
 
-innerDiv.style.animation = "pop-up 0.5s ease";
-pop.style.borderRadius = "10px"; 
+  innerDiv.style.animation = "pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards";
+  pop.style.borderRadius = "10px"; 
 
-var css = `
-@keyframes pop-up {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
+  var css = `
+  @keyframes pop-in {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    80% {
+      transform: translateY(-10%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
+
+  @keyframes pop-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translateY(10%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
   }
+
+  .pop-inner {
+    animation: pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards;
+    border-radius: 10px;
+  }
+  `;
+
+  pop.appendChild(innerDiv);
+  document.body.appendChild(pop);
+
+  var style = document.createElement("style");
+  style.appendChild(document.createTextNode(css));
+  document.head.appendChild(style);
+
+  setTimeout(() => {
+    let el = document.getElementById("pop");
+    if (el) {
+      el.remove();   
+    } else {
+      console.log("???")
+    }
+  }, 2500)
 }
 
-.pop-inner {
-  animation: pop-up 0.5s ease;
-border-radius: 10px; 
-}
-`;
-
-pop.appendChild(innerDiv);
-document.body.appendChild(pop);
-
-var style = document.createElement("style");
-style.appendChild(document.createTextNode(css));
-document.head.appendChild(style);
-
- 
- setTimeout (() => {
-  let el = document.getElementById("pop");
-  if (pop){
- pop.remove();   
-  } else {
-    console.log("???")
-  }
- },2500)
-  }
   
   
   if (!current || current !== avurl) {
