@@ -493,7 +493,7 @@ background-blend-mode: multiply;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    top: 5px;
+    top: 10px;
     cursor: pointer;
 }
 
