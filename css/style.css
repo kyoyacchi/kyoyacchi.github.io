@@ -482,7 +482,7 @@ background-blend-mode: multiply;
 
 
 .Footer:hover {
-  transform: scale(1.075);
+/*  transform: scale(1.075);*/
 }
 
 .dc_avatar {
