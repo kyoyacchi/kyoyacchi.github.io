@@ -567,10 +567,27 @@ let verifi = document.querySelector(".Cover .title.verified svg");
 
 
   }
+  function Yamete(){
+    var logo = document.querySelector(".logo-wrapper img");
+var audio = new Audio("https://cdn.discordapp.com/attachments/777526265795313704/1152318325095944262/Yamete.m4a");
+
+var clickCount = 0;
+
+logo.addEventListener("click", function() {
+    clickCount++;
+    if (clickCount === 3) {
+        audio.volume = 1;
+        audio.play();
+        console.log("😳"); 
+        clickCount = 0; 
+    }
+});
+
+  }
   window.addEventListener("load",() => {
   shakeIt();
   changeHeartColor();
-  
+  Yamete();
   
 });
  
