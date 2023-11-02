@@ -22,8 +22,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&amp;display=swap"> 
-<link rel="stylesheet"
-href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap">
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap">
 
     </head>
     <body>
@@ -223,7 +223,11 @@ href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap">
             <span class="Footer_text">Kyoya</span>
         </span>
     </a>
+  <div class="i_element">
+  <i class="fa-solid fa-chevron-down"></i>
+</div>  
 </div>
+
                     <!-- end of copyright block -->
                   <!--  <script>
   let ikon = document.querySelector(".logo-wrapper");
@@ -369,6 +373,8 @@ document.body.appendChild(overlay);
   }
 }
 
+
+
 document.addEventListener("DOMContentLoaded", async function () {
   const avatar = document.getElementById("discord_pfp");
   let current = localStorage.getItem('avatar');
@@ -465,6 +471,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 </script>
+
 
 
 <script>
@@ -590,6 +597,24 @@ logo.addEventListener("click", function() {
   Yamete();
   
 });
+
+var i = `<i id="yukari" class="fa-solid fa-chevron-down" style="color: #ffffff; margin-top: 95px; margin-left: -115px; font-size: 20px;"></i>`;
+var ii = `<i id="asagi" class="fa-solid fa-chevron-up" style="color: #ffffff; margin-top: 95px; margin-left: -115px; font-size: 20px;"></i>`;
+
+let el = document.createElement("div"); // Use a div element for this example
+el.innerHTML = i;
+
+let f = document.querySelector(".Footer");
+f.appendChild(el);
+
+el.addEventListener("click", () => {
+  if (el.querySelector("i").classList.contains("fa-chevron-down")) {
+    el.innerHTML = ii;
+  } else {
+    el.innerHTML = i;
+  }
+});
+
  
 </script>
 
