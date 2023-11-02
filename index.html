@@ -607,13 +607,79 @@ el.innerHTML = i;
 let f = document.querySelector(".Footer");
 f.appendChild(el);
 
+
+const popup = document.createElement('div');
+popup.id = '@kyomoe';
+popup.style.cssText = 'display: none; position: fixed; margin-top: 0; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: 260px; padding: 20px; background-color: #353535; justify-content: center; align-items: center; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3); border-radius: 10px; overflow: auto; max-height: 450px;';
+
+document.body.appendChild(popup);
+
+const api1 = document.createElement('div');
+api1.style.display = "flex";
+api1.textContent = "Hi!"
+popup.appendChild(api1)
+
+
+const closeButton = document.createElement('i');
+  closeButton.id = "X";
+  closeButton.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color: #ffffff;"></i>`
+//closeButton.src = 'https://cdn.discordapp.com/attachments/746414614316843152/1089189619628789901/x-mark-3-64.png';
+closeButton.style.position = 'absolute';
+closeButton.style.marginTop = '0';
+closeButton.style.right = '10px';
+closeButton.style.top = "5px";
+//closeButton.style.width = '16px';
+//closeButton.style.height = '16px';
+closeButton.style.cursor = 'pointer';
+  closeButton.style.fontSize = "22px";
+
+function togglepopup() {
+  if (popup.style.display === 'none') {
+    api1.textContent = "Hi!"
+    //popup.style.display = 'block';
+    popup.style.display = 'block';
+  popup.style.animation = 'slide-up 0.3s ease-in-out';
+setTimeout(() => {
+  popup.style.animation = "";
+},500)
+  } else {
+api1.textContent = "Goodbye!"
+    popup.style.animation = 'slide-down 0.3s ease-in-out';
+  popup.addEventListener('animationend', () => {
+    popup.style.display = 'none';
+    setTimeout(() => {
+      popup.style.animation = "";
+    },500)
+  }, { once: true });
+    //popup.style.display = 'none';
+  }
+}
+
+
 el.addEventListener("click", () => {
   if (el.querySelector("i").classList.contains("fa-chevron-down")) {
     el.innerHTML = ii;
+    togglepopup();
   } else {
+    togglepopup();
     el.innerHTML = i;
   }
 });
+
+closeButton.addEventListener('click', () => {
+  if (popup.style.display == "none") return;
+  //popup.style.display = 'none';
+  el.innerHTML = i;
+  
+  popup.style.animation = 'slide-down 0.3s ease-in-out';
+  popup.addEventListener('animationend', () => {
+    popup.style.display = 'none';
+    setTimeout(() => {
+      popup.style.animation = "";
+    },500)
+  }, { once: true });
+});
+popup.appendChild(closeButton)
 
  
 </script>
