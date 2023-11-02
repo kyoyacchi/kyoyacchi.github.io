@@ -568,3 +568,20 @@ background-blend-mode: multiply;
   bottom: 20px;
 }
 
+@keyframes slide-up {
+    0% {
+      transform: translate(-50%, 100%);
+    }
+    100% {
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @keyframes slide-down {
+    0% {
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      transform: translate(-50%, 100%);
+    }
+  }
