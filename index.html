@@ -615,11 +615,41 @@ popup.style.cssText = 'display: none; position: fixed; margin-top: 0; top: 50%; 
 document.body.appendChild(popup);
 
 const api1 = document.createElement('div');
-api1.style.display = "flex";
-api1.textContent = "Hi!"
-popup.appendChild(api1)
+api1.style.display = "block";
+api1.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:
+#ffffff;"></i> <span>Loading...</span>`
+let bancont = document.createElement("div");
+bancont.id = "bancont";
+let banner = document.createElement("img");
+banner.id = "malbanner"
+banner.onload = function() {
+  banner.style.width = '100%';
+  banner.style.height = 'auto';
+  banner.style.marginTop = '20px';
+};
+banner.onerror = function() {
+  console.log('Failed to load banner image');
+};
+async function getData() {
+  try {
+let { data } = await
+axios.get(`https://www.kyoya.cf/api/mal?user=kyoyatempest`);
 
+return data;
+} catch(e){
+  console.error(e);
+  return e;
+}
+}
+(async () => {
+        let veri = await getData();
+        banner.src = veri.modern_about_img;
+        banner.alt = "MAL Modern Image";
+      })();
+popup.appendChild(api1);
 
+bancont.appendChild(banner);
+popup.appendChild(bancont);
 const closeButton = document.createElement('i');
   closeButton.id = "X";
   closeButton.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color: #ffffff;"></i>`
@@ -635,7 +665,7 @@ closeButton.style.cursor = 'pointer';
 
 function togglepopup() {
   if (popup.style.display === 'none') {
-    api1.textContent = "Hi!"
+ //   api1.textContent = "Hi!"
     //popup.style.display = 'block';
     popup.style.display = 'block';
   popup.style.animation = 'slide-up 0.3s ease-in-out';
@@ -643,7 +673,7 @@ setTimeout(() => {
   popup.style.animation = "";
 },500)
   } else {
-api1.textContent = "Goodbye!"
+//api1.textContent = "Goodbye!"
     popup.style.animation = 'slide-down 0.3s ease-in-out';
   popup.addEventListener('animationend', () => {
     popup.style.display = 'none';
