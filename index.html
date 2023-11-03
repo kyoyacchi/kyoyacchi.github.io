@@ -620,6 +620,27 @@ popup.style.cssText = 'display: none; position: fixed; margin-top: 0; top: 50%; 
 
 document.body.appendChild(popup);
 
+document.addEventListener('click', function(event) {
+  if (!popup.contains(event.target) && event.target !== popup && event.target.id
+  != "yukari" && event.target.id != "asagi") {
+    
+
+
+  
+   popup.style.display = 'none';
+   if (el.querySelector("i").classList.contains("fa-chevron-down")) {
+    el.innerHTML = ii;
+  //  togglepopup();
+    
+  } else {
+  //  togglepopup();
+    el.innerHTML = i;
+  }
+//  togglepopup();
+  } 
+});
+
+
 const api1 = document.createElement('div');
 api1.style.display = "block";
 api1.id = "loadingmsg"
