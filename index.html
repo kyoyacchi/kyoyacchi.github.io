@@ -394,8 +394,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   innerDiv.style.backgroundColor = "#333";
   innerDiv.style.padding = "10px";
+//innerDiv.style.display = "flex";
+innerDiv.style.alignItems =  "center";
+/*  innerDiv.textContent = "updated discord profile picture";*/
+innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size:
+17px;"></i> updated discord profile picture`;
 
-  innerDiv.textContent = "updated discord profile picture";
   innerDiv.style.color = "white";
   innerDiv.style.userSelect = "none";
 
@@ -449,7 +453,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   setTimeout(() => {
     let el = document.getElementById("pop");
     if (el) {
-      el.remove();   
+      el.style.display = "none";
+      
+     // el.remove();   
     } else {
       console.log("???")
     }
@@ -675,7 +681,7 @@ function setAPI() {
   promises.push(promise);
 }
 
-setAPI();
+//setAPI();
 
 
 
@@ -685,10 +691,10 @@ popup.appendChild(api1);
 
 bioc.appendChild(bio);
 bancont.appendChild(banner);
-popup.appendChild(bancont);
-popup.appendChild(bioc);
+//popup.appendChild(bancont);
+//popup.appendChild(bioc);
 
-
+/*
 Promise.all(promises)
   .then(() => {
     const loadingText = document.getElementById("loadingmsg");
@@ -698,6 +704,7 @@ Promise.all(promises)
   .catch((error) => {
     console.error("An error occurred:", error);
   });
+*/
 
 const closeButton = document.createElement('i');
   closeButton.id = "X";
