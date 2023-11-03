@@ -595,7 +595,7 @@ logo.addEventListener("click", function() {
   shakeIt();
   changeHeartColor();
   Yamete();
-  
+ 
 });
 
 var i = `<i id="yukari" class="fa-solid fa-chevron-down" style="color: #ffffff; margin-top: 95px; margin-left: -115px; font-size: 20px;"></i>`;
@@ -616,8 +616,9 @@ document.body.appendChild(popup);
 
 const api1 = document.createElement('div');
 api1.style.display = "block";
-api1.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:
-#ffffff;"></i> <span>Loading...</span>`
+api1.id = "loadingmsg"
+api1.innerHTML = `<i id="loadingu" class="fa-solid fa-spinner fa-spin" style="color:
+#ffffff;"></i> <span style="color: white; user-select: none;">Loading...</span>`
 let bancont = document.createElement("div");
 bancont.id = "bancont";
 let banner = document.createElement("img");
@@ -630,6 +631,18 @@ banner.onload = function() {
 banner.onerror = function() {
   console.log('Failed to load banner image');
 };
+
+let bioc = document.createElement('div');
+bioc.id = "malbio_c";
+bioc.style.whiteSpace = "no-wrap"
+//bioc.style.wordBreak = "break-word";
+bioc.style.marginTop = "20px";
+let bio = document.createElement('p');
+bio.id = "malbio"
+bio.style.color = "white";
+
+
+
 async function getData() {
   try {
 let { data } = await
@@ -641,15 +654,51 @@ return data;
   return e;
 }
 }
-(async () => {
-        let veri = await getData();
-        banner.src = veri.modern_about_img;
-        banner.alt = "MAL Modern Image";
-      })();
+let isBannerHere = false;
+//(async () => {
+let promises = [];
+
+let gotData = false;
+function setAPI() {
+  console.log("Getting data from API...");
+  let promise = getData().then((veri) => {
+    banner.src = veri.modern_about_img;
+    banner.alt = "MAL Modern Image";
+    isBannerHere = true;
+    console.log("BANNER: OK!");
+
+    bio.textContent = veri.modern_about_text;
+    console.log("Biography: OK!");
+    gotData = true;
+  });
+
+  promises.push(promise);
+}
+
+setAPI();
+
+
+
 popup.appendChild(api1);
 
+
+
+bioc.appendChild(bio);
 bancont.appendChild(banner);
 popup.appendChild(bancont);
+popup.appendChild(bioc);
+
+
+Promise.all(promises)
+  .then(() => {
+    const loadingText = document.getElementById("loadingmsg");
+    loadingText.style.display = "none";
+    console.log('Sayonara!')
+  })
+  .catch((error) => {
+    console.error("An error occurred:", error);
+  });
+
 const closeButton = document.createElement('i');
   closeButton.id = "X";
   closeButton.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color: #ffffff;"></i>`
@@ -690,6 +739,7 @@ el.addEventListener("click", () => {
   if (el.querySelector("i").classList.contains("fa-chevron-down")) {
     el.innerHTML = ii;
     togglepopup();
+    
   } else {
     togglepopup();
     el.innerHTML = i;
