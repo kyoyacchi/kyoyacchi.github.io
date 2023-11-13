@@ -6,58 +6,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-   <meta http-equiv="refresh"
-  content="0;URL=https://discord.gg/aJBP9kv8q9">
-  
-     <style>
-     .text {
-       color: white;
-       font-size: 15px;
-       text-shadow: 2px 2px 4px #000000;
-       font-family: 'Poppins', sans-serif;
-     }
-     #loading {
-       
-     }
-     a {
-       color: white;
-      outline: none;
-      text-decoration: none;
-      font-style: italic;
-      font-size: 14px;
-      font-family: 'Poppins', sans-serif;
-     }
-     a:hover{
-       text-decoration: underline;
-       color: pink;
-     }
-     html {
-       background-color: #353535;
-     }
-   </style> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+      body {
+        margin: 0; /* Resetting default margin */
+        overflow: hidden; /* Preventing scrollbars */
+      }
+
+      .text {
+        color: white;
+        font-size: 15px;
+        text-shadow: 2px 2px 4px #000000;
+        font-family: 'Poppins', sans-serif;
+        white-space: nowrap;
+        display: inline-block;
+      }
+
+      #loading {}
+
+      a {
+        color: white;
+        outline: none;
+        text-decoration: none;
+        font-style: italic;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      a:hover {
+        text-decoration: underline;
+        color: pink;
+      }
+
+      html, body {
+        height: 100%;
+        background-color: #353535;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .icon-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+.icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+      .icon img {
+        max-width: 76%;
+       /* width: 100%;*/
+        height: auto;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      #spin {
+        margin-top: 10px; 
+        font-size: 24px; 
+        color: #ffffff;
+      }
+      
+      #text {
+        overflow-wrap: break-word;
+        margin-top: 10px;
+        font-size: 16px;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+        display: inline-block;
+      }
+      #countdown {
+        color: white;
+        font-weight: bold;
+      }
+    </style>
 </head>
 <body>
-  <div class="text"></div><a
-href="https://discord.gg/aJBP9kv8q9">https://discord.gg/aJBP9kv8q9</a>
-
-<script>
-  let lang = navigator.language;
-  let l = "en"//fallback
-  let el = document.querySelector(".text")
-  let text = "You are being redirected to"
-  if (lang && lang.startsWith("en")){
-    l = "en"
-  } else if (lang && lang == "tr"){
-    l = "tr"
-  }
-  if (l == "tr") {
-   el.textContent = "Şu adrese yönlendiriliyorsunuz: " 
-  } else {
-    el.textContent = text;
- }
+  <div class="icon-container">
+    <div class="icon">
+      <img id="ikon" src="https://cdn.discordapp.com/avatars/468509605828493322/171caa70641199b50c5d097a1c7248f1.png">
+    </div>
+    <i id="spin" class="fas fa-circle-notch fa-spin"></i><span
+    id="text">Redirecting you to Discord in <span id="countdown">3</span>
+    seconds...</span>
+  </div>
   
-</script>
+  <script>
+    var countdownSeconds = 3;
+    var countdownElement = document.getElementById('countdown');
+    var countdownInterval = setInterval(function() {
+      countdownSeconds--;
+      countdownElement.textContent = countdownSeconds;
+      if (countdownSeconds <= 0) {
+        document.querySelector("#spin").className = "fa-solid fa-circle-check fa-shake";
+        clearInterval(countdownInterval);
+        document.querySelector("#text").textContent = "Redirecting..."
+         window.location.href = 'https://discord.com';
+         console.log("Redirecting...")
+      }
+    }, 1000);
+  </script>
 </body>
 </html>
