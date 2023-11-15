@@ -107,6 +107,17 @@
   </div>
   
   <script>
+  window.addEventListener('load', function() {
+         
+    let url = window.location.href;
+    if (url.includes("html")) {
+      window.history.pushState({},null,"https://kyoya.is-a.dev/mal")
+    }
+  });
+    
+  </script>
+  
+  <script>
     var countdownSeconds = 3;
     var countdownElement = document.getElementById('countdown');
     var countdownInterval = setInterval(function() {
