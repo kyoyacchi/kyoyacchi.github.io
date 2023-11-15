@@ -1,15 +1,125 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-<title> My MAL Profile... </title>
+  <title>Kyoya - MyAnimeList</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="My MAL profile? If you want to see it, you can!!">
-<link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
-    <meta http-equiv="refresh" content="0;URL=https://myanimelist.net/profile/KyoyaTempest">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+      body {
+        margin: 0; 
+        overflow: hidden; 
+      }
+
+      .text {
+        color: white;
+        font-size: 15px;
+        text-shadow: 2px 2px 4px #000000;
+        font-family: 'Poppins', sans-serif;
+        white-space: nowrap;
+        display: inline-block;
+      }
+
+      #loading {}
+
+      a {
+        color: white;
+        outline: none;
+        text-decoration: none;
+        font-style: italic;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      a:hover {
+        text-decoration: underline;
+        color: pink;
+      }
+
+      html, body {
+        height: 100%;
+        background-color: #353535;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .icon-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+.icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+      .icon img {
+        max-width: 76%;
+       /* width: 100%;*/
+        height: auto;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      #spin {
+        margin-top: 10px; 
+        font-size: 24px; 
+        color: #ffffff;
+      }
+      
+      #text {
+        overflow-wrap: break-word;
+        margin-top: 10px;
+        font-size: 16px;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+        display: inline-block;
+      }
+      #countdown {
+        color: white;
+        font-weight: bold;
+      }
+    </style>
 </head>
 <body>
+  <div class="icon-container">
+    <div class="icon">
+      <img id="ikon"
+      src="https://cdn.discordapp.com/attachments/871133764410019890/1174292263422140456/8OTgkWrC.png">
+    </div>
+    <i id="spin" class="fas fa-circle-notch fa-spin"></i><span
+    id="text">Redirecting you to my MAL profile in <span id="countdown">3</span>
+    seconds...</span>
+  </div>
+  
+  <script>
+    var countdownSeconds = 3;
+    var countdownElement = document.getElementById('countdown');
+    var countdownInterval = setInterval(function() {
+      countdownSeconds--;
+      countdownElement.textContent = countdownSeconds;
+      if (countdownSeconds <= 0) {
+        document.querySelector("#spin").className = "fa-solid fa-circle-check fa-shake";
+        clearInterval(countdownInterval);
+        document.querySelector("#text").textContent = "Redirecting..."
+         window.location.href = 'https://myanimelist.net/profile/kyoyatempest';
+         console.log("Redirecting...")
+      }
+    }, 1000);
+  </script>
 </body>
 </html>
