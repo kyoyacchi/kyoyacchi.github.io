@@ -81,6 +81,13 @@
         color: #ffffff;
       }
       
+            #check {
+              display: none;
+        margin-top: 10px; 
+        font-size: 24px; 
+        color: #ffffff;
+      }
+      
       #text {
         overflow-wrap: break-word;
         margin-top: 10px;
@@ -93,6 +100,83 @@
         color: white;
         font-weight: bold;
       }
+      
+      
+      .loading-2 {
+  --duration: 0.7s;
+  --size: 2em;
+}
+
+.loading-2 .spinner * {
+  box-sizing: border-box;
+}
+
+.loading-2 .spinner {
+  display: inline-block;
+  animation-name: anim-spinner;
+  animation-duration: var(--duration);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.loading-2 .spinner .circle {
+  width: var(--size);
+  height: calc(var(--size) / 2);
+  overflow: hidden;
+}
+
+.loading-2 .spinner .circle-inner {
+  transform: rotate(45deg);
+  border-radius: 50%;
+  border: calc(var(--size) / 8) solid #d9218f;
+  border-right: calc(var(--size) / 8) solid transparent;
+  border-bottom: calc(var(--size) / 8) solid transparent;
+  width: 100%;
+  height: 200%;
+  animation-name: anim-circle-1;
+  animation-duration: var(--duration);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: cubic-bezier(.25, .1, .5, 1);
+}
+
+.loading-2 .spinner .circle-2 {
+  transform: rotate(180deg);
+}
+
+.loading-2 .spinner .circle-2 .circle-inner {
+  animation-name: anim-circle-2;
+}
+
+@keyframes anim-circle-1 {
+  from {
+    transform: rotate(60deg);
+  }
+  to {
+    transform: rotate(205deg);
+  }
+}
+
+@keyframes anim-circle-2 {
+  from {
+    transform: rotate(30deg);
+  }
+  to {
+    transform: rotate(-115deg);
+  }
+}
+
+@keyframes anim-spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+      
+      
     </style>
 </head>
 <body>
@@ -101,7 +185,19 @@
       <img id="ikon"
       src="https://cdn.discordapp.com/attachments/871133764410019890/1174292263422140456/8OTgkWrC.png">
     </div>
-    <i id="spin" class="fas fa-circle-notch fa-spin"></i><span
+  <!--  <i id="spin" class="fas fa-circle-notch fa-spin"></i>-->
+  <span id="check"></span>
+  <div class="item loading-2">
+    <div class="spinner">
+      <div class="circle circle-1">
+        <div class="circle-inner"></div>
+      </div>
+      <div class="circle circle-2">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
+    </div>
+  <span
     id="text">Redirecting you to my MAL profile in <span id="countdown">3</span>
     seconds...</span>
   </div>
@@ -124,8 +220,11 @@
       countdownSeconds--;
       countdownElement.textContent = countdownSeconds;
       if (countdownSeconds <= 0) {
-        document.querySelector("#spin").className = "fa-solid fa-circle-check fa-shake";
         clearInterval(countdownInterval);
+        document.querySelector('.loading-2').style.display = "none"
+        document.querySelector("#check").style.display = "block"
+        document.querySelector("#check").className = "fa-solid fa-circle-check fa-shake";
+        
         document.querySelector("#text").textContent = "Redirecting..."
          window.location.href = 'https://myanimelist.net/profile/kyoyatempest';
          console.log("Redirecting...")
