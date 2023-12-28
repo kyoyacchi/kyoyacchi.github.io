@@ -612,7 +612,7 @@ background-blend-mode: multiply;
 .loading-2 .circle-inner {
   transform: rotate(45deg);
   border-radius: 50%;
-  border: calc(var(--size) / 8) solid black;
+  border: calc(var(--size) / 8) solid #d9218f;
   border-right: calc(var(--size) / 8) solid transparent;
   border-bottom: calc(var(--size) / 8) solid transparent;
   width: 100%;
@@ -631,10 +631,10 @@ background-blend-mode: multiply;
 .loading-2 .circle-2 .circle-inner {
   animation-name: anim-circle-2;
 }
-.loading-2 .circle-inner,
+/*.loading-2 .circle-inner,
 .loading-2 .circle-2 .circle-inner {
   border-color: #d9218f;
-}
+}*/
 
 @keyframes anim-circle-1 {
   from {
