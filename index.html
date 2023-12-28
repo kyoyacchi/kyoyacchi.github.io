@@ -645,8 +645,14 @@ document.addEventListener('click', function(event) {
 const api1 = document.createElement('div');
 api1.style.display = "block";
 api1.id = "loadingmsg"
-api1.innerHTML = `<i id="loadingu" class="fa-solid fa-spinner fa-spin" style="color:
-#ffffff;"></i> <span style="color: white; user-select: none;">Loading...</span>`
+api1.innerHTML = `
+  <div id="loadingu" class="circle circle-2">
+    <div class="circle-inner"></div>
+  </div>
+  
+  
+  <span style="color: white; user-select: none;">Loading...</span>
+`;
 let bancont = document.createElement("div");
 bancont.id = "bancont";
 let banner = document.createElement("img");
