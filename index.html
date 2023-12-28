@@ -644,14 +644,23 @@ document.addEventListener('click', function(event) {
 
 const api1 = document.createElement('div');
 api1.style.display = "block";
+
 api1.id = "loadingmsg"
 api1.innerHTML = `
-  <div id="loadingu" class="circle circle-2">
-    <div class="circle-inner"></div>
+  <div class="item loading-2">
+    <div class="spinner">
+      <div class="circle circle-1">
+        <div class="circle-inner"></div>
+      </div>
+      <div class="circle circle-2">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
+    <div class="loading-text">
+      <span id="mari" style="color: white; user-select: none; margin-left: 40px;
+      margin-top: -10px;">Loading...</span>
+    </div>
   </div>
-  
-  
-  <span style="color: white; user-select: none;">Loading...</span>
 `;
 let bancont = document.createElement("div");
 bancont.id = "bancont";
