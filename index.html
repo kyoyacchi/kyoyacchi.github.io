@@ -641,7 +641,7 @@ document.addEventListener('click', function(event) {
   } 
 });*/
 
-
+/*
 const api1 = document.createElement('div');
 api1.style.display = "block";
 
@@ -661,7 +661,31 @@ api1.innerHTML = `
       margin-top: -10px;">Loading...</span>
     </div>
   </div>
+`;*/
+
+const api1 = document.createElement('div');
+api1.style.display = "flex";  
+
+api1.id = "loadingmsg"
+api1.innerHTML = `
+  <div class="item loading-2" style="flex: 0 0 auto; margin-right: 10px;"> <!-- Added styles for size and margin -->
+    <div class="spinner">
+      <div class="circle circle-1">
+        <div class="circle-inner"></div>
+      </div>
+      <div class="circle circle-2">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
+  </div>
+  <div class="loading-text">
+    <div id="mari" style="color: white; user-select: none; margin-top: 5px;
+    font-weight: bold;">Loading...</span>
+  </div>
 `;
+
+
+
 let bancont = document.createElement("div");
 bancont.id = "bancont";
 let banner = document.createElement("img");
