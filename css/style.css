@@ -11,7 +11,8 @@ div{
 }
 
 html {
-	font-family: 'Inter', sans-serif !important;
+/*	font-family: 'Inter', sans-serif !important;*/
+font-family: 'Comfortaa', cursive !important;
 	font-size: 15px;
 	font-weight: 700;
 	box-sizing: border-box;
