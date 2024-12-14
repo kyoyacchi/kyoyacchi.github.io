@@ -574,8 +574,30 @@ let verifi = document.querySelector(".Cover .title.verified svg");
     var logo = document.querySelector(".logo-wrapper img");
 var audio = new Audio("https://cdn.discordapp.com/attachments/777526265795313704/1152318325095944262/Yamete.m4a");
 
+function YedekToast (){
+  const tostcuk = document.createElement('div');
+   tostcuk.id = "toast1";
+   tostcuk.innerText = "Merhaba!"
+   tostcuk.style.position  = "absolute";
+   tostcuk.style.top= "230px";
+   tostcuk.style.left = "50%";
+   tostcuk.style.padding = "10px";
+   tostcuk.style.background = "#333";
+   tostcuk.style.color = "#fff";
+   tostcuk.style.borderRadius = "5px";
+   tostcuk.style.transform = "translateX(-50%)"
+   tostcuk.style.margin = "auto"
+   document.body.appendChild(tostcuk)
+}
 var clickCount = 0;
-
+function fuckToast(){
+  let tostcu = document.getElementById("info-toast");
+  if (tostcu) {
+    tostcu.remove();
+  } else {
+    yedekToast();
+  }
+}
 logo.addEventListener("click", function() {
     clickCount++;
     if (clickCount === 3) {
