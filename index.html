@@ -347,11 +347,13 @@ document.body.appendChild(overlay);
   </script><-->
   
   <script>
+  var hata = null;
   async function getDiscordAv() {
   try {
     const response = await axios.get("https://kyoya-api-x3a1.vercel.app/api/pfp?id=468509605828493322");
     return response.data.avatar;
   } catch (error) {
+    hata = true;
     console.error(error);
   }
 }
@@ -380,9 +382,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 //innerDiv.style.display = "flex";
 innerDiv.style.alignItems =  "center";
 /*  innerDiv.textContent = "updated discord profile picture";*/
+if (hata) {
+ innerDiv.innerHTML = `<i class="fas fa-times" style="color: white; font-size:
+17px;"></i> couldn't update the discord profile picture, using default pfp from
+github`; 
+} else {
 innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size:
 17px;"></i> updated discord profile picture`;
-
+}
   innerDiv.style.color = "white";
   innerDiv.style.userSelect = "none";
 
