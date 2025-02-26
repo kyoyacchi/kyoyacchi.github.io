@@ -27,18 +27,6 @@
     
     
 </head>
-<body onclick="closeMenu(event)">
-    <!--  Menu -->
-    <div class="hamburger" onclick="toggleMenu(event)">
-        <i class="fas fa-bars"></i>
-    </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar" onclick="event.stopPropagation()">
-        <ul>
-            <li><a href="#">Home</a></li>
-        </ul>
-    </div>
 
     <!-- Main Content -->
     <div class="content">
@@ -70,18 +58,7 @@
 
     <script>
     	
-        function toggleMenu(event) {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-            event.stopPropagation();
-        }
 
-        function closeMenu(event) {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-            }
-        }
 
         function shakeIt(event) {
             let verifi = document.querySelector('.checkmark');
@@ -91,7 +68,7 @@
                     verifi.classList.remove('fa-shake');
                 }, 500); // top secret
             }
-            event.stopPropagation(); // prevent menu closing
+            //event.stopPropagation(); // prevent menu closing
         }
         
         
