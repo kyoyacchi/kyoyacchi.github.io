@@ -176,6 +176,7 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
+  /* padding-bottom: 10px;*/
 }
 
 /* Footer ana içeriği */
@@ -229,12 +230,13 @@
 
 /* Shogunate onayı bölümü */
 .shogunate-approval {
-    font-size: 12px;
+    font-size: 5px;
     font-style: italic;
-    color: #bbb;
+    color: #ffffff;
     margin-top: 3px;
     opacity: 0.8;
     text-shadow: 0 0 10px rgba(154, 54, 200, 0.8), 0 0 20px rgba(154, 54, 200, 0.8); /* Glow effect */
+    margin-top: -3px;
 }
 
 /* Onay mührü ikonu */
@@ -251,6 +253,16 @@
     100% {
         box-shadow: 0 0 15px rgba(155, 89, 182, 0.6);
     }
+}
+.almighty-raiden {
+    color: #9b59b6; /* Mor renk */
+    font-weight: bold; /* Kalın yazı */
+    animation: blink 1.5s ease-in-out infinite; /* Daha hafif yanıp sönme efekti */
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
         /* Responsive */
         @media (max-width: 768px) {
