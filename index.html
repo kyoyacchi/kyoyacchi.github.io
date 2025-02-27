@@ -28,6 +28,12 @@
     
 </head>
 
+<div class="intro-overlay">
+        <img src="https://files.catbox.moe/438lmr.gif" alt="Musou Isshin" class="musou-isshin">
+        <div class="lightning-overlay">
+            <div class="lightning-crack"></div>
+        </div>
+    </div>
     <!-- Main Content -->
     <div class="content">
         <img src="https://avatars.githubusercontent.com/u/63583961" alt="Avatar" class="profile-img">
@@ -217,7 +223,18 @@ function changeHeartColor (){
 
   }
   
-  
+  document.addEventListener('DOMContentLoaded', function() {
+            const introOverlay = document.querySelector('.intro-overlay');
+            
+            // GIF'in süresi 1 saniye (1000 milisaniye)
+            setTimeout(() => {
+                introOverlay.style.opacity = '0'; // Soluklaşma efekti
+                setTimeout(() => {
+                    introOverlay.style.display = 'none'; // Tamamen gizle
+                    document.body.style.overflow = 'auto'; // Sayfanın kaydırılabilirliğini geri getir
+                }, 500); // Soluklaşma animasyonu için 0.5 saniye bekle
+            }, 1000); // GIF'in süresi olan 1 saniye
+        });
 
     </script>
 </body>
