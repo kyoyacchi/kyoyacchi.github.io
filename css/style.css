@@ -164,61 +164,94 @@
 
         /* Footer */
         footer {
-        	user-select:none;
-            position: fixed;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-            font-size: 14px;
-            color: #bbb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .footer-avatar {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #d8bfff;
-        }
-
-        footer span {
-            color: #d8bfff;
-        }
-        
-        .Footer_text {
-        user-select: none;
-        position: relative;
-        display: inline-block;
-        cursor: default;
-        text-decoration: none;
-    }
-
-    .Footer_text::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #d9218f;
-        transform-origin: left;
-        transform: scaleX(0);
-        transition: all 0.3s ease-in-out;
-    }
-
-    .Footer_text:hover::before {
-        transform: scaleX(1);
-        transform-origin: right;
-    }
-
-#Footer_heart:hover {
-  color: purple;
+    user-select: none;
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #bbb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 
+/* Footer ana içeriği */
+.footer-main {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Discord profil fotoğrafı */
+.footer-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #d8bfff;
+}
+
+/* Kyo ismi efekti */
+.Footer_text {
+    user-select: none;
+    position: relative;
+    display: inline-block;
+    cursor: default;
+    text-decoration: none;
+    color: #d8bfff;
+}
+
+.Footer_text::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #d9218f;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.Footer_text:hover::before {
+    transform: scaleX(1);
+    transform-origin: right;
+}
+
+/* Kalp hover efekti */
+#Footer_heart:hover {
+    color: purple;
+}
+
+/* Shogunate onayı bölümü */
+.shogunate-approval {
+    font-size: 12px;
+    font-style: italic;
+    color: #bbb;
+    margin-top: 3px;
+    opacity: 0.8;
+    text-shadow: 0 0 10px rgba(154, 54, 200, 0.8), 0 0 20px rgba(154, 54, 200, 0.8); /* Glow effect */
+}
+
+/* Onay mührü ikonu */
+.shogunate-approval i {
+    margin-right: 6px;
+    color: #9b59b6;
+}
+
+/* Işık efekti */
+@keyframes glowEffect {
+    0% {
+        box-shadow: 0 0 5px rgba(155, 89, 182, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(155, 89, 182, 0.6);
+    }
+}
         /* Responsive */
         @media (max-width: 768px) {
             .hamburger {
