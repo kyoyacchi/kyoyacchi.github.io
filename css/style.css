@@ -314,3 +314,107 @@
                 height: 16px;
             }
         }
+        
+        /* Tweet Embed Container */
+/* Tweet Container - Festival Teması */
+.tweet-embed-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+/* Elektro Parçacıklar */
+.tweet-embed-container::before,
+.tweet-embed-container::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: rgba(155, 89, 182, 0.8);
+    box-shadow: 0 0 15px 10px rgba(155, 89, 182, 0.5);
+    border-radius: 50%;
+    animation: floatParticles 4s infinite ease-in-out alternate;
+}
+
+.tweet-embed-container::before {
+    top: 20%;
+    left: 10%;
+    animation-delay: 1s;
+}
+
+.tweet-embed-container::after {
+    bottom: 15%;
+    right: 20%;
+}
+
+/* Elektro Şimşek Efekti */
+.tweet-content {
+    max-width: 600px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+    border: 2px solid transparent;
+    animation: pulseGlow 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+        border-color: rgba(155, 89, 182, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(155, 89, 182, 1);
+        border-color: rgba(155, 89, 182, 1);
+    }
+}
+
+/* Elektro Dalgalar */
+.tweet-decor-top::before {
+    content: '\f0e7'; /* Şimşek */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 40px;
+    color: #9b59b6;
+    position: absolute;
+    left: -2%;
+    top: 0%;
+    animation: flicker 2s infinite ease-in-out;
+}
+
+.tweet-decor-top::after {
+    content: '\f005'; /* Yıldız */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 30px;
+    color: #e8c6ff;
+    position: absolute;
+    right: -2%;
+    top: 0px;
+    animation: twinkle 1.5s infinite;
+}
+
+/* Animations */
+@keyframes flicker {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.3; }
+    75% { opacity: 0.9; }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes floatParticles {
+    0% { transform: translateY(0); opacity: 0.7; }
+    100% { transform: translateY(-20px); opacity: 0.4; }
+}
