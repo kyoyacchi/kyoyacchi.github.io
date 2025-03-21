@@ -102,7 +102,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const avatar = document.getElementById("discord_pfp");
   let current = localStorage.getItem('avatar');
-  const avurl = await getDiscordAv();
+  let avurl //= await getDiscordAv();
   const github = "https://avatars.githubusercontent.com/u/63583961";
   
   function showPopUp() {
@@ -191,7 +191,13 @@ innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size:
   }, 2500)
 }
 
-  
+  try {
+    avurl = await getDiscordAv();
+   // console.log("Fetched Discord URL:", avurl);
+  } catch (error) {
+    console.error("Failed to fetch Discord avatar:", error);
+    avurl = github;
+  }
   
   if (!current || current !== avurl) {
     current = avurl;
@@ -199,7 +205,16 @@ innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size:
     localStorage.setItem('avatar', avurl);
   }
 
-  avatar.src = current ? current : github;
+avatar.onload = () => {
+  //  console.log("Image loaded successfully:", avatar.src);
+  };
+  
+avatar.onerror = (e) => {
+  console.warn("Oops! I had issue getting discord pfp, so using github pfp for now")
+    avatar.src = github;
+  }
+  avatar.src = current || github;
+  
 });
 
 changeHeartColor()
