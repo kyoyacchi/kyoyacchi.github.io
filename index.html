@@ -24,12 +24,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"> 
 </head>
 <body>
-    <div class="intro-overlay">
-        <img src="https://files.catbox.moe/438lmr.gif" alt="Musou Isshin" class="musou-isshin">
-        <div class="lightning-overlay">
-            <div class="lightning-crack"></div>
-        </div>
-    </div>
+<div class="intro-overlay">
+    <div class="line line-left"></div>
+    <div class="line line-right"></div>
+</div>
 
     <!-- Main Content -->
     <div class="profile-container">
@@ -232,6 +230,20 @@
                 }, 500);
             }, 1000);
         });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+    const introOverlay = document.querySelector('.intro-overlay');
+    const lines = document.querySelectorAll('.line');
+    
+    // Çizgilerin animasyonu tamamlanınca intro kapanacak
+    setTimeout(() => {
+        introOverlay.style.opacity = '0';
+        setTimeout(() => {
+            introOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 500); // Opaklık geçişi tamamlandıktan sonra kapanır
+    }, 1500); // Çizgiler birleştikten 1.5 saniye sonra kapanır
+});
     </script>
 </body>
 </html>
