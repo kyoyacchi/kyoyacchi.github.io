@@ -63,43 +63,83 @@ body {
     100% { transform: translateX(-50%) scaleY(0); opacity: 0; }
 }
 
-/* Main Content */
-.content {
+/* Profil Container */
+.profile-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-    padding: 20px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* Banner Stili */
+.banner {
+    width: 100%;
+    height: 200px;
+    background: #333;
+    overflow: hidden;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Profil İçeriği */
+.profile-content {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    text-align: left; /* Sola hizalama */
+}
+
+/* Profil Header */
+.profile-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Sola hizalama */
+    margin-top: -50px; /* Avatarı biraz aşağı indirdim */
 }
 
 .profile-img {
-    width: 150px;
-    height: 150px;
+    width: 120px; /* Avatar boyutunu küçülttüm */
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 15px;
     border: 4px solid #d8bfff;
+    background: #2a0a3d;
     animation: slideUp 1s ease forwards;
 }
 
 .name-container {
     user-select: none;
     display: flex;
+    flex-direction: column; /* Handle'ı alta almak için */
+    gap: 0px; /* Handle'ı üste taşımak için gap'i azalttım */
+    margin-top: 10px;
+    animation: slideUp 1s ease 0.2s forwards;
+    opacity: 0;
+}
+
+.name-row {
+    display: flex;
     align-items: center;
-    gap: 4px; 
+    gap: 4px;
     font-size: 28px;
     font-weight: bold;
     color: #d8bfff;
-    margin-bottom: 10px;
-    animation: slideUp 1s ease 0.2s forwards;
-    opacity: 0;
+}
+
+.handle {
+    font-size: 16px;
+    color: #888; /* Gri renk */
+    opacity: 0.7; /* Parlaklığı düşük ama görünür */
+    margin-top: -4px; 
 }
 
 @keyframes shatterIn {
@@ -127,8 +167,9 @@ body {
 
 .bio {
     user-select: none;
-    max-width: 600px;
-    margin-bottom: 20px;
+    max-width: 160px; /* Bio kapsayıcısını 160px yaptım */
+    margin: 20px 0;
+    margin-left: -10px; /* Bio'yu biraz sola taşıdım */
     font-size: 18px;
     animation: slideUp 1s ease 0.4s forwards;
     opacity: 0;
@@ -146,6 +187,7 @@ body {
 .social-icons {
     display: flex;
     gap: 20px;
+    justify-content: center; /* Ortada tutmak için */
     margin-bottom: 20px;
 }
 
@@ -234,7 +276,7 @@ body {
 }
 
 .tweet-decor-top::before {
-    content: '\f0e7'; /* Lightning bolt */
+    content: '\f0e7';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     font-size: 40px;
@@ -246,7 +288,7 @@ body {
 }
 
 .tweet-decor-top::after {
-    content: '\f005'; /* Star */
+    content: '\f005';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     font-size: 30px;
@@ -348,8 +390,8 @@ footer {
     opacity: 0.8;
     text-shadow: 0 0 10px rgba(154, 54, 200, 0.8), 0 0 20px rgba(154, 54, 200, 0.8);
     max-width: 100%;
-    word-break: break-word; /* Wrap words instead of ellipsis */
-    white-space: normal; /* Allow wrapping */
+    word-break: break-word;
+    white-space: normal;
 }
 
 .almighty-raiden {
@@ -365,19 +407,24 @@ footer {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .content {
-        padding: 15px;
+    .banner {
+        height: 150px;
     }
     .profile-img {
-        width: 120px;
-        height: 120px;
+        width: 100px; /* Avatar boyutunu küçülttüm */
+        height: 100px;
+        margin-top: -40px; /* Aşağı indirme oranını azalttım */
     }
-    .name-container {
+    .name-row {
         font-size: 24px;
+    }
+    .handle {
+        font-size: 14px;
     }
     .bio {
         font-size: 16px;
-        max-width: 90%;
+        max-width: 140px; /* Bio kapsayıcısını daha da daralttım */
+        margin-left: -8px; /* Sola kaydırma oranını azalttım */
     }
     .social-icons a {
         font-size: 20px;
@@ -399,15 +446,24 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .profile-img {
-        width: 100px;
-        height: 100px;
+    .banner {
+        height: 120px;
     }
-    .name-container {
+    .profile-img {
+        width: 80px; /* Avatar boyutunu daha da küçülttüm */
+        height: 80px;
+        margin-top: -30px; /* Aşağı indirme oranını azalttım */
+    }
+    .name-row {
         font-size: 20px;
+    }
+    .handle {
+        font-size: 12px;
     }
     .bio {
         font-size: 14px;
+        max-width: 160px; /* Bio kapsayıcısını daha da daralttım */
+        margin-left: -6px; /* Sola kaydırma oranını azalttım */
     }
     .social-icons {
         gap: 15px;
