@@ -19,49 +19,46 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #000;
+    background: #4b1a6d; /* Mor arka plan */
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     transition: opacity 0.5s ease;
 }
 
-.musou-isshin {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+
+.line {
+    position: absolute;
+    height: 4px; /* Çizgi kalınlığı */
+    background: #d8bfff; /* Çizgi rengi (açık mor) */
+    box-shadow: 0 0 10px rgba(216, 191, 255, 0.8); /* Hafif parlama efekti */
 }
 
-.lightning-overlay {
-    position: absolute;
-    top: 0;
+.line-left {
     left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 1001;
+    width: 0;
+    animation: slideFromLeft 1s ease forwards;
 }
 
-.lightning-crack {
-    position: absolute;
-    width: 100px;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent, #d8bfff 20%, #7b2cbf 50%, #d8bfff 80%, transparent);
-    box-shadow: 0 0 30px rgba(123, 44, 191, 0.9), 0 0 60px rgba(123, 44, 191, 0.6);
-    animation: crackScreen 1s ease forwards;
-    transform: translateX(-50%);
-    left: 50%;
+.line-right {
+    right: 0;
+    width: 0;
+    animation: slideFromRight 1s ease forwards;
 }
 
-@keyframes crackScreen {
-    0% { transform: translateX(-50%) scaleY(0); opacity: 0; }
-    20% { transform: translateX(-50%) scaleY(1); opacity: 1; }
-    80% { transform: translateX(-50%) scaleY(1); opacity: 1; }
-    100% { transform: translateX(-50%) scaleY(0); opacity: 0; }
+@keyframes slideFromLeft {
+    0% { width: 0; }
+    50% { width: 50%; } /* Ortada birleşiyor */
+    100% { width: 50%; }
 }
+
+@keyframes slideFromRight {
+    0% { width: 0; }
+    50% { width: 50%; } /* Ortada birleşiyor */
+    100% { width: 50%; }
+}
+
 
 /* Profil Container */
 .profile-container {
