@@ -61,13 +61,14 @@
                 <a href="https://github.com/kyoyacchi" target="_blank"><i class="fab fa-github"></i></a>
             </div>
             <!-- Tweet Embed Section -->
-            <div class="tweet-embed-container">
-                <div class="tweet-content">
-                    <div class="tweet-decor-top"></div>
-                    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"><p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>— Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
-            </div>
+          <div class="tweet-embed-container">
+  <div class="loading-spinner"></div>
+  <div class="tweet-content">
+    <div class="tweet-decor-top"></div>
+    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"><p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>— Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
         </div>
     </div>
 
@@ -243,6 +244,58 @@
             document.body.style.overflow = 'auto';
         }, 500); // Opaklık geçişi tamamlandıktan sonra kapanır
     }, 1500); // Çizgiler birleştikten 1.5 saniye sonra kapanır
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const tweetContainer = document.querySelector('.tweet-embed-container');
+  const tweetContent = document.querySelector('.tweet-content');
+  const spinner = document.querySelector('.loading-spinner');
+
+  // Observer ile tweet'in görünürlüğünü kontrol et
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadTweet();
+        observer.unobserve(tweetContainer);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(tweetContainer);
+
+  function loadTweet() {
+    // Twitter script'i yükle
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      js.async = true;
+      fjs.parentNode.insertBefore(js, fjs);
+      
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+      
+      return t;
+    }(document, "script", "twitter-wjs"));
+
+    // Tweet yüklendiğinde
+    twttr.ready(function() {
+      twttr.events.bind('loaded', showContent);
+    });
+
+    // Maksimum 5 saniye timeout
+    setTimeout(showContent, 5000);
+  }
+
+  function showContent() {
+    tweetContent.classList.add('loaded');
+    spinner.style.display = 'none';
+  }
 });
     </script>
 </body>
