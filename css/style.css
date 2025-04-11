@@ -61,14 +61,23 @@ body {
 
 .preloader-text {
     position: absolute;
-    color: #8000ff; /* Mor, çizgilerle uyumlu */
-    font-family: 'Inter', sans-serif; /* Mevcut fontlardan */
-    font-size: 24px;
-    font-weight: 500;
+    color: #8000ff;
+    font-family: 'Inter', sans-serif;
+    font-size: 23px;
+    font-weight: 700;
+    text-shadow: 
+        0 0 10px #8000ff, 
+        0 0 20px #8000ff, 
+        0 0 30px #b266ff; 
     opacity: 1;
     text-align: center;
     top: 60%;
-    transition: opacity 0.5s ease
+    transition: opacity 0.5s ease;
+   max-width: 90%; 
+    word-wrap: break-word; 
+    padding: 10px; 
+    box-sizing: border-box; 
+
 }
 
 .intro-overlay.fade-out .preloader-text {
