@@ -247,14 +247,14 @@
     const introOverlay = document.querySelector('.intro-overlay');
     const lines = document.querySelectorAll('.line');
     
-    // Çizgilerin animasyonu tamamlanınca intro kapanacak
+  
     setTimeout(() => {
         introOverlay.style.opacity = '0';
         setTimeout(() => {
             introOverlay.style.display = 'none';
             document.body.style.overflow = 'auto';
-        }, 500); // Opaklık geçişi tamamlandıktan sonra kapanır
-    }, 1500); // Çizgiler birleştikten 1.5 saniye sonra kapanır
+        }, 500); 
+    }, 1500); 
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const tweetContent = document.querySelector('.tweet-content');
   const spinner = document.querySelector('.loading-spinner');
 const loadingWrapper = document.querySelector('.loading-wrapper');
-  // Observer ile tweet'in görünürlüğünü kontrol et
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -275,7 +275,7 @@ const loadingWrapper = document.querySelector('.loading-wrapper');
   observer.observe(tweetContainer);
 
   function loadTweet() {
-    // Twitter script'i yükle
+
     window.twttr = (function(d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0],
         t = window.twttr || {};
@@ -294,12 +294,12 @@ const loadingWrapper = document.querySelector('.loading-wrapper');
       return t;
     }(document, "script", "twitter-wjs"));
 
-    // Tweet yüklendiğinde
+
     twttr.ready(function() {
       twttr.events.bind('loaded', showContent);
     });
 
-    // Maksimum 5 saniye timeout
+    
     setTimeout(showContent, 5000);
   }
 
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('sparks-canvas');
             const ctx = canvas.getContext('2d');
 
-            // Canvas boyutunu ayarla
+
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -322,9 +322,9 @@ document.addEventListener('DOMContentLoaded', function() {
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Partikül sistemi
+          
             const particles = [];
-            const particleCount = 50; // Hafif, akıcı
+            const particleCount = 50; 
 
             class Particle {
                 constructor() {
@@ -342,10 +342,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 update(scrollSpeed) {
                     this.x += this.speedX;
-                    this.y += this.speedY + scrollSpeed * 0.1; // Hafif scroll etkisi
-                    this.opacity -= 0.005; // Yavaş solma
+                    this.y += this.speedY + scrollSpeed * 0.1;
+                    this.opacity -= 0.005; 
 
-                    // Ekran dışına çıkarsa veya solarsa sıfırla
+
                     if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.opacity <= 0) {
                         this.reset();
                     }
@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Partikülleri başlat
+
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
@@ -369,12 +369,12 @@ document.addEventListener('DOMContentLoaded', function() {
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Scroll hızını hesapla
+
                 const currentScrollY = window.scrollY;
                 const scrollSpeed = currentScrollY - lastScrollY;
                 lastScrollY = currentScrollY;
 
-                // Partikülleri güncelle ve çiz
+
                 particles.forEach(particle => {
                     particle.update(scrollSpeed);
                     particle.draw();
