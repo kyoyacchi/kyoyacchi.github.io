@@ -28,6 +28,7 @@
 <div class="intro-overlay">
     <div class="line line-left"></div>
     <div class="line line-right"></div>
+      <div class="preloader-text"></div>
 </div>
 
     <!-- Main Content -->
@@ -374,6 +375,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
             animate();
         });
+        document.addEventListener('DOMContentLoaded', function() {
+    const preloaderText = document.querySelector('.preloader-text');
+    const texts = [
+        'Now you shall perish!',
+        'There is no escape!',
+        'Inazuma shines eternal!',
+        'Inabikari sunawachi eien nari!',
+        'Mikirimashita'
+    ];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    preloaderText.textContent = randomText;
+});
     </script>
 </body>
 </html>
