@@ -8,8 +8,7 @@
     console.clear();
     },1500);
     document.querySelector(".footer-main").innerHTML = `
-      <i id="Footer_heart" class="fas fa-heart"></i> ile <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar">
-      <span class="Footer_text">Kyo</span> tarafından yapıldı.
+      <i id="Footer_heart" class="fas fa-heart"></i> ile <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar"> <span class="Footer_text">Kyo</span> tarafından yapıldı.
     `;
 
     document.querySelector(".shogunate-approval").innerHTML = 
