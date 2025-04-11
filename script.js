@@ -3,7 +3,7 @@
   const lang = navigator.language;
 
   if (lang.startsWith("tr")) {//TÜRKÇE İSE
-    console.log("Türkçe bir kullanıcı!? Hemen geçiş yapıyorum!");
+    console.log("Türk bir kullanıcı!? Hemen geçiş yapıyorum!");
     setTimeout(() =>{
     console.clear();
     },1500);
