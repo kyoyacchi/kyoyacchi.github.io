@@ -1,552 +1,542 @@
+/* Base Styles */
+:root {
+    --primary: #6C2BD9;
+    --primary-dark: #5525AE;
+    --secondary: #A68BFF;
+    --accent: #FF6B8B;
+    --bg-dark: #1A0B2E;
+    --bg-light: #2D1B4E;
+    --text-light: #F8F9FA;
+    --text-muted: #B4B4B4;
+    --text-dark: #2D2D2D;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Comfortaa', sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #2a0a3d 0%, #4b1a6d 100%);
-    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
+    color: var(--text-light);
     line-height: 1.6;
+    min-height: 100vh;
     overflow-x: hidden;
     position: relative;
 }
 
-.intro-overlay {
+body.loaded {
+    overflow-y: auto;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Loading Screen */
+.loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #4b1a6d; /* Mor arka plan */
-    z-index: 1000;
+    background: var(--bg-dark);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    z-index: 9999;
     transition: opacity 0.5s ease;
 }
 
-
-.line {
-    position: absolute;
-    height: 4px; /* Çizgi kalınlığı */
-    background: #d8bfff; /* Çizgi rengi (açık mor) */
-    box-shadow: 0 0 10px rgba(216, 191, 255, 0.8); /* Hafif parlama efekti */
+.loader.fade-out {
+    opacity: 0;
 }
 
-.line-left {
-    left: 0;
-    width: 0;
-    animation: slideFromLeft 1s ease forwards;
-}
-
-.line-right {
-    right: 0;
-    width: 0;
-    animation: slideFromRight 1s ease forwards;
-}
-
-@keyframes slideFromLeft {
-    0% { width: 0; background: #d8bfff; }
-    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
-    100% { width: 50%; background: #8000ff; }
-}
-
-@keyframes slideFromRight {
-    0% { width: 0; background: #d8bfff; }
-    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
-    100% { width: 50%; background: #8000ff; }
-}
-
-.preloader-text {
-    position: absolute;
-    color: #8000ff;
-    font-family: 'Inter', sans-serif;
-    font-size: 23px;
-    font-weight: 700;
-    text-shadow: 
-        0 0 10px #8000ff, 
-        0 0 20px #8000ff, 
-        0 0 30px #b266ff; 
-    opacity: 1;
-    text-align: center;
-    top: 60%;
-    transition: opacity 0.5s ease;
-   max-width: 90%; 
-    word-wrap: break-word; 
-    padding: 10px; 
-    box-sizing: border-box; 
-
-}
-
-.intro-overlay.fade-out .preloader-text {
-    opacity: 0; /* intro-overlay kaybolurken metin de kaybolur */
-}
-/* Profil Container */
-.profile-container {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
+.loader-content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
-/* Banner Stili */
+.loader-quote {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: var(--secondary);
+    text-align: center;
+    font-weight: 500;
+    opacity: 0;
+    animation: fade-in 1s ease 0.5s forwards;
+    max-width: 80%;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Background Elements */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Profile Sections */
+.profile {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    opacity: 0;
+    animation: fade-in 1s ease 0.3s forwards;
+}
+
 .banner {
     width: 100%;
-    height: 200px;
-    background: #333;
+    height: 220px;
     overflow: hidden;
+    position: relative;
 }
 
-.banner-img {
+.banner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    transition: transform 0.5s ease;
 }
 
-/* Profil İçeriği */
-.profile-content {
-    position: relative;
+.banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    text-align: left; /* Sola hizalama */
+    height: 70px;
+    background: linear-gradient(to top, var(--bg-dark), transparent);
 }
 
-/* Profil Header */
-.profile-header {
+/* Profile Information */
+.profile-info {
+    margin-top: -70px;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Sola hizalama */
-    margin-top: -50px; /* Avatarı biraz aşağı indirdim */
+    z-index: 2;
 }
 
-.profile-img {
-    width: 120px; /* Avatar boyutunu küçülttüm */
-    height: 120px;
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-image-container {
+    position: relative;
+}
+
+.profile-image {
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
+    border: 4px solid var(--primary);
+    background: var(--bg-dark);
+    box-shadow: var(--shadow);
     object-fit: cover;
-    border: 4px solid #d8bfff;
-    background: #2a0a3d;
-    animation: slideUp 1s ease forwards;
+    transition: transform 0.3s ease;
 }
 
-.name-container {
-    user-select: none;
-    display: flex;
-    flex-direction: column; /* Handle'ı alta almak için */
-    gap: 0px; /* Handle'ı üste taşımak için gap'i azalttım */
-    margin-top: 10px;
-    animation: slideUp 1s ease 0.2s forwards;
-    opacity: 0;
+.profile-image:hover {
+    transform: scale(1.05);
 }
 
-.name-row {
+.profile-details {
+    padding-top: 1.5rem;
+}
+
+.profile-name {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #d8bfff;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
-.handle {
-    font-size: 16px;
-    color: #888; /* Gri renk */
-    opacity: 0.7; /* Parlaklığı düşük ama görünür */
-    margin-top: -4px; 
-}
-
-@keyframes shatterIn {
-    0% { transform: translateY(20px) scale(0.8) rotate(3deg); opacity: 0; filter: blur(5px); }
-    50% { transform: translateY(-5px) scale(1.05) rotate(-2deg); opacity: 0.7; filter: blur(2px); }
-    100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; filter: blur(0); }
-}
-
-.checkmark {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.checkmark.shake {
-    animation: shake 0.5s infinite;
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    50% { transform: translateX(2px); }
-    75% { transform: translateX(-2px); }
-    100% { transform: translateX(0); }
-}
-
-.bio {
-    user-select: none;
-    max-width: 160px; /* Bio kapsayıcısını 160px yaptım */
-    margin: 20px 0;
-    margin-left: -10px; /* Bio'yu biraz sola taşıdım */
-    font-size: 18px;
-    animation: slideUp 1s ease 0.4s forwards;
-    opacity: 0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #7b2cbf;
-    padding: 15px;
-    border-radius: 10px;
-}
-
-@keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* Social Icons */
-.social-icons {
-    display: flex;
-    gap: 20px;
-    justify-content: center; /* Ortada tutmak için */
-    margin-bottom: 20px;
-}
-
-.social-icons a {
-    color: #fff;
-    font-size: 24px;
-    transition: all 0.3s ease;
-}
-
-.social-icons a:hover {
-    color: #d8bfff;
-    transform: scale(1.2);
-    background: linear-gradient(45deg, #7b2cbf, #d8bfff);
+.profile-name h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Tweet Embed Container */
-.tweet-embed-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;  /* Eklendi: Ortalamayı burada yapıyoruz */
-  align-items: center;     /* Eklendi: Yine ortalama */
+.verified-badge {
+    color: #3B82F6;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.tweet-embed-container::before,
-.tweet-embed-container::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: rgba(155, 89, 182, 0.8);
-    box-shadow: 0 0 15px 10px rgba(155, 89, 182, 0.5);
+.verified-badge:hover {
+    transform: scale(1.2);
+}
+
+.verified-badge.animate-badge {
+    animation: badge-shake 0.5s ease;
+}
+
+@keyframes badge-shake {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-15deg); }
+    40% { transform: rotate(10deg); }
+    60% { transform: rotate(-5deg); }
+    80% { transform: rotate(5deg); }
+}
+
+.profile-username {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.profile-bio {
+    display: inline-block;
+    background: rgba(108, 43, 217, 0.1);
+    border: 1px solid var(--primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.social-links {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    animation: floatParticles 4s infinite ease-in-out alternate;
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tweet-embed-container::before {
-    top: 20%;
-    left: 10%;
-    animation-delay: 1s;
+.social-links a:hover {
+    background: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(108, 43, 217, 0.5);
 }
 
-.tweet-embed-container::after {
-    bottom: 15%;
-    right: 20%;
+/* Tweet Section */
+.tweet-section {
+    margin: 3rem auto;
+    background: rgba(45, 27, 78, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tweet-content {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.tweet-content.loaded {
-  opacity: 1;
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
 }
 
-.loading-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Bu, wrapper'ı ortalar */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Bu, içindeki spinner ve metni yatayda ortalar */
+.section-title i {
+    color: var(--secondary);
+    font-size: 1.2rem;
 }
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(155, 89, 182, 0.2);
-  border-top: 4px solid #9b59b6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite; /* Sadece animasyon adını kullanın */
+
+.section-title h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-light);
 }
-.loading-text {
-  margin-top: 10px;
-  color: #9b59b6;
-  font-size: 14px;
+
+.tweet-container {
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(166, 139, 255, 0.2);
+    border-top: 4px solid var(--secondary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.twitter-tweet {
-    max-width: 100%;
-    overflow-x: auto;
-    word-wrap: break-word;
+.loading-indicator p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
-@keyframes pulseGlow {
-    0% {
-        box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
-        border-color: rgba(155, 89, 182, 0.7);
-    }
-    100% {
-        box-shadow: 0 0 20px rgba(155, 89, 182, 1);
-        border-color: rgba(155, 89, 182, 1);
-    }
-}
-
-.tweet-decor-top::before {
-    content: '\f0e7';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 40px;
-    color: #9b59b6;
-    position: absolute;
-    left: -2%;
-    top: 0%;
-    animation: flicker 2s infinite ease-in-out;
-}
-
-.tweet-decor-top::after {
-    content: '\f005';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 30px;
-    color: #e8c6ff;
-    position: absolute;
-    right: -2%;
-    top: 0px;
-    animation: twinkle 1.5s infinite;
-}
-
-@keyframes flicker {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 0.3; }
-    75% { opacity: 0.9; }
-}
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
-}
-
-@keyframes floatParticles {
-    0% { transform: translateY(0); opacity: 0.7; }
-    100% { transform: translateY(-20px); opacity: 0.4; }
+.tweet-embed {
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 /* Footer */
 footer {
-    user-select: none;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-    font-size: 14px;
-    color: #bbb;
+    background: rgba(26, 11, 46, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 5px;
-    padding: 10px;
-    box-sizing: border-box;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
 }
 
-.footer-main {
+.footer-credit {
     display: flex;
     align-items: center;
-    gap: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
-.footer-avatar {
-    width: 20px;
-    height: 20px;
+.heart-icon {
+    color: var(--accent);
+    transition: transform 0.3s ease;
+}
+
+.heart-icon:hover {
+    transform: scale(1.3);
+}
+
+#discord-avatar {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #d8bfff;
-    flex-shrink: 0;
+    border: 1px solid var(--primary);
 }
 
-.Footer_text {
-    user-select: none;
+.creator-name {
+    color: var(--secondary);
+    font-weight: 500;
     position: relative;
-    display: inline-block;
-    cursor: default;
-    text-decoration: none;
-    color: #d8bfff;
 }
 
-.Footer_text::before {
-    content: "";
+.creator-name::after {
+    content: '';
     position: absolute;
+    bottom: -2px;
     left: 0;
-    bottom: 0;
-    width: 100%;
+    width: 0;
     height: 2px;
-    background-color: #d9218f;
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: all 0.3s ease-in-out;
+    background: var(--accent);
+    transition: width 0.3s ease;
 }
 
-.Footer_text:hover::before {
-    transform: scaleX(1);
-    transform-origin: right;
+.creator-name:hover::after {
+    width: 100%;
 }
 
-#Footer_heart:hover {
-    color: purple;
-}
-
-.shogunate-approval {
-    font-size: 10px;
+.footer-quote {
+    font-size: 0.8rem;
+    color: var(--text-muted);
     font-style: italic;
-    color: #ffffff;
-    margin-top: 3px;
-    opacity: 0.8;
-    text-shadow: 0 0 10px rgba(154, 54, 200, 0.8), 0 0 20px rgba(154, 54, 200, 0.8);
-    max-width: 100%;
-    word-break: break-word;
-    white-space: normal;
+    max-width: 80%;
 }
 
-.almighty-raiden {
-    color: #9b59b6;
-    font-weight: bold;
-    animation: blink 1.5s ease-in-out infinite;
+.accent-text {
+    color: var(--primary);
+    font-weight: 600;
+    animation: pulse 2s infinite;
 }
 
-@keyframes blink {
+@keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
 }
 
-/* Responsive */
+/* Notification */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(45, 45, 45, 0.9);
+    color: var(--text-light);
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999;
+    backdrop-filter: blur(5px);
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification.success {
+    border-left: 3px solid #4CAF50;
+}
+
+.notification.error {
+    border-left: 3px solid #F44336;
+}
+
+.notification i {
+    font-size: 1.2rem;
+}
+
+.notification.success i {
+    color: #4CAF50;
+}
+
+.notification.error i {
+    color: #F44336;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .profile-image {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .profile-details {
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-name h1 {
+        font-size: 1.7rem;
+    }
+    
     .banner {
-        height: 150px;
+        height: 180px;
     }
-    .profile-img {
-        width: 100px; /* Avatar boyutunu küçülttüm */
-        height: 100px;
-        margin-top: -40px; /* Aşağı indirme oranını azalttım */
+    
+    .profile-info {
+        margin-top: -60px;
     }
-    .name-row {
-        font-size: 24px;
-    }
-    .handle {
-        font-size: 14px;
-    }
-    .bio {
-        font-size: 16px;
-        max-width: 140px; /* Bio kapsayıcısını daha da daralttım */
-        margin-left: -8px; /* Sola kaydırma oranını azalttım */
-    }
-    .social-icons a {
-        font-size: 20px;
-    }
-    .tweet-embed-container {
-        padding: 15px;
-    }
-    .tweet-content {
-        padding: 10px;
-    }
-    footer {
-        font-size: 12px;
-        padding: 8px;
-    }
-    .footer-avatar {
-        width: 18px;
-        height: 18px;
-    }
-    .preloader-text {
-        font-size: 18px; 
-        max-width: 85%; 
-        padding: 15px;
+    
+    .tweet-section {
+        padding: 1.5rem;
     }
 }
 
 @media (max-width: 480px) {
+    .profile-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-name h1 {
+        font-size: 1.5rem;
+    }
+    
+    .profile-username {
+        font-size: 0.9rem;
+    }
+    
+    .profile-bio {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    .social-links a {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
     .banner {
-        height: 120px;
+        height: 150px;
     }
-    .profile-img {
-        width: 80px; /* Avatar boyutunu daha da küçülttüm */
-        height: 80px;
-        margin-top: -30px; /* Aşağı indirme oranını azalttım */
+    
+    .profile-info {
+        margin-top: -50px;
     }
-    .name-row {
-        font-size: 20px;
+    
+    .section-title h2 {
+        font-size: 1.3rem;
     }
-    .handle {
-        font-size: 12px;
+    
+    .tweet-section {
+        padding: 1.2rem;
+        margin: 2rem auto;
     }
-    .bio {
-        font-size: 14px;
-        max-width: 160px; /* Bio kapsayıcısını daha da daralttım */
-        margin-left: -6px; /* Sola kaydırma oranını azalttım */
+    
+    .loader-quote {
+        font-size: 1.2rem;
     }
-    .social-icons {
-        gap: 15px;
-    }
-    .social-icons a {
-        font-size: 18px;
-    }
-    .tweet-embed-container {
-        padding: 10px;
-    }
-    .tweet-content {
-        padding: 8px;
-    }
-    footer {
-        font-size: 10px;
-        padding: 5px;
-    }
-    .footer-avatar {
-        width: 16px;
-        height: 16px;
-    }
-    .preloader-text {
-        font-size: 16px;
-        max-width: 80%;
-    }
-}
-
-#sparks-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1; /* İçeriğin arkasında */
-    background: transparent; /* Şeffaf arka plan */
-    animation: subtle-vibrate 2s ease-in-out infinite; /* Hafif titreşim */
-}
-
-/* Hafif titreşim animasyonu */
-@keyframes subtle-vibrate {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(1px, 1px); }
-    50% { transform: translate(0, 0); }
-    75% { transform: translate(-1px, -1px); }
-    100% { transform: translate(0, 0); }
 }
