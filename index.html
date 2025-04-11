@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"> 
 </head>
 <body>
+  <canvas id="sparks-canvas"></canvas>
 <div class="intro-overlay">
     <div class="line line-left"></div>
     <div class="line line-right"></div>
@@ -297,6 +298,82 @@ document.addEventListener('DOMContentLoaded', function() {
     spinner.style.display = 'none';
   }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('sparks-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Canvas boyutunu ayarla
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Partikül sistemi
+            const particles = [];
+            const particleCount = 50; // Hafif, akıcı
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 3 + 1;
+                    this.speedX = (Math.random() - 0.5) * 2;
+                    this.speedY = (Math.random() - 0.5) * 2;
+                    this.opacity = Math.random() * 0.5 + 0.3;
+                }
+
+                update(scrollSpeed) {
+                    this.x += this.speedX;
+                    this.y += this.speedY + scrollSpeed * 0.1; // Hafif scroll etkisi
+                    this.opacity -= 0.005; // Yavaş solma
+
+                    // Ekran dışına çıkarsa veya solarsa sıfırla
+                    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.opacity <= 0) {
+                        this.reset();
+                    }
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(128, 0, 255, ${this.opacity})`; // Mor renk
+                    ctx.fill();
+                }
+            }
+
+            // Partikülleri başlat
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            let lastScrollY = window.scrollY;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Scroll hızını hesapla
+                const currentScrollY = window.scrollY;
+                const scrollSpeed = currentScrollY - lastScrollY;
+                lastScrollY = currentScrollY;
+
+                // Partikülleri güncelle ve çiz
+                particles.forEach(particle => {
+                    particle.update(scrollSpeed);
+                    particle.draw();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        });
     </script>
 </body>
 </html>
