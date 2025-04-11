@@ -1,7 +1,7 @@
    function setLang() {
     document.addEventListener("DOMContentLoaded", () => {
   const lang = navigator.language;
-
+try {
   if (lang.startsWith("tr")) {//TÜRKÇE İSE
     console.log("Türk bir kullanıcı!? Hemen geçiş yapıyorum!");
     setTimeout(() =>{
@@ -34,6 +34,9 @@
     tweetBlock.setAttribute("data-lang", "tr");
   }//embed de türkçe gözüksün
   }
+} catch(e){
+  console.error(e||e.message)
+}
 });
 }
 setLang();
