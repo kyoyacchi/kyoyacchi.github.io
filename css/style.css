@@ -193,8 +193,8 @@ a {
 .bio {
    user-select: none;
     max-width: 160px; /* Bio kapsayıcısını 160px yaptım */
-    margin: 20px 0;
-    margin-left: -10px; /* Bio'yu biraz sola taşıdım */
+    margin: 20px auto;
+    
     font-size: 18px;
     animation: slideUp 1s ease 0.4s forwards;
     opacity: 0;
@@ -203,7 +203,8 @@ a {
     padding: 15px;
     border-radius: 10px;
     backdrop-filter: blur(5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
     
 }
 
@@ -469,7 +470,7 @@ footer {
     .bio {
         font-size: 16px;
         max-width: 140px; /* Bio kapsayıcısını daha da daralttım */
-        margin-left: -8px; /* Sola kaydırma oranını azalttım */
+        
     }
     .social-icons a {
         font-size: 20px;
@@ -513,7 +514,7 @@ footer {
     .bio {
         font-size: 14px;
         max-width: 160px; /* Bio kapsayıcısını daha da daralttım */
-        margin-left: -6px; /* Sola kaydırma oranını azalttım */
+        
     }
     .social-icons {
         gap: 15px;
