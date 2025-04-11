@@ -59,7 +59,21 @@ body {
     100% { width: 50%; background: #8000ff; }
 }
 
+.preloader-text {
+    position: absolute;
+    color: #8000ff; /* Mor, çizgilerle uyumlu */
+    font-family: 'Inter', sans-serif; /* Mevcut fontlardan */
+    font-size: 24px;
+    font-weight: 500;
+    opacity: 1;
+    text-align: center;
+    top: 60%;
+    transition: opacity 0.5s ease
+}
 
+.intro-overlay.fade-out .preloader-text {
+    opacity: 0; /* intro-overlay kaybolurken metin de kaybolur */
+}
 /* Profil Container */
 .profile-container {
     position: relative;
