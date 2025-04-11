@@ -48,15 +48,15 @@ body {
 }
 
 @keyframes slideFromLeft {
-    0% { width: 0; }
-    50% { width: 50%; } /* Ortada birleşiyor */
-    100% { width: 50%; }
+    0% { width: 0; background: #d8bfff; }
+    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
+    100% { width: 50%; background: #8000ff; }
 }
 
 @keyframes slideFromRight {
-    0% { width: 0; }
-    50% { width: 50%; } /* Ortada birleşiyor */
-    100% { width: 50%; }
+    0% { width: 0; background: #d8bfff; }
+    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
+    100% { width: 50%; background: #8000ff; }
 }
 
 
