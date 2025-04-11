@@ -31,7 +31,7 @@ try {
     const tweetBlock = document.getElementById("tweetBlock");
   
   if (tweetBlock) {
-    tweetBlock.setAttribute("data-lang", "tr");
+   // tweetBlock.setAttribute("data-lang", "tr");
   }//embed de türkçe gözüksün
   }
 } catch(e){
