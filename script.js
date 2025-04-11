@@ -1,3 +1,36 @@
+    document.addEventListener("DOMContentLoaded", () => {
+  const lang = navigator.language;
+
+  if (lang.startsWith("tr")) {//TÜRKÇE İSE
+    console.log("Türkçe bir kullanıcı!? Hemen geçiş yapıyorum!");
+    setTimeout(() =>{
+    console.clear();
+    },1500);
+    document.querySelector(".footer-main").innerHTML = `
+      <i id="Footer_heart" class="fas fa-heart"></i> ile <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar">
+      <span class="Footer_text">Kyo</span> tarafından yapıldı.
+    `;
+
+    document.querySelector(".shogunate-approval").innerHTML = 
+      `<p class="shogunate-approval">"Bu websitesi <span
+      class="almighty-raiden">Yüce Raiden Shogun</span> ve Shogunate koruması
+      altındadır."</p>r.`;
+
+    
+    const bio = document.querySelector(".bio");
+    if (bio) {
+      bio.textContent = "Ei benim karım ulan!";
+    }
+
+    // Tweet yükleniyor
+    const loadingText = document.querySelector(".loading-text");
+    if (loadingText) {
+      loadingText.textContent = "Tweet yükleniyor...";
+    }
+  }
+});
+    
+    
        function shakeIt(event) {
             let verifi = document.querySelector('.checkmark');
             if (verifi) {
