@@ -27,6 +27,12 @@
     if (loadingText) {
       loadingText.textContent = "Tweet yükleniyor...";
     }
+    
+    const tweetBlock = document.getElementById("tweetBlock");
+  
+  if (tweetBlock) {
+    tweetBlock.setAttribute("data-lang", "tr");
+  }//embed de türkçe gözüksün
   }
 });
 }
