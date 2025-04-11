@@ -3,6 +3,20 @@ margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+:root {
+    --primary: #6C2BD9;
+    --primary-dark: #5525AE;
+    --secondary: #A68BFF;
+    --accent: #FF6B8B;
+    --bg-dark: #1A0B2E;
+    --bg-light: #2D1B4E;
+    --text-light: #F8F9FA;
+    --text-muted: #B4B4B4;
+    --text-dark: #2D2D2D;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
 
 body {
   font-family: 'Comfortaa', sans-serif;
@@ -132,13 +146,15 @@ a {
 }
 
 .profile-img {
-    width: 120px; /* Avatar boyutunu küçülttüm */
-    height: 120px;
+  width: 140px;
+    height: 140px;
     border-radius: 50%;
+    border: 4px solid var(--primary);
+    background: var(--bg-dark);
+    box-shadow: var(--shadow);
     object-fit: cover;
-    border: 4px solid #d8bfff;
-    background: #2a0a3d;
-    animation: slideUp 1s ease forwards;
+    transition: transform 0.3s ease;
+    
 }
 
 .name-container {
