@@ -463,6 +463,11 @@ footer {
         width: 18px;
         height: 18px;
     }
+    .preloader-text {
+        font-size: 18px; 
+        max-width: 85%; 
+        padding: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -504,6 +509,10 @@ footer {
     .footer-avatar {
         width: 16px;
         height: 16px;
+    }
+    .preloader-text {
+        font-size: 16px;
+        max-width: 80%;
     }
 }
 
