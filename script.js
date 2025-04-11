@@ -28,11 +28,11 @@ try {
       loadingText.textContent = "Tweet yükleniyor...";
     }
     
-    const tweetBlock = document.getElementById("tweetBlock");
+   /* const tweetBlock = document.getElementById("tweetBlock");
   
   if (tweetBlock) {
-   // tweetBlock.setAttribute("data-lang", "tr");
-  }//embed de türkçe gözüksün
+    tweetBlock.setAttribute("data-lang", "tr");
+  }*/
   }
 } catch(e){
   console.error(e||e.message)
