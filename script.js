@@ -1,3 +1,4 @@
+   function setLang() {
     document.addEventListener("DOMContentLoaded", () => {
   const lang = navigator.language;
 
@@ -29,6 +30,8 @@
     }
   }
 });
+}
+setLang();
     
     
        function shakeIt(event) {
