@@ -483,3 +483,21 @@ footer {
         height: 16px;
     }
 }
+
+#sparks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* İçeriğin arkasında */
+    background: transparent; /* Şeffaf arka plan */
+    animation: subtle-vibrate 2s ease-in-out infinite; /* Hafif titreşim */
+}
+
+/* Hafif titreşim animasyonu */
+@keyframes subtle-vibrate {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(1px, 1px); }
+    50% { transform: translate(0, 0); }
+    75% { transform: translate(-1px, -1px); }
+    100% { transform: translate(0, 0); }
+}
