@@ -3,348 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyoya</title>
-    
-    <!-- Favicon and Meta Tags -->
+    <title>Kyo</title>
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="description" content="Kyoya's personal website.">
     <meta name="author" content="Kyoya">
-    <meta name="theme-color" content="#6C2BD9">
+    <meta name="theme-color" content="#FF00FF">
     <meta name="publisher" content="Kyoya">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kyoya">
     <meta property="og:description" content="Kyoya's personal website">
     <meta property="og:url" content="https://kyoya.ga">
     <meta property="og:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
-    
-    <!-- Fonts -->
+    <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap">
     
-    <!-- Icons and Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loader">
-        <div class="loader-content">
-            <lottie-player src="https://lottie.host/d94c3bda-4ead-4bc6-95ff-68ee5e0ff8de/cMkjjq7sjc.json" background="transparent" speed="1" style="width: 240px; height: 240px" loop autoplay></lottie-player>
-            <p class="loader-quote"></p>
-        </div>
-    </div>
-    
-    <!-- Cursor Effects -->
-    <div class="cursor-dot-outline"></div>
-    <div class="cursor-dot"></div>
+  <canvas id="sparks-canvas"></canvas>
+<div class="intro-overlay">
+    <div class="line line-left"></div>
+    <div class="line line-right"></div>
+      <div class="preloader-text"></div>
+</div>
 
-    <!-- Background Elements -->
-    <canvas id="particles-canvas"></canvas>
-    
-    <main class="profile">
-        <!-- Banner Section -->
-        <section class="banner">
-            <img src="https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360" alt="Profile Banner">
-        </section>
-        
-        <!-- Profile Information -->
-        <section class="profile-info container">
+    <!-- Main Content -->
+    <div class="profile-container">
+        <!-- Banner Alanı -->
+        <div class="banner">
+            <img src="https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360" alt="Banner" class="banner-img">
+        </div>
+
+        <!-- Profil ve Bilgiler -->
+        <div class="profile-content">
             <div class="profile-header">
-                <div class="profile-image-container">
-                    <img src="https://avatars.githubusercontent.com/u/63583961" alt="Kyoya" class="profile-image">
-                </div>
-                <div class="profile-details">
-                    <div class="profile-name">
-                        <h1>Kyoや</h1>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="verified-badge" viewBox="0 0 16 16">
+                <img src="https://avatars.githubusercontent.com/u/63583961" alt="Avatar" class="profile-img">
+                <div class="name-container">
+                    <div class="name-row">
+                        <span>Kyoや</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="checkmark" viewBox="0 0 16 16" style="color: rgb(59, 130, 246);" onclick="shakeIt(event)">
                             <title>Verified</title>
                             <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"></path>
                         </svg>
                     </div>
-                    <p class="profile-username">@kyoyacchi</p>
-                    <div class="profile-bio">I love Ei</div>
-                    
-                    <div class="social-links">
-                        <a href="https://x.com/kyoyacchi" target="_blank" aria-label="Twitter">
-                            <i class="fab fa-x-twitter"></i>
-                        </a>
-                        <a href="https://instagram.com/kyoyacchi" target="_blank" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank" aria-label="MyAnimeList">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://github.com/kyoyacchi" target="_blank" aria-label="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
+                    <span class="handle">@kyoyacchi</span>
                 </div>
             </div>
-        </section>
-        
-        <!-- Tweet Section -->
-        <section class="tweet-section container">
-            <div class="section-title">
-                <i class="fas fa-feather"></i>
-                <h2>Latest Update</h2>
+            <div class="bio">
+             I love Ei
             </div>
-            
-            <div class="tweet-container">
-                <div class="loading-indicator">
-                    <div class="spinner"></div>
-                    <p>Loading tweet...</p>
-                </div>
-                
-                <div class="tweet-embed">
-                    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark">
-                        <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>— Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a>
-                    </blockquote>
-                </div>
+            <div class="social-icons">
+                <a href="https://x.com/kyoyacchi" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://instagram.com/kyoyacchi" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/kyoyacchi" target="_blank"><i class="fab fa-github"></i></a>
             </div>
-        </section>
-    </main>
-    
+            <!-- Tweet Embed Section -->
+<div class="tweet-embed-container">
+  <div class="loading-wrapper">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">Loading tweet....</span> 
+  </div>
+
+  <div class="tweet-content">
+    <div class="tweet-decor-top"></div>
+    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"><p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>— Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
+</div>
+    </div>
+
+
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <p class="footer-credit">
-                    Made with <i class="heart-icon fas fa-heart"></i> by 
-                    <img id="discord-avatar" src="" alt="Discord Avatar">
-                    <span class="creator-name">Kyo</span>
-                </p>
-                <p class="footer-quote">"This website is under the protection of the <span class="accent-text">The Almighty Raiden Shogun</span> and the Shogunate."</p>
-            </div>
+        <div class="footer-main">
+            Made with <i id="Footer_heart" class="fas fa-heart"></i> by 
+            <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar">
+            <span class="Footer_text">Kyo</span>
         </div>
+        <p class="shogunate-approval">"This website is under the protection of the <span class="almighty-raiden">The Almighty Raiden Shogun</span> and the Shogunate."</p>
     </footer>
-    
-    <!-- Twitter Widget -->
-    <script async src="https://platform.twitter.com/widgets.js"></script>
-    
-    <!-- Custom Scripts -->
+
     <script>
-        // Loading Screen
-        document.addEventListener('DOMContentLoaded', () => {
-            const quotes = [
-                'Now you shall perish!',
-                'There is no escape!',
-                'Inazuma shines eternal!',
-                'Inabikari sunawachi eien nari!',
-                'Mikirimashita'
-            ];
-            
-            const quoteElement = document.querySelector('.loader-quote');
-            quoteElement.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-            
-            setTimeout(() => {
-                document.querySelector('.loader').classList.add('fade-out');
+        function shakeIt(event) {
+            let verifi = document.querySelector('.checkmark');
+            if (verifi) {
+                verifi.classList.add('fa-shake');
                 setTimeout(() => {
-                    document.querySelector('.loader').style.display = 'none';
-                    document.body.classList.add('loaded');
+                    verifi.classList.remove('fa-shake');
                 }, 500);
-            }, 2000);
-        });
-        
-        // Verified Badge Animation
-        document.querySelector('.verified-badge').addEventListener('click', function() {
-            this.classList.add('animate-badge');
-            setTimeout(() => {
-                this.classList.remove('animate-badge');
-            }, 800);
-        });
-        
-        // Heart Color Animation
-        const heartIcon = document.querySelector('.heart-icon');
-        const colors = ['#ff6b6b', '#8a2be2', '#48dbfb', '#1dd1a1', '#ff9ff3'];
-        let colorIndex = 0;
-        
-        heartIcon.addEventListener('mouseenter', function() {
-            let interval = setInterval(() => {
-                this.style.color = colors[colorIndex];
-                colorIndex = (colorIndex + 1) % colors.length;
-            }, 200);
-            
-            setTimeout(() => {
-                clearInterval(interval);
-                this.style.color = '';
-            }, 1200);
-        });
-        
-        // Twitter Embed Loading
-        document.addEventListener('DOMContentLoaded', function() {
-            const tweetContainer = document.querySelector('.tweet-container');
-            const tweetEmbed = document.querySelector('.tweet-embed');
-            const loadingIndicator = document.querySelector('.loading-indicator');
-            
-            // Observer for tweet loading
-            const observer = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
-                    // Wait for Twitter widget to load
-                    if (window.twttr) {
-                        window.twttr.ready(function() {
-                            window.twttr.events.bind('rendered', function() {
-                                showTweet();
-                            });
-                        });
-                    }
-                    
-                    // Fallback if Twitter widget takes too long
-                    setTimeout(showTweet, 5000);
-                    observer.unobserve(tweetContainer);
-                }
-            }, { threshold: 0.1 });
-            
-            observer.observe(tweetContainer);
-            
-            function showTweet() {
-                tweetEmbed.style.opacity = '1';
-                loadingIndicator.style.display = 'none';
             }
-        });
-        
-        // Discord Avatar Loading
-        async function getDiscordAvatar() {
-            const avatarElement = document.getElementById('discord-avatar');
-            const defaultAvatar = 'https://avatars.githubusercontent.com/u/63583961';
-            let avatarUrl = localStorage.getItem('discord-avatar');
-            
-            // Show stored avatar immediately if available
-            if (avatarUrl) {
-                avatarElement.src = avatarUrl;
-            } else {
-                avatarElement.src = defaultAvatar;
-            }
-            
-            // Try to fetch updated avatar
+        }
+
+        var hata = null;
+        async function getDiscordAv() {
             try {
-                const response = await axios.get('https://kyopi.vercel.app/api/pfp?id=468509605828493322');
-                avatarUrl = response.data.avatar;
-                
-                if (avatarUrl && avatarUrl !== localStorage.getItem('discord-avatar')) {
-                    avatarElement.src = avatarUrl;
-                    localStorage.setItem('discord-avatar', avatarUrl);
-                    showNotification('Avatar updated successfully');
-                }
+                const response = await axios.get("https://kyopi.vercel.app/api/pfp?id=468509605828493322");
+                return response.data.avatar;
             } catch (error) {
-                console.error('Failed to fetch Discord avatar:', error);
-                showNotification('Could not update avatar, using default', true);
+                hata = true;
+                console.error(error);
             }
-            
-            // Handle image error
-            avatarElement.onerror = () => {
-                avatarElement.src = defaultAvatar;
+        }
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            const avatar = document.getElementById("discord_pfp");
+            let current = localStorage.getItem('avatar');
+            let avurl;
+            const github = "https://avatars.githubusercontent.com/u/63583961";
+
+            function showPopUp() {
+                var pop = document.createElement("div");
+                var innerDiv = document.createElement("div");
+
+                pop.id = "pop";
+                innerDiv.className = "pop-inner";
+
+                pop.style.position = "fixed";
+                pop.style.bottom = '0';
+                pop.style.left = '20px';
+
+                innerDiv.style.backgroundColor = "#333";
+                innerDiv.style.padding = "10px";
+                innerDiv.style.alignItems = "center";
+                if (hata) {
+                    innerDiv.innerHTML = `<i class="fas fa-times" style="color: white; font-size: 17px;"></i> couldn't update the discord profile picture, using default pfp from github`;
+                } else {
+                    innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size: 17px;"></i> updated discord profile picture`;
+                }
+                innerDiv.style.color = "white";
+                innerDiv.style.userSelect = "none";
+
+                innerDiv.style.animation = "pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards";
+                pop.style.borderRadius = "10px";
+
+                var css = `
+                @keyframes pop-in {
+                    0% { transform: translateY(100%); opacity: 0; }
+                    80% { transform: translateY(-10%); opacity: 1; }
+                    100% { transform: translateY(0); opacity: 1; }
+                }
+
+                @keyframes pop-out {
+                    0% { transform: translateY(0); opacity: 1; }
+                    20% { transform: translateY(10%); opacity: 1; }
+                    100% { transform: translateY(100%); opacity: 0; }
+                }
+
+                .pop-inner {
+                    animation: pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards;
+                    border-radius: 10px;
+                }
+                `;
+
+                pop.appendChild(innerDiv);
+                document.body.appendChild(pop);
+
+                var style = document.createElement("style");
+                style.appendChild(document.createTextNode(css));
+                document.head.appendChild(style);
+
+                setTimeout(() => {
+                    let el = document.getElementById("pop");
+                    if (el) {
+                        el.style.display = "none";
+                    } else {
+                        console.log("???");
+                    }
+                }, 2500);
+            }
+
+            try {
+                avurl = await getDiscordAv();
+            } catch (error) {
+                console.error("Failed to fetch Discord avatar:", error);
+                avurl = github;
+            }
+
+            if (!current || current !== avurl) {
+                current = avurl;
+                showPopUp();
+                localStorage.setItem('avatar', avurl);
+            }
+
+            avatar.onload = () => {};
+            avatar.onerror = (e) => {
+                console.warn("Oops! I had issue getting discord pfp, so using github pfp for now");
+                avatar.src = github;
             };
+            avatar.src = current || github;
+        });
+
+        changeHeartColor();
+        function changeHeartColor() {
+            const heartIcon = document.getElementById('Footer_heart');
+            const colors = ['red', 'pink', 'blue', 'green', 'black'];
+            let currentIndex = 0;
+            let intervalId;
+
+            function changeColor() {
+                heartIcon.style.color = colors[currentIndex];
+                currentIndex = (currentIndex + 1) % colors.length;
+            }
+
+            function startColorChanging() {
+                intervalId = setInterval(changeColor, 200);
+            }
+
+            function stopColorChanging() {
+                heartIcon.style.color = "";
+                clearInterval(intervalId);
+            }
+
+            heartIcon.addEventListener('mouseenter', () => {
+                startColorChanging();
+                setTimeout(stopColorChanging, 1200);
+            });
+
+            heartIcon.addEventListener('mouseleave', stopColorChanging);
         }
-        
-        // Notification System
-        function showNotification(message, isError = false) {
-            const notification = document.createElement('div');
-            notification.className = 'notification ' + (isError ? 'error' : 'success');
-            
-            const icon = document.createElement('i');
-            icon.className = isError ? 'fas fa-times' : 'fas fa-check';
-            
-            const text = document.createElement('span');
-            text.textContent = message;
-            
-            notification.appendChild(icon);
-            notification.appendChild(text);
-            document.body.appendChild(notification);
-            
-            // Animation
-            setTimeout(() => notification.classList.add('show'), 10);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-        
-        // Particle Background
+
         document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.getElementById('particles-canvas');
+            const introOverlay = document.querySelector('.intro-overlay');
+            setTimeout(() => {
+                introOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    introOverlay.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 500);
+            }, 1000);
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+    const introOverlay = document.querySelector('.intro-overlay');
+    const lines = document.querySelectorAll('.line');
+    
+    // Çizgilerin animasyonu tamamlanınca intro kapanacak
+    setTimeout(() => {
+        introOverlay.style.opacity = '0';
+        setTimeout(() => {
+            introOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 500); // Opaklık geçişi tamamlandıktan sonra kapanır
+    }, 1500); // Çizgiler birleştikten 1.5 saniye sonra kapanır
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const tweetContainer = document.querySelector('.tweet-embed-container');
+  const tweetContent = document.querySelector('.tweet-content');
+  const spinner = document.querySelector('.loading-spinner');
+const loadingWrapper = document.querySelector('.loading-wrapper');
+  // Observer ile tweet'in görünürlüğünü kontrol et
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadTweet();
+        observer.unobserve(tweetContainer);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(tweetContainer);
+
+  function loadTweet() {
+    // Twitter script'i yükle
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      js.async = true;
+      fjs.parentNode.insertBefore(js, fjs);
+      
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+      
+      return t;
+    }(document, "script", "twitter-wjs"));
+
+    // Tweet yüklendiğinde
+    twttr.ready(function() {
+      twttr.events.bind('loaded', showContent);
+    });
+
+    // Maksimum 5 saniye timeout
+    setTimeout(showContent, 5000);
+  }
+
+  function showContent() {
+    tweetContent.classList.add('loaded');
+    spinner.style.display = 'none';
+    loadingWrapper.style.display = 'none';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('sparks-canvas');
             const ctx = canvas.getContext('2d');
-            
+
+            // Canvas boyutunu ayarla
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             }
-            
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-            
+
+            // Partikül sistemi
+            const particles = [];
+            const particleCount = 50; // Hafif, akıcı
+
             class Particle {
                 constructor() {
                     this.reset();
                 }
-                
+
                 reset() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = (Math.random() - 0.5) * 1;
-                    this.speedY = (Math.random() - 0.5) * 1;
-                    this.opacity = Math.random() * 0.5 + 0.2;
-                    this.color = {
-                        h: 270 + Math.random() * 30,
-                        s: 70 + Math.random() * 30,
-                        l: 50 + Math.random() * 20
-                    };
+                    this.size = Math.random() * 3 + 1;
+                    this.speedX = (Math.random() - 0.5) * 2;
+                    this.speedY = (Math.random() - 0.5) * 2;
+                    this.opacity = Math.random() * 0.5 + 0.3;
                 }
-                
+
                 update(scrollSpeed) {
                     this.x += this.speedX;
-                    this.y += this.speedY + scrollSpeed * 0.1;
-                    this.opacity -= 0.003;
-                    
-                    if (this.x < 0 || this.x > canvas.width || 
-                        this.y < 0 || this.y > canvas.height || 
-                        this.opacity <= 0) {
+                    this.y += this.speedY + scrollSpeed * 0.1; // Hafif scroll etkisi
+                    this.opacity -= 0.005; // Yavaş solma
+
+                    // Ekran dışına çıkarsa veya solarsa sıfırla
+                    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.opacity <= 0) {
                         this.reset();
                     }
                 }
-                
+
                 draw() {
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${this.color.h}, ${this.color.s}%, ${this.color.l}%, ${this.opacity})`;
+                    ctx.fillStyle = `rgba(128, 0, 255, ${this.opacity})`; // Mor renk
                     ctx.fill();
                 }
             }
-            
-            const particles = [];
-            const particleCount = 40;
-            
+
+            // Partikülleri başlat
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
-            
+
             let lastScrollY = window.scrollY;
-            
+
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
+                // Scroll hızını hesapla
                 const currentScrollY = window.scrollY;
                 const scrollSpeed = currentScrollY - lastScrollY;
                 lastScrollY = currentScrollY;
-                
+
+                // Partikülleri güncelle ve çiz
                 particles.forEach(particle => {
                     particle.update(scrollSpeed);
                     particle.draw();
                 });
-                
+
                 requestAnimationFrame(animate);
             }
-            
+
             animate();
         });
-        
-        // Initialize Discord Avatar
-        document.addEventListener('DOMContentLoaded', getDiscordAvatar);
+        document.addEventListener('DOMContentLoaded', function() {
+    const preloaderText = document.querySelector('.preloader-text');
+    const texts = [
+        'Now you shall perish!',
+        'There is no escape!',
+        'Inazuma shines eternal!',
+        'Inabikari sunawachi eien nari!',
+        'Mikirimashita'
+    ];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    preloaderText.textContent = randomText;
+});
     </script>
 </body>
 </html>
