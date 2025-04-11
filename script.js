@@ -5,7 +5,7 @@ try {
   if (lang.startsWith("tr")) {//TÜRKÇE İSE
     console.log("Türk bir kullanıcı!? Hemen geçiş yapıyorum!");
     setTimeout(() =>{
-    console.clear();
+    //console.clear();
     },1500);
     document.querySelector(".footer-main").innerHTML = `
       <i id="Footer_heart" class="fas fa-heart"></i> ile <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar"> <span class="Footer_text">Kyo</span> tarafından yapıldı.
