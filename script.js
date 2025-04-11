@@ -15,7 +15,7 @@
     document.querySelector(".shogunate-approval").innerHTML = 
       `<p class="shogunate-approval">"Bu websitesi <span
       class="almighty-raiden">Yüce Raiden Shogun</span> ve Shogunate koruması
-      altındadır."</p>r.`;
+      altındadır."</p>`;
 
     
     const bio = document.querySelector(".bio");
