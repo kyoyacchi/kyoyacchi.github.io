@@ -83,7 +83,7 @@ try {
     pop.style.overflow = "hidden";
     pop.style.boxShadow = "0 0 15px rgba(255, 105, 180, 0.8), 0 4px 10px rgba(255, 20, 147, 0.5)"; // Pembe glow + gölge
     pop.style.border = "3px solid #ff69b4"; // Canlı pembe çerçeve
-    pop.style.maxWidth = "90vw"; // Ekranın %90'ı ile sınırla
+    //pop.style.maxWidth = "90vw"; // Ekranın %90'ı ile sınırla
     pop.style.width = "fit-content";
     pop.style.padding = "5px";
     pop.style.boxSizing = "border-box";
