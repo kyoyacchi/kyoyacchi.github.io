@@ -516,8 +516,10 @@ function setupParticleCanvas() {
     function summonYae(){
       document.addEventListener("click", (e) => {
             // Kitsune spirit GIF elementi oluştur
+            
             const kitsune = document.createElement("img");
             kitsune.src = "https://files.catbox.moe/g87kzk.gif"; // Verdiğin GIF linki
+            
             kitsune.classList.add("kitsune");
 
             // Tıklanan yere yerleştir
@@ -548,7 +550,7 @@ function setupParticleCanvas() {
    // setupTweetLoading();
     setupParticleCanvas();
     setupScrollAnimations();
-summonYae();
+//summonYae();
     // Add event listener for checkmark click (if needed globally)
     const checkmarkIcon = document.querySelector('.checkmark');
     if (checkmarkIcon) {
