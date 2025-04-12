@@ -6,17 +6,34 @@ margin: 0;
 :root {
     --primary: #6C2BD9;
     --primary-dark: #5525AE;
+    --primary-light: #8A4FFF;
     --secondary: #A68BFF;
     --accent: #FF6B8B;
+    --accent-glow: rgba(255, 107, 139, 0.7); /* EKLENDİ: Pembe parlama */
     --bg-dark: #1A0B2E;
     --bg-light: #2D1B4E;
     --text-light: #F8F9FA;
     --text-muted: #B4B4B4;
     --text-dark: #2D2D2D;
+    --raiden-electro: #9B59B6; /* EKLENDİ: Raiden moru (daha belirgin) */
+    --raiden-glow: rgba(155, 89, 182, 0.8); /* EKLENDİ: Raiden parlama rengi */
+    --shadow: 0 6px 25px rgba(0, 0, 0, 0.3); /* DEĞİŞTİ: Biraz daha belirgin gölge */
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     --border-radius: 12px;
     --transition: all 0.3s ease;
+        --transition-long: all 0.5s ease; /* EKLENDİ: Daha yavaş geçişler için
+        */
 }
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 
 body {
   font-family: 'Comfortaa', sans-serif;
@@ -130,10 +147,24 @@ a {
     align-items: center;
 }
 
+.animate-on-scroll {
+    opacity: 0;
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+/* Kaydırarak yukarı çıkma efekti için ek sınıf */
+.animate-on-scroll.slide-up {
+     transform: translateY(30px);
+}
+/* JS tarafından eklenecek görünürlük sınıfı */
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Banner Stili */
 .banner {
     width: 100%;
-    height: 200px;
+    height: 250px;
     background: #333;
     overflow: hidden;
 }
@@ -143,6 +174,7 @@ a {
     height: 100%;
     object-fit: cover;
     object-position: center;
+    transition: filter 0.4s ease; /* EKLENDİ: Hover efekti için geçiş */
 }
 
 /* Profil İçeriği */
@@ -152,6 +184,9 @@ a {
     max-width: 800px;
     padding: 20px;
     text-align: left; /* Sola hizalama */
+    margin-top: -70px; 
+    z-index: 10;
+    
 }
 
 /* Profil Header */
@@ -160,21 +195,25 @@ a {
     display: flex;
     flex-direction: column;
     align-items: flex-start; /* Sola hizalama */
-    margin-top: -50px; /* Avatarı biraz aşağı indirdim */
+   /* margin-top: -50px;  Avatarı biraz aşağı indirdim */
 }
 
 .profile-img {
   width: 140px;
     height: 140px;
     border-radius: 50%;
-    border: 4px solid var(--primary);
+    border: 5px solid var(--primary-light); 
     background: var(--bg-dark);
-    box-shadow: var(--shadow);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--primary-light);
     object-fit: cover;
-    transition: transform 0.3s ease;
-    
+    transition: transform 0.4s ease, box-shadow 0.4s ease; 
+    cursor: pointer; 
 }
 
+.profile-img:hover {
+    transform: scale(1.07); /* DEĞİŞTİ: Biraz daha belirgin büyüme */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 25px var(--secondary); /* DEĞİŞTİ: Daha parlak gölge/parlama */
+}
 .name-container {
     user-select: none;
     display: flex;
@@ -186,18 +225,20 @@ a {
 }
 
 .name-row {
+  
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 28px;
+    gap: 6px;
+    font-size: 30px;
     font-weight: bold;
-    color: #d8bfff;
+    color: var(--text-light); 
+    text-shadow: 0 0 5px var(--raiden-glow); /* EKLENDİ: Hafif parlama */
 }
 
 .handle {
-    font-size: 16px;
-    color: #888; /* Gri renk */
-    opacity: 0.7; /* Parlaklığı düşük ama görünür */
+    font-size: 17px;
+    color: var(--text-muted);
+    opacity: 0.9; /* Parlaklığı düşük ama görünür */
     margin-top: -4px; 
 }
 
@@ -210,6 +251,8 @@ a {
 .checkmark {
     cursor: pointer;
     transition: all 0.3s ease;
+    width: 18px; /* DEĞİŞTİ: Biraz daha büyük */
+    height: 18px;
 }
 
 .checkmark.shake {
@@ -226,20 +269,25 @@ a {
 
 .bio {
    user-select: none;
-    max-width: 160px; /* Bio kapsayıcısını 160px yaptım */
-    margin: 20px auto;
+    max-width: 200px; /* Bio kapsayıcısını 160px yaptım */
+    margin: 25px auto;
     
     font-size: 18px;
     animation: slideUp 1s ease 0.4s forwards;
     opacity: 0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #7b2cbf;
-    padding: 15px;
+    background: rgba(45, 27, 78, 0.7); 
+    border: 1px solid var(--primary-dark);
+    padding: 20px;
     border-radius: 10px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px); /* DEĞİŞTİ: Daha güçlü blur */
+    box-shadow: var(--shadow);
     text-align: center;
-    
+    transition: var(--transition-long); 
+}
+.bio:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--secondary); /* Parlama */
+    transform: translateY(-3px); /* Hafif yukarı kalkma */
 }
 
 @keyframes slideUp {
@@ -250,20 +298,22 @@ a {
 /* Social Icons */
 .social-icons {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     justify-content: center; /* Ortada tutmak için */
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .social-icons a {
-    color: #fff;
-    font-size: 24px;
+    color: var(--text-muted); 
+    font-size: 26px;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .social-icons a:hover {
-    color: #d8bfff;
-    transform: scale(1.2);
+    color: var(--text-light); 
+    transform: translateY(-4px) scale(1.15);
+    text-shadow: 0 0 10px var(--secondary); 
     background: linear-gradient(45deg, #7b2cbf, #d8bfff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -407,15 +457,17 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
-    padding: 10px;
+    gap: 8px;
+    padding: 25px 10px;
     box-sizing: border-box;
+    margin-top: 40px; 
+    border-top: 1px solid rgba(138, 79, 255, 0.2);
 }
 
 .footer-main {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -423,11 +475,11 @@ footer {
 }
 
 .footer-avatar {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #d8bfff;
+    border: 2px solid var(--secondary); 
     flex-shrink: 0;
 }
 
@@ -437,53 +489,62 @@ footer {
     display: inline-block;
     cursor: default;
     text-decoration: none;
-    color: #d8bfff;
+    color: var(--secondary); /* DEĞİŞTİ: Daha parlak isim */
+  font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 .Footer_text::before {
     content: "";
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: -2px;
     width: 100%;
     height: 2px;
-    background-color: #d9218f;
-    transform-origin: left;
+    background-color: var(--accent); 
+    transform-origin: center;
     transform: scaleX(0);
-    transition: all 0.3s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .Footer_text:hover::before {
     transform: scaleX(1);
-    transform-origin: right;
 }
 
+#Footer_heart {
+    color: var(--accent); /* DEĞİŞTİ: Pembe vurgu rengi */
+    transition: color 0.2s linear, transform 0.3s ease; /* EKLENDİ: Transform geçişi */
+    cursor: pointer;
+}
 #Footer_heart:hover {
     color: purple;
+    transform: scale(1.2);
 }
 
 .shogunate-approval {
-    font-size: 10px;
+    font-size: 12px;
     font-style: italic;
-    color: #ffffff;
-    margin-top: 3px;
-    opacity: 0.8;
-    text-shadow: 0 0 10px rgba(154, 54, 200, 0.8), 0 0 20px rgba(154, 54, 200, 0.8);
-    max-width: 100%;
-    word-break: break-word;
-    white-space: normal;
+    color: var(--text-muted); /* DEĞİŞTİ: Daha okunaklı */
+    margin-top: 5px;
+    opacity: 0.9;
+    text-shadow: 0 0 8px var(--raiden-glow); 
+    max-width: 90%;
+    line-height: 1.4;
 }
 
 .almighty-raiden {
-    color: #9b59b6;
+    color: var(--raiden-electro);
     font-weight: bold;
-    animation: blink 1.5s ease-in-out infinite;
+    text-shadow: 0 0 10px var(--raiden-glow);
+    animation: blink 1.8s ease-in-out infinite alternate; 
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+    0% { opacity: 1; }
+    50% { opacity: 0.7; text-shadow: 0 0 5px var(--raiden-glow);} /* Daha az parlak */
+    100% { opacity: 1; text-shadow: 0 0 10px var(--raiden-glow); } /* Tam parlak */
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -582,7 +643,7 @@ footer {
     left: 0;
     z-index: -1; /* İçeriğin arkasında */
     background: transparent; /* Şeffaf arka plan */
-    animation: subtle-vibrate 2s ease-in-out infinite; /* Hafif titreşim */
+    pointer-events: none;
 }
 
 /* Hafif titreşim animasyonu */
