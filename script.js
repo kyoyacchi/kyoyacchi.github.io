@@ -101,7 +101,7 @@ try {
     innerDiv.style.color = "white";
     innerDiv.style.userSelect = "none";
     innerDiv.style.whiteSpace = "nowrap"; // Kelimeler yan yana, tek satır
-    innerDiv.style.maxWidth = "400px"; // Metnin tamamı için daha geniş alan
+   // innerDiv.style.maxWidth = "400px"; // Metnin tamamı için daha geniş alan
     innerDiv.style.overflow = "hidden"; // Taşma kontrolü
     innerDiv.style.textOverflow = "ellipsis"; // Hala taşarsa "..." koy
     innerDiv.style.boxSizing = "border-box";
