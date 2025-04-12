@@ -336,12 +336,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('DOMContentLoaded', function() {
     const preloaderText = document.querySelector('.preloader-text');
     const texts = [
-        'Now you shall perish!',
+        'Now, you shall perish!',
         'There is no escape!',
         'Inazuma shines eternal!',
-        'Inabikari sunawachi eien nari!',
+        'Inabikari, sunawachi Eien nari',
         'Mikirimashita',
         'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!'
+        'Shine down!',
+        'Illusion shattered!',
+        'Torn to oblivion!',
+        'Sabaki no ikazuchi',
+        'Nigemichi wa arimasen'
+        'Muga no kyouchi he',
+        'Koko yori, jakumetsu no toki!'
     ];
     const randomText = texts[Math.floor(Math.random() * texts.length)];
     preloaderText.textContent = randomText;
