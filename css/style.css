@@ -109,6 +109,9 @@ a {
     transform: scale(1.1); /* Subtle scaling effect */
     letter-spacing: 1.5px; /* Slight letter spacing animation */
 }
+.preloader-text.glow {
+    animation: pulseGlow 2s infinite ease-in-out;
+}
 /* Profil Container */
 .profile-container {
     position: relative;
