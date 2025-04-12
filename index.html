@@ -5,96 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kyo</title>
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <meta name="description" content="Kyoya's personal website.">
     <meta name="author" content="Kyoya">
-    <meta name="theme-color" content="#FF00FF">
+    <meta name="theme-color" content="#8A2BE2">
     <meta name="publisher" content="Kyoya">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kyoya">
     <meta property="og:description" content="Kyoya's personal website">
     <meta property="og:url" content="https://kyoya.ga">
     <meta property="og:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap"> 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 <body>
-  
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  
+
   <canvas id="sparks-canvas"></canvas>
-<div class="intro-overlay">
-    <div class="line line-left"></div>
-    <div class="line line-right"></div>
-      <div class="preloader-text"></div>
-</div>
 
-    <!-- Main Content -->
-    <div class="profile-container">
-        <!-- Banner Alanı -->
-        <div class="banner">
-            <img src="https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360" alt="Banner" class="banner-img">
-        </div>
+  <div class="intro-overlay">
+      <div class="line line-left"></div>
+      <div class="line line-right"></div>
+      <div class="preloader-text"></div> </div>
 
-        <!-- Profil ve Bilgiler -->
-        <div class="profile-content">
-            <div class="profile-header">
-                <img src="https://avatars.githubusercontent.com/u/63583961" alt="Avatar" class="profile-img">
-                <div class="name-container">
-                    <div class="name-row">
-                        <span>Kyoや</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="checkmark" viewBox="0 0 16 16" style="color: rgb(59, 130, 246);" onclick="shakeIt(event)">
-                            <title>Verified</title>
-                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"></path>
-                        </svg>
-                    </div>
-                    <span class="handle">@kyoyacchi</span>
-                </div>
-            </div>
-            <div class="bio">
-             I love Ei
-            </div>
-            <div class="social-icons">
-                <a href="https://x.com/kyoyacchi" target="_blank"><i class="fab fa-x-twitter"></i></a>
-                <a href="https://instagram.com/kyoyacchi" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/kyoyacchi" target="_blank"><i class="fab fa-github"></i></a>
-            </div>
-            <!-- Tweet Embed Section -->
-<div class="tweet-embed-container">
-  <div class="loading-wrapper">
-    <div class="loading-spinner"></div>
-    <span class="loading-text">Loading tweet....</span> 
-  </div>
+  <div class="profile-container">
 
-  <div class="tweet-content">
-    <div class="tweet-decor-top"></div>
-    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"><p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>— Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  </div>
-</div>
-</div>
-    </div>
+      <div class="banner animate-on-scroll">
+          <img src="https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360" alt="Profil Bannerı" class="banner-img">
+      </div>
 
+      <div class="profile-content">
 
-    <!-- Footer -->
-    <footer>
+          <div class="profile-header animate-on-scroll">
+              <img src="https://avatars.githubusercontent.com/u/63583961" alt="Kyo Avatar" class="profile-img">
+              <div class="name-container">
+                  <div class="name-row">
+                      <span>Kyoや</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="checkmark" viewBox="0 0 16 16" style="color: rgb(59, 130, 246);" onclick="shakeCheckmark(event)">
+                          <title>Doğrulanmış Hesap</title> <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"></path>
+                      </svg>
+                  </div>
+                  <span class="handle">@kyoyacchi</span>
+              </div>
+          </div>
+
+          <div class="bio animate-on-scroll">
+             I love Ei <i class="fas fa-heart" style="color: var(--accent);"></i> </div>
+
+          <div class="social-icons animate-on-scroll">
+              <a href="https://x.com/kyoyacchi" target="_blank" aria-label="Twitter Profili"><i class="fab fa-x-twitter"></i></a>
+              <a href="https://instagram.com/kyoyacchi" target="_blank" aria-label="Instagram Profili"><i class="fab fa-instagram"></i></a>
+              <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank" aria-label="MyAnimeList Profili"><i class="fas fa-list"></i></a>
+              <a href="https://github.com/kyoyacchi" target="_blank" aria-label="GitHub Profili"><i class="fab fa-github"></i></a>
+          </div>
+
+          <div class="tweet-embed-container animate-on-scroll">
+              <div class="loading-wrapper">
+                  <div class="loading-spinner"></div>
+                  <span class="loading-text">Loading tweet...</span>
+              </div>
+              <div class="tweet-content">
+                  <div class="tweet-decor-top"></div> <blockquote class="twitter-tweet" data-lang="en" data-theme="dark">
+                      <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>
+                      &mdash; Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a>
+                  </blockquote>
+                  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+              </div>
+          </div> </div> </div> <footer class="animate-on-scroll">
         <div class="footer-main">
-            Made with <i id="Footer_heart" class="fas fa-heart"></i> by 
-            <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar">
+            Made with <i id="Footer_heart" class="fas fa-heart"></i> by
+            <img id="discord_pfp" src="" alt="Discord Avatarı" class="footer-avatar">
             <span class="Footer_text">Kyo</span>
         </div>
         <p class="shogunate-approval">"This website is under the protection of the <span class="almighty-raiden">The Almighty Raiden Shogun</span> and the Shogunate."</p>
     </footer>
 
-
-<script src="script.js" defer></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
