@@ -70,65 +70,96 @@ try {
             const github = "https://avatars.githubusercontent.com/u/63583961";
 
             function showPopUp() {
-                var pop = document.createElement("div");
-                var innerDiv = document.createElement("div");
+    var pop = document.createElement("div");
+    var innerDiv = document.createElement("div");
 
-                pop.id = "pop";
-                innerDiv.className = "pop-inner";
+    pop.id = "pop";
+    innerDiv.className = "pop-inner";
 
-                pop.style.position = "fixed";
-                pop.style.bottom = '0';
-                pop.style.left = '20px';
+    pop.style.position = "fixed";
+    pop.style.bottom = "20px";
+    pop.style.left = "20px"; // Sol tarafa sabitle
+    pop.style.borderRadius = "15px";
+    pop.style.overflow = "hidden";
+    pop.style.boxShadow = "0px 4px 10px rgba(255, 20, 147, 0.5)";
+    pop.style.maxWidth = "80vw"; // Ekranın %80'i ile sınırla
+    pop.style.width = "fit-content";
+    pop.style.padding = "5px";
+    pop.style.boxSizing = "border-box";
 
-                innerDiv.style.backgroundColor = "#333";
-                innerDiv.style.padding = "10px";
-                innerDiv.style.alignItems = "center";
-                if (hata) {
-                    innerDiv.innerHTML = `<i class="fas fa-times" style="color: white; font-size: 17px;"></i> couldn't update the discord profile picture, using default pfp from github`;
-                } else {
-                    innerDiv.innerHTML = `<i class="fas fa-check" style="color: white; font-size: 17px;"></i> updated discord profile picture`;
-                }
-                innerDiv.style.color = "white";
-                innerDiv.style.userSelect = "none";
+    innerDiv.style.backgroundColor = "#222";
+    innerDiv.style.padding = "10px 15px";
+    innerDiv.style.display = "inline-flex";
+    innerDiv.style.alignItems = "center";
+    innerDiv.style.justifyContent = "center";
+    innerDiv.style.gap = "10px";
+    innerDiv.style.border = "2px solid pink";
+    innerDiv.style.borderRadius = "15px";
+    innerDiv.style.fontSize = "14px";
+    innerDiv.style.fontWeight = "bold";
+    innerDiv.style.color = "white";
+    innerDiv.style.userSelect = "none";
+    innerDiv.style.whiteSpace = "nowrap"; // Kelimeler yan yana, tek satır
+    innerDiv.style.maxWidth = "300px"; // Maksimum genişlik
+    innerDiv.style.overflow = "hidden"; // Taşan içeriği gizle
+    innerDiv.style.textOverflow = "ellipsis"; // Taşarsa "..." koy
+    innerDiv.style.boxSizing = "border-box";
 
-                innerDiv.style.animation = "pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards";
-                pop.style.borderRadius = "10px";
+    if (hata) {
+        innerDiv.innerHTML = `<i class="fas fa-times" style="color: white;
+        font-size: 18px;"></i> Couldn't update Discord profile picture`;
+    } else {
+        innerDiv.innerHTML = `<i class="fas fa-check" style="color: white;
+        font-size: 18px;"></i> Updated Discord profile picture successfully`;
+    }
 
-                var css = `
-                @keyframes pop-in {
-                    0% { transform: translateY(100%); opacity: 0; }
-                    80% { transform: translateY(-10%); opacity: 1; }
-                    100% { transform: translateY(0); opacity: 1; }
-                }
+    var css = `
+    @keyframes pop-in {
+        0% { transform: scale(0.8); opacity: 0; }
+        60% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
 
-                @keyframes pop-out {
-                    0% { transform: translateY(0); opacity: 1; }
-                    20% { transform: translateY(10%); opacity: 1; }
-                    100% { transform: translateY(100%); opacity: 0; }
-                }
+    @keyframes pop-out {
+        0% { transform: scale(1); opacity: 1; }
+        40% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(0.8); opacity: 0; }
+    }
 
-                .pop-inner {
-                    animation: pop-in 0.4s ease-in, pop-out 0.4s ease-out 2s forwards;
-                    border-radius: 10px;
-                }
-                `;
+    .pop-inner {
+        animation: pop-in 0.5s ease-out, pop-out 0.5s ease-in 3s forwards;
+    }
 
-                pop.appendChild(innerDiv);
-                document.body.appendChild(pop);
+    @media (max-width: 600px) {
+        #pop {
+            bottom: 10px;
+            left: 10px; // Küçük ekranlarda da solda
+            padding: 5px;
+        }
+        .pop-inner {
+            font-size: 12px;
+            padding: 8px 12px;
+            max-width: 200px; // Mobilde daha küçük
+        }
+    }
+    `;
 
-                var style = document.createElement("style");
-                style.appendChild(document.createTextNode(css));
-                document.head.appendChild(style);
+    pop.appendChild(innerDiv);
+    document.body.appendChild(pop);
 
-                setTimeout(() => {
-                    let el = document.getElementById("pop");
-                    if (el) {
-                        el.style.display = "none";
-                    } else {
-                        console.log("???");
-                    }
-                }, 2500);
-            }
+    var style = document.createElement("style");
+    style.appendChild(document.createTextNode(css));
+    document.head.appendChild(style);
+
+    setTimeout(() => {
+        let el = document.getElementById("pop");
+        if (el) {
+            el.style.display = "none";
+        } else {
+            console.log("???");
+        }
+    }, 3500);
+}
 
             try {
                 avurl = await getDiscordAv();
