@@ -271,58 +271,139 @@ async function updateDiscordPfp() {
 }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const tweetContainer = document.querySelector('.tweet-embed-container');
-  const tweetContent = document.querySelector('.tweet-content');
-  const spinner = document.querySelector('.loading-spinner');
-const loadingWrapper = document.querySelector('.loading-wrapper');
-  
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        loadTweet();
-        observer.unobserve(tweetContainer);
-      }
-    });
-  }, { threshold: 0.1 });
+/**
+ * Belirtilen bir tweet gömme konteynerini Intersection Observer kullanarak
+ * görünür hale geldiğinde yüklemek üzere ayarlar.
+ * Yükleme sırasında bir yükleme göstergesi gösterir ve içerik yüklendiğinde
+ * veya bir hata oluştuğunda durumu günceller.
+ *
+ * @param {string} containerSelector - Tweet gömme işlemini içeren ana HTML elementinin CSS seçicisi (örn: '.tweet-embed-container').
+ *                                     Bu elementin içinde '.tweet-content' ve '.loading-wrapper' (veya '.loading-spinner')
+ *                                     adında alt elementler bulunmalıdır.
+ */
+function setupTweetEmbed(containerSelector) {
+    const tweetContainer = document.querySelector(containerSelector);
 
-  observer.observe(tweetContainer);
+    // Konteyner bulunamazsa hata ver ve çık
+    if (!tweetContainer) {
+        console.error(`Tweet container ('${containerSelector}') not found.`);
+        return;
+    }
 
-  function loadTweet() {
+    // Konteyner içindeki gerekli alt elementleri bul
+    const tweetContent = tweetContainer.querySelector('.tweet-content');
+    let loadingIndicator = tweetContainer.querySelector('.loading-wrapper') || tweetContainer.querySelector('.loading-spinner'); // Önce wrapper'ı ara, yoksa spinner'ı
 
-    window.twttr = (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0],
-        t = window.twttr || {};
-      if (d.getElementById(id)) return t;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://platform.twitter.com/widgets.js";
-      js.async = true;
-      fjs.parentNode.insertBefore(js, fjs);
-      
-      t._e = [];
-      t.ready = function(f) {
-        t._e.push(f);
-      };
-      
-      return t;
-    }(document, "script", "twitter-wjs"));
+    // Gerekli alt elementler yoksa hata ver ve çık
+    if (!tweetContent) {
+        console.error(`Required element '.tweet-content' not found inside '${containerSelector}'.`);
+        return;
+    }
+    // Yükleme göstergesi opsiyonel, bulunamazsa sadece uyar
+    if (!loadingIndicator) {
+         console.warn(`Optional element '.loading-wrapper' or '.loading-spinner' not found inside '${containerSelector}'. Loading state might not be visible.`);
+    }
+
+    let isTweetLoading = false;
+    let isTweetLoaded = false;
+
+    // --- İç Fonksiyonlar ---
+    function showContent() {
+        if (isTweetLoaded) return;
+        isTweetLoaded = true;
+        requestAnimationFrame(() => {
+            tweetContent.style.opacity = '1';
+            tweetContent.style.visibility = 'visible';
+            tweetContent.classList.add('loaded');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+        });
+         console.log(`Tweet in ${containerSelector} loaded successfully.`);
+    }
+
+    function showErrorState(errorMessage = 'Tweet yüklenemedi.') {
+         if (isTweetLoaded) return;
+         console.error(`Error loading tweet in ${containerSelector}:`, errorMessage);
+         requestAnimationFrame(() => {
+             if (loadingIndicator) {
+                 if (loadingIndicator.classList.contains('loading-wrapper')) {
+                    loadingIndicator.innerHTML = `<p style="color: red; text-align: center;">${errorMessage}</p>`;
+                    loadingIndicator.style.display = 'flex';
+                 } else {
+                    loadingIndicator.style.display = 'none';
+                 }
+             }
+              tweetContent.style.opacity = '0';
+              tweetContent.style.visibility = 'hidden';
+         });
+    }
+
+    function loadTweet() {
+        window.twttr = (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0],
+                t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            js.async = true;
+            fjs.parentNode.insertBefore(js, fjs);
+            t._e = [];
+            t.ready = function(f) { t._e.push(f); };
+            return t;
+        }(document, "script", "twitter-wjs"));
+
+        twttr.ready(function(twttrInstance) {
+            let widgetLoaded = false;
+            twttrInstance.events.bind('loaded', function(event) {
+                if (event && event.widgets && event.widgets.some(widget => tweetContainer.contains(widget))) {
+                    widgetLoaded = true;
+                    showContent();
+                }
+            });
+
+            twttrInstance.widgets.load(
+                tweetContainer
+            ).then(function(widgets) {
+                 if ((!widgets || widgets.length === 0) && !widgetLoaded) {
+                     setTimeout(() => {
+                         if (!isTweetLoaded) {
+                              console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or loaded event didn't fire.`);
+                              // showErrorState('Tweet yapısı bulunamadı veya yüklenemedi.');
+                         }
+                     }, 500);
+                 }
+            }).catch(function(error) {
+                showErrorState(`Tweet yüklenirken bir hata oluştu: ${error.message || error}`);
+            });
+        });
+    }
+
+    // --- Ana Mantık ---
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex'; // veya block (CSS'ine göre ayarla)
+    }
+    tweetContent.style.opacity = '0';
+    tweetContent.style.visibility = 'hidden';
+    tweetContent.classList.remove('loaded');
+
+    const observer = new IntersectionObserver((entries, observerInstance) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !isTweetLoading) {
+                console.log(`Tweet container ${containerSelector} is intersecting. Loading tweet.`);
+                isTweetLoading = true;
+                loadTweet();
+                observerInstance.unobserve(tweetContainer);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    observer.observe(tweetContainer);
+}
 
 
-    twttr.ready(function() {
-      twttr.events.bind('loaded', showContent);
-    });
 
-    
-    setTimeout(showContent, 5000);
-  }
-
-  function showContent() {
-    tweetContent.classList.add('loaded');
-    spinner.style.display = 'none';
-    loadingWrapper.style.display = 'none';
-  }
-});
 
 function setupParticleCanvas() {
     const canvas = document.getElementById('sparks-canvas');
@@ -438,6 +519,7 @@ function setupParticleCanvas() {
     handleIntroOverlay();
     updateDiscordPfp();
     setupHeartEffect();
+    setupTweetEmbed('.tweet-embed-container');
    // setupTweetLoading();
     setupParticleCanvas();
     setupScrollAnimations();
