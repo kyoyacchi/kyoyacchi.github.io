@@ -188,31 +188,34 @@ try {
 
         changeHeartColor();
         function changeHeartColor() {
-            const heartIcon = document.getElementById('Footer_heart');
-            const colors = ['red', 'pink', 'blue', 'green', 'black'];
-            let currentIndex = 0;
-            let intervalId;
+const heartIcon = document.getElementById('Footer_heart');
+    if (!heartIcon) return;
 
-            function changeColor() {
-                heartIcon.style.color = colors[currentIndex];
-                currentIndex = (currentIndex + 1) % colors.length;
-            }
+    const colors = ['#FF6B8B', '#A68BFF', '#6C2BD9', '#ffffff', '#9B59B6']; // Raiden temalı renkler
+    let currentIndex = 0;
+    let intervalId = null;
 
-            function startColorChanging() {
-                intervalId = setInterval(changeColor, 200);
-            }
+    function changeColor() {
+        heartIcon.style.color = colors[currentIndex];
+        currentIndex = (currentIndex + 1) % colors.length;
+    }
 
-            function stopColorChanging() {
-                heartIcon.style.color = "";
-                clearInterval(intervalId);
-            }
+    function startColorChanging() {
+        if (intervalId) clearInterval(intervalId);
+        intervalId = setInterval(changeColor, 150);
+    }
 
-            heartIcon.addEventListener('mouseenter', () => {
-                startColorChanging();
-                setTimeout(stopColorChanging, 1200);
-            });
+    function stopColorChanging() {
+        clearInterval(intervalId);
+        intervalId = null;
+        heartIcon.style.color = ""; // CSS'deki varsayılan renge dön
+    }
 
-            heartIcon.addEventListener('mouseleave', stopColorChanging);
+    heartIcon.addEventListener('mouseenter', () => {
+        startColorChanging();
+        setTimeout(stopColorChanging, 1000); // 1 saniye sonra dursun
+    });
+    heartIcon.addEventListener('mouseleave', stopColorChanging);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -292,82 +295,114 @@ const loadingWrapper = document.querySelector('.loading-wrapper');
     loadingWrapper.style.display = 'none';
   }
 });
+setupParticleCanvas();
+function setupParticleCanvas() {
+    const canvas = document.getElementById('sparks-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const PARTICLE_COUNT = 40; // Partikül sayısı (azaltılmış olabilir)
 
-document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.getElementById('sparks-canvas');
-            const ctx = canvas.getContext('2d');
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
+    const particles = [];
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+    // GÜNCELLENMİŞ Particle Sınıfı
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2.5 + 1; // Boyut ayarı
+            this.speedX = (Math.random() - 0.5) * 1.5; // Hız ayarı
+            this.speedY = (Math.random() - 0.5) * 1.5; // Hız ayarı
+            this.opacity = Math.random() * 0.4 + 0.2; // Başlangıç opaklığı
+            this.life = Math.random() * 500 + 200; // Yaşam süresi
+            this.initialLife = this.life;
+        }
+        update(scrollSpeed) {
+            this.x += this.speedX;
+            this.y += this.speedY + scrollSpeed * 0.05; // Scroll etkisi azaltıldı
+            this.life -= 1;
+            this.opacity = (this.life / this.initialLife) * 0.6; // Yaşama göre solma
+            if (this.x < -this.size || this.x > canvas.width + this.size ||
+                this.y < -this.size || this.y > canvas.height + this.size ||
+                this.life <= 0) {
+                this.reset(); // Ekran dışına çıkınca veya ömrü bitince resetle
+                 // Reset pozisyonunu ekranın hemen dışı yap
+                 if (Math.random() > 0.5) {
+                      this.x = this.speedX > 0 ? -this.size : canvas.width + this.size;
+                      this.y = Math.random() * canvas.height;
+                 } else {
+                     this.y = this.speedY > 0 ? -this.size : canvas.height + this.size;
+                     this.x = Math.random() * canvas.width;
+                 }
             }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+        }
+        draw() {
+             if (this.opacity <= 0) return;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(155, 89, 182, ${this.opacity * 0.8})`; // Ana renk
+            ctx.fill();
+             // Daha parlak iç çekirdek efekti
+             if (this.opacity > 0.3) {
+                 ctx.beginPath();
+                 ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+                 ctx.fillStyle = `rgba(216, 191, 255, ${this.opacity * 0.5})`; // İç renk
+                 ctx.fill();
+             }
+        }
+    }
 
-          
-            const particles = [];
-            const particleCount = 50; 
+    for (let i = 0; i < PARTICLE_COUNT; i++) { particles.push(new Particle()); }
+    let lastScrollY = window.scrollY;
+    let animationFrameId = null;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const currentScrollY = window.scrollY;
+        const scrollSpeed = currentScrollY - lastScrollY;
+        lastScrollY = currentScrollY;
+        particles.forEach(p => { p.update(scrollSpeed); p.draw(); });
+        animationFrameId = requestAnimationFrame(animate);
+    }
+    animate();
+    // İsteğe bağlı: Sekme görünür değilken animasyonu durdurma
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) { cancelAnimationFrame(animationFrameId); }
+        else { lastScrollY = window.scrollY; animate(); }
+    });
+}
 
-            class Particle {
-                constructor() {
-                    this.reset();
+setupScrollAnimations();
+ function setupScrollAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    if (!animatedElements.length) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                // Belirli elementlere özel animasyon sınıfı ekleyebilirsin
+                if (entry.target.matches('.profile-header, .bio, .social-icons, footer, .tweet-embed-container')) {
+                   entry.target.classList.add('slide-up'); // slide-up keyframes'i kullanır
                 }
-
-                reset() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 3 + 1;
-                    this.speedX = (Math.random() - 0.5) * 2;
-                    this.speedY = (Math.random() - 0.5) * 2;
-                    this.opacity = Math.random() * 0.5 + 0.3;
-                }
-
-                update(scrollSpeed) {
-                    this.x += this.speedX;
-                    this.y += this.speedY + scrollSpeed * 0.1;
-                    this.opacity -= 0.005; 
-
-
-                    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.opacity <= 0) {
-                        this.reset();
-                    }
-                }
-
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(128, 0, 255, ${this.opacity})`; // Mor renk
-                    ctx.fill();
-                }
+                obs.unobserve(entry.target); // Görünür olunca izlemeyi bırak
             }
-
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-
-            let lastScrollY = window.scrollY;
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-                const currentScrollY = window.scrollY;
-                const scrollSpeed = currentScrollY - lastScrollY;
-                lastScrollY = currentScrollY;
-
-
-                particles.forEach(particle => {
-                    particle.update(scrollSpeed);
-                    particle.draw();
-                });
-
-                requestAnimationFrame(animate);
-            }
-
-            animate();
         });
+    }, {
+        threshold: 0.15, // %15 görünür olunca tetikle
+        rootMargin: "0px 0px -50px 0px" // Biraz daha erken tetikle
+    });
+
+    animatedElements.forEach(el => { observer.observe(el); });
+}
+       
+        
         document.addEventListener('DOMContentLoaded', function() {
     const preloaderText = document.querySelector('.preloader-text');
     const texts = [
