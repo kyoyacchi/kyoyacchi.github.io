@@ -42,15 +42,19 @@ try {
 //setLang();
     
     
-       function shakeIt(event) {
-            let verifi = document.querySelector('.checkmark');
-            if (verifi) {
-                verifi.classList.add('fa-shake');
-                setTimeout(() => {
-                    verifi.classList.remove('fa-shake');
-                }, 500);
-            }
-        }
+       function shakeCheckmark(event) {
+    const checkmark = event.currentTarget; // Get the clicked element
+    if (checkmark) {
+        checkmark.style.transition = 'transform 0.1s ease-in-out'; // Faster transition for shake
+        checkmark.style.transform = 'translateX(-2px) rotate(-5deg)';
+        setTimeout(() => {
+            checkmark.style.transform = 'translateX(2px) rotate(5deg)';
+            setTimeout(() => {
+                checkmark.style.transform = 'translateX(0) rotate(0)';
+            }, 100);
+        }, 100);
+    }
+}
 
         var hata = null;
         async function getDiscordAv() {
