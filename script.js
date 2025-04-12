@@ -39,7 +39,7 @@ try {
 }
 });
 }
-setLang();
+//setLang();
     
     
        function shakeIt(event) {
