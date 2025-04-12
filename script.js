@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'Illusion shattered!',
         'Torn to oblivion!',
         'Sabaki no ikazuchi',
-        'Nigemichi wa arimasen'
+        'Nigemichi wa arimasen',
         'Muga no kyouchi he',
         'Koko yori, jakumetsu no toki!'
     ];
