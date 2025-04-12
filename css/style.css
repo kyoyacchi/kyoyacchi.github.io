@@ -81,25 +81,32 @@ a {
 
 .preloader-text {
     position: absolute;
-    color: #8000ff;
+    color: #D946EF; /* Güncellenmiş renk: canlı mor-pembe tonu */
     font-family: 'Quicksand', sans-serif;
     font-size: 23px;
     font-weight: 700;
     text-shadow: 
-        0 0 10px #8000ff, 
+        0 0 10px #D946EF, 
         0 0 20px #8000ff, 
-        0 0 30px #b266ff; 
+        0 0 40px #b266ff; /* Güçlü parlama efekti */
     opacity: 1;
     text-align: center;
     top: 60%;
-    transition: opacity 0.8s ease-out, text-shadow 1s ease-in-out, transform 1.2s ease-in-out, letter-spacing 1s ease-in-out; 
-   max-width: 90%; 
+    transition: opacity 0.8s ease-out, text-shadow 1s ease-in-out, transform 1.2s ease-in-out, letter-spacing 1s ease-in-out, color 0.8s ease-in-out; /* Akıcı renk değişimi */
+    max-width: 90%; 
     word-wrap: break-word; 
     padding: 10px; 
     box-sizing: border-box; 
-
+}
+@keyframes glowShift {
+    0% { color: #D946EF; text-shadow: 0 0 10px #D946EF, 0 0 20px #8000ff, 0 0 40px #b266ff; }
+    50% { color: #8000ff; text-shadow: 0 0 15px #8000ff, 0 0 25px #a000ff, 0 0 45px #d29cff; }
+    100% { color: #D946EF; text-shadow: 0 0 10px #D946EF, 0 0 20px #8000ff, 0 0 40px #b266ff; }
 }
 
+.preloader-text.glow {
+    animation: glowShift 3s infinite ease-in-out;
+}
 .intro-overlay.fade-out .preloader-text {
     opacity: 0; 
 }
