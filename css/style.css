@@ -107,6 +107,7 @@ a {
 .preloader-text.glow {
     animation: glowShift 3s infinite ease-in-out;
 }
+
 .intro-overlay.fade-out .preloader-text {
     opacity: 0; 
 }
