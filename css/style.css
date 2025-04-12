@@ -682,3 +682,18 @@ footer {
     75% { transform: translate(-1px, -1px); }
     100% { transform: translate(0, 0); }
 }
+
+.kitsune {
+            position: absolute;
+            width: 72px; 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0;
+            transition: opacity 0.3s ease-in, transform 0.5s ease-out;
+            pointer-events: none;
+            z-index: 9999999;
+        }
+
+        .kitsune.active {
+            opacity: 1;
+            transform: translate(-50%, -100%) scale(1.2); 
+        }
