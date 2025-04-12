@@ -378,7 +378,7 @@ function setupParticleCanvas() {
     });
 }
 
-setupScrollAnimations();
+
  function setupScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     if (!animatedElements.length) return;
@@ -423,4 +423,4 @@ setupScrollAnimations();
     const randomText = texts[Math.floor(Math.random() * texts.length)];
     preloaderText.textContent = randomText;
 });
-    
+    setupScrollAnimations();
