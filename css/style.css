@@ -323,10 +323,18 @@ a {
 .tweet-embed-container {
   position: relative;
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;  /* Eklendi: Ortalamayı burada yapıyoruz */
-  align-items: center;     /* Eklendi: Yine ortalama */
+  max-width: 600px; /* Limit tweet width */
+  margin: 0 auto; /* Center the container */
+  padding: 20px;
+  background: rgba(30, 11, 46, 0.5); /* Darker, subtle background */
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-dark);
+  min-height: 150px; /* Ensure space for loader */
+  display: flex; /* Use flex for centering loader */
+  justify-content: center;
+  align-items: center;
+   /* Apply scroll animation class */
+   overflow: hidden; /* Hide decorative elements overflow */
 }
 
 .tweet-embed-container::before,
@@ -353,9 +361,12 @@ a {
 }
 
 .tweet-content {
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  opacity: 0; /* Start hidden */
+  width: 100%;
+  transition: opacity 0.6s ease 0.2s; /* Slower fade-in */
+  position: relative; /* For decor positioning */
 }
+
 .tweet-content.loaded {
   opacity: 1;
 }
@@ -368,6 +379,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center; /* Bu, içindeki spinner ve metni yatayda ortalar */
+  transition: opacity 0.3s ease;
 }
 .loading-spinner {
   width: 40px;
