@@ -67,14 +67,14 @@ a {
 }
 
 @keyframes slideFromLeft {
-    0% { width: 0; background: #d8bfff; }
-    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
+    0% { width: 0; background: #D946EF; }
+    50% { width: 50%; background: #9B5FC0; } /* Birleşirken mor */
     100% { width: 50%; background: #8000ff; }
 }
 
 @keyframes slideFromRight {
-    0% { width: 0; background: #d8bfff; }
-    50% { width: 50%; background: #d8bfff; } /* Birleşirken mor */
+    0% { width: 0; background: #D946EF; }
+    50% { width: 50%; background: #9B5FC0; } /* Birleşirken mor */
     100% { width: 50%; background: #8000ff; }
 }
 
