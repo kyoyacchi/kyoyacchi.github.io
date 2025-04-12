@@ -381,11 +381,16 @@ a {
   align-items: center; /* Bu, içindeki spinner ve metni yatayda ortalar */
   transition: opacity 0.3s ease;
 }
+.loading-wrapper.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(155, 89, 182, 0.2);
-  border-top: 4px solid #9b59b6;
+  border: 5px solid var(--raiden-glow);
+  border-top: 5px solid var(--secondary);
   border-radius: 50%;
   animation: spin 1s linear infinite; /* Sadece animasyon adını kullanın */
 }
