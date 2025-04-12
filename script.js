@@ -41,7 +41,13 @@ try {
 }
 //setLang();
     
-    
+    const PRELOADER_EXIT_DELAY = 1500; // ms after lines finish
+const PRELOADER_FADE_DURATION = 500; // ms for fade out
+const PARTICLE_COUNT = 40; // Reduced particle count for performance
+const DISCORD_USER_ID = "468509605828493322";
+const GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/63583961";
+const DISCORD_API_URL = `https://kyopi.vercel.app/api/pfp?id=${DISCORD_USER_ID}`;
+
        function shakeCheckmark(event) {
     const checkmark = event.currentTarget; // Get the clicked element
     if (checkmark) {
@@ -56,24 +62,21 @@ try {
     }
 }
 
-        var hata = null;
-        async function getDiscordAv() {
-            try {
-                const response = await axios.get("https://kyopi.vercel.app/api/pfp?id=468509605828493322");
-                return response.data.avatar;
-            } catch (error) {
-                hata = true;
-                console.error(error);
-            }
+    async function getDiscordAv() {
+    try {
+        const response = await axios.get(DISCORD_API_URL, { timeout: 5000 }); // Add timeout
+        if (response.data && response.data.avatar) {
+            return { avatar: response.data.avatar, error: false };
+        } else {
+             throw new Error("Invalid response structure");
         }
+    } catch (error) {
+        console.error("Failed to fetch Discord avatar:", error.message);
+        return { avatar: null, error: true };
+    }
+}
 
-        document.addEventListener("DOMContentLoaded", async function () {
-            const avatar = document.getElementById("discord_pfp");
-            let current = localStorage.getItem('avatar');
-            let avurl;
-            const github = "https://avatars.githubusercontent.com/u/63583961";
-
-      function showPopUp(isError) {
+function showPopUp(isError) {
     // Check if a popup already exists
     if (document.getElementById("status-pop")) {
         return;
@@ -84,7 +87,7 @@ try {
     pop.id = "status-pop"; // Unique ID
     innerDiv.className = "pop-inner";
 
-    // --- Popup Styling  ---
+    // --- Popup Styling (Consider moving to CSS for cleaner JS) ---
     pop.style.position = "fixed";
     pop.style.bottom = "20px";
     pop.style.left = "20px";
@@ -146,36 +149,50 @@ try {
         }, 400); // Match transition duration
     }, 3500); // Display duration
 }
+async function updateDiscordPfp() {
+    const avatarElement = document.getElementById("discord_pfp");
+    if (!avatarElement) return;
 
-      
+    const defaultAvatar = GITHUB_AVATAR_URL;
+    let currentStoredAvatar = localStorage.getItem('discord_avatar');
+    let fetchedAvatarData = { avatar: null, error: true }; // Initialize as error
 
-            try {
-                avurl = await getDiscordAv();
-            } catch (error) {
-                console.error("Failed to fetch Discord avatar:", error);
-                avurl = github;
-            }
+    try {
+        fetchedAvatarData = await getDiscordAv();
+    } catch (error) {
+        // Error already logged in getDiscordAv
+    }
 
-            if (!current || current !== avurl) {
-                current = avurl;
-                showPopUp();
-                localStorage.setItem('avatar', avurl);
-            }
+    const finalAvatarUrl = fetchedAvatarData.error ? defaultAvatar : fetchedAvatarData.avatar;
 
-            avatar.onload = () => {};
-            avatar.onerror = (e) => {
-                console.warn("Oops! I had issue getting discord pfp, so using github pfp for now");
-                avatar.src = github;
-            };
-            avatar.src = current || github;
-        });
+    // Update only if necessary and show popup
+    if (!fetchedAvatarData.error && (!currentStoredAvatar || currentStoredAvatar !== fetchedAvatarData.avatar)) {
+        localStorage.setItem('discord_avatar', fetchedAvatarData.avatar);
+        showPopUp(false); // Success popup
+        currentStoredAvatar = fetchedAvatarData.avatar; // Update current for immediate display
+    } else if (fetchedAvatarData.error && currentStoredAvatar) {
+        // If fetch failed but we have a stored one, maybe use it? Or show error?
+        // For now, just show error if fetch failed.
+        showPopUp(true); // Error popup
+    }
 
-        changeHeartColor();
-        function changeHeartColor() {
-const heartIcon = document.getElementById('Footer_heart');
+    avatarElement.onerror = () => {
+        console.warn("Oops! Failed to load avatar image, falling back to GitHub PFP.");
+        avatarElement.src = defaultAvatar;
+        // Optionally show error popup here too if the final URL failed to load
+        // showPopUp(true);
+    };
+
+    // Set the source (either newly fetched, stored, or default)
+    avatarElement.src = currentStoredAvatar && !fetchedAvatarData.error ? currentStoredAvatar : finalAvatarUrl;
+}
+
+
+        function setupHeartEffect() {
+    const heartIcon = document.getElementById('Footer_heart');
     if (!heartIcon) return;
 
-    const colors = ['#FF6B8B', '#A68BFF', '#6C2BD9', '#ffffff', '#9B59B6']; // Raiden temalı renkler
+    const colors = ['#FF6B8B', '#A68BFF', '#6C2BD9', '#ffffff', '#9B59B6']; // Raiden themed colors + white
     let currentIndex = 0;
     let intervalId = null;
 
@@ -185,24 +202,30 @@ const heartIcon = document.getElementById('Footer_heart');
     }
 
     function startColorChanging() {
-        if (intervalId) clearInterval(intervalId);
-        intervalId = setInterval(changeColor, 150);
+        if (intervalId) clearInterval(intervalId); // Clear previous interval if any
+        intervalId = setInterval(changeColor, 150); // Faster cycle
     }
 
     function stopColorChanging() {
         clearInterval(intervalId);
         intervalId = null;
-        heartIcon.style.color = ""; // CSS'deki varsayılan renge dön
+        heartIcon.style.color = ""; // Reset to default CSS color
     }
 
     heartIcon.addEventListener('mouseenter', () => {
         startColorChanging();
-        setTimeout(stopColorChanging, 1000); // 1 saniye sonra dursun
+        // Stop after a short duration even if mouse stays
+        setTimeout(stopColorChanging, 1000);
     });
-    heartIcon.addEventListener('mouseleave', stopColorChanging);
-        }
 
-        document.addEventListener('DOMContentLoaded', function() {
+    // Ensure it stops if mouse leaves quickly
+    heartIcon.addEventListener('mouseleave', stopColorChanging);
+}
+
+
+        function handleIntroOverlay() {
+          
+        
             const introOverlay = document.querySelector('.intro-overlay');
             setTimeout(() => {
                 introOverlay.style.opacity = '0';
@@ -211,10 +234,10 @@ const heartIcon = document.getElementById('Footer_heart');
                     document.body.style.overflow = 'auto';
                 }, 500);
             }, 1000);
-        });
+      
         
-        document.addEventListener('DOMContentLoaded', function() {
-    const introOverlay = document.querySelector('.intro-overlay');
+        
+    
     const lines = document.querySelectorAll('.line');
     
   
@@ -225,7 +248,28 @@ const heartIcon = document.getElementById('Footer_heart');
             document.body.style.overflow = 'auto';
         }, 500); 
     }, 1500); 
-});
+    
+    const preloaderText = document.querySelector('.preloader-text');
+    const texts = [
+        'Now, you shall perish!',
+        'There is no escape!',
+        'Inazuma shines eternal!',
+        'Inabikari, sunawachi Eien nari',
+        'Mikirimashita',
+        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+        'Shine down!',
+        'Illusion shattered!',
+        'Torn to oblivion!',
+        'Sabaki no ikazuchi',
+        'Nigemichi wa arimasen',
+        'Muga no kyouchi he',
+        'Koko yori, jakumetsu no toki!'
+    ];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    if(preloaderText){
+    preloaderText.textContent = randomText;
+}
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   const tweetContainer = document.querySelector('.tweet-embed-container');
@@ -279,7 +323,7 @@ const loadingWrapper = document.querySelector('.loading-wrapper');
     loadingWrapper.style.display = 'none';
   }
 });
-setupParticleCanvas();
+
 function setupParticleCanvas() {
     const canvas = document.getElementById('sparks-canvas');
     if (!canvas) return;
@@ -387,24 +431,30 @@ function setupParticleCanvas() {
 }
        
         
-        document.addEventListener('DOMContentLoaded', function() {
-    const preloaderText = document.querySelector('.preloader-text');
-    const texts = [
-        'Now, you shall perish!',
-        'There is no escape!',
-        'Inazuma shines eternal!',
-        'Inabikari, sunawachi Eien nari',
-        'Mikirimashita',
-        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
-        'Shine down!',
-        'Illusion shattered!',
-        'Torn to oblivion!',
-        'Sabaki no ikazuchi',
-        'Nigemichi wa arimasen',
-        'Muga no kyouchi he',
-        'Koko yori, jakumetsu no toki!'
-    ];
-    const randomText = texts[Math.floor(Math.random() * texts.length)];
-    preloaderText.textContent = randomText;
-});
+        
     setupScrollAnimations();
+    
+    function initializePage() {
+    handleIntroOverlay();
+    updateDiscordPfp();
+    setupHeartEffect();
+   // setupTweetLoading();
+    setupParticleCanvas();
+    setupScrollAnimations();
+
+    // Add event listener for checkmark click (if needed globally)
+    const checkmarkIcon = document.querySelector('.checkmark');
+    if (checkmarkIcon) {
+         // Check if the handler is already attached via HTML onclick
+         // If not using onclick="shakeCheckmark(event)" in HTML, add listener here:
+         // checkmarkIcon.addEventListener('click', shakeCheckmark);
+    }
+}
+// --- Run Initialization ---
+// Use DOMContentLoaded to ensure the DOM is ready before selecting elements
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePage);
+} else {
+    // DOM is already loaded
+    initializePage();
+}
