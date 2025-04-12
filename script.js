@@ -73,101 +73,81 @@ try {
             let avurl;
             const github = "https://avatars.githubusercontent.com/u/63583961";
 
-            function showPopUp() {
-    var pop = document.createElement("div");
-    var innerDiv = document.createElement("div");
+      function showPopUp(isError) {
+    // Check if a popup already exists
+    if (document.getElementById("status-pop")) {
+        return;
+    }
 
-    pop.id = "pop";
+    const pop = document.createElement("div");
+    const innerDiv = document.createElement("div");
+    pop.id = "status-pop"; // Unique ID
     innerDiv.className = "pop-inner";
 
+    // --- Popup Styling  ---
     pop.style.position = "fixed";
     pop.style.bottom = "20px";
-    pop.style.left = "20px"; // Sol tarafa sabitle
-    pop.style.borderRadius = "15px";
+    pop.style.left = "20px";
+    pop.style.borderRadius = "12px"; /* Match root */
     pop.style.overflow = "hidden";
-    pop.style.boxShadow = "0 0 15px rgba(75, 26, 109, 0.8), 0 4px 10px rgba(75, 26, 109, 0.5)"; 
-    pop.style.border = "3px solid #4b1a6d"; // Canlı pembe çerçeve
-    //pop.style.maxWidth = "90vw"; // Ekranın %90'ı ile sınırla
+    pop.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.3)";
+    pop.style.border = `2px solid ${isError ? 'var(--accent)' : 'var(--primary-light)'}`;
     pop.style.width = "fit-content";
-    pop.style.padding = "5px";
+    pop.style.maxWidth = "calc(100vw - 40px)"; /* Prevent overflow */
+    pop.style.zIndex = "1100"; /* Ensure visibility */
+    pop.style.padding = "3px";
     pop.style.boxSizing = "border-box";
+    pop.style.opacity = "0"; // Start hidden for animation
+    pop.style.transform = "translateX(-20px)"; // Start off-screen for animation
+    pop.style.transition = "opacity 0.4s ease-out, transform 0.4s ease-out";
 
-    innerDiv.style.backgroundColor = "#222";
-    innerDiv.style.padding = "10px 15px";
+    innerDiv.style.backgroundColor = "var(--bg-light)";
+    innerDiv.style.padding = "10px 18px";
     innerDiv.style.display = "inline-flex";
     innerDiv.style.alignItems = "center";
-    innerDiv.style.justifyContent = "center";
-    innerDiv.style.gap = "10px";
-    innerDiv.style.border = "3px solid #5525AE"; // Daha kalın, canlı pembe border
-    innerDiv.style.borderRadius = "10px";
+    innerDiv.style.gap = "12px";
+    innerDiv.style.border = `1px solid ${isError ? 'rgba(255, 107, 139, 0.5)' : 'rgba(138, 79, 255, 0.5)'}`;
+    innerDiv.style.borderRadius = "9px"; /* Inner radius */
     innerDiv.style.fontSize = "14px";
     innerDiv.style.fontWeight = "bold";
-    innerDiv.style.color = "white";
+    innerDiv.style.color = "var(--text-light)";
     innerDiv.style.userSelect = "none";
-    innerDiv.style.whiteSpace = "nowrap"; // Kelimeler yan yana, tek satır
-   // innerDiv.style.maxWidth = "400px"; // Metnin tamamı için daha geniş alan
-    innerDiv.style.overflow = "hidden"; // Taşma kontrolü
-    innerDiv.style.textOverflow = "ellipsis"; // Hala taşarsa "..." koy
+    innerDiv.style.whiteSpace = "nowrap";
+    innerDiv.style.overflow = "hidden";
+    innerDiv.style.textOverflow = "ellipsis";
     innerDiv.style.boxSizing = "border-box";
+    // --- End Popup Styling ---
 
-    if (hata) {
-        innerDiv.innerHTML = `<i class="fas fa-times" style="color: white;
-        font-size: 18px;"></i> Couldn't update Discord pfp`;
-    } else {
-        innerDiv.innerHTML = `<i class="fas fa-check" style="color: white;
-        font-size: 18px;"></i> Updated the Discord pfp`;
-    }
+    const iconClass = isError ? "fas fa-times-circle" : "fas fa-check-circle";
+    const iconColor = isError ? "var(--accent)" : "var(--primary-light)";
+    const message = isError ? "Couldn't update Discord pfp" : "Updated Discord pfp";
 
-    var css = `
-    @keyframes pop-in {
-        0% { transform: scale(0.8); opacity: 0; }
-        60% { transform: scale(1.05); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes pop-out {
-        0% { transform: scale(1); opacity: 1; }
-        40% { transform: scale(1.05); opacity: 1; }
-        100% { transform: scale(0.8); opacity: 0; }
-    }
-
-    .pop-inner {
-        animation: pop-in 0.5s ease-out, pop-out 0.5s ease-in 3s forwards;
-    }
-
-    @media (max-width: 600px) {
-        #pop {
-            bottom: 10px;
-            left: 10px;
-            padding: 5px;
-            box-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 4px 8px rgba(255, 20, 147, 0.4);
-            border: 2px solid #ff69b4;
-        }
-        .pop-inner {
-            font-size: 12px;
-            padding: 8px 12px;
-            max-width: 250px; // Mobilde daha küçük
-            border: 2px solid #ff69b4;
-        }
-    }
-    `;
+    innerDiv.innerHTML = `<i class="${iconClass}" style="color: ${iconColor}; font-size: 18px;"></i> ${message}`;
 
     pop.appendChild(innerDiv);
     document.body.appendChild(pop);
 
-    var style = document.createElement("style");
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
+    // Trigger fade-in animation
+    requestAnimationFrame(() => {
+        pop.style.opacity = "1";
+        pop.style.transform = "translateX(0)";
+    });
 
+
+    // Auto-dismiss after a delay
     setTimeout(() => {
-        let el = document.getElementById("pop");
-        if (el) {
-            el.style.display = "none";
-        } else {
-            console.log("???");
-        }
-    }, 3500);
+        pop.style.opacity = "0";
+        pop.style.transform = "translateX(-20px)";
+        // Remove from DOM after animation
+        setTimeout(() => {
+             if (pop.parentNode) {
+                pop.parentNode.removeChild(pop);
+             }
+        }, 400); // Match transition duration
+    }, 3500); // Display duration
 }
+
+      
 
             try {
                 avurl = await getDiscordAv();
