@@ -81,8 +81,9 @@ try {
     pop.style.left = "20px"; // Sol tarafa sabitle
     pop.style.borderRadius = "15px";
     pop.style.overflow = "hidden";
-    pop.style.boxShadow = "0px 4px 10px rgba(255, 20, 147, 0.5)";
-    pop.style.maxWidth = "80vw"; // Ekranın %80'i ile sınırla
+    pop.style.boxShadow = "0 0 15px rgba(255, 105, 180, 0.8), 0 4px 10px rgba(255, 20, 147, 0.5)"; // Pembe glow + gölge
+    pop.style.border = "3px solid #ff69b4"; // Canlı pembe çerçeve
+    pop.style.maxWidth = "90vw"; // Ekranın %90'ı ile sınırla
     pop.style.width = "fit-content";
     pop.style.padding = "5px";
     pop.style.boxSizing = "border-box";
@@ -93,24 +94,24 @@ try {
     innerDiv.style.alignItems = "center";
     innerDiv.style.justifyContent = "center";
     innerDiv.style.gap = "10px";
-    innerDiv.style.border = "2px solid pink";
-    innerDiv.style.borderRadius = "15px";
+    innerDiv.style.border = "3px solid #ff69b4"; // Daha kalın, canlı pembe border
+    innerDiv.style.borderRadius = "10px";
     innerDiv.style.fontSize = "14px";
     innerDiv.style.fontWeight = "bold";
     innerDiv.style.color = "white";
     innerDiv.style.userSelect = "none";
     innerDiv.style.whiteSpace = "nowrap"; // Kelimeler yan yana, tek satır
-    innerDiv.style.maxWidth = "300px"; // Maksimum genişlik
-    innerDiv.style.overflow = "hidden"; // Taşan içeriği gizle
-    innerDiv.style.textOverflow = "ellipsis"; // Taşarsa "..." koy
+    innerDiv.style.maxWidth = "400px"; // Metnin tamamı için daha geniş alan
+    innerDiv.style.overflow = "hidden"; // Taşma kontrolü
+    innerDiv.style.textOverflow = "ellipsis"; // Hala taşarsa "..." koy
     innerDiv.style.boxSizing = "border-box";
 
     if (hata) {
         innerDiv.innerHTML = `<i class="fas fa-times" style="color: white;
-        font-size: 18px;"></i> Couldn't update Discord profile picture`;
+        font-size: 18px;"></i> Couldn't update Discord pfp`;
     } else {
         innerDiv.innerHTML = `<i class="fas fa-check" style="color: white;
-        font-size: 18px;"></i> Updated Discord profile picture successfully`;
+        font-size: 18px;"></i> Updated the Discord pfp`;
     }
 
     var css = `
@@ -133,13 +134,16 @@ try {
     @media (max-width: 600px) {
         #pop {
             bottom: 10px;
-            left: 10px; // Küçük ekranlarda da solda
+            left: 10px;
             padding: 5px;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 4px 8px rgba(255, 20, 147, 0.4);
+            border: 2px solid #ff69b4;
         }
         .pop-inner {
             font-size: 12px;
             padding: 8px 12px;
-            max-width: 200px; // Mobilde daha küçük
+            max-width: 250px; // Mobilde daha küçük
+            border: 2px solid #ff69b4;
         }
     }
     `;
