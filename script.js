@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'Inazuma shines eternal!',
         'Inabikari, sunawachi Eien nari',
         'Mikirimashita',
-        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!'
+        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
         'Shine down!',
         'Illusion shattered!',
         'Torn to oblivion!',
