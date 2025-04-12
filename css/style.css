@@ -49,21 +49,22 @@ a {
 
 .line {
     position: absolute;
-    height: 4px; /* Çizgi kalınlığı */
-    background: #d8bfff; /* Çizgi rengi (açık mor) */
-    box-shadow: 0 0 10px rgba(216, 191, 255, 0.8); /* Hafif parlama efekti */
+    height: 4px; 
+    background: #d8bfff; 
+    box-shadow: 0 0 15px rgba(216, 191, 255, 0.9);
+    border-radius: 2px;
 }
 
 .line-left {
     left: 0;
     width: 0;
-    animation: slideFromLeft 1s ease forwards;
+    animation: slideFromLeft 1.5s ease-out forwards;
 }
 
 .line-right {
     right: 0;
     width: 0;
-    animation: slideFromRight 1s ease forwards;
+    animation: slideFromRight 1.5s ease-out forwards;
 }
 
 @keyframes slideFromLeft {
@@ -91,7 +92,7 @@ a {
     opacity: 1;
     text-align: center;
     top: 60%;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.8s ease-out, text-shadow 1s ease-in-out, transform 1.2s ease-in-out, letter-spacing 1s ease-in-out; 
    max-width: 90%; 
     word-wrap: break-word; 
     padding: 10px; 
@@ -100,7 +101,13 @@ a {
 }
 
 .intro-overlay.fade-out .preloader-text {
-    opacity: 0; /* intro-overlay kaybolurken metin de kaybolur */
+    opacity: 0; 
+}
+
+.preloader-text.fade-in {
+    opacity: 1;
+    transform: scale(1.1); /* Subtle scaling effect */
+    letter-spacing: 1.5px; /* Slight letter spacing animation */
 }
 /* Profil Container */
 .profile-container {
