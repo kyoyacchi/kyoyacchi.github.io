@@ -513,7 +513,32 @@ function setupParticleCanvas() {
        
         
         
-    setupScrollAnimations();
+    function summonYae(){
+      document.addEventListener("click", (e) => {
+            // Kitsune spirit GIF elementi oluştur
+            const kitsune = document.createElement("img");
+            kitsune.src = "https://files.catbox.moe/g87kzk.gif"; // Verdiğin GIF linki
+            kitsune.classList.add("kitsune");
+
+            // Tıklanan yere yerleştir
+            kitsune.style.left = `${e.clientX}px`;
+            kitsune.style.top = `${e.clientY}px`;
+
+            // Sayfaya ekle
+            document.body.appendChild(kitsune);
+
+            // Kitsune görünür yap ve animasyonu başlat
+            setTimeout(() => {
+                kitsune.classList.add("active");
+            }, 10);
+
+            // Kitsune bir süre sonra kaybolsun
+            setTimeout(() => {
+                kitsune.classList.remove("active");
+                setTimeout(() => kitsune.remove(), 300);
+            }, 1500);
+        });
+    }
     
     function initializePage() {
     handleIntroOverlay();
@@ -523,7 +548,7 @@ function setupParticleCanvas() {
    // setupTweetLoading();
     setupParticleCanvas();
     setupScrollAnimations();
-
+summonYae();
     // Add event listener for checkmark click (if needed globally)
     const checkmarkIcon = document.querySelector('.checkmark');
     if (checkmarkIcon) {
