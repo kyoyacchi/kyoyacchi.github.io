@@ -94,7 +94,7 @@ try {
     innerDiv.style.alignItems = "center";
     innerDiv.style.justifyContent = "center";
     innerDiv.style.gap = "10px";
-    innerDiv.style.border = "3px solid #ff69b4"; // Daha kalın, canlı pembe border
+    innerDiv.style.border = "3px solid #5525AE"; // Daha kalın, canlı pembe border
     innerDiv.style.borderRadius = "10px";
     innerDiv.style.fontSize = "14px";
     innerDiv.style.fontWeight = "bold";
