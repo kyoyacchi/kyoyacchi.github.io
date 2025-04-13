@@ -34,6 +34,7 @@ try {
 } catch(e){
   console.error(e||e.message)
 }
+updateDiscordPfp()
 }
 //setLang();
     
