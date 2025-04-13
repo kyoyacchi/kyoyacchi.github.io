@@ -19,7 +19,8 @@ try {
     
     const bio = document.querySelector(".bio");
     if (bio) {
-      bio.textContent = "Ei benim karım ulan!";
+      bio.innerHTML = `Ei wo aishiteru <i class="fas fa-heart" style="color:
+      var(--accent);"></i>`
     }
 
     // Tweet yükleniyor
@@ -560,7 +561,7 @@ function setupParticleCanvas() {
     updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
-   // setupTweetLoading();
+   setLang();
     setupParticleCanvas();
     setupScrollAnimations();
 //summonYae();
