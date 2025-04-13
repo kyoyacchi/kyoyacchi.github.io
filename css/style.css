@@ -324,9 +324,9 @@ a {
   position: relative;
   width: 100%;
   max-width: 600px; /* Limit tweet width */
-  margin: 0 auto; /* Center the container */
+  margin: 20px auto; /* Center the container */
   padding: 20px;
-  background: rgba(30, 11, 46, 0.5); /* Darker, subtle background */
+  background: rgba(30, 11, 46, 0.6); /* Darker, subtle background */
   border-radius: var(--border-radius);
   border: 1px solid var(--primary-dark);
   min-height: 150px; /* Ensure space for loader */
@@ -335,6 +335,13 @@ a {
   align-items: center;
    /* Apply scroll animation class */
    overflow: hidden; /* Hide decorative elements overflow */
+   transition: var(--transition-long);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Subtle initial shadow */
+}
+
+.tweet-embed-container:hover {
+    border-color: var(--raiden-electro);
+    box-shadow: 0 0 25px var(--raiden-glow), 0 0 10px var(--secondary);
 }
 
 .tweet-embed-container::before,
