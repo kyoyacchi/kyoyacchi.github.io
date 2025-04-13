@@ -204,7 +204,7 @@ a {
     border-radius: 50%;
     border: 5px solid var(--primary-light); 
     background: var(--bg-dark);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--primary-light);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--raiden-glow); 
     object-fit: cover;
     transition: transform 0.4s ease, box-shadow 0.4s ease; 
     cursor: pointer; 
@@ -212,7 +212,7 @@ a {
 
 .profile-img:hover {
     transform: scale(1.07); /* DEĞİŞTİ: Biraz daha belirgin büyüme */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 25px var(--secondary); /* DEĞİŞTİ: Daha parlak gölge/parlama */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary);
 }
 .name-container {
     user-select: none;
@@ -232,7 +232,7 @@ a {
     font-size: 30px;
     font-weight: bold;
     color: var(--text-light); 
-    text-shadow: 0 0 5px var(--raiden-glow); /* EKLENDİ: Hafif parlama */
+    text-shadow: 0 0 8px var(--raiden-glow); /* EKLENDİ: Hafif parlama */
 }
 
 .handle {
@@ -253,6 +253,7 @@ a {
     transition: all 0.3s ease;
     width: 18px; /* DEĞİŞTİ: Biraz daha büyük */
     height: 18px;
+    filter: drop-shadow(0 0 3px var(--raiden-glow)); 
 }
 
 .checkmark.shake {
