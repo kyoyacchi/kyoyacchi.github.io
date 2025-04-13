@@ -464,7 +464,7 @@ a {
     position: absolute;
     right: 5px; /* Position outside */
     top: 2px;
-    opacity: 0.6;
+    opacity: 0.7;
     animation: twinkle 2.5s infinite alternate; /* Slower twinkle */
     text-shadow: 0 0 10px var(--secondary);
 }
