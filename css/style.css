@@ -58,6 +58,7 @@ a {
     background: #4b1a6d; /* Mor arka plan */
     z-index: 1000;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     transition: opacity 0.5s ease;
@@ -96,9 +97,25 @@ a {
     100% { width: 50%; background: #8000ff; }
 }
 
+.preloader-image {
+    width: 80px; /* İkonun genişliği (ayarlayabilirsin) */
+    height: auto; /* Yüksekliği otomatik ayarla */
+    margin-bottom: 25px; /* İkon ile yazı arasındaki boşluk */
+    opacity: 1; /* Başlangıçta görünür */
+    filter: none; /* Başlangıçta parlama yok */
+    transition: filter 0.5s ease-in-out, opacity 0.5s ease; /* Yumuşak geçiş */
+}
+
+/* YENİ: Parlama aktif olduğunda */
+.preloader-image.glow-active {
+    /* Raiden renkleriyle parlama efekti */
+    filter: drop-shadow(0 0 12px var(--raiden-glow)) drop-shadow(0 0 6px var(--secondary));
+}
+
 
 .preloader-text {
-    position: absolute;
+   /* position: absolute;*/
+   position: relative;
     color: #D946EF;
     font-family: 'Quicksand', sans-serif;
     font-size: 23px;
