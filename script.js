@@ -1,5 +1,5 @@
    function setLang() {
-    document.addEventListener("DOMContentLoaded", () => {
+    
   const lang = navigator.language;
 try {
   if (lang.startsWith("tr")) {//TÜRKÇE İSE
@@ -23,22 +23,17 @@ try {
       var(--accent);"></i>`
     }
 
-    // Tweet yükleniyor
+    
     const loadingText = document.querySelector(".loading-text");
     if (loadingText) {
       loadingText.textContent = "Tweet yükleniyor...";
     }
     
-   /* const tweetBlock = document.getElementById("tweetBlock");
-  
-  if (tweetBlock) {
-    tweetBlock.setAttribute("data-lang", "tr");
-  }*/
+
   }
 } catch(e){
   console.error(e||e.message)
 }
-});
 }
 //setLang();
     
