@@ -1,43 +1,4 @@
-   function setLang() {
-    
-  const lang = navigator.language;
-try {
-  if (lang.startsWith("tr")) {//TÜRKÇE İSE
-    console.log("Türk bir kullanıcı!? Hemen geçiş yapıyorum!");
-    setTimeout(() =>{
-    //console.clear();
-    },1500);
-    document.querySelector(".footer-main").innerHTML = `
-      <i id="Footer_heart" class="fas fa-heart"></i> ile <img id="discord_pfp" src="" alt="Discord Avatar" class="footer-avatar"> <span class="Footer_text">Kyo</span> tarafından yapıldı.
-    `;
-
-    document.querySelector(".shogunate-approval").innerHTML = 
-      `<p class="shogunate-approval">"Bu websitesi <span
-      class="almighty-raiden">Yüce Raiden Shogun</span> ve Shogunate koruması
-      altındadır."</p>`;
-
-    
-    const bio = document.querySelector(".bio");
-    if (bio) {
-      bio.innerHTML = `Ei wo aishiteru <i class="fas fa-heart" style="color:
-      var(--accent);"></i>`
-    }
-
-    
-    const loadingText = document.querySelector(".loading-text");
-    if (loadingText) {
-      loadingText.textContent = "Tweet yükleniyor...";
-    }
-    
-
-  }
-} catch(e){
-  console.error(e||e.message)
-}
-
-}
-//setLang();
-    
+   
     const PRELOADER_EXIT_DELAY = 1500; // ms after lines finish
 const PRELOADER_FADE_DURATION = 500; // ms for fade out
 const PARTICLE_COUNT = 40; // Reduced particle count for performance
