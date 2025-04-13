@@ -784,6 +784,19 @@ footer::before {
     }
     .shogunate-approval { font-size: 10px; }
     .tweet-decor-top { display: none; }/* Hide decor on very small screens */
+    .tweet-content {
+        padding: 15px; /* Mobilde padding azaltılabilir */
+    }
+    .tweet-content::before {
+        font-size: 18px; /* Daha küçük ikon */
+        top: 10px;
+        left: 10px;
+    }
+    .tweet-content::after {
+        font-size: 16px; /* Daha küçük ikon */
+        top: 10px;
+        right: 10px;
+    }
 }
 
 #sparks-canvas {
