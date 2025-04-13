@@ -618,6 +618,7 @@ function setupParticleCanvas() {
    
     setupParticleCanvas();
     setupScrollAnimations();
+    showWink();
 //summonYae();
     // Add event listener for checkmark click (if needed globally)
     const checkmarkIcon = document.querySelector('.checkmark');
