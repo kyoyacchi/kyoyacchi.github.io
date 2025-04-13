@@ -554,10 +554,11 @@ function setupParticleCanvas() {
     
     function initializePage() {
     handleIntroOverlay();
+    setLang();
     updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
-   setLang();
+   
     setupParticleCanvas();
     setupScrollAnimations();
 //summonYae();
