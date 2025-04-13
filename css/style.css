@@ -326,11 +326,12 @@ a {
   width: 100%;
   max-width: 600px; /* Limit tweet width */
   margin: 20px auto; /* Center the container */
-  padding: 20px;
+  padding: 0;
   background: rgba(30, 11, 46, 0.6); /* Darker, subtle background */
   border-radius: var(--border-radius);
   border: 1px solid var(--primary-dark);
   min-height: 150px; /* Ensure space for loader */
+  box-sizing: border-box;
   display: flex; /* Use flex for centering loader */
   justify-content: center;
   align-items: center;
@@ -345,37 +346,57 @@ a {
     box-shadow: 0 0 25px var(--raiden-glow), 0 0 10px var(--secondary);
 }
 
-.tweet-embed-container::before,
-.tweet-embed-container::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: rgba(155, 89, 182, 0.8);
-    box-shadow: 0 0 15px 10px rgba(155, 89, 182, 0.5);
-    border-radius: 50%;
-    animation: floatParticles 4s infinite ease-in-out alternate;
-}
 
-.tweet-embed-container::before {
-    top: 20%;
-    left: 10%;
-    animation-delay: 1s;
-}
-
-.tweet-embed-container::after {
-    bottom: 15%;
-    right: 20%;
-}
 
 .tweet-content {
-  opacity: 0; /* Start hidden */
-  width: 100%;
-  transition: opacity 0.6s ease 0.2s; /* Slower fade-in */
-  position: relative; /* For decor positioning */
-    z-index: 2; 
+  max-width: 100%; /* Parent'a göre %100 */
+    width: 100%;
+    padding: 20px; /* İçerik ve ikonlar için boşluk */
+    /* DEĞİŞTİ: Daha belirgin Raiden arkaplanı */
+    background: rgba(30, 11, 46, 0.7);
+    border-radius: var(--border-radius); /* Değişkenden alalım */
+    box-shadow: var(--shadow); /* Değişkenden alalım */
+    position: relative; /* İkonların buna göre konumlanması için ÖNEMLİ */
+    z-index: 1;
+    /* DEĞİŞTİ: Raiden temalı kenarlık */
+    border: 1px solid var(--primary-dark);
+    /* DEĞİŞTİ: Raiden temalı parlama animasyonu */
+    animation: pulseGlowRaiden 2.5s infinite alternate ease-in-out;
+    box-sizing: border-box;
+    /* Yükleyici görünürken tweet'i gizle (Eğer loading class'ı ekliyorsan) */
+    opacity: 0; /* Başlangıçta gizli */
+    transition: opacity 0.6s ease 0.2s;
 }
-
+.tweet-content::before {
+    content: '\f0e7'; /* Font Awesome Şimşek */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 22px; /* Boyut */
+    color: var(--raiden-electro); /* Raiden Rengi */
+    text-shadow: 0 0 10px var(--raiden-glow); /* Raiden Parlaması */
+    position: absolute; /* .tweet-content'e göre */
+    top: 12px;        /* İçerik kutusunun üstünden boşluk */
+    left: 12px;       /* İçerik kutusunun solundan boşluk */
+    z-index: 2;       /* Arkaplanın üzerinde */
+    pointer-events: none; /* Tıklanamaz */
+    opacity: 0.85;
+    animation: floatSimple 3s ease-in-out infinite alternate; /* Basit animasyon */
+}
+.tweet-content::after {
+    content: '\f005'; /* Font Awesome Yıldız */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 20px; /* Boyut */
+    color: var(--secondary); /* İkincil Mor */
+    text-shadow: 0 0 8px var(--secondary); /* İkincil Parlama */
+    position: absolute; /* .tweet-content'e göre */
+    top: 12px;         /* İçerik kutusunun üstünden boşluk */
+    right: 12px;       /* İçerik kutusunun sağından boşluk */
+    z-index: 2;       /* Arkaplanın üzerinde */
+    pointer-events: none; /* Tıklanamaz */
+    opacity: 0.75;
+    animation: spinSimple 4s linear infinite; /* Basit animasyon */
+}
 .tweet-content.loaded {
   opacity: 1;
 }
@@ -389,6 +410,7 @@ a {
   flex-direction: column;
   align-items: center; /* Bu, içindeki spinner ve metni yatayda ortalar */
   transition: opacity 0.3s ease;
+    z-index: 5; 
 }
 .loading-wrapper.hidden {
     opacity: 0;
@@ -417,9 +439,35 @@ a {
 
 .twitter-tweet {
     margin: 0 auto !important; /* Center tweet */
-    max-width: 100% !important;
+    max-width: 100% !important; /* Genişliği zorla */
+    margin: 0 auto !important; /* Ortala */
+    display: block; /* Blok element yap */
+    /* Gerekirse diğer stiller... */
+    word-wrap: break-word;
 }
 
+@keyframes pulseGlowRaiden {
+    0% {
+        /* Raiden Parlama ve ikincil renk karışımı */
+        box-shadow: 0 0 12px var(--raiden-glow), 0 0 5px rgba(0,0,0,0.3);
+        border-color: var(--raiden-electro);
+    }
+    100% {
+        /* Daha güçlü parlama */
+        box-shadow: 0 0 22px var(--raiden-glow), 0 0 8px rgba(0,0,0,0.4);
+        border-color: var(--secondary); /* Renk geçişi */
+    }
+}
+@keyframes floatSimple {
+  0% { transform: translateY(-3px); opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { transform: translateY(3px); opacity: 0.7; }
+}
+
+@keyframes spinSimple {
+  from { transform: rotate(0deg) scale(1); }
+  to   { transform: rotate(360deg) scale(1.05); }
+}
 @keyframes pulseGlow {
     0% {
         box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
@@ -433,9 +481,9 @@ a {
 .tweet-decor-top {
     position: absolute;
     top: 10px;
-    left: 0;
-    right: 0;
-    height: 30px; /* Area for decor */
+    left: 10px;
+    right: 10px;
+    height: auto; /* Area for decor */
     pointer-events: none; /* Don't interfere with tweet */
     z-index: 1;
 }
@@ -445,12 +493,12 @@ a {
     content: '\f0e7'; /* Font Awesome Şimşek ikonu */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900; /* Solid stil */
-    font-size: 24px; /* İkon boyutu */
+    font-size: 22px; /* İkon boyutu */
     color: var(--raiden-electro); /* Raiden moru */
-    text-shadow: 0 0 12px var(--raiden-glow); /* Mor parlama */
+    text-shadow: 0 0 10px var(--raiden-glow); /* Mor parlama */
     position: absolute;
-    left: -15px; /* Kutunun biraz solunda */
-    top: 50%; /* Dikeyde ortala */
+    left: 0; /* Kutunun biraz solunda */
+    top: 0; /* Dikeyde ortala */
     transform: translateY(-50%); /* Tam ortalama için */
     opacity: 0.8;
     /* YENİ ANİMASYON */
@@ -461,12 +509,12 @@ a {
     content: '\f005'; /* Font Awesome Yıldız ikonu */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900; /* Solid stil */
-    font-size: 22px; /* İkon boyutu (biraz daha küçük) */
+    font-size: 20px; /* İkon boyutu (biraz daha küçük) */
     color: var(--secondary); /* İkincil mor tonu */
-    text-shadow: 0 0 10px var(--secondary); /* İkincil parlama */
+    text-shadow: 0 0 8px var(--secondary); /* İkincil parlama */
     position: absolute;
-    right: -15px; /* Kutunun biraz sağında */
-    top: 50%; /* Dikeyde ortala */
+    right: 0; /* Kutunun biraz sağında */
+    top: 0; /* Dikeyde ortala */
     transform: translateY(-50%); /* Tam ortalama için */
     opacity: 0.7;
      /* YENİ ANİMASYON */
@@ -477,30 +525,33 @@ a {
 
 @keyframes floatBolt {
   0% {
-    transform: translateY(-55%); /* Biraz yukarı */
+    transform: translateY(-5%); /* Hafif yukarı */
     opacity: 0.7;
     text-shadow: 0 0 10px var(--raiden-glow);
   }
   50% {
-      opacity: 1; /* Daha parlak */
+      opacity: 1;
       text-shadow: 0 0 16px var(--raiden-glow);
   }
   100% {
-    transform: translateY(-45%); /* Biraz aşağı */
+    transform: translateY(5%); /* Hafif aşağı */
     opacity: 0.7;
     text-shadow: 0 0 10px var(--raiden-glow);
   }
 }
 
+
 /* Yıldız için dönme ve hafif parlama animasyonu */
 @keyframes spinStar {
   from {
-    transform: translateY(-50%) rotate(0deg) scale(1);
+    /* KALDIRILDI: translateY(-50%) */
+    transform: rotate(0deg) scale(1);
      opacity: 0.7;
      text-shadow: 0 0 8px var(--secondary);
   }
   to {
-    transform: translateY(-50%) rotate(360deg) scale(1.05); /* Tam tur dönsün ve hafif büyüsün */
+    /* KALDIRILDI: translateY(-50%) */
+    transform: rotate(360deg) scale(1.05);
      opacity: 0.9;
      text-shadow: 0 0 12px var(--secondary);
   }
