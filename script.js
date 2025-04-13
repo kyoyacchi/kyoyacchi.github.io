@@ -552,6 +552,63 @@ function setupParticleCanvas() {
         });
     }
     
+    function showWink(){
+    
+    // 1. Kullanıcının tarayıcı dilini al
+    const userLang = navigator.language
+
+    // 2. Dil 'tr' ile başlıyor mu kontrol et
+    if (userLang && userLang.toLowerCase().startsWith('tr')) {
+
+        // 3. İsim span'ını bul
+        const nameSpan = document.querySelector('.name-row > span'); // 'Kyoや' yazan span
+        // 4. Checkmark svg'sini bul (varsa emojileri ondan önce ekleyelim)
+        const checkmark = document.querySelector('.name-row .checkmark');
+
+        if (nameSpan) {
+            // 5. Emoji span'larını oluştur
+            const flagSpan = document.createElement('span');
+            flagSpan.textContent = '🇹🇷';
+            flagSpan.className = 'turkish-wink-emoji flag'; // CSS için sınıf
+
+            const winkSpan = document.createElement('span');
+            winkSpan.textContent = '😉'; // Göz kırpma emojisi
+            // winkSpan.textContent = ';)'; // Alternatif olarak ;) metni
+            winkSpan.className = 'turkish-wink-emoji wink'; // CSS için sınıf
+
+            // 6. Emoji'leri DOM'a ekle
+            // Eğer checkmark varsa, onun hemen öncesine ekleyelim, yoksa ismin sonuna
+            if (checkmark) {
+                 nameSpan.parentNode.insertBefore(flagSpan, checkmark);
+                 nameSpan.parentNode.insertBefore(winkSpan, checkmark);
+            } else {
+                nameSpan.insertAdjacentElement('afterend', winkSpan); // Önce göz kırpmayı ekle
+                nameSpan.insertAdjacentElement('afterend', flagSpan); // Sonra bayrağı ekle (böylece sıra İsim-Bayrak-GözKırpma olur)
+            }
+
+
+            // 7. Kısa bir gecikmeyle görünür yap (CSS transition'ının çalışması için)
+            setTimeout(() => {
+                flagSpan.classList.add('visible');
+                winkSpan.classList.add('visible');
+            }, 100); // 100 milisaniye sonra görünür yap
+
+            // 8. Belirli bir süre sonra tekrar gizle ve DOM'dan kaldır
+            setTimeout(() => {
+                flagSpan.classList.remove('visible'); // Görünmez yap (animasyon başlar)
+                winkSpan.classList.remove('visible');
+
+                // Animasyon bittikten sonra DOM'dan kaldır (transition süresi kadar bekle)
+                setTimeout(() => {
+                    flagSpan.remove();
+                    winkSpan.remove();
+                }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
+
+            }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
+        }
+    };
+    }
+    
     function initializePage() {
     handleIntroOverlay();
    // setLang();
