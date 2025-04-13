@@ -372,6 +372,7 @@ a {
   width: 100%;
   transition: opacity 0.6s ease 0.2s; /* Slower fade-in */
   position: relative; /* For decor positioning */
+    z-index: 2; 
 }
 
 .tweet-content.loaded {
@@ -435,6 +436,7 @@ a {
     right: 10px;
     height: 30px; /* Area for decor */
     pointer-events: none; /* Don't interfere with tweet */
+    z-index: 1;
 }
 
 
@@ -442,30 +444,69 @@ a {
     content: '\f0e7'; /* Lightning bolt */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
-    font-size: 28px; /* Adjusted size */
+    font-size: 24px; /* Adjusted size */
     color: var(--raiden-electro);
     position: absolute;
-    left: -15px; /* Position outside */
-    top: -5px;
+    left: 5px; /* Position outside */
+    top: 0px;
     opacity: 0.7;
-    animation: flicker 2.5s infinite ease-in-out alternate; /* Slower flicker */
-    text-shadow: 0 0 10px var(--raiden-glow);
+    animation: flicker 2s infinite ease-in-out alternate; /* Slower flicker */
+    text-shadow: 0 0 12px var(--raiden-glow);
 }
 
 
 .tweet-decor-top::after {
-    content: '\f005'; /* Star */
+    content: '\e567';  /* Star */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
-    font-size: 22px; /* Adjusted size */
+    font-size: 20px; /* Adjusted size */
     color: var(--secondary);
     position: absolute;
-    right: -15px; /* Position outside */
-    top: 0px;
+    right: 5px; /* Position outside */
+    top: 2px;
     opacity: 0.6;
-    animation: twinkle 2s infinite alternate; /* Slower twinkle */
-    text-shadow: 0 0 8px var(--secondary);
+    animation: twinkle 2.5s infinite alternate; /* Slower twinkle */
+    text-shadow: 0 0 10px var(--secondary);
 }
+
+.tweet-embed-container::before {
+    content: "";
+    position: absolute;
+    bottom: -20px; /* Start partially outside */
+    left: -20px; /* Start partially outside */
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.3) 0%, rgba(155, 89, 182, 0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.6s ease-out;
+    z-index: 0; /* Behind tweet content */
+}
+.tweet-embed-container::after {
+    content: "";
+    position: absolute;
+    top: -20px; /* Start partially outside */
+    right: -20px; /* Start partially outside */
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(138, 79, 255, 0.25) 0%, rgba(138, 79, 255, 0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.6s ease-out 0.1s; /* Slight delay */
+    z-index: 0; /* Behind tweet content */
+}
+
+.tweet-embed-container:hover::before {
+    opacity: 0.7;
+    transform: translate(25px, 25px); /* Move into view */
+}
+.tweet-embed-container:hover::after {
+    opacity: 0.6;
+    transform: translate(-25px, 25px); /* Move into view */
+}
+
+
+
 
 @keyframes flicker { /* Slightly adjusted flicker */
     0%, 100% { opacity: 0.6; transform: translateX(-2px); }
