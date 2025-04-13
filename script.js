@@ -34,7 +34,7 @@ try {
 } catch(e){
   console.error(e||e.message)
 }
-updateDiscordPfp()
+
 }
 //setLang();
     
@@ -554,7 +554,7 @@ function setupParticleCanvas() {
     
     function initializePage() {
     handleIntroOverlay();
-    setLang();
+   // setLang();
     updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
