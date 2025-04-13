@@ -135,7 +135,7 @@ async function updateDiscordPfp() {
     }
 
     avatarElement.onerror = () => {
-        console.warn("Oops! Failed to load avatar image, falling back to GitHub PFP.");
+        console.warn("Oops! Failed to load discord pfp, falling back to github pfp");
         avatarElement.src = defaultAvatar;
         // Optionally show error popup here too if the final URL failed to load
         // showPopUp(true);
