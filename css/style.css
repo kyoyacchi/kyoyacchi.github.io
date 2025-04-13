@@ -58,7 +58,7 @@ a {
     background: #4b1a6d; /* Mor arka plan */
     z-index: 1000;
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     align-items: center;
     justify-content: center;
     transition: opacity 0.5s ease;
@@ -114,8 +114,8 @@ a {
 
 
 .preloader-text {
-   /* position: absolute;*/
-   position: relative;
+    position: absolute;
+   
     color: #D946EF;
     font-family: 'Quicksand', sans-serif;
     font-size: 23px;
