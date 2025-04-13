@@ -552,82 +552,7 @@ function setupParticleCanvas() {
         });
     }
     
-    function showWink (){
-      
-    // 1. Kullanıcının tarayıcı dilini al
-    const userLang = navigator.language;
-
-    // 2. Dil 'tr' ile başlıyor mu kontrol et
-    let data = sessionStorage.getItem("winking");
- 
-    if (userLang && userLang.toLowerCase().startsWith('tr')) {
-if (data) return;
-        // 3. İsim span'ını bul (Yedek olarak dursun)
-        // const nameSpan = document.querySelector('.name-row > span');
-
-        // 4. Checkmark svg'sini bul
-        const checkmark = document.querySelector('.name-row .checkmark');
-
-        // 5. Emoji span'larını oluştur
-        const flagSpan = document.createElement('span');
-        flagSpan.textContent = '🇹🇷';
-        flagSpan.className = 'turkish-wink-emoji flag'; // CSS için sınıf
-
-        const winkSpan = document.createElement('span');
-        winkSpan.textContent = '😉'; // Göz kırpma emojisi
-        // winkSpan.textContent = ';)'; // Alternatif olarak ;) metni
-        winkSpan.className = 'turkish-wink-emoji wink'; // CSS için sınıf
-
-        // 6. Emoji'leri DOM'a ekle (DEĞİŞTİRİLDİ)
-        // Eğer checkmark varsa, onun SONRASINA ekleyelim
-        if (checkmark) {
-            // insertAdjacentElement checkmark'tan sonraya ekler
-            checkmark.insertAdjacentElement('afterend', winkSpan); // Önce göz kırpma
-            checkmark.insertAdjacentElement('afterend', flagSpan); // Sonra bayrak (Böylece sıra: Checkmark - Bayrak - GözKırpma olur)
-
-            // VEYA şu şekilde de olurdu (appendChild ile sona ekler):
-            // checkmark.parentNode.appendChild(flagSpan);
-            // checkmark.parentNode.appendChild(winkSpan);
-            // Bu durumda checkmark'ın parent'ı olan .name-row'un sonuna ekler.
-
-        } else {
-             // Eğer checkmark yoksa, fallback olarak ismin sonuna ekle (önceki gibi)
-             const nameSpan = document.querySelector('.name-row > span');
-             if (nameSpan) {
-                nameSpan.insertAdjacentElement('afterend', winkSpan);
-                nameSpan.insertAdjacentElement('afterend', flagSpan);
-             }
-        }
-
-
-        // 7. Kısa bir gecikmeyle görünür yap (CSS transition'ının çalışması için)
-        // Bu kısım aynı kalıyor
-        setTimeout(() => {
-            // Eklediğimiz elementleri tekrar seçmemiz gerekebilir,
-            // veya oluşturduğumuz referansları (flagSpan, winkSpan) kullanabiliriz.
-            const addedFlag = document.querySelector('.turkish-wink-emoji.flag');
-            const addedWink = document.querySelector('.turkish-wink-emoji.wink');
-            if (addedFlag) addedFlag.classList.add('visible');
-            if (addedWink) addedWink.classList.add('visible');
-        }, 100); // 100 milisaniye sonra görünür yap
-
-        // 8. Belirli bir süre sonra tekrar gizle ve DOM'dan kaldır
-        // Bu kısım aynı kalıyor
-        setTimeout(() => {
-            const addedFlag = document.querySelector('.turkish-wink-emoji.flag');
-            const addedWink = document.querySelector('.turkish-wink-emoji.wink');
-            if (addedFlag) addedFlag.classList.remove('visible'); // Görünmez yap (animasyon başlar)
-            if (addedWink) addedWink.classList.remove('visible');
-
-            // Animasyon bittikten sonra DOM'dan kaldır (transition süresi kadar bekle)
-            setTimeout(() => {
-                if (addedFlag) addedFlag.remove();
-                if (addedWink) addedWink.remove();
-            }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
-sessionStorage.setItem("winking", "evet");
-        }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
-    }
-    }
+    
     
     function initializePage() {
     handleIntroOverlay();
@@ -638,7 +563,7 @@ sessionStorage.setItem("winking", "evet");
    
     setupParticleCanvas();
     setupScrollAnimations();
-    showWink();
+    
 //summonYae();
     // Add event listener for checkmark click (if needed globally)
     const checkmarkIcon = document.querySelector('.checkmark');
