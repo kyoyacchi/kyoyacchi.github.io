@@ -117,11 +117,10 @@ a {
     box-sizing: border-box; 
 }
 @keyframes glowShift {
-    0% { color: #D946EF; text-shadow: 0 0 10px #D946EF, 0 0 20px #8000ff, 0 0 40px #b266ff; }
-    50% { color: #8000ff; text-shadow: 0 0 15px #8000ff, 0 0 25px #a000ff, 0 0 45px #d29cff; }
-    100% { color: #D946EF; text-shadow: 0 0 10px #D946EF, 0 0 20px #8000ff, 0 0 40px #b266ff; }
+    0% { color: var(--secondary); text-shadow: 0 0 10px var(--raiden-glow), 0 0 20px var(--raiden-electro), 0 0 35px var(--primary-light); }
+    50% { color: var(--primary-light); text-shadow: 0 0 15px var(--raiden-electro), 0 0 25px var(--raiden-glow), 0 0 40px var(--secondary); }
+    100% { color: var(--secondary); text-shadow: 0 0 10px var(--raiden-glow), 0 0 20px var(--raiden-electro), 0 0 35px var(--primary-light); }
 }
-
 .preloader-text.glow {
     animation: glowShift 3s infinite ease-in-out;
 }
