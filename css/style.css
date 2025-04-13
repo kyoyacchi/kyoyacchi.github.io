@@ -433,8 +433,8 @@ a {
 .tweet-decor-top {
     position: absolute;
     top: 10px;
-    left: 10px;
-    right: 10px;
+    left: 0;
+    right: 0;
     height: 30px; /* Area for decor */
     pointer-events: none; /* Don't interfere with tweet */
     z-index: 1;
@@ -442,69 +442,72 @@ a {
 
 
 .tweet-decor-top::before {
-    content: '\f0e7'; /* Lightning bolt */
+    content: '\f0e7'; /* Font Awesome Şimşek ikonu */
     font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 24px; /* Adjusted size */
-    color: var(--raiden-electro);
+    font-weight: 900; /* Solid stil */
+    font-size: 24px; /* İkon boyutu */
+    color: var(--raiden-electro); /* Raiden moru */
+    text-shadow: 0 0 12px var(--raiden-glow); /* Mor parlama */
     position: absolute;
-    left: 5px; /* Position outside */
-    top: 0px;
-    opacity: 0.7;
-    animation: flicker 2s infinite ease-in-out alternate; /* Slower flicker */
-    text-shadow: 0 0 12px var(--raiden-glow);
+    left: -15px; /* Kutunun biraz solunda */
+    top: 50%; /* Dikeyde ortala */
+    transform: translateY(-50%); /* Tam ortalama için */
+    opacity: 0.8;
+    /* YENİ ANİMASYON */
+    animation: floatBolt 3s ease-in-out infinite alternate;
 }
-
 
 .tweet-decor-top::after {
-    content: '\e567';  /* Star */
+    content: '\f005'; /* Font Awesome Yıldız ikonu */
     font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 20px; /* Adjusted size */
-    color: var(--secondary);
+    font-weight: 900; /* Solid stil */
+    font-size: 22px; /* İkon boyutu (biraz daha küçük) */
+    color: var(--secondary); /* İkincil mor tonu */
+    text-shadow: 0 0 10px var(--secondary); /* İkincil parlama */
     position: absolute;
-    right: 5px; /* Position outside */
-    top: 2px;
+    right: -15px; /* Kutunun biraz sağında */
+    top: 50%; /* Dikeyde ortala */
+    transform: translateY(-50%); /* Tam ortalama için */
     opacity: 0.7;
-    animation: twinkle 2.5s infinite alternate; /* Slower twinkle */
-    text-shadow: 0 0 10px var(--secondary);
+     /* YENİ ANİMASYON */
+    animation: spinStar 4s linear infinite; /* Daha yavaş, sürekli dönme */
 }
 
-.tweet-embed-container::before {
-    content: "";
-    position: absolute;
-    bottom: -20px; /* Start partially outside */
-    left: -20px; /* Start partially outside */
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, rgba(155, 89, 182, 0.3) 0%, rgba(155, 89, 182, 0) 70%);
-    border-radius: 50%;
-    opacity: 0;
-    transition: all 0.6s ease-out;
-    z-index: 0; /* Behind tweet content */
-}
-.tweet-embed-container::after {
-    content: "";
-    position: absolute;
-    top: -20px; /* Start partially outside */
-    right: -20px; /* Start partially outside */
-    width: 50px;
-    height: 50px;
-    background: radial-gradient(circle, rgba(138, 79, 255, 0.25) 0%, rgba(138, 79, 255, 0) 70%);
-    border-radius: 50%;
-    opacity: 0;
-    transition: all 0.6s ease-out 0.1s; /* Slight delay */
-    z-index: 0; /* Behind tweet content */
+
+
+@keyframes floatBolt {
+  0% {
+    transform: translateY(-55%); /* Biraz yukarı */
+    opacity: 0.7;
+    text-shadow: 0 0 10px var(--raiden-glow);
+  }
+  50% {
+      opacity: 1; /* Daha parlak */
+      text-shadow: 0 0 16px var(--raiden-glow);
+  }
+  100% {
+    transform: translateY(-45%); /* Biraz aşağı */
+    opacity: 0.7;
+    text-shadow: 0 0 10px var(--raiden-glow);
+  }
 }
 
-.tweet-embed-container:hover::before {
-    opacity: 0.7;
-    transform: translate(25px, 25px); /* Move into view */
+/* Yıldız için dönme ve hafif parlama animasyonu */
+@keyframes spinStar {
+  from {
+    transform: translateY(-50%) rotate(0deg) scale(1);
+     opacity: 0.7;
+     text-shadow: 0 0 8px var(--secondary);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg) scale(1.05); /* Tam tur dönsün ve hafif büyüsün */
+     opacity: 0.9;
+     text-shadow: 0 0 12px var(--secondary);
+  }
 }
-.tweet-embed-container:hover::after {
-    opacity: 0.6;
-    transform: translate(-25px, 25px); /* Move into view */
-}
+
+
+
 
 
 
