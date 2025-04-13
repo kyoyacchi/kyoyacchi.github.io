@@ -624,7 +624,7 @@ if (data) return;
                 if (addedFlag) addedFlag.remove();
                 if (addedWink) addedWink.remove();
             }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
-sessionStorage.setItem("winking", true);
+sessionStorage.setItem("winking", "evet");
         }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
     }
     }
