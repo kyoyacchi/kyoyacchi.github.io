@@ -552,61 +552,79 @@ function setupParticleCanvas() {
         });
     }
     
-    function showWink(){
-    
+    function showWink (){
+      
     // 1. Kullanıcının tarayıcı dilini al
-    const userLang = navigator.language
+    const userLang = navigator.language;
 
     // 2. Dil 'tr' ile başlıyor mu kontrol et
     if (userLang && userLang.toLowerCase().startsWith('tr')) {
 
-        // 3. İsim span'ını bul
-        const nameSpan = document.querySelector('.name-row > span'); // 'Kyoや' yazan span
-        // 4. Checkmark svg'sini bul (varsa emojileri ondan önce ekleyelim)
+        // 3. İsim span'ını bul (Yedek olarak dursun)
+        // const nameSpan = document.querySelector('.name-row > span');
+
+        // 4. Checkmark svg'sini bul
         const checkmark = document.querySelector('.name-row .checkmark');
 
-        if (nameSpan) {
-            // 5. Emoji span'larını oluştur
-            const flagSpan = document.createElement('span');
-            flagSpan.textContent = '🇹🇷';
-            flagSpan.className = 'turkish-wink-emoji flag'; // CSS için sınıf
+        // 5. Emoji span'larını oluştur
+        const flagSpan = document.createElement('span');
+        flagSpan.textContent = '🇹🇷';
+        flagSpan.className = 'turkish-wink-emoji flag'; // CSS için sınıf
 
-            const winkSpan = document.createElement('span');
-            winkSpan.textContent = '😉'; // Göz kırpma emojisi
-            // winkSpan.textContent = ';)'; // Alternatif olarak ;) metni
-            winkSpan.className = 'turkish-wink-emoji wink'; // CSS için sınıf
+        const winkSpan = document.createElement('span');
+        winkSpan.textContent = '😉'; // Göz kırpma emojisi
+        // winkSpan.textContent = ';)'; // Alternatif olarak ;) metni
+        winkSpan.className = 'turkish-wink-emoji wink'; // CSS için sınıf
 
-            // 6. Emoji'leri DOM'a ekle
-            // Eğer checkmark varsa, onun hemen öncesine ekleyelim, yoksa ismin sonuna
-            if (checkmark) {
-                 nameSpan.parentNode.insertBefore(flagSpan, checkmark);
-                 nameSpan.parentNode.insertBefore(winkSpan, checkmark);
-            } else {
-                nameSpan.insertAdjacentElement('afterend', winkSpan); // Önce göz kırpmayı ekle
-                nameSpan.insertAdjacentElement('afterend', flagSpan); // Sonra bayrağı ekle (böylece sıra İsim-Bayrak-GözKırpma olur)
-            }
+        // 6. Emoji'leri DOM'a ekle (DEĞİŞTİRİLDİ)
+        // Eğer checkmark varsa, onun SONRASINA ekleyelim
+        if (checkmark) {
+            // insertAdjacentElement checkmark'tan sonraya ekler
+            checkmark.insertAdjacentElement('afterend', winkSpan); // Önce göz kırpma
+            checkmark.insertAdjacentElement('afterend', flagSpan); // Sonra bayrak (Böylece sıra: Checkmark - Bayrak - GözKırpma olur)
 
+            // VEYA şu şekilde de olurdu (appendChild ile sona ekler):
+            // checkmark.parentNode.appendChild(flagSpan);
+            // checkmark.parentNode.appendChild(winkSpan);
+            // Bu durumda checkmark'ın parent'ı olan .name-row'un sonuna ekler.
 
-            // 7. Kısa bir gecikmeyle görünür yap (CSS transition'ının çalışması için)
-            setTimeout(() => {
-                flagSpan.classList.add('visible');
-                winkSpan.classList.add('visible');
-            }, 100); // 100 milisaniye sonra görünür yap
-
-            // 8. Belirli bir süre sonra tekrar gizle ve DOM'dan kaldır
-            setTimeout(() => {
-                flagSpan.classList.remove('visible'); // Görünmez yap (animasyon başlar)
-                winkSpan.classList.remove('visible');
-
-                // Animasyon bittikten sonra DOM'dan kaldır (transition süresi kadar bekle)
-                setTimeout(() => {
-                    flagSpan.remove();
-                    winkSpan.remove();
-                }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
-
-            }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
+        } else {
+             // Eğer checkmark yoksa, fallback olarak ismin sonuna ekle (önceki gibi)
+             const nameSpan = document.querySelector('.name-row > span');
+             if (nameSpan) {
+                nameSpan.insertAdjacentElement('afterend', winkSpan);
+                nameSpan.insertAdjacentElement('afterend', flagSpan);
+             }
         }
-    };
+
+
+        // 7. Kısa bir gecikmeyle görünür yap (CSS transition'ının çalışması için)
+        // Bu kısım aynı kalıyor
+        setTimeout(() => {
+            // Eklediğimiz elementleri tekrar seçmemiz gerekebilir,
+            // veya oluşturduğumuz referansları (flagSpan, winkSpan) kullanabiliriz.
+            const addedFlag = document.querySelector('.turkish-wink-emoji.flag');
+            const addedWink = document.querySelector('.turkish-wink-emoji.wink');
+            if (addedFlag) addedFlag.classList.add('visible');
+            if (addedWink) addedWink.classList.add('visible');
+        }, 100); // 100 milisaniye sonra görünür yap
+
+        // 8. Belirli bir süre sonra tekrar gizle ve DOM'dan kaldır
+        // Bu kısım aynı kalıyor
+        setTimeout(() => {
+            const addedFlag = document.querySelector('.turkish-wink-emoji.flag');
+            const addedWink = document.querySelector('.turkish-wink-emoji.wink');
+            if (addedFlag) addedFlag.classList.remove('visible'); // Görünmez yap (animasyon başlar)
+            if (addedWink) addedWink.classList.remove('visible');
+
+            // Animasyon bittikten sonra DOM'dan kaldır (transition süresi kadar bekle)
+            setTimeout(() => {
+                if (addedFlag) addedFlag.remove();
+                if (addedWink) addedWink.remove();
+            }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
+
+        }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
+    }
     }
     
     function initializePage() {
