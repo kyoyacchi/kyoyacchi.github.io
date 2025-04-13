@@ -558,8 +558,10 @@ function setupParticleCanvas() {
     const userLang = navigator.language;
 
     // 2. Dil 'tr' ile başlıyor mu kontrol et
+    let data = sessionStorage.getItem("winking");
+ 
     if (userLang && userLang.toLowerCase().startsWith('tr')) {
-
+if (data) return;
         // 3. İsim span'ını bul (Yedek olarak dursun)
         // const nameSpan = document.querySelector('.name-row > span');
 
@@ -622,7 +624,7 @@ function setupParticleCanvas() {
                 if (addedFlag) addedFlag.remove();
                 if (addedWink) addedWink.remove();
             }, 500); // CSS transition süresi 0.4s (400ms), biraz pay bırakalım
-
+sessionStorage.setItem("winking", true);
         }, 2500); // Toplam 2.5 saniye ekranda kalacaklar
     }
     }
