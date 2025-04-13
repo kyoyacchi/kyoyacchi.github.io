@@ -486,10 +486,10 @@ function setupParticleCanvas() {
         
     function summonYae(){
       document.addEventListener("click", (e) => {
-            // Kitsune spirit GIF elementi oluştur
+          
             
             const kitsune = document.createElement("img");
-            kitsune.src = "https://files.catbox.moe/g87kzk.gif"; // Verdiğin GIF linki
+            kitsune.src = "https://files.catbox.moe/g87kzk.gif"; 
             
             kitsune.classList.add("kitsune");
 
