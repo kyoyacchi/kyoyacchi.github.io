@@ -539,7 +539,25 @@ footer {
     gap: 8px; /* Increased gap */
     padding: 25px 10px; /* More padding */
     margin-top: 40px; /* Space above footer */
-    border-top: 1px solid rgba(138, 79, 255, 0.2); /* Subtle top border */
+    border-top: 1px solid rgba(155, 89, 182, 0.3); /* Subtle top border */
+    background: linear-gradient(to top, rgba(30, 11, 46, 0.5), rgba(45, 27, 78, 0));
+    position: relative;
+    overflow: hidden;
+}
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--raiden-glow), transparent);
+    animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .footer-main {
