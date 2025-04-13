@@ -308,6 +308,34 @@ a {
     transform: translateY(-3px); /* Hafif yukarı kalkma */
 }
 
+.bio::before {
+    content: '';
+    display: block;
+    position: absolute;
+    /* YENİ: Negatif değerlerle kutunun dışına taşırma */
+    top: -20px;  /* Kutunun üst kenarından YUKARI doğru (değeri ayarla) */
+    left: -20px; /* Kutunun sol kenarından SOLA doğru (değeri ayarla) */
+
+    /* YENİ: Boyutu büyütme */
+    width: 45px;  /* Daha büyük genişlik (değeri ayarla) */
+    height: 45px; /* Daha büyük yükseklik (değeri ayarla) */
+
+    background-image: url('https://files.catbox.moe/f5sld3.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1; /* Kutunun üzerinde kalması için */
+    /* Transition ekleyebiliriz (isteğe bağlı) */
+    transition: transform 0.3s ease;
+}
+/* --- GÜNCELLENMİŞ KURAL SONU --- */
+
+/* İsteğe bağlı: Hover efekti ikona da eklenebilir */
+.bio:hover::before {
+    transform: scale(1.1) rotate(-5deg); /* Hafif büyütme ve döndürme */
+}
+
+
 @keyframes slideUp {
     from { transform: translateY(50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
