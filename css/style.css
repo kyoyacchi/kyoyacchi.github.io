@@ -67,8 +67,8 @@ a {
 .line {
     position: absolute;
     height: 4px; 
-    background: #d8bfff; 
-    box-shadow: 0 0 15px rgba(216, 191, 255, 0.9);
+    background: var(--raiden-electro);
+    box-shadow: 0 0 15px var(--raiden-glow);
     border-radius: 2px;
 }
 
@@ -96,16 +96,17 @@ a {
     100% { width: 50%; background: #8000ff; }
 }
 
+
 .preloader-text {
     position: absolute;
-    color: #D946EF; /* Güncellenmiş renk: canlı mor-pembe tonu */
+    color: #D946EF;
     font-family: 'Quicksand', sans-serif;
     font-size: 23px;
     font-weight: 700;
-    text-shadow: 
-        0 0 10px #D946EF, 
-        0 0 20px #8000ff, 
-        0 0 40px #b266ff; /* Güçlü parlama efekti */
+    text-shadow:
+        0 0 10px var(--raiden-glow),
+        0 0 20px var(--raiden-electro),
+        0 0 35px var(--primary-dark);
     opacity: 1;
     text-align: center;
     top: 60%;
