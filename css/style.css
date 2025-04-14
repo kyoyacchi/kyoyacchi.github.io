@@ -750,11 +750,13 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 8px; /* Increased gap */
-    padding: 25px 10px; /* More padding */
-    margin-top: 40px; /* Space above footer */
-    border-top: 1px solid rgba(155, 89, 182, 0.3); /* Subtle top border */
-    background: linear-gradient(to top, rgba(30, 11, 46, 0.5), rgba(45, 27, 78, 0));
+    gap: 10px; /* Increased gap */
+    padding: 30px 15px; /* More padding */
+    margin-top: 60px; /* Space above footer */
+    border-top: none;
+   /* border-top: 1px solid rgba(155, 89, 182, 0.3);  Subtle top border */
+    background: linear-gradient(to top, rgba(16, 0, 43, 0.8) 0%, rgba(36, 0, 70,
+    0) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -764,20 +766,22 @@ footer::before {
     top: 0;
     left: 0;
     width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--raiden-glow), transparent);
-    animation: shimmer 4s linear infinite;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--raiden-glow),
+    var(--secondary), var(--raiden-glow), transparent);
+    box-shadow: 0 0 10px var(--raiden-glow);
+    animation: shimmer 5s linear infinite; /* Slower shimmer */
 }
 
 @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% { transform: translateX(-100%); opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0.7; }
 }
-
 .footer-main {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -785,43 +789,41 @@ footer::before {
 }
 
 .footer-avatar {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--secondary); 
     flex-shrink: 0;
+    box-shadow: 0 0 8px var(--secondary); /* Subtle glow */
 }
 
 .Footer_text {
     position: relative;
     cursor: default;
-    color: var(--secondary); /* Brighter name */
+    color: var(--text-light); /* Brighter name in footer too */
     font-weight: bold;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    text-shadow: 0 0 5px var(--raiden-dark-glow);
+}
+.Footer_text:hover {
+    color: var(--secondary);
+    text-shadow: 0 0 10px var(--secondary);
 }
 
-.Footer_text::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -2px; /* Slightly lower */
-    width: 100%;
-    height: 2px;
-    background-color: var(--accent); /* Use accent color */
-    transform-origin: center; /* Animate from center */
-    transform: scaleX(0);
-    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); /* Smoother transition */
-}
 
-.Footer_text:hover::before {
-    transform: scaleX(1);
-}
+
 
 #Footer_heart {
-    color: var(--accent); /* DEĞİŞTİ: Pembe vurgu rengi */
-    transition: color 0.2s linear, transform 0.3s ease; /* EKLENDİ: Transform geçişi */
+    color: var(--accent);
+    transition: color 0.2s linear, transform 0.3s ease, text-shadow 0.3s ease;
     cursor: pointer;
+   /* text-shadow: 0 0 8px var(--accent-glow);*/
+}
+#Footer_heart:hover {
+    color: #ff99ac; /* Lighter pink on hover */
+    transform: scale(1.25); /* Slightly bigger pop */
+    /*text-shadow: 0 0 15px var(--accent-glow);*/
 }
 #Footer_heart:hover {
     color: purple;
