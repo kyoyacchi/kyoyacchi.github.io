@@ -375,7 +375,7 @@ a {
   background: rgba(30, 11, 46, 0.6); /* Darker, subtle background */
   border-radius: var(--border-radius);
   border: 1px solid var(--primary-dark);
-  min-height: 150px; /* Ensure space for loader */
+  min-height: 200px; /* Ensure space for loader */
   box-sizing: border-box;
   display: flex; /* Use flex for centering loader */
   justify-content: center;
@@ -385,6 +385,95 @@ a {
    transition: var(--transition-long);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Subtle initial shadow */
 }
+
+.embed-slider-wrapper {
+  display: flex;
+  width: 200%; /* 2 slides, each taking 100% of container width */
+  transition: transform 0.5s ease-in-out; /* Slide animation */
+}
+
+.embed-slide {
+  width: 50%; /* Each slide is half the wrapper width (i.e., full container width) */
+  flex-shrink: 0; /* Prevent slides from shrinking */
+  box-sizing: border-box;
+  /* Add padding inside the slide if needed, instead of the container */
+  padding: 10px;
+  display: flex; /* Helps centering content if needed */
+  align-items: center; /* Vertically center content */
+  justify-content: center; /* Horizontally center content */
+  min-height: inherit; /* Inherit min-height from container */
+}
+
+/* Adjust Twitter content positioning within the slide */
+.embed-slide .tweet-content {
+    width: 100%; /* Take full width of slide */
+    max-width: 540px; /* Or your desired max-width */
+    margin: 0 auto; /* Center within slide */
+    /* Keep existing tweet-content styles (background, border, etc.) */
+    /* Ensure opacity/loading logic still works */
+    opacity: 0; /* Start hidden if loading */
+    transition: opacity 0.6s ease 0.2s;
+}
+.embed-slide .tweet-content.loaded {
+  opacity: 1;
+}
+.embed-slide .loading-wrapper {
+    /* Ensure loader is centered within the slide area if tweet isn't loaded */
+    position: absolute;
+    top: 50%;
+    left: 25%; /* Centered within the first slide (0% to 50% of wrapper) */
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+/* Style the Instagram slide/content if needed */
+.embed-slide .instagram-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Override potential fixed width/margin issues from Instagram embed */
+.instagram-media {
+    margin: 5px auto !important; /* Center and ensure spacing */
+    max-width: 100% !important; /* Ensure it fits */
+    box-sizing: border-box;
+}
+
+
+/* Slider Navigation Dots */
+.slider-nav {
+  position: absolute;
+  bottom: 15px; /* Position dots at the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20; /* Ensure dots are above embeds */
+  display: flex;
+  gap: 8px;
+}
+
+.nav-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--text-muted);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  opacity: 0.7;
+}
+
+.nav-dot:hover {
+  background-color: var(--secondary);
+  opacity: 1;
+}
+
+.nav-dot.active {
+  background-color: var(--primary-light); /* Highlight active dot */
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 
 .tweet-embed-container:hover {
     border-color: var(--raiden-electro);
@@ -841,6 +930,20 @@ footer::before {
         font-size: 16px; /* Daha küçük ikon */
         top: 10px;
         right: 10px;
+    }
+    .embed-slide {
+        padding: 5px; /* Less padding on mobile */
+    }
+    .slider-nav {
+        bottom: 10px; /* Adjust dot position */
+    }
+    .nav-dot {
+        width: 8px;
+        height: 8px;
+    }
+     /* Ensure loader is centered within the first slide on mobile */
+    .embed-slide .loading-wrapper {
+        left: 25%;
     }
 }
 
