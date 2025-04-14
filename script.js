@@ -238,7 +238,7 @@ const subPreloaderTextElement = document.querySelector('.sub-preloader-text');
     if (subPreloaderTextElement) {
         subPreloaderTextElement.textContent = chosenText;
     } else {
-        console.error("'.sub-preloader-text' elementi bulunamadı.");
+        console.error("couldn't find .sub-preloader-text element");
     }
 
     // Eğer Mizuki metni seçildiyse resmi göster
@@ -249,7 +249,7 @@ const subPreloaderTextElement = document.querySelector('.sub-preloader-text');
             mizukiImageElement.style.display = 'none'; // Diğer durumda gizli kalsın
         }
     } else {
-         console.error("'#mizuki-sub-image' elementi bulunamadı.");
+         console.error("couldn't find #mizuki-sub-image element");
     }
 
 }
