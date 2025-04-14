@@ -525,6 +525,9 @@ function initializeDynamicBanner() {
 'https://files.catbox.moe/ezb5mw.png',
 'https://files.catbox.moe/hor3y0.png',
 'https://files.catbox.moe/g8ycpb.png',
+'https://files.catbox.moe/vezogz.jpg',
+'https://files.catbox.moe/vpah4m.jpg',
+
     ];
     // ----------------------------------
 
