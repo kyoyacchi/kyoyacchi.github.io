@@ -384,8 +384,8 @@ border-color: var(--raiden-electro);
     left: -20px; /* Kutunun sol kenarından SOLA doğru (değeri ayarla) */
 
     /* YENİ: Boyutu büyütme */
-    width: 39px;  /* Daha büyük genişlik (değeri ayarla) */
-    height: 39px; /* Daha büyük yükseklik (değeri ayarla) */
+    width: 45px;  /* Daha büyük genişlik (değeri ayarla) */
+    height: 45px; /* Daha büyük yükseklik (değeri ayarla) */
 
     background-image: url('https://files.catbox.moe/f5sld3.png');
     background-size: contain;
@@ -1002,6 +1002,18 @@ footer::before {
         max-width: 180px; /* Bio kapsayıcısını daha da daralttım */
         padding: 15px;
     }
+    .bio::before {
+         width: 39px;
+         height: 39px;
+         top: -15px;
+         left: -15px;
+     }
+    .bio-kitsune-icon {
+        width: 45px; /* Biraz küçültelim */
+        top: -22px;  /* Dikeyde biraz daha yakın */
+        right: -22px; /* Yatayda biraz daha yakın (önceki ayarına göre ayarla) */
+        transform: rotate(10deg); /* Dönüş açısı belki biraz azalabilir */
+    }
     .social-icons a {
         font-size: 24px;
     }
@@ -1045,6 +1057,12 @@ footer::before {
      font-size: 14px;
      padding: 12px; 
      
+   }
+   .bio-kitsune-icon {
+        width: 45px; /* Daha da küçültelim */
+        top: -22px;  /* Kutunun üstüne daha da yakın */
+        right: -22px; /* Kutunun sağına daha da yakın */
+        
    }
    
   .social-icons { gap: 15px; justify-content: center; padding-left: 0; } /*
