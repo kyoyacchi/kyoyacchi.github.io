@@ -217,7 +217,12 @@ body::before {
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: filter 0.4s ease; /* EKLENDİ: Hover efekti için geçiş */
+    opacity: 1;
+    transition: opacity 0.6s ease-in-out;/* EKLENDİ: Hover efekti için geçiş */
+}
+.banner-img[src=""] { /* Eğer src boşsa veya yüklenemediyse */
+    opacity: 0.5;
+    background-color: var(--bg-light); /* Hafif bir arka plan */
 }
 .banner-img:hover {
     filter: brightness(1.1) contrast(1.05); /* Hafif parlaklık ve kontrast */
