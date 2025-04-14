@@ -579,11 +579,11 @@ function initializeDynamicBanner() {
         if (document.hidden) {
             // Sekme gizli, interval'i durdur
             clearInterval(bannerIntervalId);
-            console.log('dynamic banner stopped (tab hidden)');
+          //  console.log('dynamic banner stopped (tab hidden)');
         } else {
             // Sekme aktif, tekrar başlat
             bannerIntervalId = setInterval(changeBanner, changeInterval);
-            console.log('dynamic banner resumed (tab visible)');
+          //  console.log('dynamic banner resumed (tab visible)');
         }
     });
 } // initializeDynamicBanner fonksiyonu sonu
