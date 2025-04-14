@@ -831,29 +831,34 @@ footer::before {
 }
 
 .shogunate-approval {
-    font-size: 12px;
-    font-style: italic;
-    color: var(--text-muted); /* DEĞİŞTİ: Daha okunaklı */
-    margin-top: 5px;
+    font-size: 13px;
+    font-style: normal;
+    font-family: 'Quicksand', sans-serif;
+    color: var(--text-muted);
+    margin-top: 8px; /* More space */
     opacity: 0.9;
-    text-shadow: 0 0 8px var(--raiden-glow); 
+    text-shadow: 0 0 8px var(--raiden-dark-glow);
     max-width: 90%;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .almighty-raiden {
-    color: var(--raiden-electro);
+    color: var(--raiden-electro); /* Use main electro color */
     font-weight: bold;
-    text-shadow: 0 0 10px var(--raiden-glow);
-    animation: blink 1.8s ease-in-out infinite alternate; 
+    text-shadow: 0 0 12px var(--raiden-glow);
+    animation: blink 2s ease-in-out infinite alternate; /* Slightly slower blink */
+    transition: color 0.3s ease;
 }
+.almighty-raiden:hover {
+    color: var(--secondary); /* Glow brighter on hover */
+}
+
 
 @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; text-shadow: 0 0 5px var(--raiden-glow);} /* Daha az parlak */
-    100% { opacity: 1; text-shadow: 0 0 10px var(--raiden-glow); } /* Tam parlak */
+    0% { opacity: 1; text-shadow: 0 0 12px var(--raiden-glow); }
+    50% { opacity: 0.75; text-shadow: 0 0 6px var(--raiden-dark-glow); }
+    100% { opacity: 1; text-shadow: 0 0 12px var(--raiden-glow); }
 }
-
 
 /* Responsive */
 @media (max-width: 768px) {
