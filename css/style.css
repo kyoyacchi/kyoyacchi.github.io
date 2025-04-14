@@ -329,7 +329,7 @@ body::before {
     transition: var(--transition-long); 
 }
 .bio .fa-heart { /* ADDED: Style for heart in bio */
-    color: var(--accent); /* Use the accent variable */
+    color: var(--primary-light); /* Use the accent variable */
 }
 .bio:hover {
     border-color: var(--secondary);
