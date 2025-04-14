@@ -191,7 +191,7 @@ async function updateDiscordPfp() {
                     introOverlay.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 }, 500);
-            }, 1000);
+            }, 1500);
       
         
         
@@ -199,13 +199,7 @@ async function updateDiscordPfp() {
     const lines = document.querySelectorAll('.line');
     
   
-    setTimeout(() => {
-        introOverlay.style.opacity = '0';
-        setTimeout(() => {
-            introOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 500); 
-    }, 1500); 
+    
     
     const preloaderText = document.querySelector('.preloader-text');
     const texts = [
