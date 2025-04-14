@@ -254,8 +254,12 @@ body::before {
 }
 
 .profile-img:hover {
-    transform: scale(1.07); /* DEĞİŞTİ: Biraz daha belirgin büyüme */
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary);
+    transform: scale(1.08); /* DEĞİŞTİ: Biraz daha belirgin büyüme */
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5),
+                0 0 28px var(--raiden-glow),   /* Ana parlama biraz daha güçlü */
+                0 0 18px var(--secondary);     /* İkincil mor parlama biraz daha güçlü */
+    border-color: var(--raiden-electro); /* Hover'da çerçeve rengi değişsin */
+                border-color: var(--raiden-electro);
 }
 .name-container {
     user-select: none;
@@ -298,6 +302,11 @@ body::before {
     height: 18px;
     filter: drop-shadow(0 0 3px var(--raiden-glow)); 
 }
+.checkmark:hover {
+    color: var(--secondary); /* İkincil parlak mor */
+    filter: drop-shadow(0 0 6px var(--secondary)); /* Mor parlama */
+    transform: scale(1.1);
+}
 
 .checkmark.shake {
     animation: shake 0.5s infinite;
@@ -332,9 +341,9 @@ body::before {
     color: var(--primary-light); /* Use the accent variable */
 }
 .bio:hover {
-    border-color: var(--secondary);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--secondary); /* Parlama */
-    transform: translateY(-3px); /* Hafif yukarı kalkma */
+border-color: var(--raiden-electro);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--raiden-glow);
+    transform: translateY(-4px); /* Hafif yukarı kalkma */
 }
 
 .bio::before {
@@ -386,12 +395,12 @@ body::before {
 }
 
 .social-icons a:hover {
-    color: var(--text-light); 
-    transform: translateY(-4px) scale(1.15);
-    text-shadow: 0 0 10px var(--secondary); 
-    background: linear-gradient(45deg, #7b2cbf, #d8bfff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--raiden-electro);
+    transform: translateY(-5px) scale(1.2);
+    text-shadow: 0 0 12px var(--raiden-glow);
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background: none;
 }
 
 /* Tweet Embed Container */
@@ -799,6 +808,11 @@ footer::before {
     border: 2px solid var(--secondary); 
     flex-shrink: 0;
     box-shadow: 0 0 8px var(--secondary); /* Subtle glow */
+    transition: var(--transition);
+}
+.footer-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--secondary), 0 0 5px var(--raiden-glow); /* Hover'da ana parlamayı da ekle */
 }
 
 .Footer_text {
@@ -810,8 +824,8 @@ footer::before {
     text-shadow: 0 0 5px var(--raiden-dark-glow);
 }
 .Footer_text:hover {
-    color: var(--secondary);
-    text-shadow: 0 0 10px var(--secondary);
+    color: var(--raiden-electro);
+    text-shadow: 0 0 12px var(--raiden-glow);
 }
 
 
