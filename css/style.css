@@ -219,7 +219,10 @@ body::before {
     object-position: center;
     transition: filter 0.4s ease; /* EKLENDİ: Hover efekti için geçiş */
 }
-
+.banner-img:hover {
+    filter: brightness(1.1) contrast(1.05); /* Hafif parlaklık ve kontrast */
+    box-shadow: inset 0 0 30px rgba(174, 99, 228, 0.3); /* İçten hafif mor parlama */
+}
 /* Profil İçeriği */
 .profile-content {
     position: relative;
@@ -860,17 +863,38 @@ footer::before {
 }
 
 .almighty-raiden {
-    color: var(--raiden-electro); /* Use main electro color */
+    color: var(--raiden-electro);
     font-weight: bold;
-    font-family: 'Noto Serif JP', serif; /* CHANGED: Apply Japanese Serif */
-    text-shadow: 0 0 12px var(--raiden-glow);
-    animation: blink 2s ease-in-out infinite alternate; /* Slightly slower blink */
-    transition: color 0.3s ease;
-}
+    font-family: 'Noto Serif JP', serif;
+    /* Sadece renk/parlama animasyonu */
+    animation: raidenNameGlowNoScale 2.5s ease-in-out infinite alternate; /* Yeni animasyon adı */
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    /* display: inline-block; kaldırılabilir veya kalabilir, ölçeklendirme için eklenmişti */
+};
+
 .almighty-raiden:hover {
-    color: var(--secondary); /* Glow brighter on hover */
+    color: var(--text-light);
+    text-shadow: 0 0 18px var(--secondary), 0 0 10px var(--text-light);
+    animation-play-state: paused; /* Hover'da animasyonu durdurmak hala mantıklı olabilir */
 }
 
+@keyframes raidenNameGlowNoScale {
+    0% {
+        color: var(--raiden-electro);
+        text-shadow: 0 0 12px var(--raiden-glow), 0 0 4px var(--primary-light);
+        /* transform: scale(1); kaldırıldı */
+    }
+    50% {
+        color: var(--secondary);
+        text-shadow: 0 0 18px var(--raiden-glow), 0 0 8px var(--secondary);
+        /* transform: scale(1.03); kaldırıldı */
+    }
+    100% {
+         color: var(--raiden-electro);
+         text-shadow: 0 0 12px var(--raiden-glow), 0 0 4px var(--primary-light);
+         /* transform: scale(1); kaldırıldı */
+    }
+}
 
 @keyframes blink {
     0% { opacity: 1; text-shadow: 0 0 12px var(--raiden-glow); }
