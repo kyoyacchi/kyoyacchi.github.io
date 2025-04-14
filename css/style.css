@@ -329,7 +329,7 @@ body::before {
     margin: 25px auto;
     
     font-size: 18px;
-    animation: slideUp 1s ease 0.4s forwards;
+ animation: slideUp 1s ease 0.4s forwards;*/
     opacity: 0;
     background: rgba(45, 27, 78, 0.7); 
     border: 1px solid var(--primary-dark);
@@ -339,7 +339,29 @@ body::before {
     box-shadow: var(--shadow);
     text-align: center;
     transition: var(--transition-long); 
+    position: relative;
+    overflow: visible;
 }
+
+.bio-kitsune-icon {
+    position: absolute; /* Ana elemente (.bio) göre konumlanacak */
+    width: 45px; /* Genişlik - Biraz daha büyük deneyebilirsin? */
+    height: auto; /* Yüksekliği otomatik ayarla */
+    /* Sağ üst köşeye yerleştirme */
+    top: -22px;   /* Kutunun üst kenarından ne kadar yukarı çıksın? */
+    right: -22px; /* Kutunun sağ kenarından ne kadar dışarı taşsın? */
+    z-index: 1; /* Bio içeriğinin üzerinde kalsın (varsa ::before'dan da üstte olabilir) */
+    pointer-events: none; /* Tıklama olaylarını engellemesin */
+    /* Hafif bir dönüş ekleyelim */
+    transform: rotate(12deg);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Biraz daha zıplamalı geçiş */
+}
+
+/* Ana bio kutusuna hover olduğunda ikon da tepki versin */
+.bio:hover .bio-kitsune-icon {
+  /*  transform: rotate(-8deg) scale(1.15);  Tersine dönsün ve biraz daha büyüsün */
+}
+
 .bio .fa-heart { /* ADDED: Style for heart in bio */
     color: var(--primary-light); /* Use the accent variable */
   /*  display: inline-block;  Transform için 
@@ -362,8 +384,8 @@ border-color: var(--raiden-electro);
     left: -20px; /* Kutunun sol kenarından SOLA doğru (değeri ayarla) */
 
     /* YENİ: Boyutu büyütme */
-    width: 45px;  /* Daha büyük genişlik (değeri ayarla) */
-    height: 45px; /* Daha büyük yükseklik (değeri ayarla) */
+    width: 39px;  /* Daha büyük genişlik (değeri ayarla) */
+    height: 39px; /* Daha büyük yükseklik (değeri ayarla) */
 
     background-image: url('https://files.catbox.moe/f5sld3.png');
     background-size: contain;
@@ -377,7 +399,7 @@ border-color: var(--raiden-electro);
 
 /* İsteğe bağlı: Hover efekti ikona da eklenebilir */
 .bio:hover::before {
-    transform: scale(1.1) rotate(-5deg); /* Hafif büyütme ve döndürme */
+   /* transform: scale(1.1) rotate(-5deg);  Hafif büyütme ve döndürme */
 }
 
 
