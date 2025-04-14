@@ -396,6 +396,7 @@ border-color: var(--raiden-electro);
     font-size: 26px;
     transition: all 0.3s ease;
     position: relative;
+   /* overflow: hidden; */
 }
 
 .social-icons a:hover {
@@ -434,7 +435,14 @@ border-color: var(--raiden-electro);
   padding: 0;
   background: rgba(30, 11, 46, 0.6); /* Darker, subtle background */
   border-radius: var(--border-radius);
-  border: 1px solid var(--primary-dark);
+  border: 2px solid transparent; /* Başlangıçta şeffaf kenarlık */
+  background-image: linear-gradient(var(--bg-light), var(--bg-light)), /* İç arka plan */
+                      linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary), var(--raiden-electro), var(--primary-dark)); /* Kenarlık gradienti */
+                      background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-size: 200% 100%; /* Gradientin hareket etmesi için */
+    animation: gradientBorderFlow 4s linear infinite;
+  
   min-height: 200px; /* Ensure space for loader */
   box-sizing: border-box;
   display: flex; /* Use flex for centering loader */
@@ -442,8 +450,20 @@ border-color: var(--raiden-electro);
   align-items: center;
    /* Apply scroll animation class */
    overflow: hidden; /* Hide decorative elements overflow */
-   transition: var(--transition-long);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Subtle initial shadow */
+   transition: var(--transition-long), box-shadow 0.4s ease; /* Box-shadow
+   geçişi eklendi */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Hafif başlangıç gölgesi */
+}
+.tweet-embed-container:hover {
+    border-color: transparent; /* Hover'da da transparent kalsın, gradient görünür olsun */
+    box-shadow: 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary); /* Daha güçlü parlama */
+    animation-play-state: paused; /* Hover'da kenarlık animasyonunu durdur */
+}
+
+@keyframes gradientBorderFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .embed-slider-wrapper {
@@ -574,7 +594,7 @@ border-color: var(--raiden-electro);
     z-index: 2;       /* Arkaplanın üzerinde */
     pointer-events: none; /* Tıklanamaz */
     opacity: 0.85;
-    animation: floatSimple 3s ease-in-out infinite alternate; /* Basit animasyon */
+    animation: floatBoltEnhanced 2.5s ease-in-out infinite alternate; 
 }
 .tweet-content::after {
     content: '\f005'; /* Font Awesome Yıldız */
@@ -589,8 +609,21 @@ border-color: var(--raiden-electro);
     z-index: 2;       /* Arkaplanın üzerinde */
     pointer-events: none; /* Tıklanamaz */
     opacity: 0.75;
-    animation: spinSimple 4s linear infinite; /* Basit animasyon */
+    animation: spinStarEnhanced 3.5s linear infinite; /* Yeni animasyon adı */
 }
+
+@keyframes floatBoltEnhanced {
+  0% { transform: translateY(-4px) scale(1); opacity: 0.7; text-shadow: 0 0 10px var(--raiden-glow); }
+  50% { transform: translateY(0px) scale(1.1); opacity: 1; text-shadow: 0 0 18px var(--raiden-glow); } /* Daha parlak ve büyük */
+  100% { transform: translateY(4px) scale(1); opacity: 0.7; text-shadow: 0 0 10px var(--raiden-glow); }
+}
+
+@keyframes spinStarEnhanced {
+  from { transform: rotate(0deg) scale(1); opacity: 0.7; text-shadow: 0 0 8px var(--secondary); }
+  50% { transform: rotate(180deg) scale(1.15); opacity: 1; text-shadow: 0 0 14px var(--secondary); } /* Ortada büyüyüp parlasın */
+  to   { transform: rotate(360deg) scale(1); opacity: 0.7; text-shadow: 0 0 8px var(--secondary); }
+}
+
 .tweet-content.loaded {
   opacity: 1;
 }
