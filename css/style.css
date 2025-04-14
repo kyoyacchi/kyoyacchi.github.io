@@ -328,6 +328,9 @@ body::before {
     text-align: center;
     transition: var(--transition-long); 
 }
+.bio .fa-heart { /* ADDED: Style for heart in bio */
+    color: var(--accent); /* Use the accent variable */
+}
 .bio:hover {
     border-color: var(--secondary);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--secondary); /* Parlama */
@@ -845,6 +848,7 @@ footer::before {
 .almighty-raiden {
     color: var(--raiden-electro); /* Use main electro color */
     font-weight: bold;
+    font-family: 'Noto Serif JP', serif; /* CHANGED: Apply Japanese Serif */
     text-shadow: 0 0 12px var(--raiden-glow);
     animation: blink 2s ease-in-out infinite alternate; /* Slightly slower blink */
     transition: color 0.3s ease;
