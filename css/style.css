@@ -377,6 +377,7 @@ border-color: var(--raiden-electro);
 }
 
 
+
 @keyframes slideUp {
     from { transform: translateY(50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
@@ -406,6 +407,24 @@ border-color: var(--raiden-electro);
     background: none;
 }
 
+.social-icons a::after {
+    content: '✦'; /* Veya '⚡', '*', '✧' gibi bir karakter */
+    position: absolute;
+    font-size: 14px; /* Kıvılcım boyutu */
+    color: var(--secondary); /* Kıvılcım rengi */
+    top: -5px; /* İkonun biraz üstü */
+    right: -5px; /* İkonun biraz sağı */
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+    transition: all 0.2s ease-out;
+    text-shadow: 0 0 8px var(--secondary);
+}
+
+.social-icons a:hover::after {
+    opacity: 1;
+    transform: scale(1.1) rotate(90deg); /* Büyüyüp dönsün */
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Zıplama efekti */
+}
 /* Tweet Embed Container */
 .tweet-embed-container {
   position: relative;
