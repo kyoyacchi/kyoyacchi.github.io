@@ -345,7 +345,7 @@ body::before {
 
 .bio-kitsune-icon {
     position: absolute; /* Ana elemente (.bio) göre konumlanacak */
-    width: 45px; /* Genişlik - Biraz daha büyük deneyebilirsin? */
+    width: 49px; /* Genişlik - Biraz daha büyük deneyebilirsin? */
     height: auto; /* Yüksekliği otomatik ayarla */
     /* Sağ üst köşeye yerleştirme */
     top: -22px;   /* Kutunun üst kenarından ne kadar yukarı çıksın? */
@@ -1009,7 +1009,7 @@ footer::before {
          left: -15px;
      }
     .bio-kitsune-icon {
-        width: 45px; /* Biraz küçültelim */
+        width: 49px; /* Biraz küçültelim */
         top: -22px;  /* Dikeyde biraz daha yakın */
         right: -22px; /* Yatayda biraz daha yakın (önceki ayarına göre ayarla) */
         transform: rotate(10deg); /* Dönüş açısı belki biraz azalabilir */
@@ -1059,7 +1059,7 @@ footer::before {
      
    }
    .bio-kitsune-icon {
-        width: 45px; /* Daha da küçültelim */
+        width: 49px; /* Daha da küçültelim */
         top: -22px;  /* Kutunun üstüne daha da yakın */
         right: -22px; /* Kutunun sağına daha da yakın */
         
