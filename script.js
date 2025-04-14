@@ -513,6 +513,79 @@ function setupParticleCanvas() {
         });
     }
     
+    /**
+ * Dinamik olarak değişen banner işlevselliğini başlatır.
+ * Bu fonksiyonun DOM hazır olduğunda (örn. DOMContentLoaded içinde) çağrılması gerekir.
+ */
+function initializeDynamicBanner() {
+    const bannerElement = document.querySelector('.banner-img');
+    // --- BANNER URL'LERİNİ BURAYA EKLE ---
+    const bannerUrls = [
+        'https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
+        'https://pbs.twimg.com/profile_banners/1674381898070188033/1739900077/1080x360', // 2. Alternatif
+        'https://pbs.twimg.com/profile_banners/1375018800348016641/1739900077/1080x360', // 3. Alternatif
+        // Örnek: 'https://site.com/banner4.jpg',
+    ];
+    // ----------------------------------
+
+    const changeInterval = 30000; // Değişim aralığı (ms) - 30 saniye
+    const fadeTransitionDuration = 600; // CSS transition süresi (ms) - 0.6 saniye
+    let currentBannerIndex = 0;
+    let bannerIntervalId = null;
+
+    // Eleman yoksa veya yeterli banner yoksa işlemi başlatma
+    if (!bannerElement) {
+        console.warn("couldnt start dynamic banner func: couldn't find the banner element.");
+        return;
+    }
+     if (bannerUrls.length < 2) {
+        console.info('Could not start dynamic banner func: Not enough dynamic banners to change.');
+        return;
+    }
+
+    // Ana banner değiştirme fonksiyonu
+    function changeBanner() {
+        // Yeni ve farklı bir banner indeksi seç
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * bannerUrls.length);
+        } while (newIndex === currentBannerIndex);
+
+        // Mevcut banner'ı fade out yap
+        bannerElement.style.opacity = '0';
+
+        // Geçiş süresi kadar bekledikten sonra resmi değiştir ve fade in yap
+        setTimeout(() => {
+            currentBannerIndex = newIndex;
+            bannerElement.src = bannerUrls[currentBannerIndex];
+
+            // Yeni resim yüklendikten sonra (veya direkt) fade in yap
+             bannerElement.style.opacity = '1';
+
+        }, fadeTransitionDuration);
+    }
+
+    // İlk banner değişimini belirli aralıklarla başlat
+    bannerIntervalId = setInterval(changeBanner, changeInterval);
+    console.log(`dynamic banner started to change per ${changeInterval /
+    1000} sec`);
+
+} // initializeDynamicBanner fonksiyonu sonu
+
+// --- ÖNEMLİ ---
+// Bu fonksiyonu kullanmak için, script'inin uygun bir yerinde
+// (DOM tamamen yüklendikten sonra) çağırman gerekir:
+//
+// Örnek Kullanım:
+// document.addEventListener('DOMContentLoaded', () => {
+//     initializeDynamicBanner();
+//     // diğer kodların...
+// });
+//
+// VEYA script dosyanın en sonunda, defer ile yükleniyorsa direkt çağırabilirsin:
+// initializeDynamicBanner();
+//
+    
     
     
     function initializePage() {
@@ -524,7 +597,7 @@ function setupParticleCanvas() {
    
     setupParticleCanvas();
     setupScrollAnimations();
-    
+    initializeDynamicBanner();
 //summonYae();
     // Add event listener for checkmark click (if needed globally)
     const checkmarkIcon = document.querySelector('.checkmark');
