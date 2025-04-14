@@ -342,7 +342,11 @@ body::before {
 }
 .bio .fa-heart { /* ADDED: Style for heart in bio */
     color: var(--primary-light); /* Use the accent variable */
+  /*  display: inline-block;  Transform için 
+    animation: pulseHeart 1.5s infinite ease-in-out;*/
+    
 }
+
 .bio:hover {
 border-color: var(--raiden-electro);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--raiden-glow);
