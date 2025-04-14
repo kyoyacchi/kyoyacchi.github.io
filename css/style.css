@@ -4,26 +4,35 @@ margin: 0;
     box-sizing: border-box;
 }
 :root {
-    --primary: #6C2BD9;
-    --primary-dark: #5525AE;
-    --primary-light: #8A4FFF;
-    --secondary: #A68BFF;
-    --accent: #FF6B8B;
-    --accent-glow: rgba(255, 107, 139, 0.7); /* EKLENDİ: Pembe parlama */
-    --bg-dark: #1A0B2E;
-    --bg-light: #2D1B4E;
+    /* --- Refined Raiden Palette --- */
+    --primary: #7B2CBF; /* Deeper Primary Purple */
+    --primary-dark: #5A189A; /* Darker Shade */
+    --primary-light: #9D4EDD; /* Lighter Shade */
+    --secondary: #C77DFF; /* Lighter Accent Purple */
+    --accent: #FF758F; /* Kept pink accent, maybe slightly adjusted */
+    --accent-glow: rgba(255, 117, 143, 0.7);
+
+    --bg-dark: #10002B; /* Very Dark Purple Base */
+    --bg-light: #240046; /* Lighter Dark Purple */
+    --bg-gradient-start: #18032d; /* Darker gradient start */
+    --bg-gradient-end: #3c096c; /* Richer gradient end */
+
     --text-light: #F8F9FA;
-    --text-muted: #B4B4B4;
-    --text-dark: #2D2D2D;
-    --raiden-electro: #9B59B6; /* EKLENDİ: Raiden moru (daha belirgin) */
-    --raiden-glow: rgba(155, 89, 182, 0.8); /* EKLENDİ: Raiden parlama rengi */
-    --shadow: 0 6px 25px rgba(0, 0, 0, 0.3); /* DEĞİŞTİ: Biraz daha belirgin gölge */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --text-muted: #CEC8EF; /* Muted purple-ish gray */
+    --text-dark: #E0AAFF; /* Lighter purple for dark text contrast if needed */
+
+    --raiden-electro: #AE63E4; /* Brighter Electro Purple */
+    --raiden-glow: rgba(174, 99, 228, 0.85); /* More intense glow */
+    --raiden-dark-glow: rgba(123, 44, 191, 0.6); /* Subtle dark glow */
+    --gold-accent: #FFD700; /* Gold for accents like Ei's details */
+
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+    --shadow-glow: 0 0 15px var(--raiden-glow); /* Reusable glow shadow */
     --border-radius: 12px;
     --transition: all 0.3s ease;
-        --transition-long: all 0.5s ease; /* EKLENDİ: Daha yavaş geçişler için
-        */
+    --transition-long: all 0.5s ease;
 }
+
 @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -37,8 +46,12 @@ margin: 0;
 
 body {
   font-family: 'Comfortaa', sans-serif;
-    background: linear-gradient(135deg, #2a0a3d 0%, #4b1a6d 100%);
-    color: #fff;
+    background: linear-gradient(145deg, var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%);
+    background-image: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%),
+                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path fill="%239D4EDD" fill-opacity="0.05" d="M0 40 L40 0 H20 L0 20 M40 40 V20 L20 40"></path></svg>');
+    background-attachment: fixed; /* Keep pattern fixed */
+    color: var(--text-light);
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
@@ -48,6 +61,17 @@ a {
     color: inherit;
     transition: var(--transition);
 }
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(10, 0, 30, 0.1) 0%, rgba(10, 0, 30, 0.5) 100%);
+    pointer-events: none;
+    z-index: -1;
+}
 
 .intro-overlay {
     position: fixed;
@@ -55,46 +79,46 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #4b1a6d; /* Mor arka plan */
+    background: var(--bg-dark); ; /* Mor arka plan */
     z-index: 1000;
     display: flex;
     /*flex-direction: column;*/
     align-items: center;
     justify-content: center;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.7s ease 0.5s; 
 }
 
 
 .line {
     position: absolute;
-    height: 4px; 
+    height: 5px; 
     background: var(--raiden-electro);
-    box-shadow: 0 0 15px var(--raiden-glow);
-    border-radius: 2px;
+    box-shadow: 0 0 20px var(--raiden-glow);
+    border-radius: 3px;
 }
 
 .line-left {
     left: 0;
     width: 0;
-    animation: slideFromLeft 1.5s ease-out forwards;
+    animation: slideFromLeft 1.8s ease-out forwards; /* Slightly longer */
 }
 
 .line-right {
     right: 0;
     width: 0;
-    animation: slideFromRight 1.5s ease-out forwards;
+    animation: slideFromRight 1.8s ease-out forwards; /* Slightly longer */
 }
 
 @keyframes slideFromLeft {
-    0% { width: 0; background: #D946EF; }
-    50% { width: 50%; background: #9B5FC0; } /* Birleşirken mor */
-    100% { width: 50%; background: #8000ff; }
+    0% { width: 0; background: var(--primary-light); box-shadow: 0 0 10px var(--primary-light);}
+    50% { width: 50%; background: var(--raiden-electro); box-shadow: 0 0 20px var(--raiden-glow); }
+    100% { width: 50%; background: var(--primary); box-shadow: 0 0 25px var(--raiden-glow); }
 }
 
 @keyframes slideFromRight {
-    0% { width: 0; background: #D946EF; }
-    50% { width: 50%; background: #9B5FC0; } /* Birleşirken mor */
-    100% { width: 50%; background: #8000ff; }
+    0% { width: 0; background: var(--primary-light); box-shadow: 0 0 10px var(--primary-light); }
+    50% { width: 50%; background: var(--raiden-electro); box-shadow: 0 0 20px var(--raiden-glow); }
+    100% { width: 50%; background: var(--primary); box-shadow: 0 0 25px var(--raiden-glow); }
 }
 
 .preloader-image {
@@ -116,9 +140,9 @@ a {
 .preloader-text {
     position: absolute;
    
-    color: #D946EF;
+    color: var(--secondary); 
     font-family: 'Quicksand', sans-serif;
-    font-size: 23px;
+    font-size: 24px;
     font-weight: 700;
     text-shadow:
         0 0 10px var(--raiden-glow),
@@ -134,10 +158,12 @@ a {
     box-sizing: border-box; 
 }
 @keyframes glowShift {
-    0% { color: var(--secondary); text-shadow: 0 0 10px var(--raiden-glow), 0 0 20px var(--raiden-electro), 0 0 35px var(--primary-light); }
-    50% { color: var(--primary-light); text-shadow: 0 0 15px var(--raiden-electro), 0 0 25px var(--raiden-glow), 0 0 40px var(--secondary); }
-    100% { color: var(--secondary); text-shadow: 0 0 10px var(--raiden-glow), 0 0 20px var(--raiden-electro), 0 0 35px var(--primary-light); }
+    0% { color: var(--secondary); text-shadow: 0 0 12px var(--raiden-glow), 0 0 25px var(--raiden-electro), 0 0 40px var(--primary-light); }
+    33% { color: var(--primary-light); text-shadow: 0 0 18px var(--raiden-electro), 0 0 30px var(--raiden-glow), 0 0 45px var(--secondary); }
+    66% { color: var(--text-light); text-shadow: 0 0 15px var(--secondary), 0 0 28px var(--raiden-glow), 0 0 42px var(--raiden-electro); }
+    100% { color: var(--secondary); text-shadow: 0 0 12px var(--raiden-glow), 0 0 25px var(--raiden-electro), 0 0 40px var(--primary-light); }
 }
+
 .preloader-text.glow {
     animation: glowShift 3s infinite ease-in-out;
 }
