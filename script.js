@@ -573,7 +573,19 @@ function initializeDynamicBanner() {
     bannerIntervalId = setInterval(changeBanner, changeInterval);
     console.log(`dynamic banner started to change per ${changeInterval /
     1000} sec`);
-
+    
+// Sekme görünürlük durumunu kontrol et
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            // Sekme gizli, interval'i durdur
+            clearInterval(bannerIntervalId);
+            console.log('dynamic banner stopped (tab hidden)');
+        } else {
+            // Sekme aktif, tekrar başlat
+            bannerIntervalId = setInterval(changeBanner, changeInterval);
+            console.log('dynamic banner resumed (tab visible)');
+        }
+    });
 } // initializeDynamicBanner fonksiyonu sonu
 
 // --- ÖNEMLİ ---
