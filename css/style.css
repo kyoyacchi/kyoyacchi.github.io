@@ -178,7 +178,7 @@ body::before {
         0 0 15px var(--primary-dark);
         
     /* --- OPACITY DEĞİŞİKLİĞİ BURADA --- */
-    opacity: 0.8; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.85 vb.) */
+    opacity: 0.4; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.85 vb.) */
     
     text-align: center;
     transition: opacity 0.8s ease-out; 
@@ -197,7 +197,7 @@ body::before {
     height: auto; 
 
     /* --- OPACITY DEĞİŞİKLİĞİ BURADA --- */
-    opacity: 0.75; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.8 vb.) */
+    opacity: 0.29; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.8 vb.) */
     /* Resim için farklı bir opaklık değeri de kullanabilirsiniz */
     
     transition: opacity 0.8s ease-out; 
