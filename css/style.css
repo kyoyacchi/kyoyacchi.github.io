@@ -952,7 +952,7 @@ footer::before {
     /* Sadece renk/parlama animasyonu */
     animation: raidenNameGlowNoScale 2.5s ease-in-out infinite alternate; /* Yeni animasyon adı */
     transition: color 0.3s ease, text-shadow 0.3s ease;
-    /* display: inline-block; kaldırılabilir veya kalabilir, ölçeklendirme için eklenmişti */
+     display: inline-block; /*kaldırılabilir veya kalabilir, ölçeklendirme için eklenmişti */
 };
 
 .almighty-raiden:hover {
