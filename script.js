@@ -532,7 +532,7 @@ function initializeDynamicBanner() {
     ];
     // ----------------------------------
 
-    const changeInterval = 30000; // Değişim aralığı (ms) - 30 saniye
+    const changeInterval = 10000;// Değişim aralığı (ms) - 30 saniye
     const fadeTransitionDuration = 600; // CSS transition süresi (ms) - 0.6 saniye
     let currentBannerIndex = 0;
     let bannerIntervalId = null;
