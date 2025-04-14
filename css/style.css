@@ -818,7 +818,7 @@ footer::before {
 
 
 #Footer_heart {
-    color: var(--accent);
+    color: var(--primary-light);
     transition: color 0.2s linear, transform 0.3s ease, text-shadow 0.3s ease;
     cursor: pointer;
    /* text-shadow: 0 0 8px var(--accent-glow);*/
