@@ -951,12 +951,12 @@ footer::before {
     object-fit: cover;
     border: 2px solid var(--secondary); 
     flex-shrink: 0;
-    box-shadow: 0 0 8px var(--secondary); /* Subtle glow */
+  /*  box-shadow: 0 0 8px var(--secondary); Subtle glow */
     transition: var(--transition);
 }
 .footer-avatar:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 15px var(--secondary), 0 0 5px var(--raiden-glow); /* Hover'da ana parlamayı da ekle */
+   /* box-shadow: 0 0 15px var(--secondary), 0 0 5px var(--raiden-glow);  Hover'da ana parlamayı da ekle */
 }
 
 .Footer_text {
