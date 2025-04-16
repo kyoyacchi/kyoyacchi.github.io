@@ -549,7 +549,7 @@ function initializeDynamicBanner() {
         'https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
 'https://files.catbox.moe/27mh8k.jpg',
 'https://files.catbox.moe/ftsuwx.jpg',
-'https://files.catbox.moe/g8ycpb.png',
+'https://files.catbox.moe/dx4dym.jpg',
 'https://files.catbox.moe/vezogz.jpg',
 'https://files.catbox.moe/kfn36d.jpg',
 'https://files.catbox.moe/5fwex5.jpg',
