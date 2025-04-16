@@ -547,7 +547,7 @@ function initializeDynamicBanner() {
     // --- BANNER URL'LERİNİ BURAYA EKLE ---
     const bannerUrls = [
         'https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
-'https://files.catbox.moe/ezb5mw.png',
+'https://files.catbox.moe/27mh8k.jpg',
 'https://files.catbox.moe/hor3y0.png',
 'https://files.catbox.moe/g8ycpb.png',
 'https://files.catbox.moe/vezogz.jpg',
