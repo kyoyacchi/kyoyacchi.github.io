@@ -367,6 +367,9 @@ body::before {
     width: 18px; /* DEĞİŞTİ: Biraz daha büyük */
     height: 18px;
     filter: drop-shadow(0 0 3px var(--raiden-glow)); 
+    fill: var(--raiden-electro);
+    vertical-align: middle;
+    /*margin-left: 6px;*/
 }
 .checkmark:hover {
     color: var(--secondary); /* İkincil parlak mor */
@@ -1213,3 +1216,5 @@ footer::before {
             opacity: 1;
             transform: translate(-50%, -100%) scale(1.2); 
         }
+        
+        
