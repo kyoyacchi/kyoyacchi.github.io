@@ -221,36 +221,7 @@ async function updateDiscordPfp() {
     if(preloaderText){
     preloaderText.textContent = randomText;
 }
-const subPreloaderTextElement = document.querySelector('.sub-preloader-text');
-    const mizukiImageElement = document.getElementById('mizuki-sub-image');
 
-    // Olası metinler
-    const possibleTexts = [
-        "Fuck Yumemizuki Mizuki", 
-        "Fuck Aether"
-    ];
-
-    // Rastgele bir metin seç
-    const randomIndex = Math.floor(Math.random() * possibleTexts.length);
-    const chosenText = possibleTexts[randomIndex];
-
-    // Seçilen metni elemente yazdır
-    if (subPreloaderTextElement) {
-        subPreloaderTextElement.textContent = chosenText;
-    } else {
-        console.error("couldn't find .sub-preloader-text element");
-    }
-
-    // Eğer Mizuki metni seçildiyse resmi göster
-    if (mizukiImageElement) {
-        if (chosenText === "Fuck Yumemizuki Mizuki") {
-            mizukiImageElement.style.display = 'block'; // Resmi görünür yap
-        } else {
-            mizukiImageElement.style.display = 'none'; // Diğer durumda gizli kalsın
-        }
-    } else {
-         console.error("couldn't find #mizuki-sub-image element");
-    }
 
 }
 
