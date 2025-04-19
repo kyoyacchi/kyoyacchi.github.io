@@ -198,7 +198,7 @@ async function updateDiscordPfp() {
 
     // Rastgele metinler dizisi 
     const texts = [
-       /* 'Now, you shall perish!',
+        'Now, you shall perish!',
         'There is no escape!',
         'Inazuma shines eternal!',
         'Inabikari, sunawachi Eien nari',
@@ -210,7 +210,7 @@ async function updateDiscordPfp() {
         'Sabaki no ikazuchi',
         'Nigemichi wa arimasen',
         'Muga no kyouchi he',
-        'Koko yori, jakumetsu no toki!',*/
+        'Koko yori, jakumetsu no toki!',
         'Musou me harder, mommy' // Özel muamele görecek arkadaş
     ];
 
