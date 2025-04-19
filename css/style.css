@@ -146,7 +146,7 @@ body::before {
     font-weight: 700;
     opacity: 1;
     text-align: center;
-    top: 60%;
+    top: 51.4%;
     transition: opacity 0.8s ease-out;
     animation: pulseGlowPreloader 3s infinite ease-in-out;
     max-width: 90%; 
