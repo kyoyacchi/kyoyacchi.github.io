@@ -528,12 +528,12 @@ border-color: var(--raiden-electro);
   background: rgba(30, 11, 46, 0.6); /* Darker, subtle background */
   border-radius: var(--border-radius);
   border: 2px solid transparent; /* Başlangıçta şeffaf kenarlık */
-  background-image: linear-gradient(var(--bg-light), var(--bg-light)), /* İç arka plan */
-                      linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary), var(--raiden-electro), var(--primary-dark)); /* Kenarlık gradienti */
-                      background-origin: border-box;
-    background-clip: padding-box, border-box;
-    background-size: 200% 100%; /* Gradientin hareket etmesi için */
-    animation: gradientBorderFlow 4s linear infinite;
+  background-image: linear-gradient(var(--bg-light), var(--bg-light)), /* İç arka plan rengi */
+                  linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary), var(--raiden-electro), var(--primary-dark)); /* Kenarlık gradienti */
+background-origin: border-box;
+background-clip: padding-box, border-box; /* Bu çok önemli! */
+background-size: 300% 100%;
+    animation: gradientBorderFlow 5s linear infinite; /* Yukarıdaki keyframes animasyonunu uygular */ linear infinite;
   
   min-height: 200px; /* Ensure space for loader */
   box-sizing: border-box;
@@ -542,8 +542,7 @@ border-color: var(--raiden-electro);
   align-items: center;
    /* Apply scroll animation class */
    overflow: hidden; /* Hide decorative elements overflow */
-   transition: var(--transition-long), box-shadow 0.4s ease; /* Box-shadow
-   geçişi eklendi */
+ transition: var(--transition-long), box-shadow 0.4s ease, animation-play-state 0.2s ease;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Hafif başlangıç gölgesi */
 }
 .tweet-embed-container:hover {
@@ -552,11 +551,6 @@ border-color: var(--raiden-electro);
     animation-play-state: paused; /* Hover'da kenarlık animasyonunu durdur */
 }
 
-@keyframes gradientBorderFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 
 .embed-slider-wrapper {
   display: flex;
@@ -1217,4 +1211,8 @@ footer::before {
             transform: translate(-50%, -100%) scale(1.2); 
         }
         
-        
+        @keyframes gradientBorderFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 200% 50%; } 
+    100% { background-position: 0% 50%; }
+}
