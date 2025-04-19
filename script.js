@@ -626,7 +626,7 @@ function initializeDynamicBanner() {
     function initializePage() {
     handleIntroOverlay();
    // setLang();
-   // updateDiscordPfp();
+   updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
    
