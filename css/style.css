@@ -156,57 +156,11 @@ body::before {
     width: 100%;
 }
 
-/* --- YENİ STİLLER (GÜNCELLENMİŞ) --- */
 
-.sub-preloader-text {
-    position: absolute;
-    top: 65%; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%; 
-    max-width: 400px; 
-    
-    color: var(--secondary); 
-    font-family: 'Quicksand', sans-serif;
-    font-size: 16px; 
-    font-weight: 500; 
-     text-shadow: 
-        0 0 8px var(--raiden-glow),
-        0 0 15px var(--primary-dark);
-        
-    /* --- OPACITY DEĞİŞİKLİĞİ BURADA --- */
-    opacity: 0.4; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.85 vb.) */
-    
-    text-align: center;
-    transition: opacity 0.8s ease-out; 
-    word-wrap: break-word; 
-    padding: 5px; 
-    box-sizing: border-box; 
-}
 
-#mizuki-sub-image {
-    position: absolute;
-    top: 75%; 
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 80%; 
-    max-height: 150px; 
-    height: auto; 
 
-    /* --- OPACITY DEĞİŞİKLİĞİ BURADA --- */
-    opacity: 0.29; /* 1 yerine istediğiniz bir değer (örn: 0.7, 0.8 vb.) */
-    /* Resim için farklı bir opaklık değeri de kullanabilirsiniz */
-    
-    transition: opacity 0.8s ease-out; 
-    border-radius: 5px; 
-    /* display: none; başlangıçta JS ile kontrol ediliyor */ 
-}
-
-/* --- FADE OUT STİLLERİ (DEĞİŞİKLİK YOK, SADECE KONTROL) --- */
-/* Bu kural zaten opacity'yi 0'a düşürdüğü için doğru çalışmaya devam edecektir */
 .intro-overlay.fade-out .preloader-text,
-.intro-overlay.fade-out .sub-preloader-text, 
-.intro-overlay.fade-out #mizuki-sub-image {  
+{  
     opacity: 0; 
 }
 
