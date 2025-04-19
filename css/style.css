@@ -167,7 +167,7 @@ body::before {
 .subtitle-text {
     position: absolute;
     top: 57%; 
-    width: 90%;
+    width: 100%;
     max-width: 90%;
     box-sizing: border-box;
     padding: 5px;
@@ -179,6 +179,7 @@ body::before {
     text-align: center;
     opacity: 1;
     word-wrap: break-word;
+    display: inline-block;
 }
 
 
