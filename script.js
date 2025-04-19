@@ -225,10 +225,16 @@ async function updateDiscordPfp() {
         preloaderText.textContent = randomText;
     }
 
+
     // --- İŞTE O MEŞHUR KISIM ---
     // Eğer seçilen metin "O" metinse...
     if (randomText === 'Musou me harder, mommy') {
         // introOverlay null değilse devam et
+        const subtitleText = document.querySelector('.subtitle-text'); // HTML'e eklediğimiz elementi seçelim
+if (subtitleText) {
+    subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun'; // Sabit yazımızı basalım
+    subtitleText.style.fontStyle = 'italic'; // Yazıyı italik yapalım
+}
         if (introOverlay) {
             // Arka planı koyu mora çekelim
          //   introOverlay.style.backgroundColor = '#3b0f5a';
@@ -239,6 +245,8 @@ introOverlay.classList.add('shake-it');
             }, 300); // 0.3 saniye = 300 milisaniye
         }
     }
+    
+    
     // --- MEŞHUR KISIM SONU ---
 
 
