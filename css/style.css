@@ -179,7 +179,7 @@ body::before {
     text-align: center;
     opacity: 1;
     word-wrap: break-word;
-    display: inline-block;
+  /*  display: inline-block;*/
 }
 
 
