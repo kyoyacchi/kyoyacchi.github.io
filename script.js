@@ -1,7 +1,7 @@
    
     const PRELOADER_EXIT_DELAY = 1500; // ms after lines finish
 const PRELOADER_FADE_DURATION = 500; // ms for fade out
-const PARTICLE_COUNT = 40; // Reduced particle count for performance
+const PARTICLE_COUNT = 55; // Reduced particle count for performance
 const DISCORD_USER_ID = "468509605828493322";
 const GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/63583961";
 const DISCORD_API_URL = `https://kyopi.vercel.app/api/pfp?id=${DISCORD_USER_ID}`;
