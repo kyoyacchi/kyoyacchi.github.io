@@ -198,7 +198,7 @@ async function updateDiscordPfp() {
 
     // Rastgele metinler dizisi 
     const texts = [
-        'Now, you shall perish!',
+       /* 'Now, you shall perish!',
         'There is no escape!',
         'Inazuma shines eternal!',
         'Inabikari, sunawachi Eien nari',
@@ -210,7 +210,7 @@ async function updateDiscordPfp() {
         'Sabaki no ikazuchi',
         'Nigemichi wa arimasen',
         'Muga no kyouchi he',
-        'Koko yori, jakumetsu no toki!',
+        'Koko yori, jakumetsu no toki!',*/
         'Musou me harder, mommy' // Özel muamele görecek arkadaş
     ];
 
@@ -231,27 +231,21 @@ async function updateDiscordPfp() {
         // introOverlay null değilse devam et
         if (introOverlay) {
             // Arka planı koyu mora çekelim
-            introOverlay.style.backgroundColor = '#3b0f5a'; // Senin için seçtiğim koyu mor
-
+         //   introOverlay.style.backgroundColor = '#3b0f5a';
+introOverlay.classList.add('shake-it');
             // Hafifçe yanıp sönme efekti (kısa süreliğine daha koyu yapıp geri al)
             setTimeout(() => {
-                introOverlay.style.backgroundColor = '#2a0841'; // Anlık daha koyu mor
-            }, 150); // 150 milisaniye sonra
-            setTimeout(() => {
-                introOverlay.style.backgroundColor = '#3b0f5a'; // Tekrar ana koyu mora dön
-            }, 300); // Toplam 300 milisaniye sonra eski rengine dönsün
+                introOverlay.classList.remove('shake-it');
+            }, 300); // 0.3 saniye = 300 milisaniye
         }
     }
     // --- MEŞHUR KISIM SONU ---
 
-    // .line elementleri vs. ile ilgili başka kodların varsa onlar buraya gelebilir
-    // const lines = document.querySelectorAll('.line');
+
+
 }
 
-// Fonksiyonu çağırmayı unutma, örneğin sayfa yüklendiğinde:
-// handleIntroOverlay();
-// veya
-// window.addEventListener('load', handleIntroOverlay);
+
 
 /**
  * Belirtilen bir tweet gömme konteynerini Intersection Observer kullanarak
