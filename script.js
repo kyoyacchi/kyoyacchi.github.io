@@ -182,26 +182,21 @@ async function updateDiscordPfp() {
 
 
         function handleIntroOverlay() {
-          
-        
-            const introOverlay = document.querySelector('.intro-overlay');
+    // Giriş overlay'ini seçelim
+    const introOverlay = document.querySelector('.intro-overlay');
+
+    // Ana fade-out animasyonu (1.5 saniye sonra başlar, 0.5 saniye sürer)
+    setTimeout(() => {
+        if (introOverlay) { // Null check eklendi
+            introOverlay.style.opacity = '0';
             setTimeout(() => {
-                introOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    introOverlay.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }, 500);
-            }, 1500);
-      
-        
-        
-    
-    const lines = document.querySelectorAll('.line');
-    
-  
-    
-    
-    const preloaderText = document.querySelector('.preloader-text');
+                introOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Sayfa kaydırmayı etkinleştir
+            }, 500); // Opacity 0 olduktan 500ms sonra gizle
+        }
+    }, 1500); // 1.5 saniye bekle
+
+    // Rastgele metinler dizisi 
     const texts = [
         'Now, you shall perish!',
         'There is no escape!',
@@ -215,15 +210,48 @@ async function updateDiscordPfp() {
         'Sabaki no ikazuchi',
         'Nigemichi wa arimasen',
         'Muga no kyouchi he',
-        'Koko yori, jakumetsu no toki!'
+        'Koko yori, jakumetsu no toki!',
+        'Musou me harder, mommy' // Özel muamele görecek arkadaş
     ];
+
+    // Rastgele bir metin seçelim
     const randomText = texts[Math.floor(Math.random() * texts.length)];
-    if(preloaderText){
-    preloaderText.textContent = randomText;
+
+    // Metni gösterecek elementi seçelim
+    const preloaderText = document.querySelector('.preloader-text');
+
+    // Element varsa metni içine yazalım
+    if (preloaderText) {
+        preloaderText.textContent = randomText;
+    }
+
+    // --- İŞTE O MEŞHUR KISIM ---
+    // Eğer seçilen metin "O" metinse...
+    if (randomText === 'Musou me harder, mommy') {
+        // introOverlay null değilse devam et
+        if (introOverlay) {
+            // Arka planı koyu mora çekelim
+            introOverlay.style.backgroundColor = '#3b0f5a'; // Senin için seçtiğim koyu mor
+
+            // Hafifçe yanıp sönme efekti (kısa süreliğine daha koyu yapıp geri al)
+            setTimeout(() => {
+                introOverlay.style.backgroundColor = '#2a0841'; // Anlık daha koyu mor
+            }, 150); // 150 milisaniye sonra
+            setTimeout(() => {
+                introOverlay.style.backgroundColor = '#3b0f5a'; // Tekrar ana koyu mora dön
+            }, 300); // Toplam 300 milisaniye sonra eski rengine dönsün
+        }
+    }
+    // --- MEŞHUR KISIM SONU ---
+
+    // .line elementleri vs. ile ilgili başka kodların varsa onlar buraya gelebilir
+    // const lines = document.querySelectorAll('.line');
 }
 
-
-}
+// Fonksiyonu çağırmayı unutma, örneğin sayfa yüklendiğinde:
+// handleIntroOverlay();
+// veya
+// window.addEventListener('load', handleIntroOverlay);
 
 /**
  * Belirtilen bir tweet gömme konteynerini Intersection Observer kullanarak
@@ -604,7 +632,7 @@ function initializeDynamicBanner() {
     function initializePage() {
     handleIntroOverlay();
    // setLang();
-    updateDiscordPfp();
+   // updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
    
