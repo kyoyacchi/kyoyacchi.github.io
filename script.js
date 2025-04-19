@@ -198,7 +198,7 @@ async function updateDiscordPfp() {
 
     // Rastgele metinler dizisi 
     const texts = [
-        'Now, you shall perish!',
+       'Now, you shall perish!',
         'There is no escape!',
         'Inazuma shines eternal!',
         'Inabikari, sunawachi Eien nari',
