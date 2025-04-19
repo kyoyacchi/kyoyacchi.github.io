@@ -233,7 +233,7 @@ async function updateDiscordPfp() {
         const subtitleText = document.querySelector('.subtitle-text'); // HTML'e eklediğimiz elementi seçelim
 if (subtitleText) {
     subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun'; // Sabit yazımızı basalım
-    subtitleText.style.fontStyle = 'italic'; // Yazıyı italik yapalım
+   // subtitleText.style.fontStyle = 'italic'; // Yazıyı italik yapalım
 }
         if (introOverlay) {
             // Arka planı koyu mora çekelim
