@@ -144,14 +144,11 @@ body::before {
     font-family: 'Quicksand', sans-serif;
     font-size: 24px;
     font-weight: 700;
-    text-shadow:
-        0 0 10px var(--raiden-glow),
-        0 0 20px var(--raiden-electro),
-        0 0 35px var(--primary-dark);
     opacity: 1;
     text-align: center;
     top: 60%;
-    transition: opacity 0.8s ease-out, text-shadow 1s ease-in-out, transform 1.2s ease-in-out, letter-spacing 1s ease-in-out, color 0.8s ease-in-out; /* Akıcı renk değişimi */
+    transition: opacity 0.8s ease-out, text-shadow 1s ease-in-out;
+    animation: pulseGlowPreloader 3s infinite ease-in-out;
     max-width: 90%; 
     word-wrap: break-word; 
     padding: 10px; 
@@ -1216,3 +1213,29 @@ footer::before {
     50% { background-position: 200% 50%; } 
     100% { background-position: 0% 50%; }
 }
+
+@keyframes pulseGlowPreloader {
+    0% {
+        /* Başlangıç: Açık Mor Renk ve Parlama */
+        color: var(--secondary); /* Açık Accent Mor */
+        text-shadow:
+            0 0 8px var(--secondary),       /* Açık mor hafif parlama */
+            0 0 15px var(--raiden-glow);    /* Ana elektro rengi parlama (hafif) */
+    }
+    50% {
+        /* Orta Nokta: Daha Parlak/Koyu Mor Renk ve Güçlü Parlama */
+        color: var(--raiden-electro);      /* Parlak Elektro Mor */
+        text-shadow:
+            0 0 15px var(--raiden-glow),    /* Daha güçlü ana parlama */
+            0 0 25px var(--raiden-electro), /* Daha geniş elektro parlama */
+            0 0 35px var(--primary-dark);   /* Derinlik için koyu mor gölge */
+    }
+    100% {
+        /* Bitiş: Başlangıç durumuna geri dön (yumuşak döngü için) */
+        color: var(--secondary);
+        text-shadow:
+            0 0 8px var(--secondary),
+            0 0 15px var(--raiden-glow);
+    }
+}
+
