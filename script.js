@@ -539,7 +539,7 @@ function initializeDynamicBanner() {
     const bannerElement = document.querySelector('.banner-img');
     // --- BANNER URL'LERİNİ BURAYA EKLE ---
     const bannerUrls = [
-        'https://pbs.twimg.com/profile_banners/1283317081631416320/1739900077/1080x360', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
+        'https://files.catbox.moe/9cvf8l.jpeg', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
 'https://files.catbox.moe/27mh8k.jpg',
 'https://files.catbox.moe/ftsuwx.jpg',
 'https://files.catbox.moe/dx4dym.jpg',
