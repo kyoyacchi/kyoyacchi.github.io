@@ -164,6 +164,23 @@ body::before {
     opacity: 0; 
 }
 
+.subtitle-text {
+    position: absolute;
+    top: 57%; 
+    width: 90%;
+    max-width: 90%;
+    box-sizing: border-box;
+    padding: 5px;
+    color: var(--secondary);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    font-style: italic;
+    text-align: center;
+    opacity: 1;
+    word-wrap: break-word;
+}
+
 
 
 @keyframes glowShift {
