@@ -367,7 +367,7 @@ const tweetEmbedHTML_EN = `
                      setTimeout(() => {
                          if (!isTweetLoaded) {
                               console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or loaded event didn't fire.`);
-                              // showErrorState('Tweet yapısı bulunamadı veya yüklenemedi.');
+                               showErrorState('Couldn\'t load the tweet.');
                          }
                      }, 500);
                  }
