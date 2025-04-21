@@ -395,7 +395,7 @@ function setupTweetEmbed(containerSelector) {
                      setTimeout(() => {
                          if (!isTweetLoaded) { // Hala yüklenmediyse hata göster
                               console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or 'loaded' event didn't fire.`);
-                              showErrorState('Could not load the Tweet.'); // İngilizce hata mesajı
+                         //     showErrorState('Could not load the Tweet.'); // İngilizce hata mesajı
                          }
                      }, 500); // Yarım saniye bekle, belki event gecikmiştir
                  }
@@ -403,7 +403,7 @@ function setupTweetEmbed(containerSelector) {
                  // Eğer widgets array'i dolu gelse bile loaded eventi tetiklenmezse diye yukarıdaki timeout var.
             }).catch(function(error) {
                 // widgets.load sırasında bir Promise rejection olursa hatayı yakala
-                showErrorState(`Error loading Tweet: ${error.message || error}`); // İngilizce hata mesajı
+           //     showErrorState(`Error loading Tweet: ${error.message || error}`); // İngilizce hata mesajı
             });
         });
     }
