@@ -265,6 +265,9 @@ introOverlay.classList.add('shake-it');
  *                                     Bu elementin içinde '.tweet-content' ve '.loading-wrapper' (veya '.loading-spinner')
  *                                     adında alt elementler bulunmalıdır.
  */
+// Bu fonksiyonu çalıştırmadan önce Font Awesome'ı HTML'ine eklediğinden emin ol!
+// Örnek: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" ... />
+
 function setupTweetEmbed(containerSelector) {
     const tweetContainer = document.querySelector(containerSelector);
 
@@ -290,114 +293,152 @@ function setupTweetEmbed(containerSelector) {
 
     let isTweetLoading = false;
     let isTweetLoaded = false;
-const lang = navigator.language;
+    const lang = navigator.language;
     const isTurkish = lang.toLowerCase().startsWith("tr");
-    
+
+    // Türkçe Tweet HTML'i
     const tweetEmbedHTML_TR = `
         <blockquote class="twitter-tweet" data-lang="tr" data-dnt="true" data-theme="dark">
         <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&amp;ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&amp;ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>
         &mdash; Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">17 Eylül 2024</a></blockquote>`;
 
-const tweetEmbedHTML_EN = `
+    // İngilizce Tweet HTML'i
+    const tweetEmbedHTML_EN = `
         <blockquote class="twitter-tweet" data-lang="en" data-theme="dark">
         <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&amp;ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&amp;ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>
         &mdash; Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>`;
-        
-        tweetContent.innerHTML = isTurkish ? tweetEmbedHTML_TR : tweetEmbedHTML_EN;
+
+    // Tarayıcı diline göre doğru HTML'i içeriğe bas
+    tweetContent.innerHTML = isTurkish ? tweetEmbedHTML_TR : tweetEmbedHTML_EN;
+
     // --- İç Fonksiyonlar ---
+
+    // Tweet başarıyla yüklendiğinde içeriği gösterir
     function showContent() {
         if (isTweetLoaded) return;
         isTweetLoaded = true;
         requestAnimationFrame(() => {
             tweetContent.style.opacity = '1';
             tweetContent.style.visibility = 'visible';
-            tweetContent.classList.add('loaded');
+            tweetContent.classList.add('loaded'); // Belki CSS ile animasyon eklemek istersin
             if (loadingIndicator) {
-                loadingIndicator.style.display = 'none';
+                loadingIndicator.style.display = 'none'; // Yükleme göstergesini gizle
             }
         });
          console.log(`Tweet in ${containerSelector} loaded successfully.`);
     }
 
-    function showErrorState(errorMessage = 'Tweet yüklenemedi.') {
-         if (isTweetLoaded) return;
-         console.error(`Error loading tweet in ${containerSelector}:`, errorMessage);
-         requestAnimationFrame(() => {
-             if (loadingIndicator) {
-                 if (loadingIndicator.classList.contains('loading-wrapper')) {
-                    loadingIndicator.innerHTML = `<p style="color: red; text-align: center;">${errorMessage}</p>`;
-                    loadingIndicator.style.display = 'flex';
-                 } else {
+    // Tweet yüklenemediğinde hata durumunu gösterir (İngilizce mesaj ve ikon ile)
+    function showErrorState(errorMessage = 'Could not load Tweet.') { // Default mesaj İngilizce
+        if (isTweetLoaded) return; // Zaten yüklendiyse veya hata gösterildiyse tekrar yapma
+        console.error(`Error loading tweet in ${containerSelector}:`, errorMessage);
+
+        requestAnimationFrame(() => {
+            if (loadingIndicator) {
+                // Eğer loadingIndicator bir wrapper ise (içine HTML basmak daha kolay)
+                if (loadingIndicator.classList.contains('loading-wrapper')) {
+                    // Font Awesome ikonu ve İngilizce hata mesajı
+                    loadingIndicator.innerHTML = `
+                        <div style="color: red; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                            <i class="fas fa-times-circle" style="margin-right: 8px; font-size: 1.2em; vertical-align: middle;"></i>
+                            <span>${errorMessage}</span>
+                        </div>`;
+                    loadingIndicator.style.display = 'flex'; // Wrapper'ı görünür yap
+                } else {
+                    // Sadece spinner varsa, onu gizle
                     loadingIndicator.style.display = 'none';
-                 }
-             }
-              tweetContent.style.opacity = '0';
-              tweetContent.style.visibility = 'hidden';
-         });
+                }
+            }
+            // Tweet içeriğini gizle
+            tweetContent.style.opacity = '0';
+            tweetContent.style.visibility = 'hidden';
+        });
     }
 
+    // Twitter'ın widgets.js script'ini yükler ve tweet'i render etmeye çalışır
     function loadTweet() {
+        // Twitter'ın global twttr objesini yükle/oluştur
         window.twttr = (function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0],
                 t = window.twttr || {};
-            if (d.getElementById(id)) return t;
+            if (d.getElementById(id)) return t; // Script zaten varsa tekrar ekleme
             js = d.createElement(s);
             js.id = id;
             js.src = "https://platform.twitter.com/widgets.js";
-            js.async = true;
+            js.async = true; // Asenkron yükle
             fjs.parentNode.insertBefore(js, fjs);
-            t._e = [];
-            t.ready = function(f) { t._e.push(f); };
+            t._e = []; // Event kuyruğu
+            t.ready = function(f) { t._e.push(f); }; // Hazır olunca çalışacak fonksiyonları ekle
             return t;
         }(document, "script", "twitter-wjs"));
 
+        // Twitter script'i hazır olduğunda...
         twttr.ready(function(twttrInstance) {
-            let widgetLoaded = false;
+            let widgetLoaded = false; // Widget'ın 'loaded' event'ini tetikleyip tetiklemediğini takip et
+
+            // Tweet widget'ı başarıyla yüklendiğinde tetiklenen event
             twttrInstance.events.bind('loaded', function(event) {
+                // Event'in bizim konteynerimizdeki widget için olup olmadığını kontrol et
                 if (event && event.widgets && event.widgets.some(widget => tweetContainer.contains(widget))) {
                     widgetLoaded = true;
-                    showContent();
+                    showContent(); // İçeriği göster
                 }
             });
 
+            // Belirtilen konteyner içindeki widget'ları yüklemeyi dene
             twttrInstance.widgets.load(
                 tweetContainer
             ).then(function(widgets) {
+                 // widgets.load bittiğinde, eğer hiç widget bulunamadıysa VE loaded eventi tetiklenmediyse,
+                 // bir sorun olmuş olabilir. Küçük bir gecikmeyle kontrol et.
                  if ((!widgets || widgets.length === 0) && !widgetLoaded) {
                      setTimeout(() => {
-                         if (!isTweetLoaded) {
-                              console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or loaded event didn't fire.`);
-                               showErrorState('Couldn\'t load the tweet.');
+                         if (!isTweetLoaded) { // Hala yüklenmediyse hata göster
+                              console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or 'loaded' event didn't fire.`);
+                              showErrorState('Could not load the Tweet.'); // İngilizce hata mesajı
                          }
-                     }, 500);
+                     }, 500); // Yarım saniye bekle, belki event gecikmiştir
                  }
+                 // Not: Başarılı durumda 'loaded' eventi showContent'i çağırmalı.
+                 // Eğer widgets array'i dolu gelse bile loaded eventi tetiklenmezse diye yukarıdaki timeout var.
             }).catch(function(error) {
-                showErrorState(`Tweet yüklenirken bir hata oluştu: ${error.message || error}`);
+                // widgets.load sırasında bir Promise rejection olursa hatayı yakala
+                showErrorState(`Error loading Tweet: ${error.message || error}`); // İngilizce hata mesajı
             });
         });
     }
 
     // --- Ana Mantık ---
+
+    // Başlangıçta yükleme göstergesini göster, içeriği gizle
     if (loadingIndicator) {
-        loadingIndicator.style.display = 'flex'; // veya block (CSS'ine göre ayarla)
+        // loading-wrapper için display: flex; veya block; kullanıyor olabilirsin CSS'de, ona göre ayarla
+        loadingIndicator.style.display = loadingIndicator.classList.contains('loading-wrapper') ? 'flex' : 'block';
     }
     tweetContent.style.opacity = '0';
     tweetContent.style.visibility = 'hidden';
-    tweetContent.classList.remove('loaded');
+    tweetContent.classList.remove('loaded'); // Varsa 'loaded' class'ını kaldır
 
+    // Intersection Observer: Tweet konteyneri ekrana girdiğinde yüklemeyi başlat
     const observer = new IntersectionObserver((entries, observerInstance) => {
         entries.forEach(entry => {
+            // Eğer ekrana giriyorsa VE daha önce yükleme başlamadıysa
             if (entry.isIntersecting && !isTweetLoading) {
                 console.log(`Tweet container ${containerSelector} is intersecting. Loading tweet.`);
-                isTweetLoading = true;
-                loadTweet();
-                observerInstance.unobserve(tweetContainer);
+                isTweetLoading = true; // Yüklemenin başladığını işaretle
+                loadTweet(); // Tweet yükleme fonksiyonunu çağır
+                observerInstance.unobserve(tweetContainer); // Gözlemciyi kaldır, artık işi bitti
             }
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.1 }); // %10'u ekrana girince tetiklen
 
+    // Konteyneri gözlemlemeye başla
     observer.observe(tweetContainer);
 }
+
+// Kullanım Örneği:
+// setupTweetEmbed('#my-tweet-container'); // HTML'deki tweet konteynerinin ID'si veya class'ı
+
 
 
 
