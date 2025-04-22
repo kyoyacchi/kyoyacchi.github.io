@@ -586,78 +586,118 @@ function setupParticleCanvas() {
  */
 function initializeDynamicBanner() {
     const bannerElement = document.querySelector('.banner-img');
+    const progressBarElement = document.querySelector('.banner-progress-bar'); // EKLENDİ: Progress bar seçimi
+
     // --- BANNER URL'LERİNİ BURAYA EKLE ---
     const bannerUrls = [
         'https://files.catbox.moe/9cvf8l.jpeg', // 1. Varsayılan (HTML'deki src ile aynı olmalı)
-'https://files.catbox.moe/27mh8k.jpg',
-'https://files.catbox.moe/ftsuwx.jpg',
-'https://files.catbox.moe/dx4dym.jpg',
-'https://files.catbox.moe/l98fxt.jpg',
-'https://files.catbox.moe/kfn36d.jpg',
-'https://files.catbox.moe/5fwex5.jpg',
-'https://files.catbox.moe/1m7rx3.jpg',
-'https://files.catbox.moe/ymqw8y.jpg',
-'https://files.catbox.moe/7c6pr2.jpg',
-'https://files.catbox.moe/bpr8u5.jpg',
-'https://files.catbox.moe/yf43bj.jpg'
+        'https://files.catbox.moe/27mh8k.jpg',
+        'https://files.catbox.moe/ftsuwx.jpg',
+        'https://files.catbox.moe/dx4dym.jpg',
+        'https://files.catbox.moe/l98fxt.jpg',
+        'https://files.catbox.moe/kfn36d.jpg',
+        'https://files.catbox.moe/5fwex5.jpg',
+        'https://files.catbox.moe/1m7rx3.jpg',
+        'https://files.catbox.moe/ymqw8y.jpg',
+        'https://files.catbox.moe/7c6pr2.jpg',
+        'https://files.catbox.moe/bpr8u5.jpg',
+        'https://files.catbox.moe/yf43bj.jpg'
+        // ... diğer URL'ler
     ];
     // ----------------------------------
 
-    const changeInterval = 10000;// Değişim aralığı (ms) - 30 saniye
+    const changeInterval = 10000; // Değişim aralığı (ms) - 10 saniye
     const fadeTransitionDuration = 600; // CSS transition süresi (ms) - 0.6 saniye
     let currentBannerIndex = 0;
     let bannerIntervalId = null;
 
-    // Eleman yoksa veya yeterli banner yoksa işlemi başlatma
+    // Gerekli elemanlar yoksa veya yeterli banner yoksa işlemi başlatma
     if (!bannerElement) {
         console.warn("couldnt start dynamic banner func: couldn't find the banner element.");
         return;
     }
-     if (bannerUrls.length < 2) {
+     if (!progressBarElement) { // EKLENDİ: Progress bar kontrolü
+        console.warn("couldnt start dynamic banner func: couldn't find the progress bar element.");
+        return;
+    }
+    if (bannerUrls.length < 2) {
         console.info('Could not start dynamic banner func: Not enough dynamic banners to change.');
+        // Progress bar olsa bile banner değişmeyeceği için burada durabiliriz.
         return;
     }
 
-    // Ana banner değiştirme fonksiyonu
-    function changeBanner() {
-        // Yeni ve farklı bir banner indeksi seç
-        let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * bannerUrls.length);
-        } while (newIndex === currentBannerIndex);
-
-        // Mevcut banner'ı fade out yap
-        bannerElement.style.opacity = '0';
-
-        // Geçiş süresi kadar bekledikten sonra resmi değiştir ve fade in yap
-        setTimeout(() => {
-            currentBannerIndex = newIndex;
-            bannerElement.src = bannerUrls[currentBannerIndex];
-
-            // Yeni resim yüklendikten sonra (veya direkt) fade in yap
-             bannerElement.style.opacity = '1';
-
-        }, fadeTransitionDuration);
+    // Progress bar animasyonunu resetleyip başlatan yardımcı fonksiyon
+    function startProgressBarAnimation() {
+        if (!progressBarElement) return; // Ekstra güvenlik kontrolü
+        // Animasyonu sıfırla ve yeniden başlat
+        progressBarElement.style.animation = 'none'; // Önceki animasyonu temizle
+        progressBarElement.offsetHeight; // Reflow'u tetikle (animasyon reset için önemli)
+        progressBarElement.style.animation = `fillProgressBar ${changeInterval / 1000}s linear forwards`;
+        // console.log('Progress bar animation started/restarted.'); // Test için log
     }
 
-    // İlk banner değişimini belirli aralıklarla başlat
+    // Ana banner değiştirme fonksiyonu (GÜNCELLENMİŞ)
+function changeBanner() {
+    // --- PROGRESS BAR ANIMASYONUNU BAŞLAT/RESETLE ---
+    // setInterval tetiklendiği anda animasyonu başlatıyoruz!
+    startProgressBarAnimation(); // Buraya taşıdık ve setTimeout içinden sildik!
+    // --------------------------------------------------
+
+    // Yeni ve farklı bir banner indeksi seç
+    let newIndex;
+    do {
+        newIndex = Math.floor(Math.random() * bannerUrls.length);
+    } while (newIndex === currentBannerIndex);
+
+    // Mevcut banner'ı fade out yap
+    bannerElement.style.opacity = '0';
+
+    // Geçiş süresi kadar bekledikten sonra SADECE resmi değiştir ve fade in yap
+    setTimeout(() => {
+        currentBannerIndex = newIndex;
+        bannerElement.src = bannerUrls[currentBannerIndex];
+        bannerElement.style.opacity = '1';
+        // Not: Progress bar başlatma kodunu buradan kaldırdık.
+    }, fadeTransitionDuration);
+}
+
+
+    // --- İLK ÇALIŞTIRMA ---
+    // İlk banner değişimi için interval'i başlat
     bannerIntervalId = setInterval(changeBanner, changeInterval);
-    console.log(`dynamic banner started to change per ${changeInterval /
-    1000} sec`);
-    
-// Sekme görünürlük durumunu kontrol et
+    // Sayfa yüklendiğinde ilk progress bar animasyonunu başlat
+    startProgressBarAnimation(); // EKLENDİ
+    console.log(`Dynamic banner started to change every ${changeInterval / 1000} seconds.`);
+    // ---------------------
+
+
+    // --- SEKME GÖRÜNÜRLÜK KONTROLÜ ---
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            // Sekme gizli, interval'i durdur
+            // Sekme gizli ise interval'i durdur
             clearInterval(bannerIntervalId);
-          //  console.log('dynamic banner stopped (tab hidden)');
+            // İsteğe bağlı: Animasyonu duraklat
+            // progressBarElement.style.animationPlayState = 'paused';
+            // console.log('Dynamic banner paused (tab hidden)');
         } else {
-            // Sekme aktif, tekrar başlat
+            // Sekme tekrar görünür olduğunda:
+            // 1. Güvenlik için mevcut interval'i temizle (zaten durmuş olmalı ama garanti)
+            clearInterval(bannerIntervalId);
+            // 2. Animasyonu sıfırla ve başlat (kaldığı yerden değil, baştan başlasın)
+            startProgressBarAnimation(); // EKLENDİ
+            // 3. Banner değiştirme interval'ini tekrar başlat
             bannerIntervalId = setInterval(changeBanner, changeInterval);
-          //  console.log('dynamic banner resumed (tab visible)');
+            // console.log('Dynamic banner resumed (tab visible)');
         }
     });
-} // initializeDynamicBanner fonksiyonu sonu
+}
+
+// ÖNEMLİ: Bu fonksiyonu HTML'in sonunda veya DOM hazır olduğunda çağırmayı unutma!
+// Örneğin:
+// document.addEventListener('DOMContentLoaded', initializeDynamicBanner);
+// Veya script'i body'nin en sonuna koyuyorsan direkt:
+// initializeDynamicBanner();
+
 
 // --- ÖNEMLİ ---
 // Bu fonksiyonu kullanmak için, script'inin uygun bir yerinde
