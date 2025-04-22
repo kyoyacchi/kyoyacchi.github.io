@@ -255,6 +255,30 @@ body::before {
     filter: brightness(1.1) contrast(1.05); /* Hafif parlaklık ve kontrast */
     box-shadow: inset 0 0 30px rgba(174, 99, 228, 0.3); /* İçten hafif mor parlama */
 }
+
+.banner-progress-container {
+  position: absolute; /* Banner'a göre konumlanması için */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px; /* Progress bar kalınlığı, istediğin gibi ayarla */
+  background-color: rgba(0, 0, 0, 0.3); /* Barın arka planı, opsiyonel */
+  overflow: hidden; /* İçindeki bar taşmasın */
+}
+
+.banner-progress-bar {
+  height: 100%;
+  width: 0%; /* Başlangıçta genişlik 0 */
+  background-color: #8A2BE2; /* Güzel bir mor tonu, veya Raiden moru: #ae63e4 */
+  /* Animasyon burada tanımlanacak */
+}
+
+/* Animasyon Keyframes */
+@keyframes fillProgressBar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
 /* Profil İçeriği */
 .profile-content {
     position: relative;
