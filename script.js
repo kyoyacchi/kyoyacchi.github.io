@@ -611,10 +611,11 @@ function initializeDynamicBanner() {
     const fadeTransitionDuration = 600; // Banner fade süresi (ms)
     const gifFadeDuration = 300; // GIF fade süresi (ms) - CSS'deki opacity süresiyle AYNI OLMALI!
     const progressUpdateFrequency = 50; // Progress güncelleme sıklığı (ms)
+    const renderDelay = 50; // %100'e ulaştıktan sonra resetlemeden önceki küçük bekleme (ms)
 
     let currentBannerIndex = 0;
-    let bannerIntervalId = null; // Ana banner değiştirme interval'i
     let progressIntervalId = null; // Progress bar/GIF ilerletme interval'i
+    let nextChangeTimeoutId = null; // Bir sonraki banner değişikliğini zamanlayan timeout
 
     // --- ELEMAN KONTROLLERİ ---
     if (!bannerElement) {
@@ -623,100 +624,110 @@ function initializeDynamicBanner() {
     }
     if (!progressBarElement) {
         console.warn("Progress bar elementi bulunamadı.");
-        // Opsiyonel: return; // Progress bar yoksa hiç başlatma
     }
     if (!progressGifElement) {
         console.warn("Progress GIF elementi bulunamadı.");
-        // Opsiyonel: return; // GIF yoksa hiç başlatma
     }
     if (bannerUrls.length < 2) {
         console.info('Değişecek yeterli banner URLsi yok.');
+        bannerElement.src = bannerUrls.length > 0 ? bannerUrls[0] : ''; // İlk banner'ı göster (varsa)
         return;
     }
 
     // --- Progress Animasyonunu Çalıştıran Fonksiyon ---
-    // Bu fonksiyon, GIF ve progress bar'ı 10 saniye boyunca %0'dan %100'e ilerletir.
     function runProgressAnimation() {
-        const startTime = Date.now(); // Animasyon başlangıç zamanı
-
-        // Önceki progress interval'ini temizle (varsa)
+        const startTime = Date.now();
         if (progressIntervalId) {
             clearInterval(progressIntervalId);
             progressIntervalId = null;
         }
+        // Bekleyen bir sonraki değişim varsa iptal et (yeni döngü başlıyor)
+        if (nextChangeTimeoutId) {
+            clearTimeout(nextChangeTimeoutId);
+            nextChangeTimeoutId = null;
+        }
 
-         // GIF'in 'left' geçişinin aktif olduğundan emin ol (reset sırasında 'none' yapılmış olabilir)
-         // Süreyi güncelleme sıklığına yakın tutmak daha akıcı hissettirebilir
-        const gifTransitionTiming = `${progressUpdateFrequency / 1000}s`;
-        progressGifElement.style.transition = `left ${gifTransitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
+        // GIF ve Bar geçişlerini ayarla (reset sırasında 'none' olmuş olabilir)
+        const transitionTiming = `${progressUpdateFrequency / 1000}s`;
+        progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
+        progressBarElement.style.transition = `width ${transitionTiming} linear`;
 
-        // Bar'ın 'width' geçişini de ayarlayalım
-        const barTransitionTiming = `${progressUpdateFrequency / 1000}s`;
-        progressBarElement.style.transition = `width ${barTransitionTiming} linear`;
-
-
-        // Yeni progress interval'ini başlat
         progressIntervalId = setInterval(() => {
-            const elapsedTime = Date.now() - startTime; // Geçen süre
-            let progress = (elapsedTime / changeInterval) * 100; // Yüzdelik ilerleme
+            const elapsedTime = Date.now() - startTime;
+            let progress = (elapsedTime / changeInterval) * 100;
 
-            // %100'ü geçmesini engelle
             if (progress >= 100) {
                 progress = 100;
-                clearInterval(progressIntervalId); // Süre dolunca bu interval'i durdur
+                clearInterval(progressIntervalId);
                 progressIntervalId = null;
+
+                // Stilleri %100'e ayarla
+                progressBarElement.style.width = progress + '%';
+                progressGifElement.style.left = progress + '%';
+
+                // ÖNEMLİ: Bir sonraki banner değişimini, animasyon bittikten
+                // ve küçük bir görsel gecikmeden SONRA zamanla.
+                nextChangeTimeoutId = setTimeout(() => {
+                    // Sadece sekme görünürse bir sonraki değişimi yap
+                    if (!document.hidden) {
+                         changeBanner();
+                    }
+                }, renderDelay); // Küçük gecikme ekle
+
+            } else {
+                 // Normal ilerleme güncellemesi
+                 progressBarElement.style.width = progress + '%';
+                 progressGifElement.style.left = progress + '%';
             }
 
-            // Bar genişliğini ve GIF pozisyonunu güncelle
-            progressBarElement.style.width = progress + '%';
-            progressGifElement.style.left = progress + '%';
-
-        }, progressUpdateFrequency); // Belirlenen sıklıkta çalış
+        }, progressUpdateFrequency);
     }
 
     // --- GIF Resetleme ve Progress Başlatma Fonksiyonu ---
-    // GIF'i teleport efektiyle resetler ve ardından `runProgressAnimation`'ı çağırır.
     function resetAndStartProgress() {
-        // Çalışan progress interval'i varsa hemen durdur (reset başlıyor)
         if (progressIntervalId) {
             clearInterval(progressIntervalId);
             progressIntervalId = null;
         }
+         // Bekleyen bir sonraki değişim varsa iptal et (manuel reset durumunda)
+        if (nextChangeTimeoutId) {
+            clearTimeout(nextChangeTimeoutId);
+            nextChangeTimeoutId = null;
+        }
 
-        // 1. GIF'i gizle (fade out başlar)
+        // 1. GIF'i gizle
         progressGifElement.classList.add('hidden');
 
-        // Progress bar genişliğini ANINDA sıfırla (bunun için geçişi kapatıp aç)
+        // 2. Bar genişliğini ANINDA sıfırla
         progressBarElement.style.transition = 'none';
         progressBarElement.style.width = '0%';
-        progressBarElement.offsetHeight; // Tarayıcının değişikliği algılaması için reflow
-        // Bar için normal geçişi tekrar etkinleştir (isteğe bağlı, runProgressAnimation da yapıyor)
-        // progressBarElement.style.transition = `width ${progressUpdateFrequency / 1000}s linear`;
+        progressBarElement.offsetHeight; // Reflow tetikle
 
-        // 2. GIF fade out süresi kadar bekle
+        // 3. GIF fade out süresi kadar bekle
         setTimeout(() => {
-            // GIF pozisyonunu ANINDA sıfırla (geçişi kapatıp açarak)
-            progressGifElement.style.transition = 'none'; // Geçişi kapat
-            progressGifElement.style.left = '0%';       // Konumu sıfırla
-            progressGifElement.offsetHeight;             // Reflow
+            // GIF pozisyonunu ANINDA sıfırla
+            progressGifElement.style.transition = 'none';
+            progressGifElement.style.left = '0%';
+            progressGifElement.offsetHeight; // Reflow tetikle
 
-            // GIF'i tekrar görünür yap (fade in başlar) ve normal geçişleri etkinleştir
-            const gifTransitionTiming = `${progressUpdateFrequency / 1000}s`;
-             progressGifElement.style.transition = `left ${gifTransitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
+            // GIF'i tekrar görünür yap ve normal geçişleri etkinleştir
+            const transitionTiming = `${progressUpdateFrequency / 1000}s`;
+            progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
             progressGifElement.classList.remove('hidden');
 
-            // 3. GIF görünmeye başlarken, 10 saniyelik asıl ilerleme animasyonunu başlat
+            // 4. Asıl ilerleme animasyonunu başlat (bu animasyon bitince sonraki changeBanner çağrılacak)
             runProgressAnimation();
 
-        }, gifFadeDuration); // CSS'deki opacity süresi kadar bekle
+        }, gifFadeDuration);
     }
 
     // --- Ana Banner Değiştirme Fonksiyonu ---
     function changeBanner() {
         // 1. ÖNCE: GIF'i resetle ve yeni progress animasyonunu başlat
-        resetAndStartProgress(); // <<<---- ESAS DEĞİŞİKLİK BURADA
+        // Bu animasyon bitince bir sonraki changeBanner'ı KENDİSİ tetikleyecek.
+        resetAndStartProgress();
 
-        // 2. Yeni banner index'ini seç (senin rastgele seçme mantığın aynı kalıyor)
+        // 2. Yeni banner index'ini seç
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * bannerUrls.length);
@@ -729,43 +740,46 @@ function initializeDynamicBanner() {
         setTimeout(() => {
             currentBannerIndex = newIndex;
             bannerElement.src = bannerUrls[currentBannerIndex];
+             // Resmin yüklenmesini beklemek daha garanti olabilir ama şimdilik basit tutalım.
+            // bannerElement.onload = () => { bannerElement.style.opacity = '1'; }
             bannerElement.style.opacity = '1';
         }, fadeTransitionDuration);
     }
 
     // --- İLK ÇALIŞTIRMA ---
-    // Sayfa ilk yüklendiğinde animasyonu resetleyip başlat
-    resetAndStartProgress();
-    // Belirlenen aralıklarla `changeBanner` fonksiyonunu çağırmak için interval'i başlat
-    // (changeBanner artık reset'i de kendisi yapıyor)
-    bannerIntervalId = setInterval(changeBanner, changeInterval);
-    console.log(`Dinamik banner başlatıldı. Her ${changeInterval / 1000} saniyede bir değişecek.`);
+    // Döngüyü başlatmak için changeBanner'ı doğrudan çağır.
+    // Bu, ilk banner'ı gösterecek, ilk animasyonu başlatacak ve
+    // animasyon bitince bir sonrakini zamanlayacak.
+    changeBanner();
+    console.log(`Dinamik banner başlatıldı. Her ${changeInterval / 1000} saniyede bir değişecek (animasyon bitince).`);
 
     // --- SEKME GÖRÜNÜRLÜK KONTROLÜ ---
-    // Bu kısım büyük ölçüde aynı kalabilir, sadece sekme geri geldiğinde changeBanner'ı çağırması önemli.
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            // Sekme gizlendiğinde çalışan interval'leri temizle
-            if (bannerIntervalId) clearInterval(bannerIntervalId);
+            // Sekme gizlendiğinde çalışan interval ve timeout'ları temizle
             if (progressIntervalId) clearInterval(progressIntervalId);
-            bannerIntervalId = null;
+            if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
             progressIntervalId = null;
+            nextChangeTimeoutId = null;
             // console.log('Dinamik banner duraklatıldı');
         } else {
             // Sekme tekrar görünür olduğunda:
-            // Önce çalışan interval kalmadığından emin ol
-            if (bannerIntervalId) clearInterval(bannerIntervalId);
+            // Çalışan interval/timeout kalmadığından emin ol (güvenlik önlemi)
             if (progressIntervalId) clearInterval(progressIntervalId);
+            if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+            progressIntervalId = null;
+            nextChangeTimeoutId = null;
 
-            // Banner'ı hemen değiştir ve animasyonu sıfırdan başlat.
-            // changeBanner zaten resetAndStartProgress'i çağıracak.
+            // Banner'ı hemen değiştir ve animasyon/zamanlama döngüsünü yeniden başlat.
             changeBanner();
-            // Ana banner değiştirme interval'ini tekrar başlat
-            bannerIntervalId = setInterval(changeBanner, changeInterval);
             // console.log('Dinamik banner devam ettirildi');
         }
     });
 }
+
+// CSS kodun aynı kalabilir.
+// HTML'de bu fonksiyonu çağırdığından emin ol, mesela:
+// document.addEventListener('DOMContentLoaded', initializeDynamicBanner);
 
 
 
