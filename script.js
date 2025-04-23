@@ -588,7 +588,7 @@ function initializeDynamicBanner() {
     const bannerElement = document.querySelector('.banner-img');
     const progressBarElement = document.querySelector('.banner-progress-bar');
     const progressGifElement = document.querySelector('.progress-gif');
-
+const bioElement = document.querySelector('.bio');
     // --- BANNER URL'LERİNİ BURAYA EKLE ---
     const bannerUrls = [
         'https://files.catbox.moe/9cvf8l.jpeg', // 1. Varsayılan
@@ -606,6 +606,14 @@ function initializeDynamicBanner() {
         // ... diğer URL'ler
     ];
     // ----------------------------------
+
+const euthymiaBannerUrls = [
+        'https://files.catbox.moe/ftsuwx.jpg', // <<< BU LİSTEYİ KENDİ URL'LERİNLE GÜNCELLE
+        'https://files.catbox.moe/l98fxt.jpg'  // <<< BU LİSTEYİ KENDİ URL'LERİNLE GÜNCELLE
+        // ... diğer Euthymia URL'leri
+    ];
+
+
 
     const changeInterval = 10000; // Ana değişim aralığı (ms)
     const fadeTransitionDuration = 600; // Banner fade süresi (ms)
@@ -734,6 +742,7 @@ function initializeDynamicBanner() {
         } while (newIndex === currentBannerIndex && bannerUrls.length > 1);
 
         // 3. Mevcut banner resmini fade out yap
+        const newBannerUrl = bannerUrls[newIndex]; // Yeni URL'yi al
         bannerElement.style.opacity = '0';
 
         // 4. Banner fade süresi sonunda resmi değiştirip fade in yap
@@ -743,6 +752,21 @@ function initializeDynamicBanner() {
              // Resmin yüklenmesini beklemek daha garanti olabilir ama şimdilik basit tutalım.
             // bannerElement.onload = () => { bannerElement.style.opacity = '1'; }
             bannerElement.style.opacity = '1';
+            
+            
+            if (bioElement) { // bioElement bulunduysa
+                if (euthymiaBannerUrls.includes(newBannerUrl)) {
+                    // Eğer yeni URL Euthymia listesindeyse, class ekle
+                    bioElement.classList.add('euthymia-bio-style');
+                    // console.log("Euthymia stili eklendi."); // Test için
+                } else {
+                    // Değilse, class'ı kaldır (varsa)
+                    bioElement.classList.remove('euthymia-bio-style');
+                    // console.log("Euthymia stili kaldırıldı."); // Test için
+                }
+            }
+            // ---------------------------------
+            
         }, fadeTransitionDuration);
     }
 
