@@ -767,8 +767,8 @@ function initializeDynamicBanner() {
     });
 }
 
-// DOM hazır olduğunda fonksiyonu çağır (veya sen nasıl çağırıyorsan)
-document.addEventListener('DOMContentLoaded', initializeDynamicBanner);
+
+
 
 
 // --- FONKSİYONU ÇAĞIR ---
