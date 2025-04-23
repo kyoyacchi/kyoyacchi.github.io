@@ -405,7 +405,7 @@ body::before {
     margin: 25px auto;
     
     font-size: 18px;
- animation: slideUp 1s ease 0.4s forwards;*/
+ /*animation: slideUp 1s ease 0.4s forwards;*/
     opacity: 0;
     background: rgba(45, 27, 78, 0.7); 
     border: 1px solid var(--primary-dark);
@@ -419,21 +419,19 @@ body::before {
     overflow: visible;
 }
 
+
 .bio.euthymia-bio-style {
-    /* Kırmızımsı bir kenarlık */
     border-color: rgba(220, 70, 90, 0.85);
-
-    /* Kırmızımsı bir dış ışıltı (glow) */
     box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),  /* Daha geniş kırmızı glow */
-        0 0 7px rgba(255, 80, 100, 0.8), /* Daha parlak iç kırmızı glow */
-        var(--shadow); /* Orijinal gölgeyi de koruyalım */
+        0 0 18px rgba(230, 60, 80, 0.6),
+        0 0 7px rgba(255, 80, 100, 0.8),
+        var(--shadow);
 
-    /* İsteğe bağlı: Arka planı da hafif kırmızımsı yapabilirsin */
-    /* background: rgba(60, 25, 40, 0.75); */
+    animation: euthymia-pulse 2.5s ease-in-out infinite;
 
-    /* Geçişin yumuşak olması için transition zaten .bio'da tanımlı olmalı */
+
 }
+
 .bio-kitsune-icon {
     position: absolute; /* Ana elemente (.bio) göre konumlanacak */
     width: 49px; /* Genişlik - Biraz daha büyük deneyebilirsin? */
@@ -447,6 +445,18 @@ body::before {
     transform: rotate(12deg);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Biraz daha zıplamalı geçiş */
 }
+
+@keyframes euthymia-pulse {
+  0%, 100% {
+    border-color: rgba(220, 70, 90, 0.85);
+    box-shadow: 0 0 18px rgba(230, 60, 80, 0.6), 0 0 7px rgba(255, 80, 100, 0.8), var(--shadow);
+  }
+  50% {
+    border-color: rgba(255, 90, 110, 1);
+    box-shadow: 0 0 28px rgba(255, 80, 100, 0.9), 0 0 12px rgba(255, 120, 140, 1), var(--shadow);
+  }
+}
+
 
 /* Ana bio kutusuna hover olduğunda ikon da tepki versin */
 .bio:hover .bio-kitsune-icon {
@@ -463,8 +473,20 @@ body::before {
 .bio:hover {
 border-color: var(--raiden-electro);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--raiden-glow);
-    transform: translateY(-4px); /* Hafif yukarı kalkma */
+    transform: translateY(-4px);
 }
+.bio.euthymia-bio-style:hover {
+  /* Hover'da border/shadow daha parlak/güçlü kırmızı olsun */
+  border-color: rgba(255, 100, 120, 1);
+  box-shadow:
+      0 0 25px rgba(255, 80, 100, 0.9),  /* Daha güçlü kırmızı glow */
+      0 0 10px rgba(255, 110, 130, 1), /* Daha parlak iç kırmızı glow */
+      var(--shadow);
+  /* Hover'da yukarı kalksın */
+  transform: translateY(-4px);
+  animation: paused;
+}
+
 
 .bio::before {
     content: '';
