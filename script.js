@@ -588,10 +588,11 @@ function initializeDynamicBanner() {
     const bannerElement = document.querySelector('.banner-img');
     const progressBarElement = document.querySelector('.banner-progress-bar');
     const progressGifElement = document.querySelector('.progress-gif');
-    const bioElement = document.querySelector('.bio'); // Senin kodunda bu vardı varsayıyorum
-    // --- BANNER URL'LERİNİ BURAYA EKLE ---
+    const bioElement = document.querySelector('.bio'); // Assuming you have this from your code
+
+    // --- ADD BANNER URLS HERE ---
     const bannerUrls = [
-        'https://files.catbox.moe/9cvf8l.jpeg', // 1. Varsayılan
+        'https://files.catbox.moe/9cvf8l.jpeg', // 1. Default
         'https://files.catbox.moe/27mh8k.jpg',
         'https://files.catbox.moe/ftsuwx.jpg',
         'https://files.catbox.moe/dx4dym.jpg',
@@ -611,47 +612,57 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/ymqw8y.jpg',
     ];
 
-    const changeInterval = 10000;
-    const fadeTransitionDuration = 600;
-    const gifFadeDuration = 300;
-    const progressUpdateFrequency = 50;
-    const renderDelay = 50;
+    const changeInterval = 10000; // ms
+    const fadeTransitionDuration = 600; // ms
+    const gifFadeDuration = 300; // ms
+    const progressUpdateFrequency = 50; // ms
+    const renderDelay = 50; // ms
 
-    let currentBannerIndex = 0; // İlk index 0
+    let currentBannerIndex = 0; // Initial index is 0
     let progressIntervalId = null;
     let nextChangeTimeoutId = null;
 
-    // --- ELEMAN KONTROLLERİ (Senin Kodundaki Gibi) ---
-    if (!bannerElement) { console.warn("Banner resmi elementi bulunamadı."); return; }
-    if (!progressBarElement) { console.warn("Progress bar elementi bulunamadı."); }
-    if (!progressGifElement) { console.warn("Progress GIF elementi bulunamadı."); }
-    if (!bioElement) { console.warn("Bio elementi (.bio) bulunamadı."); }
-    if (bannerUrls.length === 0) { console.info('Banner URL listesi boş.'); return; }
+    // --- ELEMENT CHECKS ---
+    if (!bannerElement) { console.warn("Banner image element not found."); return; }
+    if (!progressBarElement) { console.warn("Progress bar element not found."); }
+    if (!progressGifElement) { console.warn("Progress GIF element not found."); }
+    if (!bioElement) { console.warn("Bio element (.bio) not found."); }
+    if (bannerUrls.length === 0) { console.info('Banner URL list is empty.'); return; }
+    // Set initial banner source if not already set
     if (bannerUrls.length > 0 && !bannerElement.src) { bannerElement.src = bannerUrls[0]; }
 
 
-    // --- Fonksiyon Tanımları (SENİN KODUNDAKİ GİBİ - DEĞİŞTİRİLMEDİ) ---
+    // --- Function Definitions ---
 
     function runProgressAnimation() {
         const startTime = Date.now();
+        // Clear any existing intervals/timeouts before starting new ones
         if (progressIntervalId) { clearInterval(progressIntervalId); progressIntervalId = null; }
         if (nextChangeTimeoutId) { clearTimeout(nextChangeTimeoutId); nextChangeTimeoutId = null; }
+
         const transitionTiming = `${progressUpdateFrequency / 1000}s`;
         if(progressGifElement) { progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`; }
         if(progressBarElement) { progressBarElement.style.transition = `width ${transitionTiming} linear`; }
+
         progressIntervalId = setInterval(() => {
             const elapsedTime = Date.now() - startTime;
             let progress = (elapsedTime / changeInterval) * 100;
+
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressIntervalId);
                 progressIntervalId = null;
                 if(progressBarElement) { progressBarElement.style.width = progress + '%'; }
                 if(progressGifElement) { progressGifElement.style.left = progress + '%'; }
+
+                // Schedule the next banner change after a short delay
                 nextChangeTimeoutId = setTimeout(() => {
-                    if (!document.hidden) { changeBanner(); }
+                    if (!document.hidden) { // Only change if tab is visible
+                        changeBanner();
+                    }
                 }, renderDelay);
             } else {
+                // Update progress bar and GIF position
                 if(progressBarElement) { progressBarElement.style.width = progress + '%'; }
                 if(progressGifElement) { progressGifElement.style.left = progress + '%'; }
             }
@@ -659,94 +670,122 @@ function initializeDynamicBanner() {
     }
 
     function resetAndStartProgress() {
+        // Clear existing timers
         if (progressIntervalId) { clearInterval(progressIntervalId); progressIntervalId = null; }
         if (nextChangeTimeoutId) { clearTimeout(nextChangeTimeoutId); nextChangeTimeoutId = null; }
+
+        // Hide GIF, reset progress bar instantly
         if(progressGifElement) { progressGifElement.classList.add('hidden'); }
         if(progressBarElement) {
-            progressBarElement.style.transition = 'none';
+            progressBarElement.style.transition = 'none'; // Remove transition for instant reset
             progressBarElement.style.width = '0%';
-            progressBarElement.offsetHeight; // Reflow
+            progressBarElement.offsetHeight; // Force reflow to apply style change immediately
         }
+
+        // Use setTimeout to allow hiding/resetting styles to apply before starting animation
         setTimeout(() => {
             if(progressGifElement) {
+                // Reset GIF position instantly
                 progressGifElement.style.transition = 'none';
                 progressGifElement.style.left = '0%';
-                progressGifElement.offsetHeight; // Reflow
+                progressGifElement.offsetHeight; // Force reflow
+                // Re-apply transition and unhide
                 const transitionTiming = `${progressUpdateFrequency / 1000}s`;
                 progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
                 progressGifElement.classList.remove('hidden');
             }
+            // Start the progress animation
             runProgressAnimation();
-        }, gifFadeDuration);
+        }, gifFadeDuration); // Delay should match the GIF fade duration for smoother effect
     }
 
     function changeBanner() {
-        resetAndStartProgress();
+        resetAndStartProgress(); // Reset and start progress for the *new* banner cycle
+
         let newIndex;
+        // Ensure the new index is different from the current one if possible
         do {
             newIndex = Math.floor(Math.random() * bannerUrls.length);
         } while (newIndex === currentBannerIndex && bannerUrls.length > 1);
+
         const newBannerUrl = bannerUrls[newIndex];
+
+        // Fade out current banner
         bannerElement.style.opacity = '0';
+
+        // After fade out duration, change src and fade in
         setTimeout(() => {
             currentBannerIndex = newIndex;
-            bannerElement.src = bannerUrls[currentBannerIndex]; // Sen burada currentBannerIndex kullanmıştın
+            bannerElement.src = bannerUrls[currentBannerIndex]; // Use the selected index
             bannerElement.style.opacity = '1';
-            // --- Bio style update (Senin kodundaki gibi, anında silme yok) ---
+
+            // --- Update Bio style based on the new banner ---
             if (bioElement) {
-                if (euthymiaBannerUrls.includes(newBannerUrl)) { // newBannerUrl ile kontrol doğru
+                if (euthymiaBannerUrls.includes(newBannerUrl)) { // Check the new URL
                     bioElement.classList.add('euthymia-bio-style');
+                    // Optional: Force re-trigger animation if needed
+                    // bioElement.style.animation = 'none';
+                    // void bioElement.offsetWidth; // Reflow
+                    // bioElement.style.animation = '';
                 } else {
                     bioElement.classList.remove('euthymia-bio-style');
                 }
             }
-            // --- End bio style update ---
+            // --- End Bio style update ---
         }, fadeTransitionDuration);
     }
 
 
-    // ---------- BAŞLANGIÇ KISMI DÜZENLENDİ ----------
-    // --- İLK ÇALIŞTIRMA ---
+    // ---------- INITIALIZATION (Edited Start) ----------
+    // --- FIRST RUN ---
 
-    // 1. İlk banner için Bio stilini kontrol et:
+    // 1. Check Bio style for the initial banner:
     if (bioElement) {
-        if (euthymiaBannerUrls.includes(bannerUrls[currentBannerIndex])) { // Index 0 kontrolü
+        if (euthymiaBannerUrls.includes(bannerUrls[currentBannerIndex])) { // Check index 0
              bioElement.classList.add('euthymia-bio-style');
-             // Eğer ilk banner Euthymia ise animasyonun başlaması için:
+             // If the first banner is Euthymia, force animation start:
              bioElement.style.animation = 'none';
-             void bioElement.offsetWidth;
+             void bioElement.offsetWidth; // Reflow
              bioElement.style.animation = '';
         } else {
              bioElement.classList.remove('euthymia-bio-style');
         }
     }
 
-    // 2. İlk banner için animasyonu başlat (bu, ilk değişimi süre sonunda tetikleyecek):
+    // 2. Start the animation for the initial banner (this will trigger the first change after the interval):
     resetAndStartProgress();
 
-    // 3. Direkt changeBanner çağrısı kaldırıldı:
-    // changeBanner(); // <<< KALDIRILDI
-
-    console.log(`Dinamik banner başlatıldı. İlk banner (index ${currentBannerIndex}) gösteriliyor. Değişim ~${changeInterval / 1000} saniye sonra başlayacak.`);
-    // ---------- DÜZENLENEN KISIM BİTTİ ----------
+    console.log(`Dynamic banner initialized. Showing initial banner (index ${currentBannerIndex}). Change will occur after ~${changeInterval / 1000} seconds.`);
+    // ---------- END EDITED PART ----------
 
 
-    // --- SEKME GÖRÜNÜRLÜK KONTROLÜ (SENİN KODUNDAKİ GİBİ - DEĞİŞTİRİLMEDİ) ---
+    // --- TAB VISIBILITY CONTROL (CHANGED) ---
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
+            // Pause timers when tab is hidden
             if (progressIntervalId) clearInterval(progressIntervalId);
             if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
             progressIntervalId = null;
             nextChangeTimeoutId = null;
+            console.log("Tab hidden, banner progress paused."); // Optional logging
         } else {
+            // Clear timers when tab becomes visible again (should be null, but just in case)
             if (progressIntervalId) clearInterval(progressIntervalId);
             if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
             progressIntervalId = null;
             nextChangeTimeoutId = null;
-            changeBanner(); // Sekme geri gelince hemen değiştir (senin kodundaki gibi)
+            // Reset and restart progress for the CURRENT banner
+            resetAndStartProgress();
+            console.log("Tab focused, restarting progress for current banner."); // Optional logging
         }
     });
 }
+
+// Don't forget to call the function, typically after the DOM is loaded:
+// document.addEventListener('DOMContentLoaded', initializeDynamicBanner);
+// or if the script is at the end of the body:
+// initializeDynamicBanner();
+
 
 // --- Fonksiyonu çağırmayı unutma ---
 // initializeDynamicBanner();
