@@ -598,8 +598,8 @@ const bioElement = document.querySelector('.bio');
         'https://files.catbox.moe/l98fxt.jpg',
         'https://files.catbox.moe/kfn36d.jpg',
         'https://files.catbox.moe/5fwex5.jpg',
-        'https://files.catbox.moe/1m7rx3.jpg',
-        'https://files.catbox.moe/ymqw8y.jpg',
+      //  'https://files.catbox.moe/1m7rx3.jpg',
+    //    'https://files.catbox.moe/ymqw8y.jpg',
         'https://files.catbox.moe/7c6pr2.jpg',
         'https://files.catbox.moe/bpr8u5.jpg',
         'https://files.catbox.moe/yf43bj.jpg'
@@ -608,9 +608,8 @@ const bioElement = document.querySelector('.bio');
     // ----------------------------------
 
 const euthymiaBannerUrls = [
-        'https://files.catbox.moe/ftsuwx.jpg', // <<< BU LİSTEYİ KENDİ URL'LERİNLE GÜNCELLE
-        'https://files.catbox.moe/l98fxt.jpg'  // <<< BU LİSTEYİ KENDİ URL'LERİNLE GÜNCELLE
-        // ... diğer Euthymia URL'leri
+        'https://files.catbox.moe/1m7rx3.jpg', 
+'https://files.catbox.moe/ymqw8y.jpg',
     ];
 
 
