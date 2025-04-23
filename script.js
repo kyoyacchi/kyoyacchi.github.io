@@ -752,7 +752,7 @@ function initializeDynamicBanner() {
 // Sayfa yüklendikten sonra veya DOM hazır olduğunda bu fonksiyonu çağır.
 // Eğer script'i head içine koyuyorsan DOMContentLoaded veya window.onload kullanman gerekebilir.
 // Eğer script'i body'nin sonuna koyuyorsan direkt çağırabilirsin.
-initializeDynamicBanner();
+//initializeDynamicBanner();
 
 // ÖNEMLİ: Bu fonksiyonu HTML'in sonunda veya DOM hazır olduğunda çağırmayı unutma!
 // Örneğin:
@@ -775,7 +775,14 @@ initializeDynamicBanner();
 // initializeDynamicBanner();
 //
     
-    
+    function PreventRightClick() {
+    const allImages = document.querySelectorAll('img');
+    allImages.forEach(function(img) {
+        img.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+    });
+}
     
     function initializePage() {
     handleIntroOverlay();
@@ -783,7 +790,7 @@ initializeDynamicBanner();
    updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
-   
+   PreventRightClick();
     setupParticleCanvas();
     setupScrollAnimations();
     initializeDynamicBanner();
