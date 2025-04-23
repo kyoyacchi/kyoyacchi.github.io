@@ -271,7 +271,7 @@ body::before {
   width: 0%; /* Başlangıçta genişlik 0 */
   background-color: #8A2BE2; /* Güzel bir mor tonu, veya Raiden moru: #ae63e4 */
   /* Animasyon burada tanımlanacak */
-  transition: width 0.1s linear;
+  transition: width 0.5s linear;
 }
 
 /* Animasyon Keyframes */
@@ -287,10 +287,15 @@ body::before {
   width: 30px; /* Boyutunu ayarla */
   height: auto;
   transform: translateX(-80%);
-  transition: left 0.1s linear; /* JS ile left değişince kaysın */
   z-index: 1; /* Diğer elementlerin üzerinde kalsın */
   /* filter: drop-shadow(0 0 3px black); */ /* Opsiyonel: Daha belirgin olması için gölge */
+  opacity: 1;
+  transition: left 0.05s linear, opacity 0.3s ease-in-out; /* 0.3sn fade süresi */
 }
+.progress-gif.hidden {
+  opacity: 0;
+}
+
 /* Profil İçeriği */
 .profile-content {
     position: relative;
