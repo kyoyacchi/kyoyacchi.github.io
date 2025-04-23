@@ -271,6 +271,7 @@ body::before {
   width: 0%; /* Başlangıçta genişlik 0 */
   background-color: #8A2BE2; /* Güzel bir mor tonu, veya Raiden moru: #ae63e4 */
   /* Animasyon burada tanımlanacak */
+  transition: width 0.1s linear;
 }
 
 /* Animasyon Keyframes */
@@ -278,7 +279,18 @@ body::before {
   from { width: 0%; }
   to { width: 100%; }
 }
-
+/* YENİ EKLENEN Stil */
+.progress-gif {
+  position: absolute; /* .banner'a göre konumlanacak */
+  bottom: 2px;  /* Progress bar'ın hemen üstünde durması için ayarla (5px bar + 2px boşluk gibi) */
+  left: 0%;   /* Başlangıçta solda */
+  width: 30px; /* Boyutunu ayarla */
+  height: auto;
+  transform: translateX(-50%); /* Hala yatayda çizginin ucuna ortalamak için */
+  transition: left 0.1s linear; /* JS ile left değişince kaysın */
+  z-index: 1; /* Diğer elementlerin üzerinde kalsın */
+  /* filter: drop-shadow(0 0 3px black); */ /* Opsiyonel: Daha belirgin olması için gölge */
+}
 /* Profil İçeriği */
 .profile-content {
     position: relative;
