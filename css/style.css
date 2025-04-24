@@ -484,7 +484,7 @@ border-color: var(--raiden-electro);
       var(--shadow);
   /* Hover'da yukarı kalksın */
   transform: translateY(-4px);
-  animation: paused;
+  animation-play-state: paused;
 }
 
 
