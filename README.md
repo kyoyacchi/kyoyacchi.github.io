@@ -1,2 +1,2 @@
 #### https://kyoya.is-a.dev/
-My personal website
+My personal Ei-themed website
