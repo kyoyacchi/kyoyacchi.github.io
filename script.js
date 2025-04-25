@@ -611,7 +611,8 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/zllsq7.jpg',
         'https://files.catbox.moe/zllsq7.jpg',
         'https://files.catbox.moe/ai4oz2.gif',
-        'https://files.catbox.moe/25kggw.gif'
+        'https://files.catbox.moe/25kggw.gif',
+        'https://files.catbox.moe/obaond.jpg'
     ];
     // ----------------------------------
 
