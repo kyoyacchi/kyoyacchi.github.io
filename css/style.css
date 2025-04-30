@@ -374,8 +374,8 @@ body::before {
 .checkmark {
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 18px; /* DEĞİŞTİ: Biraz daha büyük */
-    height: 18px;
+    width: 24px; /* DEĞİŞTİ: Biraz daha büyük */
+    height: 24px;
     filter: drop-shadow(0 0 3px var(--raiden-glow)); 
     fill: var(--raiden-electro);
     vertical-align: middle;
