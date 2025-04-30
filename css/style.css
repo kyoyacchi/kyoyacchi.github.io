@@ -1307,6 +1307,13 @@ footer::before {
 .disclaimer-text {
   color: #888; 
   font-size: 0.8em; 
-  margin-top: 15px; 
+  margin-top: 5px; 
   text-align: center; 
+}
+.custom-divider {
+  width: 90%;         
+  height: 1px;          
+  background-color: #fff; 
+  margin: 5px auto;   
+  opacity: 0.8;         
 }
