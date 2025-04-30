@@ -1140,6 +1140,22 @@ footer::before {
         font-size: 20px; 
     }
     .tweet-decor-top::before, .tweet-decor-top::after { font-size: 20px; }
+    
+      .profile-badge {
+    padding: 6px 10px;
+    margin-top: 8px;
+    margin-left: -5px; 
+    border-radius: 6px;
+  }
+  .badge-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+  }
+  .badge-text {
+    font-size: 12px;
+    line-height: 1.3;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1223,6 +1239,24 @@ footer::before {
     .embed-slide .loading-wrapper {
         left: 25%;
     }
+    
+      .profile-badge {
+    padding: 5px 8px;
+    margin-top: 6px;
+    margin-left: 0; 
+    border-radius: 5px;
+    width: auto;
+    max-width: 100%;
+  }
+  .badge-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+  }
+  .badge-text {
+    font-size: 12px;
+    line-height: 1.3;
+  }
 }
 
 #sparks-canvas {
@@ -1316,4 +1350,70 @@ footer::before {
   background-color: #fff; 
   margin: 5px auto;   
   opacity: 0.8;         
+}
+
+
+.profile-badge {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: -8px; 
+  padding: 8px 12px;
+  position: relative;
+  border-radius: 8px;
+  cursor: default;
+  width: fit-content;
+  max-width: 100%; 
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  background-image: linear-gradient(rgba(36, 0, 70, 0.7), rgba(36, 0, 70, 0.7)),
+                    linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary), var(--raiden-electro), var(--primary-dark));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: 300% 100%;
+  animation: gradientBorderFlow 5s linear infinite;
+  transition: var(--transition);
+}
+
+.profile-badge:hover {
+  animation-play-state: paused;
+  box-shadow: 0 0 15px var(--raiden-glow);
+  transform: translateY(-2px);
+  border-color: transparent;
+}
+
+.badge-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.badge-text {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 500;
+  white-space: normal;
+  line-height: 1.4;
+  transition: none;
+}
+
+
+
+@media (max-width: 480px) {
+  .profile-badge {
+    padding: 5px 8px;
+    margin-top: 6px;
+    margin-left: 0; 
+    border-radius: 5px;
+  }
+  .badge-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+  }
+  .badge-text {
+    font-size: 11px;
+    line-height: 1.3;
+  }
 }
