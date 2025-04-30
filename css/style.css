@@ -1304,3 +1304,9 @@ footer::before {
 .shake-it { /* Animasyonu uygulayacak class adı */
   animation: subtle-shake 0.3s ease-in-out; /* Animasyon adı, süresi ve zamanlama fonksiyonu */
 }
+.disclaimer-text {
+  color: #888; 
+  font-size: 0.8em; 
+  margin-top: 15px; 
+  text-align: center; 
+}
