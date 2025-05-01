@@ -35,78 +35,40 @@ const DISCORD_API_URL = `https://kyopi.vercel.app/api/pfp?id=${DISCORD_USER_ID}`
 }
 
 function showPopUp(isError) {
-    // Check if a popup already exists
     if (document.getElementById("status-pop")) {
         return;
     }
 
     const pop = document.createElement("div");
     const innerDiv = document.createElement("div");
-    pop.id = "status-pop"; // Unique ID
+    pop.id = "status-pop";
     innerDiv.className = "pop-inner";
 
-    // --- Popup Styling (Consider moving to CSS for cleaner JS) ---
-    pop.style.position = "fixed";
-    pop.style.bottom = "20px";
-    pop.style.left = "20px";
-    pop.style.borderRadius = "12px"; /* Match root */
-    pop.style.overflow = "hidden";
-    pop.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.3)";
-    pop.style.border = `2px solid ${isError ? 'var(--accent)' : 'var(--primary-light)'}`;
-    pop.style.width = "fit-content";
-    pop.style.maxWidth = "calc(100vw - 40px)"; /* Prevent overflow */
-    pop.style.zIndex = "1100"; /* Ensure visibility */
-    pop.style.padding = "3px";
-    pop.style.boxSizing = "border-box";
-    pop.style.opacity = "0"; // Start hidden for animation
-    pop.style.transform = "translateX(-20px)"; // Start off-screen for animation
-    pop.style.transition = "opacity 0.4s ease-out, transform 0.4s ease-out";
-
-    innerDiv.style.backgroundColor = "var(--bg-light)";
-    innerDiv.style.padding = "10px 18px";
-    innerDiv.style.display = "inline-flex";
-    innerDiv.style.alignItems = "center";
-    innerDiv.style.gap = "12px";
-    innerDiv.style.border = `1px solid ${isError ? 'rgba(255, 107, 139, 0.5)' : 'rgba(138, 79, 255, 0.5)'}`;
-    innerDiv.style.borderRadius = "9px"; /* Inner radius */
-    innerDiv.style.fontSize = "14px";
-    innerDiv.style.fontWeight = "bold";
-    innerDiv.style.color = "var(--text-light)";
-    innerDiv.style.userSelect = "none";
-    innerDiv.style.whiteSpace = "nowrap";
-    innerDiv.style.overflow = "hidden";
-    innerDiv.style.textOverflow = "ellipsis";
-    innerDiv.style.boxSizing = "border-box";
-    // --- End Popup Styling ---
-
+    const stateClass = isError ? "error" : "success";
     const iconClass = isError ? "fas fa-times-circle" : "fas fa-check-circle";
-    const iconColor = isError ? "var(--accent)" : "var(--primary-light)";
-    const message = isError ? "Couldn't update Discord pfp" : "Updated Discord pfp";
+    const message = isError ? "couldn't update discord pfp" : "updated discord pfp";
 
-    innerDiv.innerHTML = `<i class="${iconClass}" style="color: ${iconColor}; font-size: 18px;"></i> ${message}`;
+    pop.classList.add(stateClass);
+
+    innerDiv.innerHTML = `<i class="${iconClass}"></i> ${message}`;
 
     pop.appendChild(innerDiv);
     document.body.appendChild(pop);
 
-    // Trigger fade-in animation
     requestAnimationFrame(() => {
-        pop.style.opacity = "1";
-        pop.style.transform = "translateX(0)";
+        pop.classList.add("visible");
     });
 
-
-    // Auto-dismiss after a delay
     setTimeout(() => {
-        pop.style.opacity = "0";
-        pop.style.transform = "translateX(-20px)";
-        // Remove from DOM after animation
+        pop.classList.remove("visible");
         setTimeout(() => {
              if (pop.parentNode) {
                 pop.parentNode.removeChild(pop);
              }
-        }, 400); // Match transition duration
-    }, 3500); // Display duration
+        }, 400);
+    }, 3500);
 }
+
 async function updateDiscordPfp() {
     const avatarElement = document.getElementById("discord_pfp");
     if (!avatarElement) return;
