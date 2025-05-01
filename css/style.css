@@ -219,6 +219,11 @@ body::before {
     height: 250px;
     background: #333;
     overflow: hidden;
+     -webkit-tap-highlight-color: transparent; 
+     user-select: none;
+  -moz-user-select: none;    
+  -ms-user-select: none;     
+     outline: none;
 }
 
 .banner-img {
