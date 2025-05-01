@@ -232,47 +232,80 @@ body::before {
 }
 
 /* Banner Stili */
+/* Banner Stili - Ensure relative positioning */
 .banner {
+    position: relative; /* Needed for absolute positioning of children */
     width: 100%;
-    height: 250px;
-    background: #333;
+    height: 250px; /* Or your desired height */
+    background: #333; /* Fallback background */
     overflow: hidden;
 }
 
+/* Banner Image Styles - Common styles for both images */
 .banner-img {
+    position: absolute; /* Position images on top of each other */
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
-    opacity: 1;
-    transition: opacity 0.6s ease-in-out;/* EKLENDİ: Hover efekti için geçiş */
-}
-.banner-img[src=""] { /* Eğer src boşsa veya yüklenemediyse */
-    opacity: 0.5;
-    background-color: var(--bg-light); /* Hafif bir arka plan */
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.6s ease-in-out; /* CSS transition for opacity (crossfade) */
+    /* Keep hover effect if desired, applying to both potential images */
 }
 .banner-img:hover {
-    filter: brightness(1.1) contrast(1.05); /* Hafif parlaklık ve kontrast */
-    box-shadow: inset 0 0 30px rgba(174, 99, 228, 0.3); /* İçten hafif mor parlama */
+    filter: brightness(1.1) contrast(1.05);
+    box-shadow: inset 0 0 30px rgba(174, 99, 228, 0.3);
 }
 
+/* Initial state for the first image (will be made visible by JS) */
+.banner-img-1 {
+   /* z-index: 1; /* Optional: Control stacking order */
+}
+
+/* Initial state for the second image */
+.banner-img-2 {
+   /* z-index: 0; /* Optional: Control stacking order */
+}
+
+/* Progress bar container and bar styles remain the same */
 .banner-progress-container {
-  position: absolute; /* Banner'a göre konumlanması için */
+  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5px; /* Progress bar kalınlığı, istediğin gibi ayarla */
-  background-color: rgba(0, 0, 0, 0.3); /* Barın arka planı, opsiyonel */
-  overflow: hidden; /* İçindeki bar taşmasın */
+  height: 5px;
+  background-color: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index: 2; /* Ensure it's above banner images */
 }
 
 .banner-progress-bar {
   height: 100%;
-  width: 0%; /* Başlangıçta genişlik 0 */
-  background-color: #8A2BE2; /* Güzel bir mor tonu, veya Raiden moru: #ae63e4 */
-  /* Animasyon burada tanımlanacak */
-  transition: width 0.5s linear;
+  width: 0%;
+  background-color: #8A2BE2; /* Or your Raiden purple */
+  transition: width 0.5s linear; /* Keep this transition for the bar itself */
 }
+
+/* Progress GIF styles remain the same */
+.progress-gif {
+  position: absolute;
+  bottom: 2px;
+  left: 0%;
+  width: 30px;
+  height: auto;
+  transform: translateX(-80%);
+  z-index: 3; /* Ensure it's above progress bar and banner images */
+  opacity: 1;
+  transition: left 0.05s linear, opacity 0.3s ease-in-out;
+}
+.progress-gif.hidden {
+  opacity: 0;
+}
+
+/* Add responsive adjustments for banner height if you have them */
+
 
 /* Animasyon Keyframes */
 @keyframes fillProgressBar {
@@ -280,21 +313,8 @@ body::before {
   to { width: 100%; }
 }
 /* YENİ EKLENEN Stil */
-.progress-gif {
-  position: absolute; /* .banner'a göre konumlanacak */
-  bottom: 2px;  /* Progress bar'ın hemen üstünde durması için ayarla (5px bar + 2px boşluk gibi) */
-  left: 0%;   /* Başlangıçta solda */
-  width: 30px; /* Boyutunu ayarla */
-  height: auto;
-  transform: translateX(-80%);
-  z-index: 1; /* Diğer elementlerin üzerinde kalsın */
-  /* filter: drop-shadow(0 0 3px black); */ /* Opsiyonel: Daha belirgin olması için gölge */
-  opacity: 1;
-  transition: left 0.05s linear, opacity 0.3s ease-in-out; /* 0.3sn fade süresi */
-}
-.progress-gif.hidden {
-  opacity: 0;
-}
+
+
 
 /* Profil İçeriği */
 .profile-content {
