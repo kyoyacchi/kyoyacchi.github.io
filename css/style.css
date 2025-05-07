@@ -495,14 +495,14 @@ border-color: var(--raiden-electro);
 
 .social-icons a:hover {
     color: var(--raiden-electro);
-    transform: translateY(-5px) scale(1.2);
+   /* transform: translateY(-5px) scale(1.2);*/
     text-shadow: 0 0 12px var(--raiden-glow);
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
     background: none;
 }
 
-.social-icons a::after {
+/*.social-icons a::after {
     content: '✦';
     position: absolute;
     font-size: 14px;
@@ -514,12 +514,12 @@ border-color: var(--raiden-electro);
     transition: all 0.2s ease-out;
     text-shadow: 0 0 8px var(--secondary);
 }
-
-.social-icons a:hover::after {
+*/
+/*.social-icons a:hover::after {
     opacity: 1;
     transform: scale(1.1) rotate(90deg);
     transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-}
+}*/
 
 .tweet-embed-container {
   position: relative;
