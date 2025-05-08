@@ -1299,18 +1299,9 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
     transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-#status-pop.visible {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-#status-pop.success {
-    border: 2px solid var(--primary-light);
-}
-
-#status-pop.error {
-    border: 2px solid var(--accent);
-}
+#status-pop.visible { opacity: 1; transform: translateX(0) scale(1); }
+#status-pop.success { border: 2px solid var(--primary-light); }
+#status-pop.error { border: 2px solid #FF6B8B; }
 
 .pop-inner {
     background-color: var(--bg-light);
