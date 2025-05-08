@@ -1230,11 +1230,13 @@ footer::before {
   animation: subtle-shake 0.3s ease-in-out;
 }
 .disclaimer-text {
-  color: #888;
-  font-size: 0.8em;
-  margin-top: 5px;
+  color: #8A7A9A;
+  font-size: 0.85em;
+  margin-top: 10px;
   text-align: center;
+  font-style: italic;
 }
+
 .custom-divider {
   width: 90%;
   height: 1px;
