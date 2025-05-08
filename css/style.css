@@ -1320,22 +1320,23 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
     box-sizing: border-box;
 }
 
-#status-pop.success .pop-inner {
-    border: 1px solid rgba(138, 79, 255, 0.5);
+#status-pop.success .pop-inner { 
+  border: 1px solid rgba(168, 119, 244, 0.4);
+}
+#status-pop.error .pop-inner { 
+  border: 1px solid rgba(255, 107, 139, 0.4);
 }
 
-#status-pop.error .pop-inner {
-    border: 1px solid rgba(255, 107, 139, 0.5);
-}
 
-.pop-inner i {
-    font-size: 18px;
-}
+.pop-inner i { 
+  font-size: 1.2em;
+  }
 
 #status-pop.success .pop-inner i {
     color: var(--primary-light);
 }
 
 #status-pop.error .pop-inner i {
-    color: var(--accent);
+  color: #FF6B8B; 
+  
 }
