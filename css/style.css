@@ -996,16 +996,9 @@ footer::before {
     .name-row {
         font-size: 26px;
     }
-    .handle {
-        font-size: 15px;
-    }
+    .handle { font-size: 1rem; }
 .bio { max-width: 90%; font-size: 1rem; padding: 20px 25px; }
-    .bio::before {
-         width: 39px;
-         height: 39px;
-         top: -15px;
-         left: -15px;
-     }
+
     .bio-kitsune-icon {
         width: 49px;
         top: -22px;
