@@ -1053,6 +1053,7 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
     font-size: 12px;
     line-height: 1.3;
   }
+      .shogunate-approval { font-size: 0.8rem; }
 }
 
 @media (max-width: 480px) {
@@ -1091,7 +1092,7 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
     .preloader-text {
         font-size: 18px;
     }
-    .shogunate-approval { font-size: 10px; }
+       .shogunate-approval { font-size: 0.75rem; }
     .tweet-decor-top { display: none; }
     .tweet-content {
         padding: 15px;
