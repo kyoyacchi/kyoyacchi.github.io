@@ -1046,7 +1046,7 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
         gap: 4px;
     }
     .handle {
-        font-size: 14px;
+        font-size: 1rem;
     }
     .bio { font-size: 0.95rem; padding: 18px 20px; margin: 30px auto; }
    .bio-kitsune-icon {
@@ -1056,7 +1056,7 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
    }
   .social-icons { gap: 15px; justify-content: center; padding-left: 0; }
     .social-icons a {
-        font-size: 22px;
+        font-size: 1.6rem;
     }
     .tweet-embed-container {
         padding: 10px;
@@ -1064,10 +1064,9 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
 
     footer { font-size: 0.8rem; padding: 25px 10px; gap: 8px; }
     .footer-avatar { width: 26px; height: 26px; }
-    .preloader-text {
-        font-size: 18px;
-    }
-       .shogunate-approval { font-size: 0.75rem; }
+    .preloader-text { font-size: 18px; max-width: 90%; }
+    .shogunate-approval { font-size: 0.75rem; }
+    .disclaimer-text { font-size: 0.65rem; }
     .tweet-decor-top { display: none; }
     .tweet-content {
         padding: 15px;
