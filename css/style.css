@@ -912,10 +912,7 @@ footer::before {
 }
 
 .Footer_text {
-    position: relative;
-    cursor: default;
-    color: var(--text-light);
-    font-weight: bold;
+    cursor: default; color: var(--text-light); font-weight: bold;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     text-shadow: 0 0 5px var(--raiden-dark-glow);
 }
@@ -1287,19 +1284,19 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
 }
 #status-pop {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
+    bottom: 25px;
+    left: 25px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     width: fit-content;
-    max-width: calc(100vw - 40px);
+    max-width: calc(100vw - 50px);
     z-index: 1100;
     padding: 3px;
     box-sizing: border-box;
     opacity: 0;
     transform: translateX(-20px);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 #status-pop.visible {
