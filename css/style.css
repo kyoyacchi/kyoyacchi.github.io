@@ -492,25 +492,22 @@ border-color: var(--raiden-electro);
 
 .social-icons {
     display: flex;
-    gap: 25px;
-    justify-content: flex-start;
-    margin-bottom: 30px;
+    gap: 30px;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding-left: 0;
 }
 
 .social-icons a {
-    color: var(--text-muted);
-    font-size: 26px;
-    transition: all 0.3s ease;
-    position: relative;
+    color: var(--text-secondary); font-size: 1.8rem; /* Larger icons */
+    transition: all 0.3s ease; position: relative;
+    display: inline-block; /* For transform */
 }
 
 .social-icons a:hover {
     color: var(--raiden-electro);
-   /* transform: translateY(-5px) scale(1.2);*/
-    text-shadow: 0 0 12px var(--raiden-glow);
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: unset;
-    background: none;
+    text-shadow: 0 0 12px var(--raiden-glow), 0 0 20px var(--accent-purple);
+    
 }
 
 /*.social-icons a::after {
