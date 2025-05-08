@@ -1054,10 +1054,9 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
         top: -22px;
         right: -22px;
    }
-  .social-icons { gap: 15px; justify-content: center; padding-left: 0; }
-    .social-icons a {
-        font-size: 1.6rem;
-    }
+    .social-icons { gap: 15px; }
+    .social-icons a { font-size: 1.5rem; }
+    
     .tweet-embed-container {
         padding: 10px;
     }
