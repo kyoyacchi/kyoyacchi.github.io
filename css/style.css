@@ -506,7 +506,7 @@ border-color: var(--raiden-electro);
 
 .social-icons a:hover {
     color: var(--raiden-electro);
-    text-shadow: 0 0 12px var(--raiden-glow), 0 0 20px var(--accent-purple);
+    text-shadow: 0 0 12px var(--raiden-glow), 0 0 20px var(--raiden-electro);
     
 }
 
@@ -907,7 +907,8 @@ footer::before {
     filter: saturate(0.8);
 }
 .footer-avatar:hover {
-    transform: scale(1.1);
+    transform: scale(1.15); border-color: var(--raiden-electro); 
+    filter: saturate(1);
 }
 
 .Footer_text {
