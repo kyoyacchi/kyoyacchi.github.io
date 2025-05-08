@@ -446,7 +446,7 @@ body::before {
 .bio .fa-heart {
     color: var(--primary-light);
 }
-
+.bio p { margin: 0; }
 .bio:hover {
 border-color: var(--raiden-electro);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px var(--raiden-glow);
