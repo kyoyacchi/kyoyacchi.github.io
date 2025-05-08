@@ -2,11 +2,240 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="refresh" content="0;URL=https://kyoyacchi.github.io">
+    <title>Kyo</title>
+    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+    <style>
+        :root {
+            --primary: #7B2CBF;
+            --primary-dark: #5A189A;
+            --primary-light: #9D4EDD;
+            --secondary: #C77DFF;
+            --accent: #FF758F;
+            --accent-glow: rgba(255, 117, 143, 0.7);
+            --bg-dark: #10002B;
+            --bg-light: #240046;
+            --bg-gradient-start: #18032d;
+            --bg-gradient-end: #3c096c;
+            --text-light: #F8F9FA;
+            --text-muted: #CEC8EF;
+            --text-dark: #E0AAFF;
+            --raiden-electro: #AE63E4;
+            --raiden-glow: rgba(174, 99, 228, 0.85);
+            --raiden-dark-glow: rgba(123, 44, 191, 0.6);
+            --gold-accent: #FFD700;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 15px var(--raiden-glow);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --transition-long: all 0.5s ease;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: linear-gradient(to bottom right, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            padding: 30px 25px;
+            border-radius: var(--border-radius);
+            max-width: 550px;
+            width: 90%;
+            margin: 20px 0;
+            position: relative;
+            opacity: 0;
+            border: 3px solid transparent;
+            background-image: linear-gradient(var(--bg-light), var(--bg-light)),
+                              linear-gradient(120deg, var(--accent), #FFB8CE, var(--accent), #FFB8CE, var(--accent));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            background-size: 250% 100%;
+            animation: gradientBorderFill 5s linear forwards,
+                       fadeIn 0.8s ease-out 0.2s forwards;
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), var(--shadow-glow);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientBorderFill {
+            0% {
+                background-position: 150% 50%;
+            }
+            100% {
+                background-position: -50% 50%;
+            }
+        }
+
+        .yae-miko-icon {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .yae-miko-icon img {
+            max-width: 180px;
+            height: auto;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+            position: relative;
+            left: 0px;
+            top: 10px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-light);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .message {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin-bottom: 30px;
+        }
+
+        .message strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .home-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--text-light);
+            padding: 10px 25px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2), 0 0 8px var(--accent-glow);
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-button:hover,
+        .home-button:focus {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(0,0,0,0.25), 0 0 12px var(--accent-glow);
+            color: var(--text-light);
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            opacity: 0.65;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(circle, var(--accent-glow) 0%, transparent 35%);
+            animation: pulseGlow 10s infinite ease-in-out alternate;
+            z-index: -1;
+            opacity: 0.25;
+        }
+
+        @keyframes pulseGlow {
+            from { transform: scale(0.9); opacity: 0.2;}
+            to { transform: scale(1.1); opacity: 0.3;}
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                width: 95%;
+                padding: 20px 15px;
+                margin: 15px 0;
+                border-width: 2px;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            .message {
+                font-size: 0.9rem;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            }
+            .yae-miko-icon { /* Mobil için font-size gereksiz, resim var */
+            }
+             .yae-miko-icon img {
+                max-width: 80px; /* Mobil için resim boyutu */
+            }
+            .home-button {
+                padding: 9px 20px;
+                font-size: 0.9rem;
+            }
+            .footer-note {
+                 font-size: 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="yae-miko-icon">
+            <img src="https://us-east-1.tixte.net/uploads/kyoya.discowd.com/33d1ed4bbe93bbc3810953d0c4e8f8b7_508243765883771814.png" alt="Yae Miko Sticker">
+        </div>
+        <h1>Ara Ara~</h1>
+        <p class="message">
+            Lost, <strong>little one</strong>?
+            Curious paths can be diverting, but perhaps it's time to head back to the <strong>Grand Narukami Shrine</strong>?
+        </p>
+        <a href="/" class="home-button" id="homeButton">Return to the Shrine</a>
+        <p class="footer-note">
+            Remember, every end is a new beginning... or perhaps just a broken link.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeButton = document.getElementById('homeButton');
+            const redirectTime = 5000; // Süre 5 saniyeye düşürüldü
+            let redirectTimer;
+
+            redirectTimer = setTimeout(function() {
+                window.location.href = "/"; // Ana sayfa URL'niz
+            }, redirectTime);
+
+            homeButton.addEventListener('click', function() {
+                clearTimeout(redirectTimer);
+            });
+        });
+    </script>
 </body>
 </html>
