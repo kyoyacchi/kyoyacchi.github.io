@@ -136,23 +136,39 @@ body::before {
     filter: drop-shadow(0 0 12px var(--raiden-glow)) drop-shadow(0 0 6px var(--secondary));
 }
 
+@keyframes slideUpAndFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); 
+    }
+}
+
+
 .preloader-text {
     position: absolute;
-    color: var(--secondary);
     font-family: 'Quicksand', sans-serif;
     font-size: 24px;
     font-weight: 700;
-    opacity: 1;
     text-align: center;
     top: 51.4%;
-    transition: opacity 0.8s ease-out;
-    animation: pulseGlowPreloader 3s infinite ease-in-out;
     max-width: 90%;
     word-wrap: break-word;
     padding: 10px;
     box-sizing: border-box;
     width: 100%;
+
+
+    opacity: 0;
+    animation: 
+        slideUpAndFadeIn 1s ease-out 0.5s forwards,  
+        pulseGlowPreloader 3s infinite ease-in-out 0.5s; 
 }
+
+
 
 .intro-overlay.fade-out .preloader-text,
 {
