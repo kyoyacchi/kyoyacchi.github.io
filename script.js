@@ -136,10 +136,13 @@ function setupHeartEffect() {
 }
 
 function handleIntroOverlay() {
-
     const introOverlay = document.querySelector('.intro-overlay');
+    const preloaderText = document.querySelector('.preloader-text');
+    const subtitleText = document.querySelector('.subtitle-text');
 
-    setTimeout(() => {
+    let initialHideTimeoutId = null;
+
+    const hidePreloaderNormally = () => {
         if (introOverlay) {
             introOverlay.style.opacity = '0';
             setTimeout(() => {
@@ -147,52 +150,105 @@ function handleIntroOverlay() {
                 document.body.style.overflow = 'auto';
             }, 500);
         }
-    }, 1500);
+    };
 
-    const texts = [
-       'Now, you shall perish!',
-        'There is no escape!',
-        'Inazuma shines eternal!',
-        'Inabikari, sunawachi Eien nari',
-        'Mikirimashita',
-        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
-        'Shine down!',
-        'Illusion shattered!',
-        'Torn to oblivion!',
-        'Sabaki no ikazuchi',
-        'Nigemichi wa arimasen',
-        'Muga no kyouchi he',
-        'Koko yori, jakumetsu no toki!',
-        'Musou me harder, mommy'
-    ];
+    const denialChance = 0.21
+    const triggerDenial = Math.random() < denialChance;
 
-    const randomText = texts[Math.floor(Math.random() * texts.length)];
-
-    const preloaderText = document.querySelector('.preloader-text');
-
-    if (preloaderText) {
-        preloaderText.textContent = randomText;
-    }
-
-    if (randomText === 'Musou me harder, mommy') {
-
-        const subtitleText = document.querySelector('.subtitle-text');
-if (subtitleText) {
-    subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
-
-}
+    if (triggerDenial) {
         if (introOverlay) {
+            if (preloaderText) {
+                 preloaderText.textContent = '';
+                 preloaderText.className = 'preloader-text';
+            }
+             if (subtitleText) {
+                 subtitleText.textContent = '';
+                 subtitleText.className = 'subtitle-text';
+             }
+             if (introOverlay) {
+                 introOverlay.classList.remove('shake-it');
+             }
+
+            introOverlay.classList.add('shogun-denied');
+
+            if (preloaderText) {
+                preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
+                preloaderText.classList.add('denied-text');
+            }
 
 
-introOverlay.classList.add('shake-it');
+            const deniedIcon = document.createElement('i');
+            deniedIcon.classList.add('fas', 'fa-times', 'denied-icon');
+            introOverlay.appendChild(deniedIcon);
 
             setTimeout(() => {
-                introOverlay.classList.remove('shake-it');
-            }, 300);
-        }
-    }
+                if (introOverlay) {
+                    introOverlay.classList.remove('shogun-denied');
+                    if (deniedIcon.parentNode) {
+                        deniedIcon.parentNode.removeChild(deniedIcon);
+                    }
 
+                    if (preloaderText) {
+                        preloaderText.textContent = "The Almighty Raiden Shogun has approved your access.";
+                        preloaderText.classList.remove('denied-text');
+                        preloaderText.classList.add('approved-text');
+                    }
+
+                    setTimeout(() => {
+                        hidePreloaderNormally();
+                    }, 2000);
+
+                }
+
+            }, 10000);
+
+        }
+
+    } else {
+         const texts = [
+           'Now, you shall perish!',
+            'There is no escape!',
+            'Inazuma shines eternal!',
+            'Inabikari, sunawachi Eien nari',
+            'Mikirimashita',
+            'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+            'Shine down!',
+            'Illusion shattered!',
+            'Torn to oblivion!',
+            'Sabaki no ikazuchi',
+            'Nigemichi wa arimasen',
+            'Muga no kyouchi he',
+            'Koko yori, jakumetsu no toki!',
+            'Musou me harder, mommy'
+        ];
+
+        const randomText = texts[Math.floor(Math.random() * texts.length)];
+
+         if (preloaderText) {
+            preloaderText.textContent = randomText;
+        }
+
+         if (randomText === 'Musou me harder, mommy') {
+             if (subtitleText) {
+                subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
+            }
+            if (introOverlay) {
+                introOverlay.classList.add('shake-it');
+                setTimeout(() => {
+                    introOverlay.classList.remove('shake-it');
+                }, 300);
+            }
+        }
+
+        initialHideTimeoutId = setTimeout(() => {
+            hidePreloaderNormally();
+        }, 2500);
+    }
 }
+
+
+
+
 
 
 function setupTweetEmbed(containerSelector) {
