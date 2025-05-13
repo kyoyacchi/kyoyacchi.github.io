@@ -152,7 +152,7 @@ function handleIntroOverlay() {
         }
     };
 
-    const denialChance = 0.21
+    const denialChance = 0.10
     const triggerDenial = Math.random() < denialChance;
 
     if (triggerDenial) {
@@ -196,7 +196,7 @@ function handleIntroOverlay() {
 
                     setTimeout(() => {
                         hidePreloaderNormally();
-                    }, 2000);
+                    }, 1500);
 
                 }
 
@@ -242,7 +242,7 @@ function handleIntroOverlay() {
 
         initialHideTimeoutId = setTimeout(() => {
             hidePreloaderNormally();
-        }, 2500);
+        }, 1500);
     }
 }
 
