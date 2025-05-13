@@ -152,7 +152,7 @@ function handleIntroOverlay() {
         }
     };
 
-    const denialChance = 0.10
+    const denialChance = 0.1
     const triggerDenial = Math.random() < denialChance;
 
     if (triggerDenial) {
@@ -200,7 +200,7 @@ function handleIntroOverlay() {
 
                 }
 
-            }, 10000);
+            }, 3200);
 
         }
 
