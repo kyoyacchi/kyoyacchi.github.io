@@ -148,7 +148,7 @@ function handleIntroOverlay() {
             setTimeout(() => {
                 introOverlay.style.display = 'none';
                 document.body.style.overflow = 'auto';
-            }, 500);
+            }, 1000);
         }
     };
 
