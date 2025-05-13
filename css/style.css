@@ -171,7 +171,7 @@ body::before {
 
 
 
-.intro-overlay.fade-out .preloader-text,
+.intro-overlay.fade-out .preloader-text
 {
     opacity: 0;
 }
