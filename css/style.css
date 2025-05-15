@@ -350,7 +350,7 @@ body::before {
                 border-color: var(--raiden-electro);
 }
 .name-container {
-    user-select: none;
+  /*  user-select: none;*/
     display: flex;
     flex-direction: column;
     gap: 0px;
@@ -1421,4 +1421,16 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
 html {
     scrollbar-width: thin; 
     scrollbar-color: var(--primary) var(--bg-light); 
+}
+
+::selection {
+    background-color: var(--primary);
+    color: var(--text-light);
+    text-shadow: none;
+}
+
+::-moz-selection {
+    background-color: var(--primary);
+    color: var(--text-light);
+    text-shadow: none;
 }
