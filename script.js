@@ -821,7 +821,7 @@ function initializeDynamicBanner() {
    updateDiscordPfp();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
-   PreventRightClick();
+ //  PreventRightClick();
   setupParticleCanvas();
     setupScrollAnimations();
     initializeDynamicBanner();
