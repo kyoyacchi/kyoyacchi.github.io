@@ -194,10 +194,10 @@
                 line-height: 1.6;
                 margin-bottom: 25px;
             }
-            .yae-miko-icon { /* Mobil için font-size gereksiz, resim var */
+            .yae-miko-icon { 
             }
              .yae-miko-icon img {
-                max-width: 80px; /* Mobil için resim boyutu */
+                max-width: 80px;
             }
             .home-button {
                 padding: 9px 20px;
@@ -228,11 +228,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const homeButton = document.getElementById('homeButton');
-            const redirectTime = 5000; // Süre 5 saniyeye düşürüldü
+            const redirectTime = 5000; 
             let redirectTimer;
 
             redirectTimer = setTimeout(function() {
-                window.location.href = "/"; // Ana sayfa URL'niz
+                window.location.href = "/"; 
             }, redirectTime);
 
             homeButton.addEventListener('click', function() {
