@@ -1022,7 +1022,7 @@ footer::before {
         padding: 15px;
     }
 
-footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
+footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
 
 
     .tweet-decor-top::before, .tweet-decor-top::after { font-size: 20px; }
@@ -1076,8 +1076,8 @@ footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
         padding: 10px;
     }
 
-    footer { font-size: 0.8rem; padding: 25px 10px; gap: 8px; }
-    .footer-avatar { width: 26px; height: 26px; }
+    footer { font-size: 0.85rem; padding: 30px 15px; gap: 10px; }
+    .footer-avatar { width: 28px; height: 28px; }
     .preloader-text { font-size: 18px; max-width: 90%; }
     .shogunate-approval { font-size: 0.75rem; }
     .disclaimer-text { font-size: 0.65rem; }
