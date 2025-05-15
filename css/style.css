@@ -1387,3 +1387,38 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
 .line-right.resume-animation {
     animation: slideToFullRight 1.8s ease-out forwards;
 }
+
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: var(--border-radius-small);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: var(--border-radius-small);
+    border: 3px solid var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/*Ugh, firefox.....*/
+html {
+    scrollbar-width: thin; 
+    scrollbar-color: var(--primary) var(--bg-light); 
+}
