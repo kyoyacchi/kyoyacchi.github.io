@@ -94,6 +94,7 @@ function setupHeartEffect() {
     const colors = ['#FF6B8B', '#A68BFF', '#6C2BD9', '#ffffff', '#9B59B6'];
     let currentIndex = 0;
     let intervalId = null;
+    let timeoutId = null;
 
     function changeColor() {
         heartIcon.style.color = colors[currentIndex];
@@ -101,21 +102,21 @@ function setupHeartEffect() {
     }
 
     function startColorChanging() {
-        if (intervalId) clearInterval(intervalId);
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
         intervalId = setInterval(changeColor, 150);
+        timeoutId = setTimeout(stopColorChanging, 1000);
     }
 
     function stopColorChanging() {
         clearInterval(intervalId);
+        clearTimeout(timeoutId);
         intervalId = null;
+        timeoutId = null;
         heartIcon.style.color = "";
     }
 
-    heartIcon.addEventListener('mouseenter', () => {
-        startColorChanging();
-        setTimeout(stopColorChanging, 1000);
-    });
-
+    heartIcon.addEventListener('mouseenter', startColorChanging);
     heartIcon.addEventListener('mouseleave', stopColorChanging);
 }
 
@@ -134,14 +135,17 @@ function handleIntroOverlay() {
         }, 1000);
     };
 
-    const denialChance = 0.1;
+    const denialChance = 0.002;
     if (Math.random() < denialChance) {
         preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
         preloaderText.className = 'preloader-text denied-text';
         subtitleText.textContent = '';
         introOverlay.classList.remove('shake-it');
         introOverlay.classList.add('shogun-denied');
-        introOverlay.innerHTML += '<i class="fas fa-times denied-icon"></i>';
+        const iconElement = document.createElement('i');
+iconElement.className = 'fas fa-times denied-icon';
+introOverlay.appendChild(iconElement);
+
 
         setTimeout(() => {
             introOverlay.classList.remove('shogun-denied');
@@ -152,7 +156,7 @@ function handleIntroOverlay() {
             preloaderText.className = 'preloader-text approved-text';
 
             setTimeout(hidePreloaderNormally, 2000);
-        }, 2500);
+        }, 1500);
 
     } else {
         const texts = [
@@ -180,7 +184,7 @@ function handleIntroOverlay() {
             setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
         }
 
-        setTimeout(hidePreloaderNormally, 1500);
+        setTimeout(hidePreloaderNormally, 2000);
     }
 }
 
@@ -758,7 +762,53 @@ function initializeDynamicBanner() {
 
     const checkmarkIcon = document.querySelector('.checkmark');
     if (checkmarkIcon) {
+const tooltips = document.querySelectorAll('.tooltip');
 
+    tooltips.forEach(tooltipContainer => {
+        const tooltipText = tooltipContainer.querySelector('.tooltiptext');
+        let autoHideTimer = null;
+        let visibilityTimer = null; 
+
+        if (!tooltipText) {
+            return; 
+        }
+
+
+        tooltipContainer.addEventListener('mouseenter', function() {
+
+            clearTimeout(autoHideTimer);
+            clearTimeout(visibilityTimer);
+
+
+            tooltipText.style.opacity = '';
+            tooltipText.style.transform = '';
+            tooltipText.style.visibility = '';
+            
+
+            autoHideTimer = setTimeout(() => {
+
+                tooltipText.style.opacity = '0';
+                tooltipText.style.transform = 'translateX(-50%) translateY(10px)'; 
+                clearTimeout(visibilityTimer); 
+                visibilityTimer = setTimeout(() => {
+                    tooltipText.style.visibility = 'hidden';
+                }, 400); 
+
+            }, 1500); 
+        });
+
+
+        tooltipContainer.addEventListener('mouseleave', function() {
+
+            clearTimeout(autoHideTimer);
+            clearTimeout(visibilityTimer);
+
+
+            tooltipText.style.opacity = '';
+            tooltipText.style.transform = '';
+            tooltipText.style.visibility = '';
+        });
+    });
 
     }
 }
