@@ -300,7 +300,7 @@ function setupTweetEmbed(containerSelector) {
                 loadingIndicator.style.display = 'none';
             }
         });
-         console.log(`Tweet in ${containerSelector} loaded successfully.`);
+     //    console.log(`Tweet in ${containerSelector} loaded successfully.`);
     }
 
     function showErrorState(errorMessage = 'Could not load Tweet.') {
@@ -363,7 +363,7 @@ function setupTweetEmbed(containerSelector) {
                  if ((!widgets || widgets.length === 0) && !widgetLoaded) {
                      setTimeout(() => {
                          if (!isTweetLoaded) {
-                              console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or 'loaded' event didn't fire.`);
+    //                          console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or 'loaded' event didn't fire.`);
 
                          }
                      }, 500);
@@ -391,7 +391,7 @@ function setupTweetEmbed(containerSelector) {
         entries.forEach(entry => {
 
             if (entry.isIntersecting && !isTweetLoading) {
-                console.log(`Tweet container ${containerSelector} is intersecting. Loading tweet.`);
+      //          console.log(`Tweet container ${containerSelector} is intersecting. Loading tweet.`);
                 isTweetLoading = true;
                 loadTweet();
                 observerInstance.unobserve(tweetContainer);
@@ -585,7 +585,7 @@ function initializeDynamicBanner() {
         bannerImg1.src = bannerUrls[currentBannerIndex];
         bannerImg1.onload = () => {
             bannerImg1.style.opacity = '1';
-            console.log("Initial banner loaded:", bannerUrls[currentBannerIndex]);
+       //     console.log("Initial banner loaded:", bannerUrls[currentBannerIndex]);
             startProgressCycle();
         };
          bannerImg1.onerror = () => {
@@ -648,7 +648,7 @@ function initializeDynamicBanner() {
                         prepareBannerChange();
                     } else {
 
-                        console.log("Change skipped (tab hidden). Will restart progress on focus.");
+           //             console.log("Change skipped (tab hidden). Will restart progress on focus.");
                     }
                     nextChangeTimeoutId = null;
                 }, renderDelay);
@@ -801,7 +801,7 @@ function initializeDynamicBanner() {
 
     updateBioStyle(bannerUrls[currentBannerIndex]);
 
-    console.log(`Dynamic banner initialized. Waiting for initial image load... Interval: ${changeInterval / 1000}s.`);
+  //  console.log(`Dynamic banner initialized. Waiting for initial image load... Interval: ${changeInterval / 1000}s.`);
 }
 
 
