@@ -942,10 +942,7 @@ footer::before {
     transition: color 0.2s linear, transform 0.3s ease, text-shadow 0.3s ease;
     cursor: pointer;
 }
-#Footer_heart:hover {
-    color: #ff99ac;
-    transform: scale(1.25);
-}
+
 #Footer_heart:hover {
     color: purple;
     transform: scale(1.2);
