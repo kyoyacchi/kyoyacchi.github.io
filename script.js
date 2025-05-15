@@ -25,7 +25,7 @@ async function getDiscordAv() {
         if (response.data && response.data.avatar) {
             return { avatar: response.data.avatar, error: false };
         } else {
-             throw new Error("Invalid response structure");
+            throw new Error("Invalid response structure");
         }
     } catch (error) {
         console.error("Failed to fetch Discord avatar:", error.message);
@@ -34,22 +34,15 @@ async function getDiscordAv() {
 }
 
 function showPopUp(isError) {
-    if (document.getElementById("status-pop")) {
-        return;
-    }
+    if (document.getElementById("status-pop")) return;
 
     const pop = document.createElement("div");
     const innerDiv = document.createElement("div");
     pop.id = "status-pop";
     innerDiv.className = "pop-inner";
 
-    const stateClass = isError ? "error" : "success";
-    const iconClass = isError ? "fas fa-times-circle" : "fas fa-check-circle";
-    const message = isError ? "couldn't update discord pfp" : "updated discord pfp";
-
-    pop.classList.add(stateClass);
-
-    innerDiv.innerHTML = `<i class="${iconClass}"></i> ${message}`;
+    pop.classList.add(isError ? "error" : "success");
+    innerDiv.innerHTML = `<i class="fas ${isError ? "fa-times-circle" : "fa-check-circle"}"></i> ${isError ? "couldn't update discord pfp" : "updated discord pfp"}`;
 
     pop.appendChild(innerDiv);
     document.body.appendChild(pop);
@@ -61,9 +54,7 @@ function showPopUp(isError) {
     setTimeout(() => {
         pop.classList.remove("visible");
         setTimeout(() => {
-             if (pop.parentNode) {
-                pop.parentNode.removeChild(pop);
-             }
+            if (pop.parentNode) pop.parentNode.removeChild(pop);
         }, 400);
     }, 3500);
 }
@@ -72,35 +63,28 @@ async function updateDiscordPfp() {
     const avatarElement = document.getElementById("discord_pfp");
     if (!avatarElement) return;
 
-    const defaultAvatar = GITHUB_AVATAR_URL;
     let currentStoredAvatar = localStorage.getItem('discord_avatar');
     let fetchedAvatarData = { avatar: null, error: true };
 
     try {
         fetchedAvatarData = await getDiscordAv();
-    } catch (error) {
+    } catch {}
 
-    }
+    let finalAvatarUrl = fetchedAvatarData.error ? (currentStoredAvatar || GITHUB_AVATAR_URL) : fetchedAvatarData.avatar;
 
-    const finalAvatarUrl = fetchedAvatarData.error ? defaultAvatar : fetchedAvatarData.avatar;
-
-    if (!fetchedAvatarData.error && (!currentStoredAvatar || currentStoredAvatar !== fetchedAvatarData.avatar)) {
+    if (!fetchedAvatarData.error && fetchedAvatarData.avatar !== currentStoredAvatar) {
         localStorage.setItem('discord_avatar', fetchedAvatarData.avatar);
         showPopUp(false);
         currentStoredAvatar = fetchedAvatarData.avatar;
     } else if (fetchedAvatarData.error && currentStoredAvatar) {
-
         showPopUp(true);
     }
 
     avatarElement.onerror = () => {
-        console.warn("Oops! Failed to load discord pfp, falling back to github pfp");
-        avatarElement.src = defaultAvatar;
-
-
+        avatarElement.src = GITHUB_AVATAR_URL;
     };
 
-    avatarElement.src = currentStoredAvatar && !fetchedAvatarData.error ? currentStoredAvatar : finalAvatarUrl;
+    avatarElement.src = finalAvatarUrl;
 }
 
 function setupHeartEffect() {
