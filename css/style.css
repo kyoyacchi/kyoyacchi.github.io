@@ -385,12 +385,13 @@ body::before {
 .checkmark {
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 24px;
-    height: 24px;
+    width: 1.2em;  
+    height: 1.2em;
     filter: drop-shadow(0 0 3px var(--raiden-glow));
     fill: var(--raiden-electro);
-    vertical-align: middle;
+    vertical-align: middle; 
 }
+
 .checkmark:hover {
     color: var(--secondary);
     filter: drop-shadow(0 0 6px var(--secondary));
