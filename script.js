@@ -137,76 +137,42 @@ function setupHeartEffect() {
 
 function handleIntroOverlay() {
     const introOverlay = document.querySelector('.intro-overlay');
+    if (!introOverlay) return;
+
     const preloaderText = document.querySelector('.preloader-text');
     const subtitleText = document.querySelector('.subtitle-text');
 
-    let initialHideTimeoutId = null;
-
     const hidePreloaderNormally = () => {
-        if (introOverlay) {
-            introOverlay.style.opacity = '0';
-            setTimeout(() => {
-                introOverlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }, 1250);
-        }
+        introOverlay.style.opacity = '0';
+        setTimeout(() => {
+            introOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 1000);
     };
 
-    const denialChance = 0.1
-    const triggerDenial = Math.random() < denialChance;
+    const denialChance = 0.1;
+    if (Math.random() < denialChance) {
+        preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
+        preloaderText.className = 'preloader-text denied-text';
+        subtitleText.textContent = '';
+        introOverlay.classList.remove('shake-it');
+        introOverlay.classList.add('shogun-denied');
+        introOverlay.innerHTML += '<i class="fas fa-times denied-icon"></i>';
 
-    if (triggerDenial) {
-        if (introOverlay) {
-            if (preloaderText) {
-                 preloaderText.textContent = '';
-                 preloaderText.className = 'preloader-text';
-            }
-             if (subtitleText) {
-                 subtitleText.textContent = '';
-                 subtitleText.className = 'subtitle-text';
-             }
-             if (introOverlay) {
-                 introOverlay.classList.remove('shake-it');
-             }
+        setTimeout(() => {
+            introOverlay.classList.remove('shogun-denied');
+            const deniedIcon = introOverlay.querySelector('.denied-icon');
+            if (deniedIcon) deniedIcon.remove();
 
-            introOverlay.classList.add('shogun-denied');
+            preloaderText.textContent = "The Almighty Raiden Shogun has approved your access.";
+            preloaderText.className = 'preloader-text approved-text';
 
-            if (preloaderText) {
-                preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
-                preloaderText.classList.add('denied-text');
-            }
-
-
-            const deniedIcon = document.createElement('i');
-            deniedIcon.classList.add('fas', 'fa-times', 'denied-icon');
-            introOverlay.appendChild(deniedIcon);
-
-            setTimeout(() => {
-                if (introOverlay) {
-                    introOverlay.classList.remove('shogun-denied');
-                    if (deniedIcon.parentNode) {
-                        deniedIcon.parentNode.removeChild(deniedIcon);
-                    }
-
-                    if (preloaderText) {
-                        preloaderText.textContent = "The Almighty Raiden Shogun has approved your access.";
-                        preloaderText.classList.remove('denied-text');
-                        preloaderText.classList.add('approved-text');
-                    }
-
-                    setTimeout(() => {
-                        hidePreloaderNormally();
-                    }, 1500);
-
-                }
-
-            }, 3200);
-
-        }
+            setTimeout(hidePreloaderNormally, 2000);
+        }, 2500);
 
     } else {
-         const texts = [
-           'Now, you shall perish!',
+        const texts = [
+            'Now, you shall perish!',
             'There is no escape!',
             'Inazuma shines eternal!',
             'Inabikari, sunawachi Eien nari',
@@ -221,28 +187,16 @@ function handleIntroOverlay() {
             'Koko yori, jakumetsu no toki!',
             'Musou me harder, mommy'
         ];
-
         const randomText = texts[Math.floor(Math.random() * texts.length)];
+        preloaderText.textContent = randomText;
 
-         if (preloaderText) {
-            preloaderText.textContent = randomText;
+        if (randomText === 'Musou me harder, mommy') {
+            subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
+            introOverlay.classList.add('shake-it');
+            setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
         }
 
-         if (randomText === 'Musou me harder, mommy') {
-             if (subtitleText) {
-                subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
-            }
-            if (introOverlay) {
-                introOverlay.classList.add('shake-it');
-                setTimeout(() => {
-                    introOverlay.classList.remove('shake-it');
-                }, 300);
-            }
-        }
-
-        initialHideTimeoutId = setTimeout(() => {
-            hidePreloaderNormally();
-        }, 1500);
+        setTimeout(hidePreloaderNormally, 1500);
     }
 }
 
@@ -416,22 +370,34 @@ function setupParticleCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resizeCanvas, 150);
+    });
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
     const particles = [];
 
     class Particle {
         constructor() { this.reset(); }
         reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
             this.size = Math.random() * 2.5 + 1;
             this.speedX = (Math.random() - 0.5) * 1.5;
             this.speedY = (Math.random() - 0.5) * 1.5;
-            this.opacity = Math.random() * 0.4 + 0.2;
             this.life = Math.random() * 500 + 200;
             this.initialLife = this.life;
+
+            if (Math.random() > 0.5) {
+                this.x = this.speedX > 0 ? -this.size : canvas.width + this.size;
+                this.y = Math.random() * canvas.height;
+            } else {
+                this.y = this.speedY > 0 ? -this.size : canvas.height + this.size;
+                this.x = Math.random() * canvas.width;
+            }
+
+            this.opacity = Math.random() * 0.4 + 0.2;
         }
         update(scrollSpeed) {
             this.x += this.speedX;
@@ -442,48 +408,54 @@ function setupParticleCanvas() {
                 this.y < -this.size || this.y > canvas.height + this.size ||
                 this.life <= 0) {
                 this.reset();
-
-                 if (Math.random() > 0.5) {
-                      this.x = this.speedX > 0 ? -this.size : canvas.width + this.size;
-                      this.y = Math.random() * canvas.height;
-                 } else {
-                     this.y = this.speedY > 0 ? -this.size : canvas.height + this.size;
-                     this.x = Math.random() * canvas.width;
-                 }
             }
         }
         draw() {
-             if (this.opacity <= 0) return;
+            if (this.opacity <= 0) return;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(155, 89, 182, ${this.opacity * 0.8})`;
             ctx.fill();
 
-             if (this.opacity > 0.3) {
-                 ctx.beginPath();
-                 ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
-                 ctx.fillStyle = `rgba(216, 191, 255, ${this.opacity * 0.5})`;
-                 ctx.fill();
-             }
+            if (this.opacity > 0.3) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(216, 191, 255, ${this.opacity * 0.5})`;
+                ctx.fill();
+            }
         }
     }
 
-    for (let i = 0; i < PARTICLE_COUNT; i++) { particles.push(new Particle()); }
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(new Particle());
+    }
+
     let lastScrollY = window.scrollY;
-    let animationFrameId = null;
+    let animationFrameId;
+
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const currentScrollY = window.scrollY;
         const scrollSpeed = currentScrollY - lastScrollY;
         lastScrollY = currentScrollY;
-        particles.forEach(p => { p.update(scrollSpeed); p.draw(); });
+
+        particles.forEach(p => {
+            p.update(scrollSpeed);
+            p.draw();
+        });
+
         animationFrameId = requestAnimationFrame(animate);
     }
+
     animate();
 
     document.addEventListener("visibilitychange", () => {
-        if (document.hidden) { cancelAnimationFrame(animationFrameId); }
-        else { lastScrollY = window.scrollY; animate(); }
+        if (document.hidden) {
+            cancelAnimationFrame(animationFrameId);
+        } else {
+            lastScrollY = window.scrollY;
+            animate();
+        }
     });
 }
 
@@ -554,7 +526,7 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/bpr8u5.jpg', 'https://files.catbox.moe/yf43bj.jpg',
         'https://files.catbox.moe/4atada.jpg', 'https://files.catbox.moe/gc1qh3.jpg',
         'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
- 'https://files.catbox.moe/ai4oz2.gif',
+        'https://files.catbox.moe/ai4oz2.gif',
         'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg'
     ];
 
@@ -585,18 +557,26 @@ function initializeDynamicBanner() {
         bannerImg1.src = bannerUrls[currentBannerIndex];
         bannerImg1.onload = () => {
             bannerImg1.style.opacity = '1';
-       //     console.log("Initial banner loaded:", bannerUrls[currentBannerIndex]);
             startProgressCycle();
         };
-         bannerImg1.onerror = () => {
-             console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
-             startProgressCycle();
-         };
+        bannerImg1.onerror = () => {
+            console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
+            startProgressCycle();
+        };
         bannerImg2.style.opacity = '0';
         isBanner1Active = true;
     } else {
         bannerContainer.style.display = 'none';
         return;
+    }
+
+    function getNextIndex(current, max) {
+        if (max <= 1) return 0;
+        let next = Math.floor(Math.random() * max);
+        if (next === current) {
+            next = (current + 1) % max;
+        }
+        return next;
     }
 
     function runProgressAnimation() {
@@ -615,8 +595,6 @@ function initializeDynamicBanner() {
         progressIntervalId = setInterval(() => {
 
             if (isLoadingNext) {
-
-
                 return;
             }
 
@@ -642,13 +620,9 @@ function initializeDynamicBanner() {
                     progressGifElement.offsetHeight;
                 }
 
-
                 nextChangeTimeoutId = setTimeout(() => {
                     if (!document.hidden) {
                         prepareBannerChange();
-                    } else {
-
-           //             console.log("Change skipped (tab hidden). Will restart progress on focus.");
                     }
                     nextChangeTimeoutId = null;
                 }, renderDelay);
@@ -660,64 +634,50 @@ function initializeDynamicBanner() {
                     progressBarElement.style.transition = `width ${transitionTiming} linear`;
                     progressBarElement.style.width = progress + '%';
                 }
-                 if (progressGifElement) {
+                if (progressGifElement) {
 
-                     progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
-                     progressGifElement.style.left = progress + '%';
-                 }
+                    progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
+                    progressGifElement.style.left = progress + '%';
+                }
             }
         }, progressUpdateFrequency);
     }
 
     function startProgressCycle() {
 
-         if (progressIntervalId) clearInterval(progressIntervalId);
-         if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-         progressIntervalId = null; nextChangeTimeoutId = null;
-         isLoadingNext = false;
+        if (progressIntervalId) clearInterval(progressIntervalId);
+        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+        progressIntervalId = null; nextChangeTimeoutId = null;
+        isLoadingNext = false;
 
-         if (progressBarElement) {
-             progressBarElement.style.transition = 'none';
-             progressBarElement.style.width = '0%';
-             progressBarElement.offsetHeight;
-         }
-         if (progressGifElement) {
-             progressGifElement.classList.add('hidden');
-             progressGifElement.style.transition = 'none';
-             progressGifElement.style.left = '0%';
-             progressGifElement.offsetHeight;
-         }
+        if (progressBarElement) {
+            progressBarElement.style.transition = 'none';
+            progressBarElement.style.width = '0%';
+            progressBarElement.offsetHeight;
+        }
+        if (progressGifElement) {
+            progressGifElement.classList.add('hidden');
+            progressGifElement.style.transition = 'none';
+            progressGifElement.style.left = '0%';
+            progressGifElement.offsetHeight;
+        }
 
-
-         setTimeout(() => {
-
-             runProgressAnimation();
-         }, 50);
+        setTimeout(() => {
+            runProgressAnimation();
+        }, 50);
     }
 
     function prepareBannerChange() {
         if (isLoadingNext) return;
         isLoadingNext = true;
 
-
-        let newIndex;
-        if (bannerUrls.length > 1) {
-            do {
-                newIndex = Math.floor(Math.random() * bannerUrls.length);
-            } while (newIndex === currentBannerIndex);
-        } else {
-            newIndex = 0;
-        }
-
+        const newIndex = getNextIndex(currentBannerIndex, bannerUrls.length);
         const newBannerUrl = bannerUrls[newIndex];
-
 
         const activeBannerElement = isBanner1Active ? bannerImg1 : bannerImg2;
         const nextBannerElement = isBanner1Active ? bannerImg2 : bannerImg1;
 
         const executeFade = () => {
-
-
             currentBannerIndex = newIndex;
 
             if (progressBarElement) {
@@ -732,7 +692,6 @@ function initializeDynamicBanner() {
                 progressGifElement.offsetHeight;
             }
 
-
             activeBannerElement.style.opacity = '0';
             nextBannerElement.style.opacity = '1';
 
@@ -741,9 +700,7 @@ function initializeDynamicBanner() {
             updateBioStyle(newBannerUrl);
 
             setTimeout(() => {
-
                 isLoadingNext = false;
-
                 startProgressCycle();
             }, fadeTransitionDuration);
         };
@@ -752,10 +709,8 @@ function initializeDynamicBanner() {
         nextBannerElement.onerror = () => {
             console.error("Failed to load banner image:", newBannerUrl);
             isLoadingNext = false;
-
             startProgressCycle();
         };
-
 
         nextBannerElement.src = newBannerUrl;
     }
@@ -777,31 +732,21 @@ function initializeDynamicBanner() {
 
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-
             if (progressIntervalId) clearInterval(progressIntervalId);
             if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
             progressIntervalId = null; nextChangeTimeoutId = null;
-
         } else {
-
-
             if (progressIntervalId) clearInterval(progressIntervalId);
             if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
             progressIntervalId = null; nextChangeTimeoutId = null;
-
 
             if (!isLoadingNext) {
-
                 startProgressCycle();
-            } else {
-
             }
         }
     });
 
     updateBioStyle(bannerUrls[currentBannerIndex]);
-
-  //  console.log(`Dynamic banner initialized. Waiting for initial image load... Interval: ${changeInterval / 1000}s.`);
 }
 
 
