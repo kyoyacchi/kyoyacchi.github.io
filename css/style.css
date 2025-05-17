@@ -976,14 +976,38 @@ footer::before {
 }
 
 .Footer_text {
-    cursor: default; color: var(--text-light); font-weight: bold;
+    cursor: default;
+    color: var(--text-light);
+    font-weight: bold;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     text-shadow: 0 0 5px var(--raiden-dark-glow);
+    position: relative; 
+    display: inline-block; 
 }
+
 .Footer_text:hover {
     color: var(--raiden-electro);
     text-shadow: 0 0 12px var(--raiden-glow);
 }
+
+.Footer_text::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 2px;
+    left: 0; 
+    background: var(--raiden-electro);
+    transition: width 0.3s ease;
+    -webkit-transition: width 0.3s ease;
+}
+
+.Footer_text:hover::after {
+    width: 100%;
+}
+
+
 
 #Footer_heart {
     color: var(--primary-light);
