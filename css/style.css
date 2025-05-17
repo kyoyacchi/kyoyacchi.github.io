@@ -607,7 +607,7 @@ border-color: var(--raiden-electro);
 background-origin: border-box;
 background-clip: padding-box, border-box;
 background-size: 300% 100%;
-    animation: gradientBorderFlow 5s linear infinite; linear infinite;
+    animation: gradientBorderFlow 5s linear infinite; 
   min-height: 200px;
   box-sizing: border-box;
   display: flex;
@@ -971,7 +971,8 @@ footer::before {
     filter: saturate(0.8);
 }
 .footer-avatar:hover {
-    transform: scale(1.15); border-color: var(--raiden-electro); 
+   /* transform: scale(1.15);*/
+   border-color: var(--raiden-electro); 
     filter: saturate(1);
 }
 
