@@ -523,9 +523,9 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/ymqw8y.jpg',
     ];
 
-    const changeInterval = 10000;
-    const fadeTransitionDuration = 600;
-    const gifFadeDuration = 300;
+    const changeInterval = 5500;
+    const fadeTransitionDuration = 350;
+    const gifFadeDuration = 250;
     const progressUpdateFrequency = 50;
     const renderDelay = 50;
 
