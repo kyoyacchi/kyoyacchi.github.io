@@ -764,7 +764,7 @@ function initializeDynamicBanner() {
     if (checkmarkIcon) {
 const tooltips = document.querySelectorAll('.tooltip');
 
-    tooltips.forEach(tooltipContainer => {
+   /* tooltips.forEach(tooltipContainer => {
         const tooltipText = tooltipContainer.querySelector('.tooltiptext');
         let autoHideTimer = null;
         let visibilityTimer = null; 
@@ -808,7 +808,7 @@ const tooltips = document.querySelectorAll('.tooltip');
             tooltipText.style.transform = '';
             tooltipText.style.visibility = '';
         });
-    });
+    });*/
 
     }
 }
