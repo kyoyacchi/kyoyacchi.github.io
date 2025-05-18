@@ -352,7 +352,7 @@ function setupParticleCanvas() {
     const canvas = document.getElementById('sparks-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const PARTICLE_COUNT = 40;
+  //  const PARTICLE_COUNT = 55;
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -371,7 +371,7 @@ function setupParticleCanvas() {
     class Particle {
         constructor() { this.reset(); }
         reset() {
-            this.size = Math.random() * 2.5 + 1;
+            this.size = Math.random() * 3.5 + 1;
             this.speedX = (Math.random() - 0.5) * 1.5;
             this.speedY = (Math.random() - 0.5) * 1.5;
             this.life = Math.random() * 500 + 200;
