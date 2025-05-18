@@ -929,14 +929,24 @@ background-size: 300% 100%;
     100% { transform: translateY(-20px); opacity: 0.4; }
 }
 
-footer {
-  user-select: none; width: 100%; text-align: center;
-  font-size: 0.9rem; color: var(--text-secondary);
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  gap: 12px; padding: 40px 20px; margin-top: 60px;
+Footer {
+  user-select: none;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  margin-top: 60px;
   background: linear-gradient(to top, rgba(16, 0, 43, 0.8) 0%, rgba(36, 0, 70, 0) 100%);
-  position: relative; overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
+
 footer::before {
     content: '';
     position: absolute;
