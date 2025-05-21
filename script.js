@@ -532,7 +532,7 @@ function initializeDynamicBanner() {
     ];
 
     const changeInterval = 5500;
-    const fadeTransitionDuration = 350;
+    const fadeTransitionDuration = 350; 
     const gifFadeDuration = 250;
     const progressUpdateFrequency = 50;
     const renderDelay = 50;
@@ -552,14 +552,16 @@ function initializeDynamicBanner() {
     if (bannerUrls.length > 0) {
         bannerImg1.src = bannerUrls[currentBannerIndex];
         bannerImg1.onload = () => {
-            bannerImg1.style.opacity = '1';
+            bannerImg1.classList.add('active');
+            bannerImg2.classList.remove('active'); 
             startProgressCycle();
         };
         bannerImg1.onerror = () => {
             console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
+            bannerImg2.classList.remove('active'); 
             startProgressCycle();
         };
-        bannerImg2.style.opacity = '0';
+      
         isBanner1Active = true;
     } else {
         bannerContainer.style.display = 'none';
@@ -589,7 +591,6 @@ function initializeDynamicBanner() {
         if (progressGifElement) { progressGifElement.classList.remove('hidden'); }
 
         progressIntervalId = setInterval(() => {
-
             if (isLoadingNext) {
                 return;
             }
@@ -598,19 +599,16 @@ function initializeDynamicBanner() {
             let progress = (elapsedTime / changeInterval) * 100;
 
             if (progress >= 100) {
-
                 progress = 100;
                 clearInterval(progressIntervalId);
                 progressIntervalId = null;
 
                 if (progressBarElement) {
-
                     progressBarElement.style.transition = 'none';
                     progressBarElement.style.width = progress + '%';
                     progressBarElement.offsetHeight;
                 }
                 if (progressGifElement) {
-
                     progressGifElement.style.transition = 'none';
                     progressGifElement.style.left = progress + '%';
                     progressGifElement.offsetHeight;
@@ -624,14 +622,11 @@ function initializeDynamicBanner() {
                 }, renderDelay);
 
             } else {
-
                 if (progressBarElement) {
-
                     progressBarElement.style.transition = `width ${transitionTiming} linear`;
                     progressBarElement.style.width = progress + '%';
                 }
                 if (progressGifElement) {
-
                     progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
                     progressGifElement.style.left = progress + '%';
                 }
@@ -640,7 +635,6 @@ function initializeDynamicBanner() {
     }
 
     function startProgressCycle() {
-
         if (progressIntervalId) clearInterval(progressIntervalId);
         if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
         progressIntervalId = null; nextChangeTimeoutId = null;
@@ -688,24 +682,25 @@ function initializeDynamicBanner() {
                 progressGifElement.offsetHeight;
             }
 
-            activeBannerElement.style.opacity = '0';
-            nextBannerElement.style.opacity = '1';
+
+            activeBannerElement.classList.remove('active');
+            nextBannerElement.classList.add('active');
+
 
             isBanner1Active = !isBanner1Active;
-
             updateBioStyle(newBannerUrl);
 
             setTimeout(() => {
                 isLoadingNext = false;
                 startProgressCycle();
-            }, fadeTransitionDuration);
+            }, fadeTransitionDuration); 
         };
 
         nextBannerElement.onload = executeFade;
         nextBannerElement.onerror = () => {
             console.error("Failed to load banner image:", newBannerUrl);
             isLoadingNext = false;
-            startProgressCycle();
+            startProgressCycle(); 
         };
 
         nextBannerElement.src = newBannerUrl;
