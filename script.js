@@ -515,12 +515,20 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/4atada.jpg', 'https://files.catbox.moe/gc1qh3.jpg',
         'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
         'https://files.catbox.moe/ai4oz2.gif',
-        'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg'
+        'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg',
+         'https://files.catbox.moe/a53d5g.jpg',
+        'https://files.catbox.moe/lc17bc.jpg',
+        'https://files.catbox.moe/m0nyat.jpg',
+        'https://files.catbox.moe/4nz27h.jpg'
     ];
 
     const euthymiaBannerUrls = [
         'https://files.catbox.moe/1m7rx3.jpg',
         'https://files.catbox.moe/ymqw8y.jpg',
+        'https://files.catbox.moe/a53d5g.jpg',
+        'https://files.catbox.moe/lc17bc.jpg',
+        'https://files.catbox.moe/m0nyat.jpg',
+        'https://files.catbox.moe/4nz27h.jpg'
     ];
 
     const changeInterval = 5500;
