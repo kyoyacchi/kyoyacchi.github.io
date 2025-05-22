@@ -211,7 +211,6 @@ function handleIntroOverlay() {
     }
 }
 
-// document.addEventListener('DOMContentLoaded', handleIntroOverlay);
 
 
 
