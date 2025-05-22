@@ -739,6 +739,57 @@ function initializeDynamicBanner() {
 
     updateBioStyle(bannerUrls[currentBannerIndex]);
 }
+/*function initializeBirthdayCountdown() {
+    const timerElement = document.getElementById('countdown-timer');
+
+    if (!timerElement) {
+        console.error("Element with ID 'countdown-timer' not found.");
+        return;
+    }
+
+    let countdownIntervalId = null;
+
+    function updateAndDisplay() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentDay = now.getDate();
+
+        if (currentMonth === 5 && currentDay === 26) { 
+            timerElement.innerText = "Happy birthday, Raiden Shogun!";
+            if (countdownIntervalId) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+            triggerSingleConfettiBurst();
+            setTimeout(triggerSingleConfettiBurst, 600);
+            setTimeout(triggerSingleConfettiBurst, 1200);
+            return;
+        }
+
+        let targetDate = new Date(now.getFullYear(), 5, 26, 0, 0, 0); 
+
+        if (now > targetDate) {
+            targetDate.setFullYear(targetDate.getFullYear() + 1);
+        }
+
+        const diff = targetDate - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        timerElement.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    updateAndDisplay();
+
+    if (countdownIntervalId) clearInterval(countdownIntervalId);
+    countdownIntervalId = setInterval(updateAndDisplay, 1000);
+}*/
+
+
+
 
 
     function PreventRightClick() {
@@ -749,6 +800,36 @@ function initializeDynamicBanner() {
         });
     });
 }
+
+function triggerSingleConfettiBurst() {
+  confetti({
+    particleCount: 150,
+    spread: 180,
+    origin: { y: 0.6 },
+    colors: ['#9b5de5', '#f15bb5', '#fee440', '#00bbf9', '#00f5d4']
+  });
+}
+
+function startBirthdayCelebration() {
+  const today = new Date();
+  const currentMonth = today.getMonth(); 
+  const currentDay = today.getDate();
+
+
+  if (currentMonth === 5 && currentDay === 26) { 
+    triggerSingleConfettiBurst();
+    setTimeout(triggerSingleConfettiBurst, 500);
+    setTimeout(function() {
+      console.log("TODAY IS JUN 26TH!")
+      triggerSingleConfettiBurst();
+    }, 1500);
+  } else {
+  }
+
+}
+
+
+
 
 
     function initializePage() {
@@ -761,8 +842,8 @@ function initializeDynamicBanner() {
   setupParticleCanvas();
     setupScrollAnimations();
     initializeDynamicBanner();
-
-
+//initializeBirthdayCountdown();
+startBirthdayCelebration();
     const checkmarkIcon = document.querySelector('.checkmark');
     if (checkmarkIcon) {
 const tooltips = document.querySelectorAll('.tooltip');
