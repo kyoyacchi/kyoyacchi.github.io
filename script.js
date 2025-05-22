@@ -592,14 +592,13 @@ function initializeDynamicBanner() {
         return;
     }
 
-    function getNextIndex(current, max) {
-        if (max <= 1) return 0;
-        let next = Math.floor(Math.random() * max);
-        if (next === current) {
-            next = (current + 1) % max;
-        }
-        return next;
-    }
+    let shuffledIndexes = [...Array(bannerUrls.length).keys()].sort(() => Math.random() - 0.5);
+let currentShuffledIndex = 0;
+
+function getNextIndex() {
+    currentShuffledIndex = (currentShuffledIndex + 1) % shuffledIndexes.length;
+    return shuffledIndexes[currentShuffledIndex];
+}
 
     function runProgressAnimation() {
         const startTime = Date.now();
