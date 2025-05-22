@@ -135,6 +135,28 @@ function handleIntroOverlay() {
         }, 1000);
     };
 
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentDay = today.getDate();
+
+    const isRaidenBirthday = (currentMonth === 5 && currentDay === 26);
+
+    if (isRaidenBirthday) {
+        preloaderText.textContent = "Happy birthday, Almighty Raiden Shogun!";
+        subtitleText.textContent = "🎉 Glory to the Shogun!⚡️";
+        subtitleText.style.top = '61%';
+
+        introOverlay.classList.remove('shake-it');
+        introOverlay.classList.remove('shogun-denied');
+        const existingDeniedIcon = introOverlay.querySelector('.denied-icon');
+        if (existingDeniedIcon) existingDeniedIcon.remove();
+
+        setTimeout(hidePreloaderNormally, 2500);
+        return;
+    } else {
+        subtitleText.style.top = '';
+    }
+
     const denialChance = 0.002;
     if (Math.random() < denialChance) {
         preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
@@ -143,9 +165,8 @@ function handleIntroOverlay() {
         introOverlay.classList.remove('shake-it');
         introOverlay.classList.add('shogun-denied');
         const iconElement = document.createElement('i');
-iconElement.className = 'fas fa-times denied-icon';
-introOverlay.appendChild(iconElement);
-
+        iconElement.className = 'fas fa-times denied-icon';
+        introOverlay.appendChild(iconElement);
 
         setTimeout(() => {
             introOverlay.classList.remove('shogun-denied');
@@ -178,6 +199,8 @@ introOverlay.appendChild(iconElement);
         const randomText = texts[Math.floor(Math.random() * texts.length)];
         preloaderText.textContent = randomText;
 
+        subtitleText.textContent = '';
+
         if (randomText === 'Musou me harder, mommy') {
             subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
             introOverlay.classList.add('shake-it');
@@ -187,6 +210,8 @@ introOverlay.appendChild(iconElement);
         setTimeout(hidePreloaderNormally, 2000);
     }
 }
+
+// document.addEventListener('DOMContentLoaded', handleIntroOverlay);
 
 
 
