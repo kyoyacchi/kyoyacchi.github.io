@@ -530,6 +530,7 @@ function initializeDynamicBanner() {
     const bioElement = document.querySelector('.bio');
 
     const bannerUrls = [
+        'https://files.catbox.moe/a53d5g.jpg',
         'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/27mh8k.jpg',
         'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg',
         'https://files.catbox.moe/l98fxt.jpg', 'https://files.catbox.moe/kfn36d.jpg',
@@ -540,8 +541,6 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
         'https://files.catbox.moe/ai4oz2.gif',
         'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg',
-         'https://files.catbox.moe/a53d5g.jpg',
-        'https://files.catbox.moe/lc17bc.jpg',
         'https://files.catbox.moe/m0nyat.jpg',
         'https://files.catbox.moe/4nz27h.jpg'
     ];
@@ -551,7 +550,6 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/ymqw8y.jpg',
         'https://files.catbox.moe/a53d5g.jpg',
         'https://files.catbox.moe/lc17bc.jpg',
-        'https://files.catbox.moe/m0nyat.jpg',
         'https://files.catbox.moe/4nz27h.jpg'
     ];
 
