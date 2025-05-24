@@ -528,6 +528,9 @@ const bannerImg2 = document.querySelector('.banner-img-2');
 const progressBarElement = document.querySelector('.banner-progress-bar');
 const progressGifElement = document.querySelector('.progress-gif');
 const bioElement = document.querySelector('.bio');
+const profileImg = document.querySelector('.profile-img');
+const tweetContent = document.querySelector('.tweet-content');
+const tweetEmbedContainer = document.querySelector('.tweet-embed-container');
 
 const bannerUrls = [
     'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
@@ -729,17 +732,25 @@ function prepareBannerChange() {
 }
 
 function updateBioStyle(currentUrl) {
-    if (!bioElement) return;
+    if (!bioElement || !bannerContainer || !profileImg) return;
     const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
     const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
 
     if (needsEuthymiaStyle && !hasEuthymiaStyle) {
         bioElement.classList.add('euthymia-bio-style');
+        bannerContainer.classList.add('euthymia-bio-style');
+        profileImg.classList.add('euthymia-bio-style');
+        tweetContent.classList.add("euthymia-bio-style");
+        tweetEmbedContainer.classList.add("euthymia-bio-style");
         bioElement.style.animation = 'none';
         void bioElement.offsetWidth;
         bioElement.style.animation = '';
     } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
         bioElement.classList.remove('euthymia-bio-style');
+        bannerContainer.classList.remove('euthymia-bio-style');
+        profileImg.classList.remove('euthymia-bio-style');
+        tweetContent.classList.remove("euthymia-bio-style");
+        tweetEmbedContainer.classList.remove("euthymia-bio-style");
     }
 }
 
