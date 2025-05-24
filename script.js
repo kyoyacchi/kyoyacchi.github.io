@@ -530,8 +530,7 @@ function initializeDynamicBanner() {
     const bioElement = document.querySelector('.bio');
 
     const bannerUrls = [
-        'https://files.catbox.moe/a53d5g.jpg',
-        'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/27mh8k.jpg',
+        'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
         'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg',
         'https://files.catbox.moe/l98fxt.jpg', 'https://files.catbox.moe/kfn36d.jpg',
         'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',
