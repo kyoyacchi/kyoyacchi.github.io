@@ -246,13 +246,13 @@ body::before {
 .banner {
     position: relative;
     width: 100%;
-    height: 360px;
+    height: 500px; 
     overflow: hidden;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     outline: none;
     border: 2px solid transparent;
-    border-radius: var(--border-radius, 10px);
+    border-radius: var(--border-radius, 12px); 
     background-image:
         linear-gradient(var(--primary-dark), var(--primary-dark)),
         linear-gradient(120deg, var(--primary-dark), var(--raiden-electro, #8A2BE2), var(--secondary, #FF69B4), var(--raiden-electro, #8A2BE2), var(--primary-dark));
@@ -260,7 +260,7 @@ body::before {
     background-clip: padding-box, border-box;
     background-size: 300% 100%;
     animation: gradientBorderFlow 5s linear infinite;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.4s ease, animation-play-state 0.2s ease;
 }
 
@@ -275,11 +275,11 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: 55% center;
+    object-fit: cover; 
+    object-position: center center; 
     opacity: 0; 
     pointer-events: none;
-    transition: opacity 0.35s ease-in-out; 
+    transition: opacity 0.35s ease-in-out;
 }
 
 .banner-img.active {
