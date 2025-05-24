@@ -522,235 +522,245 @@ function setupParticleCanvas() {
     }
 
 function initializeDynamicBanner() {
-    const bannerContainer = document.querySelector('.banner');
-    const bannerImg1 = document.querySelector('.banner-img-1');
-    const bannerImg2 = document.querySelector('.banner-img-2');
-    const progressBarElement = document.querySelector('.banner-progress-bar');
-    const progressGifElement = document.querySelector('.progress-gif');
-    const bioElement = document.querySelector('.bio');
+const bannerContainer = document.querySelector('.banner');
+const bannerImg1 = document.querySelector('.banner-img-1');
+const bannerImg2 = document.querySelector('.banner-img-2');
+const progressBarElement = document.querySelector('.banner-progress-bar');
+const progressGifElement = document.querySelector('.progress-gif');
+const bioElement = document.querySelector('.bio');
 
-    const bannerUrls = [
-        'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
-        'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg',
-        'https://files.catbox.moe/l98fxt.jpg', 'https://files.catbox.moe/kfn36d.jpg',
-        'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',
-        'https://files.catbox.moe/ymqw8y.jpg', 'https://files.catbox.moe/7c6pr2.jpg',
-        'https://files.catbox.moe/bpr8u5.jpg', 'https://files.catbox.moe/yf43bj.jpg',
-        'https://files.catbox.moe/4atada.jpg',
-        'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
-        'https://files.catbox.moe/ai4oz2.gif',
-        'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg',
-        'https://files.catbox.moe/m0nyat.jpg',
-        'https://files.catbox.moe/4nz27h.jpg'
-    ];
+const bannerUrls = [
+    'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
+    'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg',
+    'https://files.catbox.moe/l98fxt.jpg', 'https://files.catbox.moe/kfn36d.jpg',
+    'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',
+    'https://files.catbox.moe/ymqw8y.jpg', 'https://files.catbox.moe/7c6pr2.jpg',
+    'https://files.catbox.moe/bpr8u5.jpg', 'https://files.catbox.moe/yf43bj.jpg',
+    'https://files.catbox.moe/4atada.jpg',
+    'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
+    'https://files.catbox.moe/ai4oz2.gif',
+    'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg',
+    'https://files.catbox.moe/m0nyat.jpg',
+    'https://files.catbox.moe/4nz27h.jpg'
+];
 
-    const euthymiaBannerUrls = [
-        'https://files.catbox.moe/1m7rx3.jpg',
-        'https://files.catbox.moe/ymqw8y.jpg',
-        'https://files.catbox.moe/a53d5g.jpg',
-        'https://files.catbox.moe/lc17bc.jpg',
-        'https://files.catbox.moe/4nz27h.jpg'
-    ];
+const euthymiaBannerUrls = [
+    'https://files.catbox.moe/1m7rx3.jpg',
+    'https://files.catbox.moe/ymqw8y.jpg',
+    'https://files.catbox.moe/a53d5g.jpg',
+    'https://files.catbox.moe/lc17bc.jpg',
+    'https://files.catbox.moe/4nz27h.jpg'
+];
 
-    const CHANGE_INTERVAL = 5500;
-    const FADE_TRANSITION_DURATION = 350;
-    const GIF_FADE_DURATION = 250;
-    const PROGRESS_UPDATE_FREQUENCY = 50;
-    const RENDER_DELAY = 50;
-    const PROGRESS_ANIMATION_START_DELAY = 50;
+const changeInterval = 5500;
+const fadeTransitionDuration = 350;
+const gifFadeDuration = 250;
+const progressUpdateFrequency = 50;
+const renderDelay = 50;
 
-    let currentBannerIndex = 0;
-    let progressIntervalId = null;
-    let nextChangeTimeoutId = null;
-    let isBanner1Active = true;
-    let isLoadingNext = false;
+let currentBannerIndex = 0;
+let progressIntervalId = null;
+let nextChangeTimeoutId = null;
+let isBanner1Active = true;
+let isLoadingNext = false;
 
-    if (!bannerContainer || !bannerImg1 || !bannerImg2) { console.warn("Banner elements not found."); return; }
-    if (!progressBarElement) { console.warn("Progress bar element not found."); }
-    if (!progressGifElement) { console.warn("Progress GIF element not found."); }
-    if (!bioElement) { console.warn("Bio element (.bio) not found."); }
-    if (bannerUrls.length === 0) { console.info('Banner URL list is empty.'); return; }
+if (!bannerContainer || !bannerImg1 || !bannerImg2) { console.warn("Banner elements not found."); return; }
+if (!progressBarElement) { console.warn("Progress bar element not found."); }
+if (!progressGifElement) { console.warn("Progress GIF element not found."); }
+if (!bioElement) { console.warn("Bio element (.bio) not found."); }
+if (bannerUrls.length === 0) { console.info('Banner URL list is empty.'); return; }
 
-    let shuffledIndexes = [...Array(bannerUrls.length).keys()].sort(() => Math.random() - 0.5);
-    let currentPositionInShuffle = 0;
+if (bannerUrls.length > 0) {
+    bannerImg1.src = bannerUrls[currentBannerIndex];
+    bannerImg1.onload = () => {
+        bannerImg1.classList.add('active');
+        bannerImg2.classList.remove('active');
+        startProgressCycle();
+    };
+    bannerImg1.onerror = () => {
+        console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
+        bannerImg2.classList.remove('active');
+        startProgressCycle();
+    };
 
-    function clearAllTimers() {
-        if (progressIntervalId) clearInterval(progressIntervalId);
-        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-        progressIntervalId = null;
-        nextChangeTimeoutId = null;
+    isBanner1Active = true;
+} else {
+    bannerContainer.style.display = 'none';
+    return;
+}
+
+let shuffledIndexes = [...Array(bannerUrls.length).keys()].sort(() => Math.random() - 0.5);
+
+
+let currentShuffledIndex = 0;
+
+function getNextIndex() {
+currentShuffledIndex = (currentShuffledIndex + 1) % shuffledIndexes.length;
+return shuffledIndexes[currentShuffledIndex];
+}
+
+function runProgressAnimation() {
+    const startTime = Date.now();
+
+    if (progressIntervalId) clearInterval(progressIntervalId);
+    if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+    progressIntervalId = null; nextChangeTimeoutId = null;
+
+    const transitionTiming = `${progressUpdateFrequency / 1000}s`;
+    if (progressGifElement) { progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`; }
+    if (progressBarElement) { progressBarElement.style.transition = `width ${transitionTiming} linear`; }
+
+    if (progressGifElement) { progressGifElement.classList.remove('hidden'); }
+
+    progressIntervalId = setInterval(() => {
+        if (isLoadingNext) {
+            return;
+        }
+
+        const elapsedTime = Date.now() - startTime;
+        let progress = (elapsedTime / changeInterval) * 100;
+
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(progressIntervalId);
+            progressIntervalId = null;
+
+            if (progressBarElement) {
+                progressBarElement.style.transition = 'none';
+                progressBarElement.style.width = progress + '%';
+                progressBarElement.offsetHeight;
+            }
+            if (progressGifElement) {
+                progressGifElement.style.transition = 'none';
+                progressGifElement.style.left = progress + '%';
+                progressGifElement.offsetHeight;
+            }
+
+            nextChangeTimeoutId = setTimeout(() => {
+                if (!document.hidden) {
+                    prepareBannerChange();
+                }
+                nextChangeTimeoutId = null;
+            }, renderDelay);
+
+        } else {
+            if (progressBarElement) {
+                progressBarElement.style.transition = `width ${transitionTiming} linear`;
+                progressBarElement.style.width = progress + '%';
+            }
+            if (progressGifElement) {
+                progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
+                progressGifElement.style.left = progress + '%';
+            }
+        }
+    }, progressUpdateFrequency);
+}
+
+function startProgressCycle() {
+    if (progressIntervalId) clearInterval(progressIntervalId);
+    if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+    progressIntervalId = null; nextChangeTimeoutId = null;
+    isLoadingNext = false;
+
+    if (progressBarElement) {
+        progressBarElement.style.transition = 'none';
+        progressBarElement.style.width = '0%';
+        progressBarElement.offsetHeight;
+    }
+    if (progressGifElement) {
+        progressGifElement.classList.add('hidden');
+        progressGifElement.style.transition = 'none';
+        progressGifElement.style.left = '0%';
+        progressGifElement.offsetHeight;
     }
 
-    function resetProgressVisuals(immediate = false) {
+    setTimeout(() => {
+        runProgressAnimation();
+    }, 50);
+}
+
+function prepareBannerChange() {
+    if (isLoadingNext) return;
+    isLoadingNext = true;
+
+    const newIndex = getNextIndex(currentBannerIndex, bannerUrls.length);
+    const newBannerUrl = bannerUrls[newIndex];
+
+    const activeBannerElement = isBanner1Active ? bannerImg1 : bannerImg2;
+    const nextBannerElement = isBanner1Active ? bannerImg2 : bannerImg1;
+
+    const executeFade = () => {
+        currentBannerIndex = newIndex;
+
         if (progressBarElement) {
-            progressBarElement.style.transition = immediate ? 'none' : 'width 0s linear';
+            progressBarElement.style.transition = 'none';
             progressBarElement.style.width = '0%';
-            if (immediate) progressBarElement.offsetHeight;
+            progressBarElement.offsetHeight;
         }
         if (progressGifElement) {
             progressGifElement.classList.add('hidden');
-            progressGifElement.style.transition = immediate ? 'none' : `left 0s linear, opacity ${GIF_FADE_DURATION / 1000}s ease-in-out`;
+            progressGifElement.style.transition = 'none';
             progressGifElement.style.left = '0%';
-            if (immediate) progressGifElement.offsetHeight;
-        }
-    }
-
-    function getNextUrlIndexFromShuffle() {
-        if (shuffledIndexes.length === 0) return 0;
-        const urlIndex = shuffledIndexes[currentPositionInShuffle];
-        currentPositionInShuffle = (currentPositionInShuffle + 1) % shuffledIndexes.length;
-        return urlIndex;
-    }
-
-    function runProgressAnimation() {
-        if (document.hidden) return;
-
-        clearAllTimers();
-        const startTime = Date.now();
-
-        const transitionTiming = `${PROGRESS_UPDATE_FREQUENCY / 1000}s`;
-        if (progressGifElement) {
-            progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${GIF_FADE_DURATION / 1000}s ease-in-out`;
-            progressGifElement.classList.remove('hidden');
-        }
-        if (progressBarElement) {
-            progressBarElement.style.transition = `width ${transitionTiming} linear`;
+            progressGifElement.offsetHeight;
         }
 
-        progressIntervalId = setInterval(() => {
-            if (isLoadingNext) return;
 
-            const elapsedTime = Date.now() - startTime;
-            let progress = (elapsedTime / CHANGE_INTERVAL) * 100;
+        activeBannerElement.classList.remove('active');
+        nextBannerElement.classList.add('active');
 
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(progressIntervalId);
-                progressIntervalId = null;
 
-                if (progressBarElement) {
-                    progressBarElement.style.transition = 'none';
-                    progressBarElement.style.width = progress + '%';
-                    progressBarElement.offsetHeight;
-                }
-                if (progressGifElement) {
-                    progressGifElement.style.transition = 'none';
-                    progressGifElement.style.left = progress + '%';
-                    progressGifElement.offsetHeight;
-                }
-
-                nextChangeTimeoutId = setTimeout(() => {
-                    if (!document.hidden) {
-                        prepareBannerChange();
-                    }
-                    nextChangeTimeoutId = null;
-                }, RENDER_DELAY);
-
-            } else {
-                if (progressBarElement) {
-                    progressBarElement.style.width = progress + '%';
-                }
-                if (progressGifElement) {
-                    progressGifElement.style.left = progress + '%';
-                }
-            }
-        }, PROGRESS_UPDATE_FREQUENCY);
-    }
-
-    function startProgressCycle() {
-        clearAllTimers();
-        isLoadingNext = false;
-        resetProgressVisuals(true);
+        isBanner1Active = !isBanner1Active;
+        updateBioStyle(newBannerUrl);
 
         setTimeout(() => {
-            if (document.hidden) return;
-            runProgressAnimation();
-        }, PROGRESS_ANIMATION_START_DELAY);
-    }
-
-    function prepareBannerChange() {
-        if (isLoadingNext) return;
-        isLoadingNext = true;
-
-        const newIndex = getNextUrlIndexFromShuffle();
-        const newBannerUrl = bannerUrls[newIndex];
-
-        const activeBannerElement = isBanner1Active ? bannerImg1 : bannerImg2;
-        const nextBannerElement = isBanner1Active ? bannerImg2 : bannerImg1;
-
-        resetProgressVisuals(true);
-
-        const executeFade = () => {
-            currentBannerIndex = newIndex;
-
-            activeBannerElement.classList.remove('active');
-            nextBannerElement.classList.add('active');
-
-            isBanner1Active = !isBanner1Active;
-            updateBioStyle(newBannerUrl);
-
-            setTimeout(() => {
-                isLoadingNext = false;
-                if (!document.hidden) {
-                    startProgressCycle();
-                }
-            }, FADE_TRANSITION_DURATION);
-        };
-
-        nextBannerElement.onload = executeFade;
-        nextBannerElement.onerror = () => {
-            console.error("Failed to load banner image:", newBannerUrl);
             isLoadingNext = false;
-            if (!document.hidden) {
-                startProgressCycle();
-            }
-        };
-        nextBannerElement.src = newBannerUrl;
-    }
-
-    function updateBioStyle(currentUrl) {
-        if (!bioElement) return;
-        const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
-        const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
-
-        if (needsEuthymiaStyle && !hasEuthymiaStyle) {
-            bioElement.classList.add('euthymia-bio-style');
-            bioElement.style.animation = 'none';
-            void bioElement.offsetWidth;
-            bioElement.style.animation = '';
-        } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
-            bioElement.classList.remove('euthymia-bio-style');
-        }
-    }
-
-    if (bannerUrls.length > 0) {
-        bannerImg1.src = bannerUrls[currentBannerIndex]; 
-        bannerImg1.onload = () => {
-            bannerImg1.classList.add('active');
-            bannerImg2.classList.remove('active');
-            updateBioStyle(bannerUrls[currentBannerIndex]);
             startProgressCycle();
-        };
-        bannerImg1.onerror = () => {
-            console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
-            bannerImg2.classList.remove('active');
-            startProgressCycle();
-        };
-        isBanner1Active = true;
+        }, fadeTransitionDuration);
+    };
+
+    nextBannerElement.onload = executeFade;
+    nextBannerElement.onerror = () => {
+        console.error("Failed to load banner image:", newBannerUrl);
+        isLoadingNext = false;
+        startProgressCycle();
+    };
+
+    nextBannerElement.src = newBannerUrl;
+}
+
+function updateBioStyle(currentUrl) {
+    if (!bioElement) return;
+    const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
+    const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
+
+    if (needsEuthymiaStyle && !hasEuthymiaStyle) {
+        bioElement.classList.add('euthymia-bio-style');
+        bioElement.style.animation = 'none';
+        void bioElement.offsetWidth;
+        bioElement.style.animation = '';
+    } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
+        bioElement.classList.remove('euthymia-bio-style');
+    }
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (progressIntervalId) clearInterval(progressIntervalId);
+        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+        progressIntervalId = null; nextChangeTimeoutId = null;
     } else {
-        bannerContainer.style.display = 'none';
-        return;
-    }
+        if (progressIntervalId) clearInterval(progressIntervalId);
+        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
+        progressIntervalId = null; nextChangeTimeoutId = null;
 
-    document.addEventListener('visibilitychange', () => {
-        clearAllTimers();
-        if (!document.hidden) {
-            if (!isLoadingNext) {
-                resetProgressVisuals(true);
-                startProgressCycle();
-            }
+        if (!isLoadingNext) {
+            startProgressCycle();
         }
-    });
+    }
+});
+
+updateBioStyle(bannerUrls[currentBannerIndex]);
+
 }
 /*function initializeBirthdayCountdown() {
     const timerElement = document.getElementById('countdown-timer');
