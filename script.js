@@ -732,7 +732,7 @@ function prepareBannerChange() {
 }
 
 function updateBioStyle(currentUrl) {
-    if (!bioElement || !bannerContainer || !profileImg) return;
+if (!bioElement || !bannerContainer || !profileImg || !tweetContent || !tweetEmbedContainer) return;
     const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
     const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
 
