@@ -597,10 +597,22 @@ let shuffledIndexes = [...Array(bannerUrls.length).keys()].sort(() => Math.rando
 
 let currentShuffledIndex = 0;
 
-function getNextIndex() {
-currentShuffledIndex = (currentShuffledIndex + 1) % shuffledIndexes.length;
-return shuffledIndexes[currentShuffledIndex];
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
+
+function getNextIndex() {
+    if (currentShuffledIndex === shuffledIndexes.length - 1) {
+        shuffleArray(shuffledIndexes);
+        currentShuffledIndex = -1; 
+    }
+    currentShuffledIndex++;
+    return shuffledIndexes[currentShuffledIndex];
+}
+
 
 function runProgressAnimation() {
     const startTime = Date.now();
