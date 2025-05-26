@@ -262,6 +262,7 @@ body::before {
     animation: gradientBorderFlow 5s linear infinite;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.4s ease, animation-play-state 0.2s ease;
+    cursor: default;
 }
 
 .banner:hover {
