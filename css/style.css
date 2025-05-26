@@ -374,7 +374,6 @@ body::before {
                 0 0 28px var(--raiden-glow),
                 0 0 18px var(--secondary);
     border-color: var(--raiden-electro);
-                border-color: var(--raiden-electro);
 }
 .name-container {
   /*  user-select: none;*/
