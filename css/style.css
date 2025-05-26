@@ -485,17 +485,17 @@ body::before {
 
 
 .bio {
-   user-select: none;
-    max-width: 200px;
+    user-select: none;
+    max-width: 220px; 
     margin: 25px auto;
     font-size: 18px;
     opacity: 0;
-    background: rgba(45, 27, 78, 0.7);
-    border: 1px solid var(--primary-dark);
+    background: rgba(45, 27, 78, 0.6);
+    border: 1px solid var(--raiden-electro); 
     padding: 20px;
-    border-radius: 10px;
-    backdrop-filter: blur(6px);
-    box-shadow: var(--shadow);
+    border-radius: 12px; 
+    backdrop-filter: blur(8px); 
+    box-shadow: 0 0 18px rgba(140, 120, 255, 0.25), var(--shadow); 
     text-align: center;
     transition: var(--transition-long);
     position: relative;
@@ -504,10 +504,10 @@ body::before {
  
 
 .bio.euthymia-bio-style {
-    border-color: rgba(220, 70, 90, 0.85);
+    border-color: rgba(130, 110, 255, 0.75);
     box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),
-        0 0 7px rgba(255, 80, 100, 0.8),
+        0 0 18px rgba(150, 130, 255, 0.5),
+        0 0 7px rgba(180, 160, 255, 0.6),
         var(--shadow);
     animation: euthymia-pulse 2.5s ease-in-out infinite;
 }
@@ -560,15 +560,14 @@ body::before {
 
 @keyframes euthymia-pulse {
   0%, 100% {
-    border-color: rgba(220, 70, 90, 0.85);
-    box-shadow: 0 0 18px rgba(230, 60, 80, 0.6), 0 0 7px rgba(255, 80, 100, 0.8), var(--shadow);
+    border-color: rgba(120, 90, 255, 0.7);
+    box-shadow: 0 0 18px rgba(140, 110, 255, 0.4), 0 0 7px rgba(180, 150, 255, 0.6), var(--shadow);
   }
   50% {
-    border-color: rgba(255, 90, 110, 1);
-    box-shadow: 0 0 28px rgba(255, 80, 100, 0.9), 0 0 12px rgba(255, 120, 140, 1), var(--shadow);
+    border-color: rgba(160, 130, 255, 1);
+    box-shadow: 0 0 28px rgba(170, 140, 255, 0.8), 0 0 12px rgba(200, 170, 255, 1), var(--shadow);
   }
 }
-
 .bio:hover .bio-kitsune-icon {
 }
 
@@ -582,10 +581,10 @@ border-color: var(--raiden-electro);
     transform: translateY(-4px);
 }
 .bio.euthymia-bio-style:hover {
-  border-color: rgba(255, 100, 120, 1);
+  border-color: rgba(160, 140, 255, 1);
   box-shadow:
-      0 0 25px rgba(255, 80, 100, 0.9),
-      0 0 10px rgba(255, 110, 130, 1),
+      0 0 25px rgba(170, 150, 255, 0.85),
+      0 0 10px rgba(200, 180, 255, 1),
       var(--shadow);
   transform: translateY(-4px);
   animation-play-state: paused;
