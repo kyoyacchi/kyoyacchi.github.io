@@ -686,7 +686,7 @@ function prepareBannerChange() {
     if (isLoadingNext) return;
     isLoadingNext = true;
 
-    const newIndex = getNextIndex(currentBannerIndex, bannerUrls.length);
+    const newIndex = getNextIndex();
     const newBannerUrl = bannerUrls[newIndex];
 
     const activeBannerElement = isBanner1Active ? bannerImg1 : bannerImg2;
