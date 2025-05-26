@@ -1034,7 +1034,7 @@ footer::before {
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
-    filter: saturate(0.8);
+    filter: saturate(1) brightness(1.05);
     box-sizing: border-box;
     border: 2px solid transparent;
     background-image: linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary), var(--raiden-electro), var(--primary-dark));
@@ -1076,7 +1076,7 @@ footer::before {
     margin-top: 2px;
     left: 0; 
     background: var(--raiden-electro);
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
     -webkit-transition: width 0.3s ease;
 }
 
