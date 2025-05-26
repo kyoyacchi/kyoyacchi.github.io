@@ -1116,7 +1116,7 @@ footer::before {
     animation: raidenNameGlowNoScale 2.5s ease-in-out infinite alternate;
     transition: color 0.5s ease, text-shadow 0.5s ease;
      display: inline-block;
-};
+}
 
 .almighty-raiden:hover {
     color: var(--text-light);
