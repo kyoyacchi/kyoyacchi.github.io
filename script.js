@@ -732,25 +732,17 @@ function prepareBannerChange() {
 }
 
 function updateBioStyle(currentUrl) {
-if (!bioElement || !bannerContainer || !profileImg || !tweetContent || !tweetEmbedContainer) return;
+if (!bioElement) return;
     const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
     const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
 
     if (needsEuthymiaStyle && !hasEuthymiaStyle) {
         bioElement.classList.add('euthymia-bio-style');
-        bannerContainer.classList.add('euthymia-bio-style');
-        profileImg.classList.add('euthymia-bio-style');
-        tweetContent.classList.add("euthymia-bio-style");
-        tweetEmbedContainer.classList.add("euthymia-bio-style");
         bioElement.style.animation = 'none';
         void bioElement.offsetWidth;
         bioElement.style.animation = '';
     } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
         bioElement.classList.remove('euthymia-bio-style');
-        bannerContainer.classList.remove('euthymia-bio-style');
-        profileImg.classList.remove('euthymia-bio-style');
-        tweetContent.classList.remove("euthymia-bio-style");
-        tweetEmbedContainer.classList.remove("euthymia-bio-style");
     }
 }
 
