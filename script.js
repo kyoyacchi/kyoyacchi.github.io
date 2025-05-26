@@ -750,9 +750,7 @@ if (!bioElement) return;
 
     if (needsEuthymiaStyle && !hasEuthymiaStyle) {
         bioElement.classList.add('euthymia-bio-style');
-        bioElement.style.animation = 'none';
-        void bioElement.offsetWidth;
-        bioElement.style.animation = '';
+        
     } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
         bioElement.classList.remove('euthymia-bio-style');
     }
