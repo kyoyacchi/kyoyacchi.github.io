@@ -376,7 +376,6 @@ function setupParticleCanvas() {
     const canvas = document.getElementById('sparks-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-  //  const PARTICLE_COUNT = 55;
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -390,51 +389,52 @@ function setupParticleCanvas() {
     });
     resizeCanvas();
 
+    const PARTICLE_COUNT = 70;
     const particles = [];
 
     class Particle {
         constructor() { this.reset(); }
+
         reset() {
-            this.size = Math.random() * 3.5 + 1;
-            this.speedX = (Math.random() - 0.5) * 1.5;
-            this.speedY = (Math.random() - 0.5) * 1.5;
-            this.life = Math.random() * 500 + 200;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = (Math.random() - 0.5) * 2;
+            this.speedY = (Math.random() - 0.5) * 2;
+            this.life = Math.random() * 300 + 300;
             this.initialLife = this.life;
-
-            if (Math.random() > 0.5) {
-                this.x = this.speedX > 0 ? -this.size : canvas.width + this.size;
-                this.y = Math.random() * canvas.height;
-            } else {
-                this.y = this.speedY > 0 ? -this.size : canvas.height + this.size;
-                this.x = Math.random() * canvas.width;
-            }
-
-            this.opacity = Math.random() * 0.4 + 0.2;
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.opacity = Math.random() * 0.6 + 0.4;
+            this.glow = Math.random() > 0.7;
         }
+
         update(scrollSpeed) {
             this.x += this.speedX;
             this.y += this.speedY + scrollSpeed * 0.05;
-            this.life -= 1;
-            this.opacity = (this.life / this.initialLife) * 0.6;
-            if (this.x < -this.size || this.x > canvas.width + this.size ||
+            this.life--;
+            this.opacity = (this.life / this.initialLife) * 0.7;
+            if (
+                this.x < -this.size || this.x > canvas.width + this.size ||
                 this.y < -this.size || this.y > canvas.height + this.size ||
-                this.life <= 0) {
+                this.life <= 0
+            ) {
                 this.reset();
             }
         }
+
         draw() {
             if (this.opacity <= 0) return;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(155, 89, 182, ${this.opacity * 0.8})`;
-            ctx.fill();
 
-            if (this.opacity > 0.3) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(216, 191, 255, ${this.opacity * 0.5})`;
-                ctx.fill();
-            }
+            const baseColor = this.glow
+                ? `rgba(216,191,255,${this.opacity})`
+                : `rgba(123,44,191,${this.opacity})`;
+
+            ctx.shadowColor = 'rgba(187,143,206,0.5)';
+            ctx.shadowBlur = this.glow ? 15 : 5;
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            ctx.shadowBlur = 0; // reset
         }
     }
 
@@ -470,6 +470,7 @@ function setupParticleCanvas() {
         }
     });
 }
+
 
 
  function setupScrollAnimations() {
