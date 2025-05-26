@@ -284,7 +284,7 @@ body::before {
 
 .banner-img.active {
     opacity: 1; 
-    pointer-events: auto; 
+   pointer-events: auto;
 }
 
 .banner-img:hover { 
@@ -369,11 +369,11 @@ body::before {
   background-color: #E63946; 
 }
 .profile-img:hover {
-    /*transform: scale(1.08);*/
         box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5),
                 0 0 28px var(--raiden-glow),
                 0 0 18px var(--secondary);
     border-color: var(--raiden-electro);
+    transition: box-shadow 0.4s ease;
 }
 .name-container {
   /*  user-select: none;*/
