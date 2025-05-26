@@ -989,7 +989,7 @@ background-size: 300% 100%;
     100% { transform: translateY(-20px); opacity: 0.4; }
 }
 
-Footer {
+footer {
   user-select: none;
   width: 100%;
   text-align: center;
