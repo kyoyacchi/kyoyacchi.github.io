@@ -181,31 +181,37 @@ function handleIntroOverlay() {
 
     } else {
         const texts = [
-            'Now, you shall perish!',
-            'There is no escape!',
-            'Inazuma shines eternal!',
-            'Inabikari, sunawachi Eien nari',
-            'Mikirimashita',
-            'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
-            'Shine down!',
-            'Illusion shattered!',
-            'Torn to oblivion!',
-            'Sabaki no ikazuchi',
-            'Nigemichi wa arimasen',
-            'Muga no kyouchi he',
-            'Koko yori, jakumetsu no toki!',
-            'Musou me harder, mommy'
-        ];
-        const randomText = texts[Math.floor(Math.random() * texts.length)];
-        preloaderText.textContent = randomText;
+  { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
+  { romaji: 'Mikirimashita', jp: '見切りました。' },
+  { romaji: 'Sabaki no ikazuchi', jp: '裁きの雷。' },
+  { romaji: 'Nigemichi wa arimasen', jp: '逃げ道はありません。' },
+  { romaji: 'Muga no kyouchi he', jp: '無我の境地へ。' },
+  { romaji: 'Koko yori, jakumetsu no toki!', jp: 'ここより、寂滅の時！' },
+  'Now, you shall perish!',
+  'There is no escape!',
+  'Inazuma shines eternal!',
+  'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+  'Shine down!',
+  'Illusion shattered!',
+  'Torn to oblivion!',
+  'Musou me harder, mommy'
+];
 
-        subtitleText.textContent = '';
+const randomText = texts[Math.floor(Math.random() * texts.length)];
 
-        if (randomText === 'Musou me harder, mommy') {
-            subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
-            introOverlay.classList.add('shake-it');
-            setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
-        }
+if (typeof randomText === 'string') {
+  preloaderText.textContent = randomText;
+  subtitleText.textContent = '';
+} else {
+  preloaderText.textContent = randomText.romaji;
+  subtitleText.textContent = randomText.jp;
+}
+
+if (randomText === 'Musou me harder, mommy') {
+  subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
+  introOverlay.classList.add('shake-it');
+  setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
+}
 
         setTimeout(hidePreloaderNormally, 2000);
     }
