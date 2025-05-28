@@ -127,7 +127,7 @@ function handleIntroOverlay() {
     const preloaderText = document.querySelector('.preloader-text');
     const subtitleText = document.querySelector('.subtitle-text');
 
-    const hidePreloaderNormally = () => {
+    const hidePreloader = () => {
         introOverlay.style.opacity = '0';
         setTimeout(() => {
             introOverlay.style.display = 'none';
@@ -136,85 +136,83 @@ function handleIntroOverlay() {
     };
 
     const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentDay = today.getDate();
-
-    const isRaidenBirthday = (currentMonth === 5 && currentDay === 26);
+    const isRaidenBirthday = today.getMonth() === 5 && today.getDate() === 26;
 
     if (isRaidenBirthday) {
         preloaderText.textContent = "Happy birthday, Almighty Raiden Shogun!";
         subtitleText.textContent = "🎉 Glory to the Shogun!⚡️";
         subtitleText.style.top = '61%';
-
-        introOverlay.classList.remove('shake-it');
-        introOverlay.classList.remove('shogun-denied');
-        const existingDeniedIcon = introOverlay.querySelector('.denied-icon');
-        if (existingDeniedIcon) existingDeniedIcon.remove();
-
-        setTimeout(hidePreloaderNormally, 2500);
+        
+        introOverlay.classList.remove('shake-it', 'shogun-denied');
+        introOverlay.querySelector('.denied-icon')?.remove();
+        
+        setTimeout(hidePreloader, 2500);
         return;
-    } else {
-        subtitleText.style.top = '';
     }
 
-    const denialChance = 0.002;
-    if (Math.random() < denialChance) {
+    subtitleText.style.top = '';
+
+
+    if (Math.random() < 0.002) {
         preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
         preloaderText.className = 'preloader-text denied-text';
         subtitleText.textContent = '';
+        
         introOverlay.classList.remove('shake-it');
         introOverlay.classList.add('shogun-denied');
+        
         const iconElement = document.createElement('i');
         iconElement.className = 'fas fa-times denied-icon';
         introOverlay.appendChild(iconElement);
 
         setTimeout(() => {
             introOverlay.classList.remove('shogun-denied');
-            const deniedIcon = introOverlay.querySelector('.denied-icon');
-            if (deniedIcon) deniedIcon.remove();
-
+            introOverlay.querySelector('.denied-icon')?.remove();
+            
             preloaderText.textContent = "The Almighty Raiden Shogun has approved your access.";
             preloaderText.className = 'preloader-text approved-text';
-
-            setTimeout(hidePreloaderNormally, 2000);
+            
+            setTimeout(hidePreloader, 2000);
         }, 1500);
-
-    } else {
-        const texts = [
-  { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
-  { romaji: 'Mikirimashita', jp: '見切りました。' },
-  { romaji: 'Sabaki no ikazuchi', jp: '裁きの雷。' },
-  { romaji: 'Nigemichi wa arimasen', jp: '逃げ道はありません。' },
-  { romaji: 'Muga no kyouchi he', jp: '無我の境地へ。' },
-  { romaji: 'Koko yori, jakumetsu no toki!', jp: 'ここより、寂滅の時！' },
-  'Now, you shall perish!',
-  'There is no escape!',
-  'Inazuma shines eternal!',
-  'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
-  'Shine down!',
-  'Illusion shattered!',
-  'Torn to oblivion!',
-  'Musou me harder, mommy'
-];
-
-const randomText = texts[Math.floor(Math.random() * texts.length)];
-
-if (typeof randomText === 'string') {
-  preloaderText.textContent = randomText;
-  subtitleText.textContent = '';
-} else {
-  preloaderText.textContent = randomText.romaji;
-  subtitleText.textContent = randomText.jp;
-}
-
-if (randomText === 'Musou me harder, mommy') {
-  subtitleText.textContent = '- A Turkish guy who is obsessed over Raiden Shogun';
-  introOverlay.classList.add('shake-it');
-  setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
-}
-
-        setTimeout(hidePreloaderNormally, 2000);
+        return;
     }
+
+    // Random texts
+    const texts = [
+        { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
+        { romaji: 'Mikirimashita', jp: '見切りました。' },
+        { romaji: 'Sabaki no ikazuchi', jp: '裁きの雷。' },
+        { romaji: 'Nigemichi wa arimasen', jp: '逃げ道はありません。' },
+        { romaji: 'Muga no kyouchi he', jp: '無我の境地へ。' },
+        { romaji: 'Koko yori, jakumetsu no toki!', jp: 'ここより、寂滅の時！' },
+        'Now, you shall perish!',
+        'There is no escape!',
+        'Inazuma shines eternal!',
+        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+        'Shine down!',
+        'Illusion shattered!',
+        'Torn to oblivion!',
+        'Musou me harder, mommy'
+    ];
+
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+
+    if (typeof randomText === 'string') {
+        preloaderText.textContent = randomText;
+        subtitleText.textContent = randomText === 'Musou me harder, mommy' 
+            ? '- A Turkish guy who is obsessed over Raiden Shogun' 
+            : '';
+            
+        if (randomText === 'Musou me harder, mommy') {
+            introOverlay.classList.add('shake-it');
+            setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
+        }
+    } else {
+        preloaderText.textContent = randomText.romaji;
+        subtitleText.textContent = randomText.jp;
+    }
+
+    setTimeout(hidePreloader, 2000);
 }
 
 
