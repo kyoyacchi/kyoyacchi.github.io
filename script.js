@@ -526,258 +526,257 @@ function setupParticleCanvas() {
     }
 
 function initializeDynamicBanner() {
-const bannerContainer = document.querySelector('.banner');
-const bannerImg1 = document.querySelector('.banner-img-1');
-const bannerImg2 = document.querySelector('.banner-img-2');
-const progressBarElement = document.querySelector('.banner-progress-bar');
-const progressGifElement = document.querySelector('.progress-gif');
-const bioElement = document.querySelector('.bio');
-const profileImg = document.querySelector('.profile-img');
-const tweetContent = document.querySelector('.tweet-content');
-const tweetEmbedContainer = document.querySelector('.tweet-embed-container');
 
-const bannerUrls = [
-    'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
-    'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg',
-    'https://files.catbox.moe/l98fxt.jpg', 'https://files.catbox.moe/kfn36d.jpg',
-    'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',
-    'https://files.catbox.moe/ymqw8y.jpg', 'https://files.catbox.moe/7c6pr2.jpg',
-    'https://files.catbox.moe/bpr8u5.jpg', 'https://files.catbox.moe/yf43bj.jpg',
-    'https://files.catbox.moe/4atada.jpg',
-    'https://files.catbox.moe/ph6zj4.jpeg', 'https://files.catbox.moe/ox23f5.jpeg',
-    'https://files.catbox.moe/ai4oz2.gif',
-    'https://files.catbox.moe/25kggw.gif', 'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg',
-    'https://files.catbox.moe/m0nyat.jpg',
-    'https://files.catbox.moe/4nz27h.jpg'
-];
-
-const euthymiaBannerUrls = [
-    'https://files.catbox.moe/1m7rx3.jpg',
-    'https://files.catbox.moe/ymqw8y.jpg',
-    'https://files.catbox.moe/a53d5g.jpg',
-    'https://files.catbox.moe/lc17bc.jpg',
-    'https://files.catbox.moe/4nz27h.jpg'
-];
-
-const changeInterval = 5500;
-const fadeTransitionDuration = 350;
-const gifFadeDuration = 250;
-const progressUpdateFrequency = 50;
-const renderDelay = 50;
-
-let currentBannerIndex = 0;
-let progressIntervalId = null;
-let nextChangeTimeoutId = null;
-let isBanner1Active = true;
-let isLoadingNext = false;
-
-if (!bannerContainer || !bannerImg1 || !bannerImg2) { console.warn("Banner elements not found."); return; }
-if (!progressBarElement) { console.warn("Progress bar element not found."); }
-if (!progressGifElement) { console.warn("Progress GIF element not found."); }
-if (!bioElement) { console.warn("Bio element (.bio) not found."); }
-if (bannerUrls.length === 0) { console.info('Banner URL list is empty.'); return; }
-
-if (bannerUrls.length > 0) {
-    bannerImg1.src = bannerUrls[currentBannerIndex];
-    bannerImg1.onload = () => {
-        bannerImg1.classList.add('active');
-        bannerImg2.classList.remove('active');
-        startProgressCycle();
-    };
-    bannerImg1.onerror = () => {
-        console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
-        bannerImg2.classList.remove('active');
-        startProgressCycle();
+    const elements = {
+        bannerContainer: document.querySelector('.banner'),
+        bannerImg1: document.querySelector('.banner-img-1'),
+        bannerImg2: document.querySelector('.banner-img-2'),
+        progressBar: document.querySelector('.banner-progress-bar'),
+        progressGif: document.querySelector('.progress-gif'),
+        bio: document.querySelector('.bio')
     };
 
-    isBanner1Active = true;
-} else {
-    bannerContainer.style.display = 'none';
-    return;
-}
 
-let shuffledIndexes = [...Array(bannerUrls.length).keys()].sort(() => Math.random() - 0.5);
+    const config = {
+        changeInterval: 5500,
+        fadeTransitionDuration: 350,
+        gifFadeDuration: 250,
+        progressUpdateFrequency: 50,
+        renderDelay: 50
+    };
 
+    
+    const bannerUrls = [
+        'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/27mh8k.jpg',
+        'https://files.catbox.moe/ftsuwx.jpg', 'https://files.catbox.moe/dx4dym.jpg', 'https://files.catbox.moe/l98fxt.jpg',
+        'https://files.catbox.moe/kfn36d.jpg', 'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',
+        'https://files.catbox.moe/ymqw8y.jpg', 'https://files.catbox.moe/7c6pr2.jpg', 'https://files.catbox.moe/bpr8u5.jpg',
+        'https://files.catbox.moe/yf43bj.jpg', 'https://files.catbox.moe/4atada.jpg', 'https://files.catbox.moe/ph6zj4.jpeg',
+        'https://files.catbox.moe/ox23f5.jpeg', 'https://files.catbox.moe/ai4oz2.gif', 'https://files.catbox.moe/25kggw.gif',
+        'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg', 'https://files.catbox.moe/m0nyat.jpg',
+        'https://files.catbox.moe/4nz27h.jpg'
+    ];
 
-let currentShuffledIndex = 0;
+    
+    const euthymiaBannerUrls = new Set([
+        'https://files.catbox.moe/1m7rx3.jpg', 'https://files.catbox.moe/ymqw8y.jpg',
+        'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/lc17bc.jpg',
+        'https://files.catbox.moe/4nz27h.jpg'
+    ]);
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+  
+    let currentBannerIndex = 0;
+    let progressIntervalId = null;
+    let nextChangeTimeoutId = null;
+    let isBanner1Active = true;
+    let isLoadingNext = false;
+    let shuffledIndexes = shuffleArray([...Array(bannerUrls.length).keys()]);
+    let currentShuffledIndex = 0;
+
+  
+    if (!validateElements()) return;
+
+    
+    function validateElements() {
+        if (!elements.bannerContainer || !elements.bannerImg1 || !elements.bannerImg2) {
+            console.warn("Required banner elements not found.");
+            return false;
+        }
+        
+
+        ['progressBar', 'progressGif', 'bio'].forEach(key => {
+            if (!elements[key]) console.warn(`${key} element not found.`);
+        });
+
+        if (bannerUrls.length === 0) {
+            console.info('Banner URL list is empty.');
+            return false;
+        }
+        
+        return true;
     }
-}
 
-function getNextIndex() {
-    if (currentShuffledIndex === shuffledIndexes.length - 1) {
-        shuffleArray(shuffledIndexes);
-        currentShuffledIndex = -1; 
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
     }
-    currentShuffledIndex++;
-    return shuffledIndexes[currentShuffledIndex];
-}
 
+    function getNextIndex() {
+        if (currentShuffledIndex >= shuffledIndexes.length - 1) {
+            shuffledIndexes = shuffleArray(shuffledIndexes);
+            currentShuffledIndex = -1;
+        }
+        return shuffledIndexes[++currentShuffledIndex];
+    }
 
-function runProgressAnimation() {
-    const startTime = Date.now();
+    function clearTimers() {
+        if (progressIntervalId) {
+            clearInterval(progressIntervalId);
+            progressIntervalId = null;
+        }
+        if (nextChangeTimeoutId) {
+            clearTimeout(nextChangeTimeoutId);
+            nextChangeTimeoutId = null;
+        }
+    }
 
-    if (progressIntervalId) clearInterval(progressIntervalId);
-    if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-    progressIntervalId = null; nextChangeTimeoutId = null;
+    function setProgressStyles(progress, useTransition = true) {
+        const transitionTiming = `${config.progressUpdateFrequency / 1000}s`;
+        
+        if (elements.progressBar) {
+            elements.progressBar.style.transition = useTransition ? `width ${transitionTiming} linear` : 'none';
+            elements.progressBar.style.width = `${progress}%`;
+        }
+        
+        if (elements.progressGif) {
+            const transition = useTransition ? 
+                `left ${transitionTiming} linear, opacity ${config.gifFadeDuration / 1000}s ease-in-out` : 'none';
+            elements.progressGif.style.transition = transition;
+            elements.progressGif.style.left = `${progress}%`;
+        }
+    }
 
-    const transitionTiming = `${progressUpdateFrequency / 1000}s`;
-    if (progressGifElement) { progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`; }
-    if (progressBarElement) { progressBarElement.style.transition = `width ${transitionTiming} linear`; }
+    function resetProgress() {
+        setProgressStyles(0, false);
+        
+        if (elements.progressGif) {
+            elements.progressGif.classList.add('hidden');
+        }
 
-    if (progressGifElement) { progressGifElement.classList.remove('hidden'); }
+      
+        if (elements.progressBar) elements.progressBar.offsetHeight;
+        if (elements.progressGif) elements.progressGif.offsetHeight;
+    }
 
-    progressIntervalId = setInterval(() => {
-        if (isLoadingNext) {
+    function runProgressAnimation() {
+        const startTime = Date.now();
+        clearTimers();
+
+        if (elements.progressGif) {
+            elements.progressGif.classList.remove('hidden');
+        }
+
+        progressIntervalId = setInterval(() => {
+            if (isLoadingNext) return;
+
+            const elapsedTime = Date.now() - startTime;
+            const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
+
+            if (progress >= 100) {
+                clearInterval(progressIntervalId);
+                progressIntervalId = null;
+
+                setProgressStyles(100, false);
+
+                nextChangeTimeoutId = setTimeout(() => {
+                    if (!document.hidden) {
+                        prepareBannerChange();
+                    }
+                    nextChangeTimeoutId = null;
+                }, config.renderDelay);
+            } else {
+                setProgressStyles(progress, true);
+            }
+        }, config.progressUpdateFrequency);
+    }
+
+    function startProgressCycle() {
+        clearTimers();
+        isLoadingNext = false;
+        resetProgress();
+
+        setTimeout(runProgressAnimation, 50);
+    }
+
+    function prepareBannerChange() {
+        if (isLoadingNext) return;
+        isLoadingNext = true;
+
+        const newIndex = getNextIndex();
+        const newBannerUrl = bannerUrls[newIndex];
+        const activeBanner = isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
+        const nextBanner = isBanner1Active ? elements.bannerImg2 : elements.bannerImg1;
+
+        function executeFade() {
+            currentBannerIndex = newIndex;
+            resetProgress();
+
+            // Banner geçişi
+            activeBanner.classList.remove('active');
+            nextBanner.classList.add('active');
+            isBanner1Active = !isBanner1Active;
+
+            updateBioStyle(newBannerUrl);
+
+            setTimeout(() => {
+                isLoadingNext = false;
+                startProgressCycle();
+            }, config.fadeTransitionDuration);
+        }
+
+        nextBanner.onload = executeFade;
+        nextBanner.onerror = () => {
+            console.error("Failed to load banner image:", newBannerUrl);
+            isLoadingNext = false;
+            startProgressCycle();
+        };
+
+        nextBanner.src = newBannerUrl;
+    }
+
+    function updateBioStyle(currentUrl) {
+        if (!elements.bio) return;
+        
+        const needsEuthymiaStyle = euthymiaBannerUrls.has(currentUrl);
+        const hasEuthymiaStyle = elements.bio.classList.contains('euthymia-bio-style');
+
+        if (needsEuthymiaStyle !== hasEuthymiaStyle) {
+            elements.bio.classList.toggle('euthymia-bio-style', needsEuthymiaStyle);
+        }
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            clearTimers();
+        } else {
+            clearTimers();
+            if (!isLoadingNext) {
+                startProgressCycle();
+            }
+        }
+    }
+
+    
+    function initializeBanner() {
+        if (bannerUrls.length === 0) {
+            elements.bannerContainer.style.display = 'none';
             return;
         }
 
-        const elapsedTime = Date.now() - startTime;
-        let progress = (elapsedTime / changeInterval) * 100;
-
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(progressIntervalId);
-            progressIntervalId = null;
-
-            if (progressBarElement) {
-                progressBarElement.style.transition = 'none';
-                progressBarElement.style.width = progress + '%';
-                progressBarElement.offsetHeight;
-            }
-            if (progressGifElement) {
-                progressGifElement.style.transition = 'none';
-                progressGifElement.style.left = progress + '%';
-                progressGifElement.offsetHeight;
-            }
-
-            nextChangeTimeoutId = setTimeout(() => {
-                if (!document.hidden) {
-                    prepareBannerChange();
-                }
-                nextChangeTimeoutId = null;
-            }, renderDelay);
-
-        } else {
-            if (progressBarElement) {
-                progressBarElement.style.transition = `width ${transitionTiming} linear`;
-                progressBarElement.style.width = progress + '%';
-            }
-            if (progressGifElement) {
-                progressGifElement.style.transition = `left ${transitionTiming} linear, opacity ${gifFadeDuration / 1000}s ease-in-out`;
-                progressGifElement.style.left = progress + '%';
-            }
-        }
-    }, progressUpdateFrequency);
-}
-
-function startProgressCycle() {
-    if (progressIntervalId) clearInterval(progressIntervalId);
-    if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-    progressIntervalId = null; nextChangeTimeoutId = null;
-    isLoadingNext = false;
-
-    if (progressBarElement) {
-        progressBarElement.style.transition = 'none';
-        progressBarElement.style.width = '0%';
-        progressBarElement.offsetHeight;
-    }
-    if (progressGifElement) {
-        progressGifElement.classList.add('hidden');
-        progressGifElement.style.transition = 'none';
-        progressGifElement.style.left = '0%';
-        progressGifElement.offsetHeight;
-    }
-
-    setTimeout(() => {
-        runProgressAnimation();
-    }, 50);
-}
-
-function prepareBannerChange() {
-    if (isLoadingNext) return;
-    isLoadingNext = true;
-
-    const newIndex = getNextIndex();
-    const newBannerUrl = bannerUrls[newIndex];
-
-    const activeBannerElement = isBanner1Active ? bannerImg1 : bannerImg2;
-    const nextBannerElement = isBanner1Active ? bannerImg2 : bannerImg1;
-
-    const executeFade = () => {
-        currentBannerIndex = newIndex;
-
-        if (progressBarElement) {
-            progressBarElement.style.transition = 'none';
-            progressBarElement.style.width = '0%';
-            progressBarElement.offsetHeight;
-        }
-        if (progressGifElement) {
-            progressGifElement.classList.add('hidden');
-            progressGifElement.style.transition = 'none';
-            progressGifElement.style.left = '0%';
-            progressGifElement.offsetHeight;
-        }
-
-
-        activeBannerElement.classList.remove('active');
-        nextBannerElement.classList.add('active');
-
-
-        isBanner1Active = !isBanner1Active;
-        updateBioStyle(newBannerUrl);
-
-        setTimeout(() => {
-            isLoadingNext = false;
+        elements.bannerImg1.src = bannerUrls[currentBannerIndex];
+        elements.bannerImg1.onload = () => {
+            elements.bannerImg1.classList.add('active');
+            elements.bannerImg2.classList.remove('active');
             startProgressCycle();
-        }, fadeTransitionDuration);
-    };
-
-    nextBannerElement.onload = executeFade;
-    nextBannerElement.onerror = () => {
-        console.error("Failed to load banner image:", newBannerUrl);
-        isLoadingNext = false;
-        startProgressCycle();
-    };
-
-    nextBannerElement.src = newBannerUrl;
-}
-
-function updateBioStyle(currentUrl) {
-if (!bioElement) return;
-    const needsEuthymiaStyle = euthymiaBannerUrls.includes(currentUrl);
-    const hasEuthymiaStyle = bioElement.classList.contains('euthymia-bio-style');
-
-    if (needsEuthymiaStyle && !hasEuthymiaStyle) {
-        bioElement.classList.add('euthymia-bio-style');
-        
-    } else if (!needsEuthymiaStyle && hasEuthymiaStyle) {
-        bioElement.classList.remove('euthymia-bio-style');
-    }
-}
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        if (progressIntervalId) clearInterval(progressIntervalId);
-        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-        progressIntervalId = null; nextChangeTimeoutId = null;
-    } else {
-        if (progressIntervalId) clearInterval(progressIntervalId);
-        if (nextChangeTimeoutId) clearTimeout(nextChangeTimeoutId);
-        progressIntervalId = null; nextChangeTimeoutId = null;
-
-        if (!isLoadingNext) {
+        };
+        elements.bannerImg1.onerror = () => {
+            console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
+            elements.bannerImg2.classList.remove('active');
             startProgressCycle();
-        }
+        };
+
+        updateBioStyle(bannerUrls[currentBannerIndex]);
     }
-});
 
-updateBioStyle(bannerUrls[currentBannerIndex]);
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    
+    initializeBanner();
 }
 /*function initializeBirthdayCountdown() {
     const timerElement = document.getElementById('countdown-timer');
