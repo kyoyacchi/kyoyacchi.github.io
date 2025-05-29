@@ -223,148 +223,79 @@ function handleIntroOverlay() {
 
 function setupTweetEmbed(containerSelector) {
     const tweetContainer = document.querySelector(containerSelector);
-
     if (!tweetContainer) {
         console.error(`Tweet container ('${containerSelector}') not found.`);
         return;
     }
 
     const tweetContent = tweetContainer.querySelector('.tweet-content');
-    let loadingIndicator = tweetContainer.querySelector('.loading-wrapper') || tweetContainer.querySelector('.loading-spinner');
-
+    const loadingIndicator = tweetContainer.querySelector('.loading-wrapper') || tweetContainer.querySelector('.loading-spinner');
     if (!tweetContent) {
         console.error(`Required element '.tweet-content' not found inside '${containerSelector}'.`);
         return;
     }
+    if (!loadingIndicator) console.warn(`Optional loading indicator not found in '${containerSelector}'.`);
 
-    if (!loadingIndicator) {
-         console.warn(`Optional element '.loading-wrapper' or '.loading-spinner' not found inside '${containerSelector}'. Loading state might not be visible.`);
-    }
+    const isTurkish = navigator.language.toLowerCase().startsWith('tr');
+    const tweetEmbedHTML = `
+        <blockquote class="twitter-tweet" data-lang="${isTurkish ? 'tr' : 'en'}" data-dnt="true" data-theme="dark">
+            <p lang="en" dir="ltr">C2 RAIDEN SHOOOOGUUUUUN!<br><br>YAYYYY!!!!!🥳🥳💜<a href="https://twitter.com/hashtag/RaidenShogun?src=hash&ref_src=twsrc%5Etfw">#RaidenShogun</a> <a href="https://twitter.com/hashtag/GenshinImpact?src=hash&ref_src=twsrc%5Etfw">#GenshinImpact</a> <a href="https://t.co/5FMRjZZGz2">pic.twitter.com/5FMRjZZGz2</a></p>
+            — Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1927412978376126845?ref_src=twsrc%5Etfw">May 27, 2025</a>
+        </blockquote>`;
 
-    let isTweetLoading = false;
-    let isTweetLoaded = false;
-    const lang = navigator.language;
-    const isTurkish = lang.toLowerCase().startsWith("tr");
-
-    const tweetEmbedHTML_TR = `
-        <blockquote class="twitter-tweet" data-lang="tr" data-dnt="true" data-theme="dark">
-        <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&amp;ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&amp;ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>
-        &mdash; Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">17 Eylül 2024</a></blockquote>`;
-
-    const tweetEmbedHTML_EN = `
-        <blockquote class="twitter-tweet" data-lang="en" data-theme="dark">
-        <p lang="en" dir="ltr">RAAAAAAGAHSJSHAHSHNADJAJDJ I DID IT! <a href="https://twitter.com/hashtag/raidenshogun?src=hash&amp;ref_src=twsrc%5Etfw">#raidenshogun</a> <a href="https://twitter.com/hashtag/genshinimpact?src=hash&amp;ref_src=twsrc%5Etfw">#genshinimpact</a> WITH HER WEAPON LMAOAOOOO <a href="https://t.co/L7mJJ3DezG">pic.twitter.com/L7mJJ3DezG</a></p>
-        &mdash; Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1836094129312297212?ref_src=twsrc%5Etfw">September 17, 2024</a></blockquote>`;
-
-    tweetContent.innerHTML = isTurkish ? tweetEmbedHTML_TR : tweetEmbedHTML_EN;
-
+    tweetContent.innerHTML = tweetEmbedHTML;
 
     function showContent() {
-        if (isTweetLoaded) return;
-        isTweetLoaded = true;
-        requestAnimationFrame(() => {
+        if (!tweetContent.classList.contains('loaded')) {
+            tweetContent.classList.add('loaded');
             tweetContent.style.opacity = '1';
             tweetContent.style.visibility = 'visible';
-            tweetContent.classList.add('loaded');
-            if (loadingIndicator) {
-                loadingIndicator.style.display = 'none';
-            }
-        });
-     //    console.log(`Tweet in ${containerSelector} loaded successfully.`);
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+        }
     }
 
-    function showErrorState(errorMessage = 'Could not load Tweet.') {
-        if (isTweetLoaded) return;
-        console.error(`Error loading tweet in ${containerSelector}:`, errorMessage);
-
-        requestAnimationFrame(() => {
-            if (loadingIndicator) {
-
-                if (loadingIndicator.classList.contains('loading-wrapper')) {
-
-                    loadingIndicator.innerHTML = `
-                        <div style="color: red; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px;">
-                            <i class="fas fa-times-circle" style="margin-right: 8px; font-size: 1.2em; vertical-align: middle;"></i>
-                            <span>${errorMessage}</span>
-                        </div>`;
-                    loadingIndicator.style.display = 'flex';
-                } else {
-
-                    loadingIndicator.style.display = 'none';
-                }
-            }
-
-            tweetContent.style.opacity = '0';
-            tweetContent.style.visibility = 'hidden';
-        });
+    function showErrorState(message = 'Could not load Tweet.') {
+        console.error(`Error loading tweet in ${containerSelector}:`, message);
+        if (loadingIndicator?.classList.contains('loading-wrapper')) {
+            loadingIndicator.innerHTML = `<div style="color: red; text-align: center;"><i class="fas fa-times-circle"></i> ${message}</div>`;
+            loadingIndicator.style.display = 'flex';
+        }
+        tweetContent.style.opacity = '0';
+        tweetContent.style.visibility = 'hidden';
     }
 
     function loadTweet() {
-
         window.twttr = (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0],
-                t = window.twttr || {};
+            const t = window.twttr || {};
             if (d.getElementById(id)) return t;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "https://platform.twitter.com/widgets.js";
+            const js = d.createElement(s); 
+            js.id = id; 
+            js.src = "https://platform.twitter.com/widgets.js"; 
             js.async = true;
-            fjs.parentNode.insertBefore(js, fjs);
-            t._e = [];
-            t.ready = function(f) { t._e.push(f); };
+            d.getElementsByTagName(s)[0].parentNode.insertBefore(js, d.getElementsByTagName(s)[0]); 
+            t._e = []; 
+            t.ready = f => t._e.push(f); 
             return t;
         }(document, "script", "twitter-wjs"));
 
-        twttr.ready(function(twttrInstance) {
-            let widgetLoaded = false;
-
-            twttrInstance.events.bind('loaded', function(event) {
-
-                if (event && event.widgets && event.widgets.some(widget => tweetContainer.contains(widget))) {
-                    widgetLoaded = true;
-                    showContent();
-                }
+        twttr.ready(twttr => {
+            twttr.events.bind('loaded', e => {
+                if (e.widgets?.some(w => tweetContainer.contains(w))) showContent();
             });
-
-            twttrInstance.widgets.load(
-                tweetContainer
-            ).then(function(widgets) {
-
-                 if ((!widgets || widgets.length === 0) && !widgetLoaded) {
-                     setTimeout(() => {
-                         if (!isTweetLoaded) {
-    //                          console.warn(`widgets.load finished for ${containerSelector}, but no widgets found or 'loaded' event didn't fire.`);
-
-                         }
-                     }, 500);
-                 }
-
-
-            }).catch(function(error) {
-
-
-            });
+            twttr.widgets.load(tweetContainer).catch(showErrorState);
         });
     }
 
-
-
-    if (loadingIndicator) {
-
-        loadingIndicator.style.display = loadingIndicator.classList.contains('loading-wrapper') ? 'flex' : 'block';
-    }
+    if (loadingIndicator) loadingIndicator.style.display = 'flex';
     tweetContent.style.opacity = '0';
     tweetContent.style.visibility = 'hidden';
     tweetContent.classList.remove('loaded');
 
-    const observer = new IntersectionObserver((entries, observerInstance) => {
+    const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-
-            if (entry.isIntersecting && !isTweetLoading) {
-      //          console.log(`Tweet container ${containerSelector} is intersecting. Loading tweet.`);
-                isTweetLoading = true;
+            if (entry.isIntersecting) {
                 loadTweet();
-                observerInstance.unobserve(tweetContainer);
+                observer.unobserve(tweetContainer);
             }
         });
     }, { threshold: 0.1 });
