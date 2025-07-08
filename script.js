@@ -21,11 +21,15 @@ function shakeCheckmark(event) {
 }
 
 function connectLanyard() {
-    const ws = new WebSocket('wss://api.lanyard.rest/socket');
+  
+const ws = new WebSocket('wss://api.lanyard.rest/socket');  
 const avatarElement = document.getElementById("discord_pfp");
 
     ws.addEventListener('open', () => {
-        ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+        ws.send(JSON.stringify({
+            op: 2,
+            d: { subscribe_to_id: DISCORD_USER_ID }
+        }));
     });
 
     ws.addEventListener('error', () => ws.close());
@@ -35,13 +39,21 @@ const avatarElement = document.getElementById("discord_pfp");
         const { t, d } = JSON.parse(data);
         if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
 
-        const avatarHash = d.discord_user.avatar;
-        const avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${avatarHash}.webp?size=128`;
+        const avatarHash = d.discord_user?.avatar;
+        if (!avatarHash) {
+            avatarElement.src = GITHUB_AVATAR_URL;
+            return;
+        }
+
+        const isGif = avatarHash.startsWith("a_");
+        const format = isGif ? "gif" : "webp";
+        const avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${avatarHash}.${format}?size=128`;
+
+        avatarElement.src = avatarUrl;
 
         avatarElement.onerror = () => {
             avatarElement.src = GITHUB_AVATAR_URL;
         };
-        avatarElement.src = avatarUrl;
     });
 }
 
