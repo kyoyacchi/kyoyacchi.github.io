@@ -5,6 +5,7 @@ const DISCORD_USER_ID = "468509605828493322";
 const GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/63583961";
 const DISCORD_API_URL = `https://kyopi.vercel.app/api/pfp?id=${DISCORD_USER_ID}`;
 
+
 function shakeCheckmark(event) {
     const checkmark = event.currentTarget;
     if (checkmark) {
@@ -19,73 +20,31 @@ function shakeCheckmark(event) {
     }
 }
 
-async function getDiscordAv() {
-    try {
-        const response = await axios.get(DISCORD_API_URL, { timeout: 5000 });
-        if (response.data && response.data.avatar) {
-            return { avatar: response.data.avatar, error: false };
-        } else {
-            throw new Error("Invalid response structure");
-        }
-    } catch (error) {
-        console.error("Failed to fetch Discord avatar:", error.message);
-        return { avatar: null, error: true };
-    }
-}
+function connectLanyard() {
+    const ws = new WebSocket('wss://api.lanyard.rest/socket');
+const avatarElement = document.getElementById("discord_pfp");
 
-function showPopUp(isError) {
-    if (document.getElementById("status-pop")) return;
-
-    const pop = document.createElement("div");
-    const innerDiv = document.createElement("div");
-    pop.id = "status-pop";
-    innerDiv.className = "pop-inner";
-
-    pop.classList.add(isError ? "error" : "success");
-    innerDiv.innerHTML = `<i class="fas ${isError ? "fa-times-circle" : "fa-check-circle"}"></i> ${isError ? "couldn't update discord pfp" : "updated discord pfp"}`;
-
-    pop.appendChild(innerDiv);
-    document.body.appendChild(pop);
-
-    requestAnimationFrame(() => {
-        pop.classList.add("visible");
+    ws.addEventListener('open', () => {
+        ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
     });
 
-    setTimeout(() => {
-        pop.classList.remove("visible");
-        setTimeout(() => {
-            if (pop.parentNode) pop.parentNode.removeChild(pop);
-        }, 400);
-    }, 3500);
+    ws.addEventListener('error', () => ws.close());
+    ws.addEventListener('close', () => setTimeout(connectLanyard, 2000));
+
+    ws.addEventListener('message', ({ data }) => {
+        const { t, d } = JSON.parse(data);
+        if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
+
+        const avatarHash = d.discord_user.avatar;
+        const avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${avatarHash}.webp?size=128`;
+
+        avatarElement.onerror = () => {
+            avatarElement.src = GITHUB_AVATAR_URL;
+        };
+        avatarElement.src = avatarUrl;
+    });
 }
 
-async function updateDiscordPfp() {
-    const avatarElement = document.getElementById("discord_pfp");
-    if (!avatarElement) return;
-
-    let currentStoredAvatar = localStorage.getItem('discord_avatar');
-    let fetchedAvatarData = { avatar: null, error: true };
-
-    try {
-        fetchedAvatarData = await getDiscordAv();
-    } catch {}
-
-    let finalAvatarUrl = fetchedAvatarData.error ? (currentStoredAvatar || GITHUB_AVATAR_URL) : fetchedAvatarData.avatar;
-
-    if (!fetchedAvatarData.error && fetchedAvatarData.avatar !== currentStoredAvatar) {
-        localStorage.setItem('discord_avatar', fetchedAvatarData.avatar);
-        showPopUp(false);
-        currentStoredAvatar = fetchedAvatarData.avatar;
-    } else if (fetchedAvatarData.error && currentStoredAvatar) {
-        showPopUp(true);
-    }
-
-    avatarElement.onerror = () => {
-        avatarElement.src = GITHUB_AVATAR_URL;
-    };
-
-    avatarElement.src = finalAvatarUrl;
-}
 
 function setupHeartEffect() {
     const heartIcon = document.getElementById('Footer_heart');
@@ -799,10 +758,10 @@ function startBirthdayCelebration() {
 
 
 
-    function initializePage() {
+   function initializePage() {
     handleIntroOverlay();
 
-   updateDiscordPfp();
+   connectLanyard();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
  //  PreventRightClick();
