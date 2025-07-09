@@ -1020,10 +1020,11 @@ footer::before {
 }
 
 @keyframes shimmer {
-    0% { transform: translateX(-100%); opacity: 0.7; }
+    0% { transform: translateX(-100%); opacity: 0.8; }
     50% { opacity: 1; }
-    100% { transform: translateX(100%); opacity: 0.7; }
+    100% { transform: translateX(100%); opacity: 0.8; }
 }
+
 .footer-main {
     display: flex; align-items: center; gap: 10px;
 }
