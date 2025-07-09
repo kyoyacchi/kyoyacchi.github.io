@@ -1611,3 +1611,66 @@ html {
   font-size: 0.9rem;
   margin-top: 4px;
 }
+
+.makoto-memory {
+    position: absolute;
+    bottom: 14px;
+    right: 2px;
+    z-index: 15;
+
+    font-size: 13px;
+    font-family: var(--font-accent);
+    font-style: italic;
+    color: var(--text-light);
+
+    background: rgba(45, 27, 78, 0.5);
+    border: 1px solid var(--raiden-electro);
+    border-radius: 8px;
+    padding: 4px 10px;
+
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 14px rgba(140, 120, 255, 0.25), var(--shadow);
+
+    opacity: 0;
+    animation: fadeInFloat 0.7s ease forwards;
+    transition: var(--transition-long), transform 0.25s ease;
+    pointer-events: auto;
+}
+
+.makoto-memory.hide {
+    animation: fadeOutSlide 0.7s ease forwards;
+}
+
+@keyframes fadeInFloat {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+        filter: blur(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes fadeOutSlide {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+        filter: blur(2px);
+    }
+}
+
+.makoto-memory:hover {
+    border-color: var(--raiden-electro);
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.45),
+        0 0 20px var(--raiden-glow);
+    transform: translateY(-3px);
+}
