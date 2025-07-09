@@ -438,6 +438,17 @@ function initializeDynamicBanner() {
         bio: document.querySelector('.bio')
     };
 
+    const makotoBannerUrl = 'https://files.catbox.moe/a8y5q1.jpg';
+
+
+    const makotoMemoryTag = document.createElement('div');
+    makotoMemoryTag.className = 'makoto-memory';
+    makotoMemoryTag.innerText = "In memory of Makoto...";
+
+  
+    makotoMemoryTag.style.display = 'none';
+    elements.bannerContainer.appendChild(makotoMemoryTag);
+
 
     const config = {
         changeInterval: 5500,
@@ -453,6 +464,7 @@ function initializeDynamicBanner() {
 'https://files.catbox.moe/p0duyn.jpg',
 'https://files.catbox.moe/590yyq.png',
 'https://files.catbox.moe/dvxsv8.jpg',
+'https://files.catbox.moe/a8y5q1.jpg',
 
     ];
 
@@ -604,12 +616,13 @@ function initializeDynamicBanner() {
             currentBannerIndex = newIndex;
             resetProgress();
 
-            // Banner geçişi
+          
             activeBanner.classList.remove('active');
             nextBanner.classList.add('active');
             isBanner1Active = !isBanner1Active;
 
             updateBioStyle(newBannerUrl);
+updateMakotoMemoryTag(newBannerUrl);
 
             setTimeout(() => {
                 isLoadingNext = false;
@@ -637,6 +650,21 @@ function initializeDynamicBanner() {
             elements.bio.classList.toggle('euthymia-bio-style', needsEuthymiaStyle);
         }
     }
+function updateMakotoMemoryTag(currentUrl) {
+    if (currentUrl === makotoBannerUrl) {
+        makotoMemoryTag.style.display = 'block';
+        makotoMemoryTag.classList.remove('hide');
+    } else {
+        // animasyonla gizle
+        makotoMemoryTag.classList.add('hide');
+        makotoMemoryTag.addEventListener('animationend', () => {
+            if (makotoMemoryTag.classList.contains('hide')) {
+                makotoMemoryTag.style.display = 'none';
+                makotoMemoryTag.classList.remove('hide');
+            }
+        }, { once: true });
+    }
+}
 
     function handleVisibilityChange() {
         if (document.hidden) {
@@ -669,6 +697,8 @@ function initializeDynamicBanner() {
         };
 
         updateBioStyle(bannerUrls[currentBannerIndex]);
+        updateMakotoMemoryTag(bannerUrls[currentBannerIndex]);
+        
     }
 
 
