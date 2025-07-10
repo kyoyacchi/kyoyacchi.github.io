@@ -151,6 +151,7 @@ body::before {
 
 
 .preloader-text {
+    color: var(--secondary);
     position: absolute;
     font-family: 'Quicksand', sans-serif;
     font-size: 24px;
@@ -162,8 +163,6 @@ body::before {
     padding: 10px;
     box-sizing: border-box;
     width: 100%;
-
-
     opacity: 0;
     animation: 
         slideUpAndFadeIn 1s ease-out 0.5s forwards,  
@@ -195,7 +194,6 @@ body::before {
     animation: 
         slideUpAndFadeIn 1s ease-out 1s forwards,  
         pulseGlowPreloader 3s infinite ease-in-out; 
-        
 }
 
 @keyframes glowShift {
