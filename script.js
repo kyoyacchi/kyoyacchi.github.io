@@ -20,6 +20,7 @@ function shakeCheckmark(event) {
     }
 }
 
+// from AutumnVN/chino.pages.dev
 function connectLanyard() {
   
 const ws = new WebSocket('wss://api.lanyard.rest/socket');  
