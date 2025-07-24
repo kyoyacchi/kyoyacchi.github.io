@@ -105,6 +105,9 @@ function handleIntroOverlay() {
     const subtitleText = document.querySelector('.subtitle-text');
 
     const hidePreloader = () => {
+        // Start animations immediately as preloader begins fading
+        triggerMainContentAnimations();
+        
         introOverlay.style.opacity = '0';
         setTimeout(() => {
             introOverlay.style.display = 'none';
@@ -384,7 +387,50 @@ function setupParticleCanvas() {
 }
 
 
- function setupScrollAnimations() {
+function triggerMainContentAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    if (!animatedElements.length) return;
+    
+    // Add CSS variables for social icons staggered animation
+    const socialIcons = document.querySelectorAll('.social-icons.animate-on-scroll a');
+    socialIcons.forEach((icon, index) => {
+        icon.style.setProperty('--social-icon-index', index);
+    });
+    
+    // Define animation order and delays - balanced timing
+    const animationOrder = [
+        { selector: '.banner', delay: 100 },
+        { selector: '.profile-header', delay: 250 },
+        { selector: '.bio', delay: 400 },
+        { selector: '.social-icons', delay: 550 },
+        { selector: '.tweet-embed-container', delay: 700 },
+        { selector: 'footer', delay: 850 }
+    ];
+    
+    animationOrder.forEach(({ selector, delay }) => {
+        const element = document.querySelector(selector + '.animate-on-scroll');
+        if (element) {
+            setTimeout(() => {
+                element.classList.add('is-visible');
+                if (element.matches('.profile-header, .bio, .social-icons, footer, .tweet-embed-container')) {
+                    element.classList.add('slide-up');
+                }
+                
+                // Add special effect for the banner
+                if (element.matches('.banner')) {
+                    element.style.filter = 'blur(0px)';
+                }
+            }, delay);
+        }
+    });
+    
+    // Setup scroll animations for any future elements or if page is scrolled
+    setTimeout(() => {
+        setupScrollAnimations();
+    }, 1000);
+}
+
+function setupScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     if (!animatedElements.length) return;
 
@@ -1014,7 +1060,7 @@ calculateStats();
     setupTweetEmbed('.tweet-embed-container');
  //  PreventRightClick();
   setupParticleCanvas();
-    setupScrollAnimations();
+    // Don't setup scroll animations immediately - they'll be triggered after preloader
     initializeDynamicBanner();
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
