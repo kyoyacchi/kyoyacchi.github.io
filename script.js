@@ -6,6 +6,11 @@ const GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/63583961";
 const DISCORD_API_URL = `https://kyopi.vercel.app/api/pfp?id=${DISCORD_USER_ID}`;
 
 
+
+const GENSHIN_START_DATE = new Date('2022-04-10'); 
+const RAIDEN_OBTAINED_DATE = new Date('2024-09-17'); 
+const RAIDEN_CONSTELLATION = 'C2';
+
 function shakeCheckmark(event) {
     const checkmark = event.currentTarget;
     if (checkmark) {
@@ -21,7 +26,7 @@ function shakeCheckmark(event) {
 }
 
 // from AutumnVN/chino.pages.dev
-function connectLanyard() {
+function updateDiscordAvatar() {
   
 const ws = new WebSocket('wss://api.lanyard.rest/socket');  
 const avatarElement = document.getElementById("discord_pfp");
@@ -798,13 +803,213 @@ function startBirthdayCelebration() {
 }
 
 
+function animateNumber(element, start, end, duration) {
+  const startTime = performance.now();
+  const animate = (currentTime) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+   const current = Math.floor(start + (end - start) * progress);
+    element.textContent = current.toLocaleString();
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+  
+  requestAnimationFrame(animate);
+}
+
+function calculateStats() {
+  const today = new Date();
+  
+  // Genshin günleri
+  const genshinDiff = Math.abs(today - GENSHIN_START_DATE);
+  const genshinDays = Math.ceil(genshinDiff / (1000 * 60 * 60 * 24));
+const raidenDiff = Math.abs(today - RAIDEN_OBTAINED_DATE);
+  const raidenDays = Math.ceil(raidenDiff / (1000 * 60 * 60 * 24));
+  const genshinElement = document.getElementById('genshin-days');
+  const raidenElement = document.getElementById('raiden-days');
+  const constellationElement = document.getElementById('constellation');
+  if (genshinElement) {
+    animateNumber(genshinElement, 0, genshinDays, 2000);
+  }
+  
+  if (raidenElement) {
+    animateNumber(raidenElement, 0, raidenDays, 2500);
+  }
+  if (constellationElement) {
+    constellationElement.style.textShadow = '0 0 8px var(--raiden-glow)';
+    constellationElement.textContent = RAIDEN_CONSTELLATION;
+  }
+}
+
+async function connectLanyard() {
+  const presenceElement = document.getElementById("discord-presence");
+  
+  // İlk önce REST API'den kullanıcı bilgilerini çek
+  async function fetchUserData() {
+    try {
+      const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.data;
+      }
+    } catch (error) {
+      console.error('REST API hatası:', error);
+    }
+    return null;
+  }
+  
+  // İlk kez kullanıcı bilgilerini al
+  let userData = await fetchUserData();
+  
+  if (!userData) {
+    presenceElement.innerHTML = '<div class="discord-status">Kullanıcı bulunamadı</div>';
+    return;
+  }
+  
+  // İlk render
+  renderPresence(userData);
+  
+  // WebSocket bağlantısı kur
+  function connectWebSocket() {
+    const ws = new WebSocket('wss://api.lanyard.rest/socket');
+    
+    ws.addEventListener('open', () => {
+      ws.send(JSON.stringify({
+        op: 2,
+        d: { subscribe_to_id: DISCORD_USER_ID }
+      }));
+    });
+
+    ws.addEventListener('error', () => ws.close());
+    ws.addEventListener('close', () => setTimeout(connectWebSocket, 2000));
+
+    ws.addEventListener('message', ({ data }) => {
+      const { t, d } = JSON.parse(data);
+      if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
+      
+      let presence;
+      if (t === 'INIT_STATE') {
+        presence = d[DISCORD_USER_ID];
+      } else {
+        presence = d;
+      }
+      
+      // Eğer presence var ise güncelle, yoksa mevcut userData'yı kullan
+      if (presence && presence.discord_user) {
+        userData = presence;
+      }
+      
+      renderPresence(userData);
+    });
+  }
+  
+  function renderPresence(data) {
+    if (!data || !data.discord_user) return;
+    
+    const user = data.discord_user;
+    const status = data.discord_status || 'offline';
+    const activities = data.activities || [];
+    
+    const displayName = user.global_name || user.username;
+   
+    let avatarUrl;
+    if (user.avatar) {
+      const isGif = user.avatar.startsWith("a_");
+      const format = isGif ? "gif" : "webp";
+      avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
+    } else {
+      const discriminator = user.discriminator === '0' ? 
+          ((parseInt(user.id) >> 22) % 6) : 
+          (parseInt(user.discriminator) % 5);
+      avatarUrl = `https://cdn.discordapp.com/embed/avatars/${discriminator}.png`;
+    }
+    
+    let activityText = '';
+    let activityIcon = '';
+    let isGenshin = false;
+    
+    if (status === 'offline') {
+      activityIcon = '😴';
+      activityText = 'Currently offline';
+    } else {
+      const activity = activities.find(a => a.type !== 4);
+      
+      if (activity) {
+        if (activity.name && activity.name.toLowerCase().includes('genshin')) {
+          isGenshin = true;
+          activityIcon = '⚡';
+          activityText = 'Playing Genshin Impact';
+          
+          if (activity.details && (activity.details.includes('Raiden') || activity.state?.includes('Raiden'))) {
+            activityText += ' (with Ei!)';
+          }
+        } else {
+          switch (activity.type) {
+            case 0:
+              activityIcon = '🎮';
+              activityText = `Playing ${activity.name}`;
+              break;
+            case 2:
+              activityIcon = '🎵';
+              if (activity.name === 'Spotify' && activity.details && activity.state) {
+                activityText = `${activity.details} - ${activity.state}`;
+              } else {
+                activityText = `Listening to ${activity.name}`;
+              }
+              break;
+            default:
+              activityIcon = '💻';
+              activityText = activity.name;
+          }
+        }
+      } else {
+        switch (status) {
+          case 'online':
+            activityIcon = '🟢';
+            activityText = 'Online';
+            break;
+          case 'idle':
+            activityIcon = '🌙';
+            activityText = 'Away';
+            break;
+          case 'dnd':
+            activityIcon = '⛔';
+            activityText = 'Do Not Disturb';
+            break;
+        }
+      }
+    }
+    
+    const genshinClass = isGenshin ? 'genshin-activity' : '';
+    presenceElement.innerHTML = `
+      <div class="discord-status ${genshinClass}">
+        <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
+        <div class="discord-info">
+          <div class="discord-username">${displayName}</div>
+          <div class="discord-activity">
+            <span class="activity-icon">${activityIcon}</span>
+            <span class="activity-text">${activityText}</span>
+          </div>
+        </div>
+        <div class="status-indicator status-${status}"></div>
+      </div>
+    `;
+  }
+  
+
+  connectWebSocket();
+}
 
 
 
    function initializePage() {
     handleIntroOverlay();
-
-   connectLanyard();
+calculateStats();
+  connectLanyard();
+  updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
  //  PreventRightClick();
