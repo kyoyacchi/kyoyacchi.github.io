@@ -33,6 +33,10 @@ margin: 0;
     --border-radius: 12px;
     --transition: all 0.3s ease;
     --transition-long: all 0.5s ease;
+    --transition-fast: 200ms ease-out;
+    --transition-normal: 300ms ease-out;
+    --transition-slow: 500ms ease-out;
+    --transition-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
        --font-main: 'Poppins', sans-serif;
     --font-headings: 'Noto Serif JP', serif;
     --font-accent: 'Quicksand', sans-serif;
@@ -240,6 +244,20 @@ body::before {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* ===== ANIMATION UTILITIES ===== */
+.animate-element {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s var(--transition-spring);
+}
+
+.animate-element.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
 
 .banner {
     position: relative;
