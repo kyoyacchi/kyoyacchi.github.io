@@ -484,13 +484,13 @@ body::before {
 
 .bio {
     user-select: none;
-    max-width: 220px; 
+    max-width: 350px; 
     margin: 25px auto;
-    font-size: 18px;
+    font-size: 16px;
     opacity: 0;
     background: rgba(45, 27, 78, 0.6);
     border: 1px solid var(--raiden-electro); 
-    padding: 20px;
+    padding: 25px;
     border-radius: 12px; 
     backdrop-filter: blur(8px); 
     box-shadow: 0 0 18px rgba(140, 120, 255, 0.25), var(--shadow); 
@@ -500,6 +500,159 @@ body::before {
     overflow: visible;
 }
  
+.bio-main {
+  display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    color: var(--text-primary);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bio-heart {
+  color: var(--raiden-electro);
+  animation: heartBeat 2s ease-in-out infinite;
+  margin-left: 6px;
+}
+.bio-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: inherit;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.stat-value {
+font-size: 1.2rem;
+    font-weight: 600;
+  color: var(--raiden-electro);
+  text-shadow: 0 0 10px var(--raiden-glow);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.stat-divider {
+    color: var(--raiden-electro);
+    font-weight: bold;
+    margin: 0 6px;
+    font-size: 14px;
+}
+
+.discord-presence {
+    margin-top: 1.5rem;
+    padding: 1rem; 1.5rem; 
+    background: rgba(35, 21, 68, 0.8);
+    border: 1px solid rgba(140, 120, 255, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.discord-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+}
+.discord-loading i {
+    color: #5865F2;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+
+.discord-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Daha fazla gap */
+    font-size: 0.85rem;
+}
+
+.discord-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--raiden-electro);
+}
+.discord-info {
+  flex: 1;
+  text-align: left;
+}
+
+.discord-username {
+  font-weight: 500;
+  color: white;
+}
+
+.discord-activity {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+.activity-icon {
+  margin-right: 4px;
+}
+
+.status-indicator {
+    width: 12px; 
+    height: 12px;
+    border-radius: 50%;
+    margin-left: auto;
+}
+
+.status-online { background: #43B581; }
+.status-idle { background: #FAA61A; }
+.status-dnd { background: #F04747; }
+.status-offline { background: #747F8D; }
+
+.genshin-activity {
+    border: 1px solid: var(--raiden-electro) !important;
+    background: linear-gradient(135deg, rgba(150, 67, 199, 0.1), rgba(166, 99, 232, 0.05)) !important;
+    animation: genshinGlow 3s ease-in-out infinite alternate;
+}
+
+.genshin-activity .discord-avatar {
+    box-shadow: 0 0 15px var(--raiden-glow);
+    border-color: var(--raiden-electro);
+}
+
+.genshin-activity .activity-text {
+    color: var(--raiden-electro);
+    font-weight: 500;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes genshinGlow {
+  0% { box-shadow: 0 0 8px rgba(140, 120, 255, 0.3); }
+  100% { box-shadow: 0 0 15px rgba(140, 120, 255, 0.6); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 
 .bio.euthymia-bio-style {
     border-color: rgba(130, 110, 255, 0.75);
@@ -1156,8 +1309,41 @@ footer::before {
         font-size: 26px;
     }
     .handle { font-size: 1rem; }
-.bio { max-width: 90%; font-size: 1rem; padding: 20px 25px; }
-
+.bio { 
+        max-width: 90%; 
+        font-size: 1rem; 
+        padding: 20px 25px;
+    }
+    .bio-stats {
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+        .bio-text {
+        font-size: 0.9rem;
+    }
+    
+    .stat-item {
+        min-width: 60px;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+    }
+    
+        .discord-presence {
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+        }
+            .discord-avatar {
+        width: 28px;
+        height: 28px;
+    }
+    
     .bio-kitsune-icon {
         width: 49px;
         top: -22px;
@@ -1195,6 +1381,8 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
     .preloader-text { font-size: 20px; }
 }
 
+
+
 @media (max-width: 480px) {
     .banner {
         height: 200px;
@@ -1215,12 +1403,20 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
     .handle {
         font-size: 1rem;
     }
-    .bio { font-size: 0.95rem; padding: 18px 20px; margin: 30px auto; }
+.bio { 
+        font-size: 0.95rem; 
+        padding: 18px 20px; 
+        margin: 30px auto;
+        max-width: 280px; /* Mobilde daha dar */
+    }
    .bio-kitsune-icon {
         width: 49px;
         top: -22px;
         right: -22px;
    }
+
+
+    
     .social-icons { gap: 15px; }
     .social-icons a { font-size: 1.5rem; }
     
