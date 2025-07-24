@@ -384,238 +384,28 @@ function setupParticleCanvas() {
 }
 
 
- let intersectionObserver;
-let observedElements = new Set();
+ function setupScrollAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    if (!animatedElements.length) return;
 
-function initAnimationObserver() {
-    const options = {
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+
+                if (entry.target.matches('.profile-header, .bio, .social-icons, footer, .tweet-embed-container')) {
+                   entry.target.classList.add('slide-up');
+                }
+                obs.unobserve(entry.target);
+            }
+        });
+    }, {
         threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    intersectionObserver = new IntersectionObserver(handleIntersection, options);
-    observeElements();
-}
-
-function observeElements() {
-    const elements = document.querySelectorAll('.animate-element');
-    elements.forEach((element, index) => {
-        const delay = parseInt(element.dataset.delay) || index * 150;
-        element.dataset.animationDelay = delay;
-        intersectionObserver.observe(element);
+        rootMargin: "0px 0px -50px 0px"
     });
-}
 
-function handleIntersection(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !observedElements.has(entry.target)) {
-            animateElement(entry.target);
-            observedElements.add(entry.target);
-            intersectionObserver.unobserve(entry.target);
-        }
-    });
+    animatedElements.forEach(el => { observer.observe(el); });
 }
-
-function animateElement(element) {
-    const delay = parseInt(element.dataset.animationDelay) || 0;
-    
-    setTimeout(() => {
-        element.classList.add('animated');
-        triggerCustomAnimation(element);
-    }, delay);
-}
-
-function triggerCustomAnimation(element) {
-    // Banner (.banner)
-    if (element.classList.contains('banner')) {
-        animateBanner(element);
-    }
-    // Profile header (.profile-header)
-    else if (element.classList.contains('profile-header')) {
-        animateProfileHeader(element);
-    }
-    // Bio (.bio)
-    else if (element.classList.contains('bio')) {
-        animateBio(element);
-    }
-    // Social icons (.social-icons)
-    else if (element.classList.contains('social-icons')) {
-        animateSocialIcons(element);
-    }
-    // Tweet embed (.tweet-embed-container)
-    else if (element.classList.contains('tweet-embed-container')) {
-        animateTweetEmbed(element);
-    }
-    // Footer (footer tag)
-    else if (element.tagName.toLowerCase() === 'footer') {
-        animateFooter(element);
-    }
-}
-
-function animateBanner(element) {
-    element.style.transform = 'translateY(-30px)';
-    element.style.opacity = '0';
-    element.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease-out';
-    
-    setTimeout(() => {
-        element.style.transform = 'translateY(0)';
-        element.style.opacity = '1';
-    }, 100);
-}
-
-function animateProfileHeader(element) {
-    const profileImg = element.querySelector('.profile-img');
-    const nameContainer = element.querySelector('.name-container');
-    
-    // Profile image animasyonu
-    if (profileImg) {
-        profileImg.style.transform = 'scale(0.7) rotate(-10deg)';
-        profileImg.style.opacity = '0';
-        profileImg.style.transition = 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            profileImg.style.transform = 'scale(1) rotate(0deg)';
-            profileImg.style.opacity = '1';
-        }, 200);
-    }
-    
-    // Name container animasyonu
-    if (nameContainer) {
-        nameContainer.style.transform = 'translateX(30px)';
-        nameContainer.style.opacity = '0';
-        nameContainer.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            nameContainer.style.transform = 'translateX(0)';
-            nameContainer.style.opacity = '1';
-        }, 400);
-    }
-}
-
-function animateBio(element) {
-    const kitsuneIcon = element.querySelector('.bio-kitsune-icon');
-    const bioMain = element.querySelector('.bio-main');
-    const bioStats = element.querySelector('.bio-stats');
-    const discordPresence = element.querySelector('.discord-presence');
-    
-    // Kitsune icon animasyonu
-    if (kitsuneIcon) {
-        kitsuneIcon.style.transform = 'scale(0) rotate(180deg)';
-        kitsuneIcon.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        
-        setTimeout(() => {
-            kitsuneIcon.style.transform = 'scale(1) rotate(0deg)';
-        }, 100);
-    }
-    
-    // Bio main text animasyonu
-    if (bioMain) {
-        bioMain.style.transform = 'translateY(20px)';
-        bioMain.style.opacity = '0';
-        bioMain.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            bioMain.style.transform = 'translateY(0)';
-            bioMain.style.opacity = '1';
-        }, 300);
-    }
-    
-    // Bio stats animasyonu
-    if (bioStats) {
-        bioStats.style.transform = 'translateY(20px)';
-        bioStats.style.opacity = '0';
-        bioStats.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            bioStats.style.transform = 'translateY(0)';
-            bioStats.style.opacity = '1';
-        }, 500);
-    }
-    
-    // Discord presence animasyonu
-    if (discordPresence) {
-        discordPresence.style.transform = 'translateY(20px)';
-        discordPresence.style.opacity = '0';
-        discordPresence.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            discordPresence.style.transform = 'translateY(0)';
-            discordPresence.style.opacity = '1';
-        }, 700);
-    }
-}
-
-function animateSocialIcons(element) {
-    const socialLinks = element.querySelectorAll('a');
-    
-    socialLinks.forEach((link, index) => {
-        const icon = link.querySelector('i');
-        if (icon) {
-            icon.style.transform = 'scale(0) rotate(180deg)';
-            icon.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            
-            setTimeout(() => {
-                icon.style.transform = 'scale(1) rotate(0deg)';
-            }, 200 + (index * 100));
-        }
-    });
-}
-
-function animateTweetEmbed(element) {
-    element.style.transform = 'translateY(30px)';
-    element.style.opacity = '0';
-    element.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-    
-    setTimeout(() => {
-        element.style.transform = 'translateY(0)';
-        element.style.opacity = '1';
-    }, 100);
-}
-
-function animateFooter(element) {
-    const footerMain = element.querySelector('.footer-main');
-    const shogunateApproval = element.querySelector('.shogunate-approval');
-    const disclaimerText = element.querySelector('.disclaimer-text');
-    
-    // Footer main animasyonu
-    if (footerMain) {
-        footerMain.style.transform = 'translateY(20px)';
-        footerMain.style.opacity = '0';
-        footerMain.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            footerMain.style.transform = 'translateY(0)';
-            footerMain.style.opacity = '1';
-        }, 100);
-    }
-    
-    // Shogunate approval animasyonu
-    if (shogunateApproval) {
-        shogunateApproval.style.transform = 'translateY(20px)';
-        shogunateApproval.style.opacity = '0';
-        shogunateApproval.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            shogunateApproval.style.transform = 'translateY(0)';
-            shogunateApproval.style.opacity = '1';
-        }, 300);
-    }
-    
-    // Disclaimer text animasyonu
-    if (disclaimerText) {
-        disclaimerText.style.transform = 'translateY(20px)';
-        disclaimerText.style.opacity = '0';
-        disclaimerText.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-        
-        setTimeout(() => {
-            disclaimerText.style.transform = 'translateY(0)';
-            disclaimerText.style.opacity = '1';
-        }, 500);
-    }
-}
-
-// Başlatmak için çağır
-document.addEventListener('DOMContentLoaded', initAnimationObserver);
 
 
     function summonYae(){
@@ -1224,7 +1014,7 @@ calculateStats();
     setupTweetEmbed('.tweet-embed-container');
  //  PreventRightClick();
   setupParticleCanvas();
-    initAnimationObserver();
+    setupScrollAnimations();
     initializeDynamicBanner();
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
