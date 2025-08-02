@@ -247,13 +247,12 @@ body::before {
     transform: translateY(0);
 }
 
-/* Enhanced animations for different elements */
+
 .banner.animate-on-scroll {
-    transform: translateY(30px) scale(0.95);
-    filter: blur(2px);
     transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
                 transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.4s ease !important;
 }
 
 .banner.animate-on-scroll.is-visible {
@@ -305,34 +304,28 @@ body::before {
 }
 
 
-
 .banner {
     position: relative;
     width: 100%;
-    height: 500px; 
+    height: 500px;
     overflow: hidden;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
+    border-radius: var(--border-radius);
     border: 2px solid transparent;
-    border-radius: var(--border-radius, 12px); 
-    background-image:
-        linear-gradient(var(--primary-dark), var(--primary-dark)),
-        linear-gradient(120deg, var(--primary-dark), var(--raiden-electro, #8A2BE2), var(--secondary, #FF69B4), var(--raiden-electro, #8A2BE2), var(--primary-dark));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    background-size: 300% 100%;
-    animation: gradientBorderFlow 5s linear infinite;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    transition: box-shadow 0.4s ease, animation-play-state 0.2s ease;
-    cursor: default;
+    background: 
+        linear-gradient(var(--primary-dark), var(--primary-dark)) padding-box,
+        linear-gradient(120deg, var(--primary-dark), var(--raiden-electro), var(--secondary)) border-box;
+    transition: 
+        box-shadow 0.4s ease,
+        transform 0.3s ease,
+        filter 0.3s ease;
+    cursor: pointer;
 }
 
 .banner:hover {
-    box-shadow: 0 0 30px var(--raiden-glow, rgba(138, 43, 226, 0.7)), 0 0 15px var(--secondary, rgba(255, 105, 180, 0.5));
-    animation-play-state: paused;
+    box-shadow: 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary);
+    transform: translateY(-2px);
+    filter: brightness(1.05);
 }
-
 .banner-img {
     position: absolute;
     top: 0;
@@ -345,7 +338,6 @@ body::before {
     pointer-events: none;
     transition: opacity 0.35s ease-in-out;
 }
-
 .banner-img.active {
     opacity: 1; 
    pointer-events: auto;
