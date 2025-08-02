@@ -913,7 +913,7 @@ async function connectLanyard() {
         return data.data;
       }
     } catch (error) {
-      console.error('REST API hatası:', error);
+      console.error('REST API error:', error);
     }
     return null;
   }
@@ -922,7 +922,7 @@ async function connectLanyard() {
   let userData = await fetchUserData();
   
   if (!userData) {
-    presenceElement.innerHTML = '<div class="discord-status">Kullanıcı bulunamadı</div>';
+    presenceElement.innerHTML = '<div class="discord-status">Error</div>';
     return;
   }
   
