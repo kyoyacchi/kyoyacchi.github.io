@@ -759,6 +759,18 @@ function updateMakotoMemoryTag(currentUrl) {
     
     initializeBanner();
 }
+function toggleNamaeVisibility() {
+  const namae = document.querySelector(".namae");
+  if (!namae) return;
+
+  if (document.visibilityState === "hidden") {
+    namae.style.visibility = "hidden"; 
+  } else {
+    namae.style.visibility = "visible"
+  }
+}
+
+
 /*function initializeBirthdayCountdown() {
     const timerElement = document.getElementById('countdown-timer');
 
@@ -1050,6 +1062,7 @@ async function connectLanyard() {
 }
 
 
+document.addEventListener("visibilitychange", toggleNamaeVisibility);
 
    function initializePage() {
     handleIntroOverlay();
