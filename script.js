@@ -399,7 +399,6 @@ function triggerMainContentAnimations() {
     
     // Define animation order and delays - balanced timing
     const animationOrder = [
-        { selector: '.banner', delay: 100 },
         { selector: '.profile-header', delay: 250 },
         { selector: '.bio', delay: 400 },
         { selector: '.social-icons', delay: 550 },
