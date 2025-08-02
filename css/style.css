@@ -458,7 +458,41 @@ body::before {
     color: var(--text-light);
     text-shadow: 0 0 8px var(--raiden-glow);
 }
-
+.namae {
+                background: linear-gradient(
+                45deg,
+                #6a0dad,
+                #9370db,
+                #dda0dd,
+                #ff69b4,
+                #8a2be2,
+                #4b0082,
+                #6a0dad
+            );
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: electroPulse 4.5s ease-in-out infinite;
+}
+@keyframes electroPulse {
+            0%, 100% {
+                background-position: 0% 50%;
+                filter: brightness(1);
+            }
+            25% {
+                background-position: 50% 0%;
+                filter: brightness(1.2);
+            }
+            50% {
+                background-position: 100% 50%;
+                filter: brightness(0.8);
+            }
+            75% {
+                background-position: 50% 100%;
+                filter: brightness(1.1);
+            }
+        }
 .handle {
     font-size: 1.1rem;
     color: var(--text-muted);
