@@ -249,6 +249,8 @@ body::before {
 
 
 .banner.animate-on-scroll {
+    transform: translateY(30px) scale(0.95);
+    filter: blur(2px);
     transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
                 transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
