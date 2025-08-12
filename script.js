@@ -193,6 +193,7 @@ function handleIntroOverlay() {
     }
 
     setTimeout(hidePreloader, 2000);
+    setTimeout(WritingAnimate, 2100);
 }
 
 
@@ -1062,7 +1063,37 @@ async function connectLanyard() {
 
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
-
+function WritingAnimate() {
+    const heroTitle = document.querySelector('.namae');
+    const titleText = heroTitle.textContent;
+    heroTitle.textContent = '';
+    
+    let i = 0;
+    function typeTitle() {
+        if (i < titleText.length) {
+            heroTitle.textContent += titleText.charAt(i);
+            
+            
+            heroTitle.style.textShadow = '0 0 10px #9945ff, 0 0 20px #9945ff';
+            setTimeout(() => {
+                heroTitle.style.textShadow = '0 0 5px #9945ff';
+            }, 100);
+            
+            
+            heroTitle.textContent += '|';
+            setTimeout(() => {
+                heroTitle.textContent = heroTitle.textContent.slice(0, -1);
+            }, 75);
+            
+            i++;
+            
+            const speed = Math.random() * 100 + 100;
+            setTimeout(typeTitle, speed);
+        }
+    }
+    
+    setTimeout(typeTitle, 1000);
+}
    function initializePage() {
     handleIntroOverlay();
 calculateStats();
