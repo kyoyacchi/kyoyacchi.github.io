@@ -495,7 +495,7 @@ function initializeDynamicBanner() {
 
     const makotoMemoryTag = document.createElement('div');
     makotoMemoryTag.className = 'makoto-memory';
-    makotoMemoryTag.innerText = "In memory of Makoto...";
+    makotoMemoryTag.innerText = "🌸 In memory of Makoto...";
 
   
     makotoMemoryTag.style.display = 'none';
