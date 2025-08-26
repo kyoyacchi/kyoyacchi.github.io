@@ -705,8 +705,12 @@ font-size: 1.2rem;
   flex: 1;
    min-width: 0;
   text-align: left;
+  flex-wrap: wrap;
 }
-
+.activity-text {
+  white-space: normal;   
+  word-break: break-word;
+}
 
 .discord-username {
   font-weight: 600;
