@@ -2003,3 +2003,60 @@ html {
         0 0 20px var(--raiden-glow);
     transform: translateY(-3px);
 }
+
+.verification-badge {
+    background: linear-gradient(135deg, #9945C7 0%, #7B2CBF 100%);
+    width: 27px;  
+    height: 27px; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 300ms ease-out;
+    box-shadow: 0 0 20px rgba(153, 69, 199, 0.6);
+}
+
+.verification-badge i {
+    color: white;
+    font-size: 1.1rem; 
+}
+
+
+#lightning-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lightning-bolt {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(135deg, #9945C7 0%, #7B2CBF 100%);
+    box-shadow: 0 0 20px rgba(153, 69, 199, 0.6);
+    border-radius: 1px;
+    animation: lightning-strike 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes lightning-strike {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    20% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(1);
+    }
+}
+
+
