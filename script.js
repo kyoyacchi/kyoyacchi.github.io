@@ -990,7 +990,7 @@ async function connectLanyard() {
   let isGenshin = false;
   
   if (status === 'offline') {
-    activityText = `<i class="fab fa-discord"></i> Currently offline`;
+    activityText = `<i class="fab fa-discord"></i> Offline`;
   } else {
     const activity = activities.find(a => a.type !== 4);
     
