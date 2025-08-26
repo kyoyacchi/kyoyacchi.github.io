@@ -194,6 +194,7 @@ function handleIntroOverlay() {
 
     setTimeout(hidePreloader, 2000);
     setTimeout(WritingAnimate, 2100);
+    setTimeout(calculateStats, 1500);
 }
 
 
@@ -1229,7 +1230,7 @@ function flashScreen() {
 
    function initializePage() {
     handleIntroOverlay();
-calculateStats();
+//calculateStats();
   connectLanyard();
   updateDiscordAvatar();
     setupHeartEffect();
