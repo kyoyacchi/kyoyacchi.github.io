@@ -703,41 +703,93 @@ font-size: 1.2rem;
 }
 .discord-info {
   flex: 1;
+   min-width: 0;
   text-align: left;
 }
 
+
 .discord-username {
-  font-weight: 500;
-  color: white;
+  font-weight: 600;
+  color: var(--raiden-electro);
+  display: inline-block;
+  transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .discord-activity {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.75rem; 
+    font-weight: 500;
     margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 1;
 }
+
 
 .activity-icon {
   margin-right: 4px;
 }
 
-.status-indicator {
-    width: 12px; 
-    height: 12px;
-    border-radius: 50%;
-    margin-left: auto;
+.discord-activity i {
+  font-size: 1.2em; 
+  vertical-align: middle;
+  margin-right: 2px;
+  display: inline-flex;
+  align-items: center;
 }
 
-.status-online { background: #43B581; }
-.status-idle { background: #FAA61A; }
-.status-dnd { background: #F04747; }
-.status-offline { background: #747F8D; }
+.genshin-activity i.fas.fa-bolt {
+  font-size: 1.4em; 
+  color: var(--raiden-glow);
+  margin-right: 2px;
+}
+
+.discord-activity i.fas.fa-gamepad {
+  font-size: 1.2em; 
+}
+
+.discord-activity i.fas.fa-music {
+  font-size: 1.3em;
+}
+
+.discord-activity i.fas.fa-desktop {
+  font-size: 1.2em;
+}
+
+.status-indicator {
+  width: 15px;
+  height: 15px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+}
+
+.status-online {
+  background-image: url('https://files.catbox.moe/l82m6v.png');
+}
+
+.status-idle {
+  background-image: url('https://files.catbox.moe/sko7xm.png');
+}
+
+.status-dnd {
+  background-image: url('https://files.catbox.moe/rojatg.png');
+}
+
+.status-offline {
+  background-image: url('https://files.catbox.moe/d146hq.png');
+}
 
 .genshin-activity {
-    border: 1px solid: var(--raiden-electro) !important;
-    background: linear-gradient(135deg, rgba(150, 67, 199, 0.1), rgba(166, 99, 232, 0.05)) !important;
-    animation: genshinGlow 3s ease-in-out infinite alternate;
+    border: 2px solid var(--raiden-electro);
+    border-radius: 10px;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, rgba(150, 67, 199, 0.15), rgba(166, 99, 232, 0.08)) !important;
+    animation: genshinGlow 2.5s ease-in-out infinite;
 }
+
 
 .genshin-activity .discord-avatar {
     box-shadow: 0 0 15px var(--raiden-glow);
@@ -745,8 +797,8 @@ font-size: 1.2rem;
 }
 
 .genshin-activity .activity-text {
-    color: var(--raiden-electro);
-    font-weight: 500;
+    font-size: 0.78rem; 
+    font-weight: 600;
 }
 
 @keyframes heartBeat {
@@ -755,8 +807,16 @@ font-size: 1.2rem;
 }
 
 @keyframes genshinGlow {
-  0% { box-shadow: 0 0 8px rgba(140, 120, 255, 0.3); }
-  100% { box-shadow: 0 0 15px rgba(140, 120, 255, 0.6); }
+  0%, 100% {
+    border-color: var(--raiden-electro);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45),
+                0 0 20px var(--raiden-glow);
+  }
+  50% {
+    border-color: var(--raiden-electro);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45),
+                0 0 35px var(--raiden-glow); 
+  }
 }
 
 @keyframes pulse {
