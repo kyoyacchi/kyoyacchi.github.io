@@ -1101,63 +1101,13 @@ calculateStats();
   updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
- //  PreventRightClick();
   setupParticleCanvas();
-    // Don't setup scroll animations immediately - they'll be triggered after preloader
     initializeDynamicBanner();
+    
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
-    const checkmarkIcon = document.querySelector('.checkmark');
-    if (checkmarkIcon) {
-const tooltips = document.querySelectorAll('.tooltip');
-
-   /* tooltips.forEach(tooltipContainer => {
-        const tooltipText = tooltipContainer.querySelector('.tooltiptext');
-        let autoHideTimer = null;
-        let visibilityTimer = null; 
-
-        if (!tooltipText) {
-            return; 
-        }
-
-
-        tooltipContainer.addEventListener('mouseenter', function() {
-
-            clearTimeout(autoHideTimer);
-            clearTimeout(visibilityTimer);
-
-
-            tooltipText.style.opacity = '';
-            tooltipText.style.transform = '';
-            tooltipText.style.visibility = '';
-            
-
-            autoHideTimer = setTimeout(() => {
-
-                tooltipText.style.opacity = '0';
-                tooltipText.style.transform = 'translateX(-50%) translateY(10px)'; 
-                clearTimeout(visibilityTimer); 
-                visibilityTimer = setTimeout(() => {
-                    tooltipText.style.visibility = 'hidden';
-                }, 400); 
-
-            }, 1500); 
-        });
-
-
-        tooltipContainer.addEventListener('mouseleave', function() {
-
-            clearTimeout(autoHideTimer);
-            clearTimeout(visibilityTimer);
-
-
-            tooltipText.style.opacity = '';
-            tooltipText.style.transform = '';
-            tooltipText.style.visibility = '';
-        });
-    });*/
-
-    }
+    
+    
 }
 
 if (document.readyState === 'loading') {
