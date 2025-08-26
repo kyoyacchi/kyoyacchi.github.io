@@ -2135,3 +2135,16 @@ html {
   vertical-align: middle; 
   margin-right: 4px; 
 }
+
+.activity-text  i.fab.fa-discord {
+  color: var(--raiden-electro); 
+  font-size: 1.1rem;
+  margin-right: 2px;
+  transition: var(--transition-smooth);
+  filter: drop-shadow(0 0 6px var(--raiden-glow));
+}
+
+.activity-text  i.fab.fa-discord:hover {
+  color: var(--primary-light); 
+  filter: drop-shadow(0 0 10px var(--raiden-glow));
+}
