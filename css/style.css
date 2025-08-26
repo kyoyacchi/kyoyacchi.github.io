@@ -702,10 +702,12 @@ font-size: 1.2rem;
   border: 2px solid rgba(255, 255, 255, 0.1);
 }
 .discord-info {
+  display: flex;  
+  flex-direction: column; 
   flex: 1;
-   min-width: 0;
+  min-width: 0;
   text-align: left;
-  flex-wrap: wrap;
+  flex-wrap: wrap;      
 }
 .activity-text {
   white-space: normal;   
