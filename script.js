@@ -1219,7 +1219,6 @@ function flashScreen() {
 
    function initializePage() {
     handleIntroOverlay();
-//calculateStats();
   connectLanyard();
   updateDiscordAvatar();
     setupHeartEffect();
