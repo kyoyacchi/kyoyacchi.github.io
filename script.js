@@ -1094,6 +1094,139 @@ function WritingAnimate() {
     
     setTimeout(typeTitle, 1000);
 }
+
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function createElement(tag, className, innerHTML) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (innerHTML) element.innerHTML = innerHTML;
+    return element;
+}
+
+
+function triggerElectroShock(event) {
+    const element = event.currentTarget;
+    
+    
+    element.style.transform = 'scale(1.2) rotate(360deg)';
+    element.style.filter = 'brightness(2) saturate(2)';
+    
+    
+    createSparkEffect(element);
+    
+    
+    setTimeout(() => {
+        element.style.transform = '';
+        element.style.filter = '';
+    }, 600);
+
+    
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const bolt = createElement('div', 'lightning-bolt');
+            const left = random(0, window.innerWidth);
+            const height = random(200, 500);
+            
+            bolt.style.left = `${left}px`;
+            bolt.style.height = `${height}px`;
+            bolt.style.top = `${random(0, window.innerHeight - height)}px`;
+            bolt.style.animationDuration = '0.5s';
+            bolt.style.animationTimingFunction = 'steps(5)';
+            bolt.style.opacity = '1';
+            
+            document.body.appendChild(bolt);
+            
+            setTimeout(() => {
+                if (bolt.parentNode) {
+                    bolt.parentNode.removeChild(bolt);
+                }
+            }, 500);
+        }, i * 100);
+    }
+    
+    
+    flashScreen();
+}
+
+
+function createSparkEffect(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 12; i++) {
+        const spark = createElement('div', 'spark-particle');
+        
+        spark.style.position = 'fixed';
+        spark.style.left = `${centerX}px`;
+        spark.style.top = `${centerY}px`;
+        spark.style.width = '4px';
+        spark.style.height = '4px';
+        spark.style.background = '#A663E8';  
+        spark.style.borderRadius = '50%';
+        spark.style.pointerEvents = 'none';
+        spark.style.zIndex = '10000';
+        spark.style.boxShadow = '0 0 10px #A663E8';
+        
+        const angle = (i / 12) * Math.PI * 2;
+        const distance = random(50, 150);
+        const endX = centerX + Math.cos(angle) * distance;
+        const endY = centerY + Math.sin(angle) * distance;
+        
+        spark.style.transform = `translate(-50%, -50%)`;
+        spark.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        document.body.appendChild(spark);
+        
+        setTimeout(() => {
+            spark.style.left = `${endX}px`;
+            spark.style.top = `${endY}px`;
+            spark.style.opacity = '0';
+            spark.style.transform = 'translate(-50%, -50%) scale(0)';
+        }, 50);
+        
+        setTimeout(() => {
+            if (spark.parentNode) {
+                spark.parentNode.removeChild(spark);
+            }
+        }, 850);
+    }
+}
+
+
+function flashScreen() {
+    const flash = createElement('div');
+    flash.style.position = 'fixed';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100%';
+    flash.style.height = '100%';
+    flash.style.background = 'rgba(166, 99, 232, 0.3)';  // Based on electro-accent
+    flash.style.pointerEvents = 'none';
+    flash.style.zIndex = '9998';
+    flash.style.opacity = '0';
+    flash.style.transition = 'opacity 0.2s ease';
+    
+    document.body.appendChild(flash);
+    
+    setTimeout(() => {
+        flash.style.opacity = '1';
+    }, 10);
+    
+    setTimeout(() => {
+        flash.style.opacity = '0';
+    }, 200);
+    
+    setTimeout(() => {
+        if (flash.parentNode) {
+            flash.parentNode.removeChild(flash);
+        }
+    }, 400);
+}
+
    function initializePage() {
     handleIntroOverlay();
 calculateStats();
