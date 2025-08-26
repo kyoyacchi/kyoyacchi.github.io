@@ -691,7 +691,6 @@ font-size: 1.2rem;
 .discord-status {
     display: flex;
     align-items: center;
-    gap: 1rem; 
     font-size: 0.85rem;
 }
 
@@ -770,6 +769,7 @@ font-size: 1.2rem;
   background-size: cover;
   background-position: center;
   border-radius: 50%;
+  margin-left: 1rem;
 }
 
 .status-online {
