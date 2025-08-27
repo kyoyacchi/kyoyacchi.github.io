@@ -1449,7 +1449,9 @@ footer::before {
 .Footer_text:hover::after {
     width: 100%;
 }
-
+.Footer_text .namae {
+    font-weight: bold;
+}
 .Footer_text .kanji {
     opacity: 0;
     transform: translateX(-5px);
