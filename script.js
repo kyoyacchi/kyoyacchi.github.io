@@ -981,10 +981,7 @@ async function connectLanyard() {
     const format = isGif ? "gif" : "webp";
     avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
   } else {
-    const discriminator = user.discriminator === '0' ? 
-        ((parseInt(user.id) >> 22) % 6) : 
-        (parseInt(user.discriminator) % 5);
-    avatarUrl = `https://cdn.discordapp.com/embed/avatars/${discriminator}.png`;
+    avatarUrl = `https://cdn.discordapp.com/embed/avatars/0.png`;
   }
   
   let activityText = '';
@@ -999,9 +996,6 @@ async function connectLanyard() {
       if (activity.name && activity.name.toLowerCase().includes('genshin')) {
         isGenshin = true;
         activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
-        if (activity.details && (activity.details.includes('Raiden') || activity.state?.includes('Raiden'))) {
-          activityText += ' (with Ei!)';
-        }
       } else {
         switch (activity.type) {
           case 0:
