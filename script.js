@@ -911,34 +911,33 @@ async function connectLanyard() {
     presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
   }
 
+  function showErrorState(msg) {
+    presenceElement.innerHTML = `<div class="discord-status error"><i class="fab fa-discord"></i> ${msg}</div>`;
+  }
+
   async function fetchUserData() {
-  try {
-    const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-    console.log('Fetch status:', response.status);
-    const data = await response.json();
-    console.log('Fetch payload:', data);
-    if (data.success) return data.data;
-  } catch (error) {
-    console.error('REST API error:', error);
+    try {
+      const url = `https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`;
+      console.log("[Lanyard] Fetching:", url);
+      const response = await fetch(url);
+      console.log("[Lanyard] Fetch status:", response.status);
+      const data = await response.json();
+      console.log("[Lanyard] Fetch payload:", data);
+      if (data.success) return data.data;
+    } catch (error) {
+      console.error("[Lanyard] REST API error:", error);
+    }
+    return null;
   }
-  return null;
-}
-
-  let userData = await fetchUserData();
-  if (!userData) {
-    showConnecting();
-    setTimeout(connectLanyard, 5000);
-    return;
-  }
-
-  renderPresence(userData);
 
   function connectWebSocket() {
     if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) return;
 
-    ws = new WebSocket('wss://api.lanyard.rest/socket');
+    console.log("[Lanyard] Opening WebSocket…");
+    ws = new WebSocket("wss://api.lanyard.rest/socket");
 
-    ws.addEventListener('open', () => {
+    ws.addEventListener("open", () => {
+      console.log("[Lanyard] WS open — subscribing to ID");
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
         reconnectTimeout = null;
@@ -946,24 +945,27 @@ async function connectLanyard() {
       ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
     });
 
-    ws.addEventListener('error', () => {
+    ws.addEventListener("error", (e) => {
+      console.error("[Lanyard] WS error:", e);
       showConnecting();
-      ws.close(1006, 'WebSocket error');
+      ws.close(1006, "WebSocket error");
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener("close", (e) => {
+      console.warn("[Lanyard] WS closed:", e.code, e.reason);
       showConnecting();
       if (!reconnectTimeout) {
         reconnectTimeout = setTimeout(connectWebSocket, 2000);
       }
     });
 
-    ws.addEventListener('message', ({ data }) => {
+    ws.addEventListener("message", ({ data }) => {
       const { t, d } = JSON.parse(data);
-      if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
+      if (t !== "INIT_STATE" && t !== "PRESENCE_UPDATE") return;
 
-      let presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+      let presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
       if (presence?.discord_user) {
+        console.log("[Lanyard] WS presence update:", presence);
         userData = presence;
         renderPresence(userData);
       }
@@ -971,10 +973,14 @@ async function connectLanyard() {
   }
 
   function renderPresence(data) {
-  //  if (!data?.discord_user) return;
+    console.log("[Lanyard] renderPresence called");
+    if (!data?.discord_user) {
+      console.warn("[Lanyard] No discord_user in data");
+      return;
+    }
 
     const user = data.discord_user;
-    const status = data.discord_status || 'offline';
+    const status = data.discord_status || "offline";
     const activities = data.activities || [];
     const displayName = user.global_name || user.username;
 
@@ -982,15 +988,15 @@ async function connectLanyard() {
       ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
       : `https://cdn.discordapp.com/embed/avatars/0.png`;
 
-    let activityText = '';
+    let activityText = "";
     let isGenshin = false;
 
-    if (status === 'offline') {
+    if (status === "offline") {
       activityText = `<i class="fab fa-discord"></i> Offline`;
     } else {
       const activity = activities.find(a => a.type !== 4);
       if (activity?.name) {
-        if (activity.name.toLowerCase().includes('genshin')) {
+        if (activity.name.toLowerCase().includes("genshin")) {
           isGenshin = true;
           activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
         } else {
@@ -999,7 +1005,7 @@ async function connectLanyard() {
               activityText = `<i class="fas fa-gamepad"></i> Playing ${activity.name}`;
               break;
             case 2:
-              if (activity.name === 'Spotify' && activity.details && activity.state) {
+              if (activity.name === "Spotify" && activity.details && activity.state) {
                 activityText = `<i class="fas fa-music"></i> ${activity.details} - ${activity.state}`;
               } else {
                 activityText = `<i class="fas fa-music"></i> Listening to ${activity.name}`;
@@ -1010,16 +1016,12 @@ async function connectLanyard() {
           }
         }
       } else {
-        const statusMap = {
-          online: 'Online',
-          idle: 'Idle',
-          dnd: 'Do Not Disturb'
-        };
-        activityText = statusMap[status] || '';
+        const statusMap = { online: "Online", idle: "Idle", dnd: "Do Not Disturb" };
+        activityText = statusMap[status] || "";
       }
     }
 
-    const genshinClass = isGenshin ? 'genshin-activity' : '';
+    const genshinClass = isGenshin ? "genshin-activity" : "";
     presenceElement.innerHTML = `
       <div class="discord-status ${genshinClass}">
         <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
@@ -1032,22 +1034,45 @@ async function connectLanyard() {
         <div class="status-indicator status-${status}"></div>
       </div>
     `;
+
+    console.log("[Lanyard] Presence render complete");
+    // Resolve the outer Promise now that we have a render
+    if (firstRenderResolve) {
+      firstRenderResolve();
+      firstRenderResolve = null;
+    }
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
       if (!ws || ws.readyState === WebSocket.CLOSED) connectWebSocket();
     } else {
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
         reconnectTimeout = null;
       }
-      if (ws && ws.readyState === WebSocket.OPEN) ws.close(1000, 'Tab hidden');
+      if (ws && ws.readyState === WebSocket.OPEN) ws.close(1000, "Tab hidden");
     }
   });
 
+  // Boot sequence
   showConnecting();
+  let firstRenderResolve;
+  const firstRenderPromise = new Promise(resolve => { firstRenderResolve = resolve; });
+
+  let userData = await fetchUserData();
+  if (userData) {
+    renderPresence(userData);
+  } else {
+    console.warn("[Lanyard] No data from REST, retrying in 5s");
+    setTimeout(connectLanyard, 5000);
+    return;
+  }
+
   connectWebSocket();
+
+  // Await until we have rendered at least once
+  return firstRenderPromise;
 }
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
