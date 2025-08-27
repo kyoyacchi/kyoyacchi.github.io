@@ -971,7 +971,7 @@ async function connectLanyard() {
   }
 
   function renderPresence(data) {
-    if (!data?.discord_user) return;
+  //  if (!data?.discord_user) return;
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
