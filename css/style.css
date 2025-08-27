@@ -1452,14 +1452,14 @@ footer::before {
 .Footer_text .namae {
     font-weight: bold;
 }
-.Footer_text .kanji {
+.Footer_text .hiragana {
     opacity: 0;
     transform: translateX(-5px);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     display: inline-block;
 }
 
-.Footer_text:hover .kanji {
+.Footer_text:hover .hiragana {
     opacity: 1;
     transform: translateX(0);
 }
