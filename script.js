@@ -904,6 +904,8 @@ const raidenDiff = Math.abs(today - RAIDEN_OBTAINED_DATE);
 
 async function connectLanyard() {
   const presenceElement = document.getElementById("discord-presence");
+  let ws = null;
+  let reconnectTimeout = null;
   
   presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>';
 
@@ -924,7 +926,8 @@ async function connectLanyard() {
   let userData = await fetchUserData();
   
   if (!userData) {
-    presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Error</div>';
+    presenceElement.innerHTML = '<div class="discord-status"><i class="fab
+    fa-discord"></i> Connecting...</div>';
     setTimeout(connectLanyard, 5000);
     return;
   }
@@ -932,9 +935,17 @@ async function connectLanyard() {
   renderPresence(userData);
 
   function connectWebSocket() {
-    const ws = new WebSocket('wss://api.lanyard.rest/socket');
+    if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) {
+      return;
+    }
+    
+    ws = new WebSocket('wss://api.lanyard.rest/socket');
     
     ws.addEventListener('open', () => {
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
       ws.send(JSON.stringify({
         op: 2,
         d: { subscribe_to_id: DISCORD_USER_ID }
@@ -948,7 +959,9 @@ async function connectLanyard() {
     
     ws.addEventListener('close', () => {
       presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>';
-      setTimeout(connectWebSocket, 2000);
+      if (!reconnectTimeout) {
+        reconnectTimeout = setTimeout(connectWebSocket, 2000);
+      }
     });
 
     ws.addEventListener('message', ({ data }) => {
@@ -1045,6 +1058,19 @@ async function connectLanyard() {
       </div>
     `;
   }
+  
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      if (!ws || ws.readyState === WebSocket.CLOSED) {
+        connectWebSocket();
+      }
+    } else {
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
+    }
+  });
 
   connectWebSocket();
 }
