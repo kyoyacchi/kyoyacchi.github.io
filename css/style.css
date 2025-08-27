@@ -1423,38 +1423,44 @@ footer::before {
 
 
 .Footer_text {
-    cursor: default;
-    color: var(--text-light);
-    font-weight: bold;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
-    text-shadow: 0 0 5px var(--raiden-dark-glow);
     position: relative; 
-    display: inline-block; 
+    display: inline-flex; 
+    align-items: baseline; 
+    cursor: default;
+    filter: drop-shadow(0 0 4px var(--raiden-dark-glow));
+    transition: filter 0.3s ease;
 }
 
 .Footer_text:hover {
-    color: var(--raiden-electro);
-    text-shadow: 0 0 12px var(--raiden-glow);
+    filter: drop-shadow(0 0 8px var(--raiden-glow));
 }
 
 .Footer_text::after {
     content: '';
     position: absolute;
+    bottom: 0;            
+    left: 0;
     width: 0;
     height: 2px;
-    display: block;
-    margin-top: 2px;
-    left: 0; 
     background: var(--raiden-electro);
-    transition: all 0.3s ease;
-    -webkit-transition: width 0.3s ease;
+    transition: width 0.3s ease;
 }
 
 .Footer_text:hover::after {
     width: 100%;
 }
 
+.Footer_text .kanji {
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    display: inline-block;
+}
 
+.Footer_text:hover .kanji {
+    opacity: 1;
+    transform: translateX(0);
+}
 
 #Footer_heart {
     color: var(--primary-light);
