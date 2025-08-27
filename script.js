@@ -906,13 +906,10 @@ async function connectLanyard() {
   const presenceElement = document.getElementById("discord-presence");
   let ws = null;
   let reconnectTimeout = null;
+  let heartbeatInterval = null;
 
   function showConnecting() {
     presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
-  }
-
-  function showErrorState(msg) {
-    presenceElement.innerHTML = `<div class="discord-status error"><i class="fab fa-discord"></i> ${msg}</div>`;
   }
 
   async function fetchUserData() {
@@ -930,14 +927,32 @@ async function connectLanyard() {
     return null;
   }
 
+  function startHeartbeat() {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    heartbeatInterval = setInterval(() => {
+      if (ws?.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ op: 3 }));
+        console.log("[Lanyard] Heartbeat sent");
+      }
+    }, 30000); // 30s ping
+  }
+
+  function stopHeartbeat() {
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+      heartbeatInterval = null;
+    }
+  }
+
   function connectWebSocket() {
     if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) return;
 
     console.log("[Lanyard] Opening WebSocket…");
-    ws = new WebSocket("wss://api.lanyard.rest/socket");
+    ws = new WebSocket("wss://api.lanyard.rest/socket"); // Correct endpoint
 
     ws.addEventListener("open", () => {
       console.log("[Lanyard] WS open — subscribing to ID");
+      startHeartbeat();
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
         reconnectTimeout = null;
@@ -952,22 +967,25 @@ async function connectLanyard() {
     });
 
     ws.addEventListener("close", (e) => {
-      console.warn("[Lanyard] WS closed:", e.code, e.reason);
-      showConnecting();
-      if (!reconnectTimeout) {
-        reconnectTimeout = setTimeout(connectWebSocket, 2000);
+      console.warn("[Lanyard] WS closed:", e.code, e.reason || "(no reason)");
+      stopHeartbeat();
+      if (e.code !== 1000) { // only abnormal closes
+        if (!reconnectTimeout) {
+          reconnectTimeout = setTimeout(connectWebSocket, 5000); // 5s backoff
+        }
       }
     });
 
     ws.addEventListener("message", ({ data }) => {
       const { t, d } = JSON.parse(data);
+      console.log("[Lanyard] WS event:", t);
+
       if (t !== "INIT_STATE" && t !== "PRESENCE_UPDATE") return;
 
-      let presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
+      let presence = d[DISCORD_USER_ID] || d; // handles both shapes
       if (presence?.discord_user) {
         console.log("[Lanyard] WS presence update:", presence);
-        userData = presence;
-        renderPresence(userData);
+        renderPresence(presence);
       }
     });
   }
@@ -1034,13 +1052,7 @@ async function connectLanyard() {
         <div class="status-indicator status-${status}"></div>
       </div>
     `;
-
     console.log("[Lanyard] Presence render complete");
-    // Resolve the outer Promise now that we have a render
-    if (firstRenderResolve) {
-      firstRenderResolve();
-      firstRenderResolve = null;
-    }
   }
 
   document.addEventListener("visibilitychange", () => {
@@ -1057,10 +1069,7 @@ async function connectLanyard() {
 
   // Boot sequence
   showConnecting();
-  let firstRenderResolve;
-  const firstRenderPromise = new Promise(resolve => { firstRenderResolve = resolve; });
-
-  let userData = await fetchUserData();
+  const userData = await fetchUserData();
   if (userData) {
     renderPresence(userData);
   } else {
@@ -1068,11 +1077,7 @@ async function connectLanyard() {
     setTimeout(connectLanyard, 5000);
     return;
   }
-
   connectWebSocket();
-
-  // Await until we have rendered at least once
-  return firstRenderPromise;
 }
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
