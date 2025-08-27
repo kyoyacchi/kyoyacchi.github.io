@@ -907,7 +907,8 @@ async function connectLanyard() {
   let ws = null;
   let reconnectTimeout = null;
   
-  presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>';
+  presenceElement.innerHTML = `<div class="discord-status"><i class="fab
+  fa-discord"></i> Connecting...</div>`;
 
   async function fetchUserData() {
     try {
@@ -926,8 +927,8 @@ async function connectLanyard() {
   let userData = await fetchUserData();
   
   if (!userData) {
-    presenceElement.innerHTML = '<div class="discord-status"><i class="fab
-    fa-discord"></i> Connecting...</div>';
+    presenceElement.innerHTML = `<div class="discord-status"><i class="fab
+    fa-discord"></i> Connecting...</div>`;
     setTimeout(connectLanyard, 5000);
     return;
   }
@@ -953,12 +954,14 @@ async function connectLanyard() {
     });
 
     ws.addEventListener('error', () => {
-      presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>';
+      presenceElement.innerHTML = `<div class="discord-status"><i class="fab
+      fa-discord"></i> Connecting...</div>`;
       ws.close();
     });
     
     ws.addEventListener('close', () => {
-      presenceElement.innerHTML = '<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>';
+      presenceElement.innerHTML = `<div class="discord-status"><i class="fab
+      fa-discord"></i> Connecting...</div>`;
       if (!reconnectTimeout) {
         reconnectTimeout = setTimeout(connectWebSocket, 2000);
       }
