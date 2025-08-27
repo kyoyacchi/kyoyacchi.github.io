@@ -906,18 +906,16 @@ async function connectLanyard() {
   const presenceElement = document.getElementById("discord-presence");
   let ws = null;
   let reconnectTimeout = null;
-  
-  presenceElement.innerHTML = `<div class="discord-status"><i class="fab
-  fa-discord"></i> Connecting...</div>`;
+
+  function showConnecting() {
+    presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
+  }
 
   async function fetchUserData() {
     try {
       const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
       const data = await response.json();
-      
-      if (data.success) {
-        return data.data;
-      }
+      if (data.success) return data.data;
     } catch (error) {
       console.error('REST API error:', error);
     }
@@ -925,10 +923,8 @@ async function connectLanyard() {
   }
 
   let userData = await fetchUserData();
-  
   if (!userData) {
-    presenceElement.innerHTML = `<div class="discord-status"><i class="fab
-    fa-discord"></i> Connecting...</div>`;
+    showConnecting();
     setTimeout(connectLanyard, 5000);
     return;
   }
@@ -936,32 +932,25 @@ async function connectLanyard() {
   renderPresence(userData);
 
   function connectWebSocket() {
-    if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) {
-      return;
-    }
-    
+    if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) return;
+
     ws = new WebSocket('wss://api.lanyard.rest/socket');
-    
+
     ws.addEventListener('open', () => {
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
         reconnectTimeout = null;
       }
-      ws.send(JSON.stringify({
-        op: 2,
-        d: { subscribe_to_id: DISCORD_USER_ID }
-      }));
+      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
     });
 
     ws.addEventListener('error', () => {
-      presenceElement.innerHTML = `<div class="discord-status"><i class="fab
-      fa-discord"></i> Connecting...</div>`;
-      ws.close();
+      showConnecting();
+      ws.close(1006, 'WebSocket error');
     });
-    
+
     ws.addEventListener('close', () => {
-      presenceElement.innerHTML = `<div class="discord-status"><i class="fab
-      fa-discord"></i> Connecting...</div>`;
+      showConnecting();
       if (!reconnectTimeout) {
         reconnectTimeout = setTimeout(connectWebSocket, 2000);
       }
@@ -970,50 +959,36 @@ async function connectLanyard() {
     ws.addEventListener('message', ({ data }) => {
       const { t, d } = JSON.parse(data);
       if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
-      
-      let presence;
-      if (t === 'INIT_STATE') {
-        presence = d[DISCORD_USER_ID];
-      } else {
-        presence = d;
-      }
 
-      if (presence && presence.discord_user) {
+      let presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+      if (presence?.discord_user) {
         userData = presence;
+        renderPresence(userData);
       }
-      
-      renderPresence(userData);
     });
   }
-  
+
   function renderPresence(data) {
-    if (!data || !data.discord_user) return;
-    
+    if (!data?.discord_user) return;
+
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
     const activities = data.activities || [];
-    
     const displayName = user.global_name || user.username;
-   
-    let avatarUrl;
-    if (user.avatar) {
-      const isGif = user.avatar.startsWith("a_");
-      const format = isGif ? "gif" : "webp";
-      avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
-    } else {
-      avatarUrl = `https://cdn.discordapp.com/embed/avatars/0.png`;
-    }
-    
+
+    const avatarUrl = user.avatar
+      ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
+      : `https://cdn.discordapp.com/embed/avatars/0.png`;
+
     let activityText = '';
     let isGenshin = false;
-    
+
     if (status === 'offline') {
       activityText = `<i class="fab fa-discord"></i> Offline`;
     } else {
       const activity = activities.find(a => a.type !== 4);
-      
-      if (activity) {
-        if (activity.name && activity.name.toLowerCase().includes('genshin')) {
+      if (activity?.name) {
+        if (activity.name.toLowerCase().includes('genshin')) {
           isGenshin = true;
           activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
         } else {
@@ -1033,51 +1008,45 @@ async function connectLanyard() {
           }
         }
       } else {
-        switch (status) {
-          case 'online':
-            activityText = 'Online';
-            break;
-          case 'idle':
-            activityText = 'Idle';
-            break;
-          case 'dnd':
-            activityText = 'Do Not Disturb';
-            break;
-        }
+        const statusMap = {
+          online: 'Online',
+          idle: 'Idle',
+          dnd: 'Do Not Disturb'
+        };
+        activityText = statusMap[status] || '';
       }
     }
-    
+
     const genshinClass = isGenshin ? 'genshin-activity' : '';
-  presenceElement.innerHTML = `
-    <div class="discord-status ${genshinClass}">
-      <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
-      <div class="discord-info">
-        <div class="discord-username">${displayName}</div>
-        <div class="discord-activity">
-          <span class="activity-text">${activityText}</span>
+    presenceElement.innerHTML = `
+      <div class="discord-status ${genshinClass}">
+        <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
+        <div class="discord-info">
+          <div class="discord-username">${displayName}</div>
+          <div class="discord-activity">
+            <span class="activity-text">${activityText}</span>
+          </div>
         </div>
+        <div class="status-indicator status-${status}"></div>
       </div>
-      <div class="status-indicator status-${status}"></div>
-    </div>
-  `;
+    `;
   }
-  
+
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-      if (!ws || ws.readyState === WebSocket.CLOSED) {
-        connectWebSocket();
-      }
+      if (!ws || ws.readyState === WebSocket.CLOSED) connectWebSocket();
     } else {
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout);
         reconnectTimeout = null;
       }
+      if (ws && ws.readyState === WebSocket.OPEN) ws.close(1000, 'Tab hidden');
     }
   });
 
+  showConnecting();
   connectWebSocket();
 }
-
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
