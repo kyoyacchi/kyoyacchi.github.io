@@ -1432,7 +1432,8 @@ footer::before {
 }
 
 .Footer_text:hover {
-    filter: drop-shadow(0 0 8px var(--raiden-glow));
+    color: var(--raiden-electro);
+    text-shadow: 0 0 12px var(--raiden-glow);
 }
 
 .Footer_text::after {
