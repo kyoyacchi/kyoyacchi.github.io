@@ -321,6 +321,16 @@ body::before {
         transform 0.3s ease,
         filter 0.3s ease;
     cursor: pointer;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    
+    outline: none !important;
 }
 
 .banner:hover {
@@ -328,6 +338,19 @@ body::before {
     transform: translateY(-2px);
     filter: brightness(1.05);
 }
+
+.banner:focus {
+    outline: none !important;
+}
+
+.banner::selection {
+    background: transparent;
+}
+
+.banner::-moz-selection {
+    background: transparent;
+}
+
 .banner-img {
     position: absolute;
     top: 0;
@@ -339,16 +362,32 @@ body::before {
     opacity: 0; 
     pointer-events: none;
     transition: opacity 0.35s ease-in-out;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
+
 .banner-img.active {
     opacity: 1; 
-   pointer-events: auto;
+    pointer-events: auto;
 }
 
 .banner-img:hover { 
     filter: brightness(1.1) saturate(1.1);
 }
 
+.banner-img::selection {
+    background: transparent;
+}
+
+.banner-img::-moz-selection {
+    background: transparent;
+}
 
 .banner-img-1 {
 }
