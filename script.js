@@ -912,15 +912,17 @@ async function connectLanyard() {
   }
 
   async function fetchUserData() {
-    try {
-      const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-      const data = await response.json();
-      if (data.success) return data.data;
-    } catch (error) {
-      console.error('REST API error:', error);
-    }
-    return null;
+  try {
+    const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+    console.log('Fetch status:', response.status);
+    const data = await response.json();
+    console.log('Fetch payload:', data);
+    if (data.success) return data.data;
+  } catch (error) {
+    console.error('REST API error:', error);
   }
+  return null;
+}
 
   let userData = await fetchUserData();
   if (!userData) {
