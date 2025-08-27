@@ -1045,18 +1045,18 @@ async function connectLanyard() {
     }
     
     const genshinClass = isGenshin ? 'genshin-activity' : '';
-    presenceElement.innerHTML = `
-      <div class="discord-status ${genshinClass}">
-        <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
-        <div class="discord-info">
-          <div class="discord-username">${displayName}</div>
-          <div class="discord-activity">
-            <span class="activity-text">${activityText}</span>
-          </div>
+  presenceElement.innerHTML = `
+    <div class="discord-status ${genshinClass}">
+      <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
+      <div class="discord-info">
+        <div class="discord-username">${displayName}</div>
+        <div class="discord-activity">
+          <span class="activity-text">${activityText}</span>
         </div>
-        <div class="status-indicator status-${status}"></div>
       </div>
-    `;
+      <div class="status-indicator status-${status}"></div>
+    </div>
+  `;
   }
   
   document.addEventListener('visibilitychange', () => {
