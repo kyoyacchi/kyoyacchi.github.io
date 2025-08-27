@@ -1213,9 +1213,9 @@ function flashScreen() {
     }, 400);
 }
 
-   function initializePage() {
+ async  function initializePage() {
     handleIntroOverlay();
-  connectLanyard();
+await connectLanyard();
   updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
