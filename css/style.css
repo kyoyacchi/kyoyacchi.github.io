@@ -1444,7 +1444,7 @@ footer::before {
     width: 0;
     height: 2px;
     background: var(--raiden-electro);
-    transition: width 0.3s ease;
+    transition: width 0.4s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 .Footer_text:hover::after {
