@@ -481,7 +481,6 @@ function setupScrollAnimations() {
     }
 
 function initializeDynamicBanner() {
-
     const elements = {
         bannerContainer: document.querySelector('.banner'),
         bannerImg1: document.querySelector('.banner-img-1'),
@@ -493,42 +492,53 @@ function initializeDynamicBanner() {
 
     const makotoBannerUrl = 'https://files.catbox.moe/a8y5q1.jpg';
 
-
     const makotoMemoryTag = document.createElement('div');
     makotoMemoryTag.className = 'makoto-memory';
     makotoMemoryTag.innerText = "🌸 In memory of Makoto...";
-
-  
     makotoMemoryTag.style.display = 'none';
     elements.bannerContainer.appendChild(makotoMemoryTag);
 
-
     const config = {
-        changeInterval: 5500,
-        fadeTransitionDuration: 350,
-        gifFadeDuration: 250,
-        progressUpdateFrequency: 50,
-        renderDelay: 50
+        changeInterval: 5.5,
+        fadeTransitionDuration: 0.35,
+        gifFadeDuration: 0.25,
+        progressUpdateFrequency: 0.05,
+        renderDelay: 0.05
     };
 
-    
     const bannerUrls = [
-        'https://files.catbox.moe/9cvf8l.jpeg', 'https://files.catbox.moe/a53d5g.jpg',          'https://files.catbox.moe/dx4dym.jpg',        'https://files.catbox.moe/kfn36d.jpg', 'https://files.catbox.moe/5fwex5.jpg', 'https://files.catbox.moe/1m7rx3.jpg',        'https://files.catbox.moe/ymqw8y.jpg', 'https://files.catbox.moe/7c6pr2.jpg', 'https://files.catbox.moe/bpr8u5.jpg',       'https://files.catbox.moe/yf43bj.jpg',  'https://files.catbox.moe/ph6zj4.jpeg',        'https://files.catbox.moe/ox23f5.jpeg', 'https://files.catbox.moe/ai4oz2.gif', 'https://files.catbox.moe/25kggw.gif',       'https://files.catbox.moe/obaond.jpg', 'https://files.catbox.moe/vywstu.jpg', 'https://files.catbox.moe/m0nyat.jpg',      'https://files.catbox.moe/4nz27h.jpg',
-'https://files.catbox.moe/p0duyn.jpg',
-'https://files.catbox.moe/590yyq.png',
-'https://files.catbox.moe/dvxsv8.jpg',
-'https://files.catbox.moe/a8y5q1.jpg',
-
+        'https://files.catbox.moe/9cvf8l.jpeg',
+        'https://files.catbox.moe/a53d5g.jpg',
+        'https://files.catbox.moe/dx4dym.jpg',
+        'https://files.catbox.moe/kfn36d.jpg',
+        'https://files.catbox.moe/5fwex5.jpg',
+        'https://files.catbox.moe/1m7rx3.jpg',
+        'https://files.catbox.moe/ymqw8y.jpg',
+        'https://files.catbox.moe/7c6pr2.jpg',
+        'https://files.catbox.moe/bpr8u5.jpg',
+        'https://files.catbox.moe/yf43bj.jpg',
+        'https://files.catbox.moe/ph6zj4.jpeg',
+        'https://files.catbox.moe/ox23f5.jpeg',
+        'https://files.catbox.moe/ai4oz2.gif',
+        'https://files.catbox.moe/25kggw.gif',
+        'https://files.catbox.moe/obaond.jpg',
+        'https://files.catbox.moe/vywstu.jpg',
+        'https://files.catbox.moe/m0nyat.jpg',
+        'https://files.catbox.moe/4nz27h.jpg',
+        'https://files.catbox.moe/p0duyn.jpg',
+        'https://files.catbox.moe/590yyq.png',
+        'https://files.catbox.moe/dvxsv8.jpg',
+        'https://files.catbox.moe/a8y5q1.jpg'
     ];
 
-    
     const euthymiaBannerUrls = new Set([
-        'https://files.catbox.moe/1m7rx3.jpg', 'https://files.catbox.moe/ymqw8y.jpg',
-        'https://files.catbox.moe/a53d5g.jpg', 'https://files.catbox.moe/lc17bc.jpg',
+        'https://files.catbox.moe/1m7rx3.jpg',
+        'https://files.catbox.moe/ymqw8y.jpg',
+        'https://files.catbox.moe/a53d5g.jpg',
+        'https://files.catbox.moe/lc17bc.jpg',
         'https://files.catbox.moe/4nz27h.jpg'
     ]);
 
-  
     let currentBannerIndex = 0;
     let progressIntervalId = null;
     let nextChangeTimeoutId = null;
@@ -537,26 +547,11 @@ function initializeDynamicBanner() {
     let shuffledIndexes = shuffleArray([...Array(bannerUrls.length).keys()]);
     let currentShuffledIndex = 0;
 
-  
     if (!validateElements()) return;
 
-    
     function validateElements() {
-        if (!elements.bannerContainer || !elements.bannerImg1 || !elements.bannerImg2) {
-            console.warn("Required banner elements not found.");
-            return false;
-        }
-        
-
-        ['progressBar', 'progressGif', 'bio'].forEach(key => {
-            if (!elements[key]) console.warn(`${key} element not found.`);
-        });
-
-        if (bannerUrls.length === 0) {
-            console.info('Banner URL list is empty.');
-            return false;
-        }
-        
+        if (!elements.bannerContainer || !elements.bannerImg1 || !elements.bannerImg2) return false;
+        if (bannerUrls.length === 0) return false;
         return true;
     }
 
@@ -589,16 +584,13 @@ function initializeDynamicBanner() {
     }
 
     function setProgressStyles(progress, useTransition = true) {
-        const transitionTiming = `${config.progressUpdateFrequency / 1000}s`;
-        
         if (elements.progressBar) {
-            elements.progressBar.style.transition = useTransition ? `width ${transitionTiming} linear` : 'none';
+            elements.progressBar.style.transition = useTransition ? `width ${config.progressUpdateFrequency}s linear` : 'none';
             elements.progressBar.style.width = `${progress}%`;
         }
-        
         if (elements.progressGif) {
             const transition = useTransition ? 
-                `left ${transitionTiming} linear, opacity ${config.gifFadeDuration / 1000}s ease-in-out` : 'none';
+                `left ${config.progressUpdateFrequency}s linear, opacity ${config.gifFadeDuration}s ease-in-out` : 'none';
             elements.progressGif.style.transition = transition;
             elements.progressGif.style.left = `${progress}%`;
         }
@@ -606,137 +598,103 @@ function initializeDynamicBanner() {
 
     function resetProgress() {
         setProgressStyles(0, false);
-        
-        if (elements.progressGif) {
-            elements.progressGif.classList.add('hidden');
-        }
-
-      
-        if (elements.progressBar) elements.progressBar.offsetHeight;
-        if (elements.progressGif) elements.progressGif.offsetHeight;
+        if (elements.progressGif) elements.progressGif.classList.add('hidden');
+        requestAnimationFrame(() => {});
     }
 
     function runProgressAnimation() {
         const startTime = Date.now();
         clearTimers();
-
-        if (elements.progressGif) {
-            elements.progressGif.classList.remove('hidden');
-        }
-
+        if (elements.progressGif) elements.progressGif.classList.remove('hidden');
         progressIntervalId = setInterval(() => {
             if (isLoadingNext) return;
-
-            const elapsedTime = Date.now() - startTime;
+            const elapsedTime = (Date.now() - startTime) / 1000;
             const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
-
             if (progress >= 100) {
                 clearInterval(progressIntervalId);
                 progressIntervalId = null;
-
                 setProgressStyles(100, false);
-
                 nextChangeTimeoutId = setTimeout(() => {
-                    if (!document.hidden) {
-                        prepareBannerChange();
-                    }
+                    if (!document.hidden) prepareBannerChange();
                     nextChangeTimeoutId = null;
-                }, config.renderDelay);
+                }, config.renderDelay * 1000);
             } else {
                 setProgressStyles(progress, true);
             }
-        }, config.progressUpdateFrequency);
+        }, config.progressUpdateFrequency * 1000);
     }
 
     function startProgressCycle() {
         clearTimers();
         isLoadingNext = false;
         resetProgress();
-
         setTimeout(runProgressAnimation, 50);
     }
 
     function prepareBannerChange() {
         if (isLoadingNext) return;
         isLoadingNext = true;
-
         const newIndex = getNextIndex();
         const newBannerUrl = bannerUrls[newIndex];
         const activeBanner = isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
         const nextBanner = isBanner1Active ? elements.bannerImg2 : elements.bannerImg1;
-
-        function executeFade() {
+        const img = new Image();
+        img.onload = () => {
             currentBannerIndex = newIndex;
             resetProgress();
-
-          
             activeBanner.classList.remove('active');
             nextBanner.classList.add('active');
+            nextBanner.src = newBannerUrl;
             isBanner1Active = !isBanner1Active;
-
             updateBioStyle(newBannerUrl);
-updateMakotoMemoryTag(newBannerUrl);
-
+            updateMakotoMemoryTag(newBannerUrl);
             setTimeout(() => {
                 isLoadingNext = false;
                 startProgressCycle();
-            }, config.fadeTransitionDuration);
-        }
-
-        nextBanner.onload = executeFade;
-        nextBanner.onerror = () => {
-            console.error("Failed to load banner image:", newBannerUrl);
+            }, config.fadeTransitionDuration * 1000);
+        };
+        img.onerror = () => {
             isLoadingNext = false;
             startProgressCycle();
         };
-
-        nextBanner.src = newBannerUrl;
+        img.src = newBannerUrl;
     }
 
     function updateBioStyle(currentUrl) {
-        if (!elements.bio) return;
-        
-        const needsEuthymiaStyle = euthymiaBannerUrls.has(currentUrl);
-        const hasEuthymiaStyle = elements.bio.classList.contains('euthymia-bio-style');
+        elements.bio?.classList.toggle('euthymia-bio-style', euthymiaBannerUrls.has(currentUrl));
+    }
 
-        if (needsEuthymiaStyle !== hasEuthymiaStyle) {
-            elements.bio.classList.toggle('euthymia-bio-style', needsEuthymiaStyle);
+    function updateMakotoMemoryTag(currentUrl) {
+        if (currentUrl === makotoBannerUrl) {
+            makotoMemoryTag.style.display = 'block';
+            makotoMemoryTag.classList.remove('hide');
+        } else {
+            makotoMemoryTag.classList.add('hide');
+            const handler = () => {
+                if (makotoMemoryTag.classList.contains('hide')) {
+                    makotoMemoryTag.style.display = 'none';
+                    makotoMemoryTag.classList.remove('hide');
+                }
+                makotoMemoryTag.removeEventListener('animationend', handler);
+            };
+            makotoMemoryTag.addEventListener('animationend', handler);
         }
     }
-function updateMakotoMemoryTag(currentUrl) {
-    if (currentUrl === makotoBannerUrl) {
-        makotoMemoryTag.style.display = 'block';
-        makotoMemoryTag.classList.remove('hide');
-    } else {
-        // animasyonla gizle
-        makotoMemoryTag.classList.add('hide');
-        makotoMemoryTag.addEventListener('animationend', () => {
-            if (makotoMemoryTag.classList.contains('hide')) {
-                makotoMemoryTag.style.display = 'none';
-                makotoMemoryTag.classList.remove('hide');
-            }
-        }, { once: true });
-    }
-}
 
     function handleVisibilityChange() {
         if (document.hidden) {
             clearTimers();
         } else {
             clearTimers();
-            if (!isLoadingNext) {
-                startProgressCycle();
-            }
+            if (!isLoadingNext) startProgressCycle();
         }
     }
 
-    
     function initializeBanner() {
         if (bannerUrls.length === 0) {
             elements.bannerContainer.style.display = 'none';
             return;
         }
-
         elements.bannerImg1.src = bannerUrls[currentBannerIndex];
         elements.bannerImg1.onload = () => {
             elements.bannerImg1.classList.add('active');
@@ -744,20 +702,14 @@ function updateMakotoMemoryTag(currentUrl) {
             startProgressCycle();
         };
         elements.bannerImg1.onerror = () => {
-            console.error("Failed to load initial banner:", bannerUrls[currentBannerIndex]);
             elements.bannerImg2.classList.remove('active');
             startProgressCycle();
         };
-
         updateBioStyle(bannerUrls[currentBannerIndex]);
         updateMakotoMemoryTag(bannerUrls[currentBannerIndex]);
-        
     }
 
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    
     initializeBanner();
 }
 function toggleNamaeVisibility() {
