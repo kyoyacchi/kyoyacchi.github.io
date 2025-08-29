@@ -195,6 +195,7 @@ function handleIntroOverlay() {
     setTimeout(hidePreloader, 2000);
     setTimeout(WritingAnimate, 2100);
     setTimeout(calculateStats, 1500);
+    setTimeout(initializeDynamicBanner, 1500);
 }
 
 
@@ -712,6 +713,7 @@ function initializeDynamicBanner() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     initializeBanner();
 }
+
 function toggleNamaeVisibility() {
   const namae = document.querySelector(".namae");
   if (!namae) return;
@@ -1171,7 +1173,7 @@ function flashScreen() {
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
   setupParticleCanvas();
-    initializeDynamicBanner();
+ //   initializeDynamicBanner();
     
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
