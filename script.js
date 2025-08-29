@@ -196,6 +196,7 @@ function handleIntroOverlay() {
     setTimeout(WritingAnimate, 2100);
     setTimeout(calculateStats, 1500);
     setTimeout(initializeDynamicBanner, 1500);
+  setTimeout(connectLanyard, 2500);
 }
 
 
@@ -858,147 +859,133 @@ const raidenDiff = Math.abs(today - RAIDEN_OBTAINED_DATE);
 
 async function connectLanyard() {
   const presenceElement = document.getElementById("discord-presence");
-  
+
+  presenceElement.innerHTML = `
+    <div class="discord-status">
+      <i class="fab fa-discord"></i> Connecting...
+    </div>
+  `;
 
   async function fetchUserData() {
     try {
       const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
       const data = await response.json();
-      
-      if (data.success) {
-        return data.data;
-      }
+      if (data.success) return data.data;
     } catch (error) {
       console.error('REST API error:', error);
     }
     return null;
   }
-  
 
   let userData = await fetchUserData();
-  
-  if (!userData) {
-    presenceElement.innerHTML = `<div class="discord-status"><i class="fab
-    fa-discord"></i> Connecting...</div>`;
-    return;
-  }
-  
 
-  renderPresence(userData);
-  
+
+
+  if (userData) {
+    renderPresence(userData);
+  }
+
+  connectWebSocket();
 
   function connectWebSocket() {
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
-    
     ws.addEventListener('open', () => {
       ws.send(JSON.stringify({
         op: 2,
         d: { subscribe_to_id: DISCORD_USER_ID }
       }));
     });
-
     ws.addEventListener('error', () => ws.close());
     ws.addEventListener('close', () => setTimeout(connectWebSocket, 2000));
-
     ws.addEventListener('message', ({ data }) => {
       const { t, d } = JSON.parse(data);
       if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
-      
-      let presence;
-      if (t === 'INIT_STATE') {
-        presence = d[DISCORD_USER_ID];
-      } else {
-        presence = d;
-      }
-      
-
+      let presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
       if (presence && presence.discord_user) {
         userData = presence;
+        renderPresence(userData);
       }
-      
-      renderPresence(userData);
     });
   }
-  
+
   function renderPresence(data) {
-  if (!data || !data.discord_user) return;
-  
-  const user = data.discord_user;
-  const status = data.discord_status || 'offline';
-  const activities = data.activities || [];
-  
-  const displayName = user.global_name || user.username;
- 
-  let avatarUrl;
-  if (user.avatar) {
-    const isGif = user.avatar.startsWith("a_");
-    const format = isGif ? "gif" : "webp";
-    avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
-  } else {
-    avatarUrl = `https://cdn.discordapp.com/embed/avatars/0.png`;
-  }
-  
-  let activityText = '';
-  let isGenshin = false;
-  
-  if (status === 'offline') {
-    activityText = `<i class="fab fa-discord"></i> Offline`;
-  } else {
-    const activity = activities.find(a => a.type !== 4);
-    
-    if (activity) {
-      if (activity.name && activity.name.toLowerCase().includes('genshin')) {
-        isGenshin = true;
-        activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
+    if (!data || !data.discord_user) return;
+    const user = data.discord_user;
+    const status = data.discord_status || 'offline';
+    const activities = data.activities || [];
+    const displayName = user.global_name || user.username;
+    let avatarUrl;
+    if (user.avatar) {
+      const isGif = user.avatar.startsWith("a_");
+      const format = isGif ? "gif" : "webp";
+      avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
+    } else {
+      avatarUrl = `https://cdn.discordapp.com/embed/avatars/0.png`;
+    }
+    let activityText = '';
+    let isGenshin = false;
+    if (status === 'offline') {
+      activityText = `<i class="fab fa-discord"></i> Offline`;
+    } else {
+      const activity = activities.find(a => a.type !== 4);
+      if (activity) {
+        if (activity.name && activity.name.toLowerCase().includes('genshin')) {
+          isGenshin = true;
+          activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
+        } else {
+          switch (activity.type) {
+            case 0:
+              activityText = `<i class="fas fa-gamepad"></i> Playing ${activity.name}`;
+              break;
+            case 2:
+              if (activity.name === 'Spotify' && activity.details && activity.state) {
+                activityText = `<i class="fas fa-music"></i> ${activity.details} - ${activity.state}`;
+              } else {
+                activityText = `<i class="fas fa-music"></i> Listening to ${activity.name}`;
+              }
+              break;
+            default:
+              activityText = `<i class="fas fa-desktop"></i> ${activity.name}`;
+          }
+        }
       } else {
-        switch (activity.type) {
-          case 0:
-            activityText = `<i class="fas fa-gamepad"></i> Playing ${activity.name}`;
+        switch (status) {
+          case 'online':
+            activityText = 'Online';
             break;
-          case 2:
-            if (activity.name === 'Spotify' && activity.details && activity.state) {
-              activityText = `<i class="fas fa-music"></i> ${activity.details} - ${activity.state}`;
-            } else {
-              activityText = `<i class="fas fa-music"></i> Listening to ${activity.name}`;
-            }
+          case 'idle':
+            activityText = 'Idle';
             break;
-          default:
-            activityText = `<i class="fas fa-desktop"></i> ${activity.name}`;
+          case 'dnd':
+            activityText = 'Do Not Disturb';
+            break;
         }
       }
-    } else {
-      switch (status) {
-        case 'online':
-          activityText = 'Online';
-          break;
-        case 'idle':
-          activityText = 'Idle';
-          break;
-        case 'dnd':
-          activityText = 'Do Not Disturb';
-          break;
-      }
+    }
+    const genshinClass = isGenshin ? 'genshin-activity' : '';
+    presenceElement.innerHTML = `
+      <div class="discord-status ${genshinClass}">
+        <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
+        <div class="discord-info">
+          <div class="discord-username">${displayName}</div>
+          <div class="discord-activity">
+            <span class="activity-text">${activityText}</span>
+          </div>
+        </div>
+        <div class="status-indicator status-${status}"></div>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    const el = document.getElementById("discord-presence");
+    if (el && el.textContent.trim().includes("Connecting")) {
+      connectLanyard();
     }
   }
-  
-  const genshinClass = isGenshin ? 'genshin-activity' : '';
-  presenceElement.innerHTML = `
-    <div class="discord-status ${genshinClass}">
-      <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
-      <div class="discord-info">
-        <div class="discord-username">${displayName}</div>
-        <div class="discord-activity">
-          <span class="activity-text">${activityText}</span>
-        </div>
-      </div>
-      <div class="status-indicator status-${status}"></div>
-    </div>
-  `;
-}
-  
-
-  connectWebSocket();
-}
+});
 
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
@@ -1168,7 +1155,7 @@ function flashScreen() {
 
    function initializePage() {
     handleIntroOverlay();
-  connectLanyard();
+// connectLanyard();
   updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
