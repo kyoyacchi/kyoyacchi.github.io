@@ -2163,8 +2163,8 @@ html {
 .lightning-bolt {
     position: absolute;
     width: 2px;
-    background: linear-gradient(135deg, #9945C7 0%, #7B2CBF 100%);
-    box-shadow: 0 0 20px rgba(153, 69, 199, 0.6);
+    background: linear-gradient(135deg, #9945C7 0%, #7B2CBF 50%, #A855F7 100%);
+    box-shadow: 0 0 20px rgba(153, 69, 199, 0.8);
     border-radius: 1px;
     animation: lightning-strike 0.8s ease-out forwards;
     opacity: 0;
@@ -2174,14 +2174,21 @@ html {
     0% {
         opacity: 0;
         transform: scaleY(0);
+        filter: brightness(1);
     }
-    20% {
+    15% {
         opacity: 1;
         transform: scaleY(1);
+        filter: brightness(2);
+    }
+    50% {
+        opacity: 0.8;
+        filter: brightness(1.2);
     }
     100% {
         opacity: 0;
         transform: scaleY(1);
+        filter: brightness(1);
     }
 }
 
