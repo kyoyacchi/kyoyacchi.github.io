@@ -1467,13 +1467,17 @@ footer::before {
 
 #Footer_heart {
     color: var(--primary-light);
-    transition: color 0.2s linear, transform 0.3s ease, text-shadow 0.3s ease;
+    transition: color 0.25s ease, text-shadow 0.3s ease;
     cursor: pointer;
 }
 
 #Footer_heart:hover {
     color: purple;
-    transform: scale(1.2);
+    text-shadow: 0 0 8px purple, 0 0 16px var(--secondary);
+}
+
+#Footer_heart:active {
+    filter: brightness(1.2);
 }
 
 .shogunate-approval {
