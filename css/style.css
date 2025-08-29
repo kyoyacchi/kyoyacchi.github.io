@@ -1472,8 +1472,8 @@ footer::before {
 }
 
 #Footer_heart:hover {
-    color: purple;
-    text-shadow: 0 0 8px purple, 0 0 16px var(--secondary);
+    color: var(--secondary);
+    text-shadow: 0 0 8px var(--secondary), 0 0 16px var(--raiden-glow);
 }
 
 #Footer_heart:active {
