@@ -1159,8 +1159,7 @@ function hydrateGenshinCard() {
   if (!card) return;
 
   const USER_API = 'https://kyopi.vercel.app/api/akasha?uid=742098574';
-  const CACHE_KEY = 'genshinProfileCache';
-  const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+  const CACHE_KEY = 'genshinProfileCachePermanent';
 
   const toInt = (x) => {
     if (typeof x === 'number' && Number.isFinite(x)) return Math.floor(x);
@@ -1225,28 +1224,33 @@ function hydrateGenshinCard() {
     if (err) err.style.display = 'none';
   };
 
-  const now = Date.now();
+  if (window.akasha) {
+    renderCard(window.akasha);
+    return;
+  }
+
   const cachedRaw = localStorage.getItem(CACHE_KEY);
   if (cachedRaw) {
     try {
-      const { timestamp, data } = JSON.parse(cachedRaw);
-      if (now - timestamp < CACHE_TTL) {
-        renderCard(data);
-        return;
-      }
+      const data = JSON.parse(cachedRaw);
+      window.akasha = data;
+      renderCard(data);
+      return;
     } catch {}
   }
 
   axios.get(USER_API, { timeout: 5000 })
     .then((res) => {
       const data = res.data;
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      window.akasha = data;
       renderCard(data);
     })
     .catch((err) => {
       if (cachedRaw) {
         try {
-          const { data } = JSON.parse(cachedRaw);
+          const data = JSON.parse(cachedRaw);
+          window.akasha = data;
           renderCard(data);
           return;
         } catch {}
@@ -1254,7 +1258,22 @@ function hydrateGenshinCard() {
       renderError('Failed to load Akasha data. Please try again later.');
       console.error('Genshin card error:', err);
     });
+
+  window.refreshAkasha = function() {
+    axios.get(USER_API + '&refresh=true', { timeout: 5000 })
+      .then((res) => {
+        const data = res.data;
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        window.akasha = data;
+        renderCard(data);
+        console.log('window.akasha updated from refresh');
+      })
+      .catch((err) => {
+        console.error('Refresh failed:', err);
+      });
+  };
 }
+
 
 
 
