@@ -1260,18 +1260,25 @@ function hydrateGenshinCard() {
     });
 
   window.refreshAkasha = function() {
-    axios.get(USER_API + '&refresh=true', { timeout: 5000 })
-      .then((res) => {
-        const data = res.data;
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-        window.akasha = data;
-        renderCard(data);
-        console.log('window.akasha updated from refresh');
-      })
-      .catch((err) => {
-        console.error('Refresh failed:', err);
-      });
-  };
+  axios.get(USER_API + '&refresh=true', { timeout: 5000 })
+    .then((res) => {
+      if (res.data?.data?.message === 'New user data is ready') {
+        return axios.get(USER_API, { timeout: 5000 });
+      } else {
+        throw new Error('Refresh did not return ready message');
+      }
+    })
+    .then((res) => {
+      const data = res.data;
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      window.akasha = data;
+      renderCard(data);
+      console.log('window.akasha updated from refresh');
+    })
+    .catch((err) => {
+      console.error('Refresh failed:', err);
+    });
+};
 }
 
 
