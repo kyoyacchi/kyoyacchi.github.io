@@ -1152,13 +1152,15 @@ function flashScreen() {
         }
     }, 400);
 }
+
+
 function hydrateGenshinCard() {
   const card = document.getElementById('genshin-card');
   if (!card) return;
 
   const USER_API = 'https://akasha.cv/api/user/742098574';
   const CACHE_KEY = 'genshinProfileCache';
-  const CACHE_TTL = 60 * 60 * 1000;
+  const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
   const toInt = (x) => {
     if (typeof x === 'number' && Number.isFinite(x)) return Math.floor(x);
@@ -1235,12 +1237,9 @@ function hydrateGenshinCard() {
     } catch {}
   }
 
-  fetch(USER_API, { cache: 'no-store' })
-    .then((r) => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    })
-    .then((data) => {
+  axios.get(USER_API, { timeout: 5000 })
+    .then((res) => {
+      const data = res.data;
       localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
       renderCard(data);
     })
@@ -1252,12 +1251,12 @@ function hydrateGenshinCard() {
           return;
         } catch {}
       }
-      renderError('Akasha verisi yüklenemedi. Lütfen daha sonra tekrar dene.');
+      renderError('Failed to load Akasha data. Please try again later.');
       console.error('Genshin card error:', err);
     });
 }
 
-document.addEventListener('DOMContentLoaded', hydrateGenshinCard);
+
 
    function initializePage() {
     handleIntroOverlay();
@@ -1270,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', hydrateGenshinCard);
     
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
-    
+    hydrateGenshinCard();
     
 }
 
