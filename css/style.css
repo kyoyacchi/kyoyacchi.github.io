@@ -916,10 +916,10 @@ font-size: 1.2rem;
 }
 .bio-kitsune-icon {
     position: absolute;
-    width: 49px;
+    width: 30px;
     height: auto;
-    top: -22px;
-    right: -22px;
+    top: -12px;
+    right: -8.4px;
     z-index: 1;
     pointer-events: none;
     transform: rotate(12deg);
@@ -1591,10 +1591,9 @@ footer::before {
     }
     
     .bio-kitsune-icon {
-        width: 49px;
-        top: -22px;
-        right: -22px;
-        transform: rotate(10deg);
+        width: 30px;
+        top: -12px;
+        right: -8.4px;
     }
     .social-icons a {
         font-size: 1.6rem;
@@ -1681,11 +1680,11 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
         height: 45px;
     }
     
-   .bio-kitsune-icon {
-        width: 49px;
-        top: -22px;
-        right: -22px;
-   }
+.bio-kitsune-icon {
+    width: 30px;
+    top: -12px; 
+    right: -8.4px;
+}
 
 
     
