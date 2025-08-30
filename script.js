@@ -1157,6 +1157,8 @@ function hydrateGenshinCard() {
   if (!card) return;
 
   const USER_API = 'https://akasha.cv/api/user/742098574';
+  const CACHE_KEY = 'genshinProfileCache';
+  const CACHE_TTL = 60 * 60 * 1000;
 
   const toInt = (x) => {
     if (typeof x === 'number' && Number.isFinite(x)) return Math.floor(x);
@@ -1165,42 +1167,97 @@ function hydrateGenshinCard() {
     return m ? parseInt(m[0], 10) : null;
   };
 
-  fetch(USER_API)
-    .then(r => r.json())
-    .then(userData => {
-      const p = userData?.data?.account?.playerInfo || {};
-      const avatarUrl = userData?.data?.account?.profilePictureLink || '';
-      const nameCardUrl = userData?.data?.account?.nameCardLink || '';
+  const renderError = (message) => {
+    const skeleton = card.querySelector('.enka-skeleton');
+    if (skeleton) {
+      skeleton.classList.add('stopped');
+      skeleton.style.display = 'none';
+    }
+    card.querySelector('.enka-content')?.classList.add('is-hidden');
+    let err = card.querySelector('.enka-error');
+    if (!err) {
+      err = document.createElement('div');
+      err.className = 'enka-error';
+      err.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span>${message}</span>`;
+      card.appendChild(err);
+    } else {
+      err.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span>${message}</span>`;
+      err.style.display = 'flex';
+    }
+  };
 
-      card.style.backgroundImage = `url(${nameCardUrl})`;
-      card.style.backgroundSize = 'cover';
-      card.style.backgroundPosition = 'center';
+  const renderCard = (userData) => {
+    const p = userData?.data?.account?.playerInfo || {};
+    const avatarUrl = userData?.data?.account?.profilePictureLink || '';
+    const nameCardUrl = userData?.data?.account?.nameCardLink || '';
 
-      const img = card.querySelector('.enka-avatar');
+    card.style.backgroundImage = `url(${nameCardUrl})`;
+    card.style.backgroundSize = 'cover';
+    card.style.backgroundPosition = 'center';
+
+    const img = card.querySelector('.enka-avatar');
+    if (img) {
       img.src = avatarUrl;
       img.alt = `${p.nickname || 'Traveler'} avatar`;
+    }
 
-      card.querySelector('.enka-name').textContent = p.nickname || 'Traveler';
+    const nameElem = card.querySelector('.enka-name');
+    if (nameElem) nameElem.textContent = p.nickname || 'Traveler';
 
-      const arShort = toInt(p.level);
-      const wlText = p.worldLevel != null ? `WL ${p.worldLevel}` : '';
-      const ach = toInt(p.finishAchievementNum);
-      const achText = ach != null ? `Achv.${ach}` : '';
-      const metaLine = [arShort != null ? `AR ${arShort}` : '', wlText, achText]
-        .filter(Boolean)
-        .join(' • ');
-      const metaElem = card.querySelector('.enka-meta');
-      if (metaElem) metaElem.textContent = metaLine;
+    const arShort = toInt(p.level);
+    const wlText = p.worldLevel != null ? `WL ${p.worldLevel}` : '';
+    const ach = toInt(p.finishAchievementNum);
+    const achText = ach != null ? `Achv.${ach}` : '';
+    const metaLine = [arShort != null ? `AR ${arShort}` : '', wlText, achText].filter(Boolean).join(' • ');
+    const metaElem = card.querySelector('.enka-meta');
+    if (metaElem) metaElem.textContent = metaLine;
 
-      card.querySelector('.enka-signature').textContent = p.signature || '';
+    const sig = card.querySelector('.enka-signature');
+    if (sig) sig.textContent = p.signature || '';
 
-      const skeleton = card.querySelector('.enka-skeleton');
-      if (skeleton) skeleton.style.display = 'none';
-      card.querySelector('.enka-content')?.classList.remove('is-hidden');
+    const skeleton = card.querySelector('.enka-skeleton');
+    if (skeleton) skeleton.style.display = 'none';
+    card.querySelector('.enka-content')?.classList.remove('is-hidden');
+
+    const err = card.querySelector('.enka-error');
+    if (err) err.style.display = 'none';
+  };
+
+  const now = Date.now();
+  const cachedRaw = localStorage.getItem(CACHE_KEY);
+  if (cachedRaw) {
+    try {
+      const { timestamp, data } = JSON.parse(cachedRaw);
+      if (now - timestamp < CACHE_TTL) {
+        renderCard(data);
+        return;
+      }
+    } catch {}
+  }
+
+  fetch(USER_API, { cache: 'no-store' })
+    .then((r) => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
     })
-    .catch(err => console.error('Genshin card error:', err));
+    .then((data) => {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+      renderCard(data);
+    })
+    .catch((err) => {
+      if (cachedRaw) {
+        try {
+          const { data } = JSON.parse(cachedRaw);
+          renderCard(data);
+          return;
+        } catch {}
+      }
+      renderError('Akasha verisi yüklenemedi. Lütfen daha sonra tekrar dene.');
+      console.error('Genshin card error:', err);
+    });
 }
 
+document.addEventListener('DOMContentLoaded', hydrateGenshinCard);
 
    function initializePage() {
     handleIntroOverlay();
@@ -1213,7 +1270,7 @@ function hydrateGenshinCard() {
     
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
-    hydrateGenshinCard()
+    
     
 }
 
