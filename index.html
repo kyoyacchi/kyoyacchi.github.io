@@ -112,16 +112,50 @@
   <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank" rel="noopener noreferrer" aria-label="MyAnimeList"><i class="fas fa-list"></i></a>
 </div>
 
-          <div class="tweet-embed-container animate-on-scroll">
-              <div class="loading-wrapper">
-                  <div class="loading-spinner"></div>
-                  <span class="loading-text">Loading tweet...</span>
-              </div>
-              <div class="tweet-content">
-                  <div class="tweet-decor-top"></div>
-                  <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"></blockquote>
-              </div>
-          </div>
+<!-- Genshin Profile Card -->
+<h2 class="section-title badge-title animate-on-scroll">
+  <i class="fa-solid fa-bolt"></i>
+  <span>Eternity Records</span>
+</h2>
+<div id="genshin-card" class="enka-card animate-on-scroll">
+  <div class="enka-skeleton">
+    <div class="enka-avatar-skel"></div>
+    <div class="enka-lines">
+      <div class="enka-line w-60"></div>
+      <div class="enka-line w-40"></div>
+      <div class="enka-line w-80"></div>
+    </div>
+  </div>
+
+  <div class="enka-content is-hidden">
+    <div class="enka-left">
+      <img class="enka-avatar" alt="Avatar" src="" />
+    </div>
+    <div class="enka-right">
+      <div class="enka-name"></div>
+      <div class="enka-meta"></div>
+      <div class="enka-signature"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Existing tweet embed -->
+
+<!-- Tweet Embed -->
+<h2 class="section-title badge-title animate-on-scroll">
+  <i class="fa-solid fa-feather"></i>
+  <span>C2 Flexing</span>
+</h2>
+<div class="tweet-embed-container animate-on-scroll">
+  <div class="loading-wrapper">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">Loading tweet...</span>
+  </div>
+  <div class="tweet-content">
+    <div class="tweet-decor-top"></div>
+    <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"></blockquote>
+  </div>
+</div>
           </div> </div> 
 <footer class="animate-on-scroll">
 <div class="footer-main">
@@ -136,7 +170,8 @@
     <p class="shogunate-approval">"This website is under the divine protection of <span class="almighty-raiden">The Almighty Raiden Shogun</span> and the Shogunate."</p>
     <p class="disclaimer-text">This website is a personal project and is not affiliated with HoYoverse. Genshin Impact, game content, and materials are trademarks and copyrights of HoYoverse.</p>
   </footer>
-
+<!-- Axios CDN (load before your script.js) -->
+<script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>
