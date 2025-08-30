@@ -984,25 +984,93 @@ border-color: var(--raiden-electro);
 }
 
 .social-icons {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    margin-bottom: 40px;
-    padding-left: 0;
-    margin-top: -31px;
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  margin-bottom: 40px;
+  padding-left: 0;
+  margin-top: -31px;
+  position: relative;
+  z-index: 2;
 }
 
 .social-icons a {
-    color: var(--text-secondary); font-size: 1.8rem; /* Larger icons */
-    transition: all 0.3s ease; position: relative;
-    display: inline-block; /* For transform */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 1.8rem;
+  line-height: 1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 220ms ease, text-shadow 220ms ease, transform 220ms ease;
 }
 
-.social-icons a:hover {
-    color: var(--raiden-electro);
-    text-shadow: 0 0 12px var(--raiden-glow), 0 0 20px var(--raiden-electro);
-    
+.social-icons a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--raiden-electro, #8A5CF6),
+    var(--raiden-glow, rgba(173, 138, 255, 0.9)),
+    var(--raiden-electro, #8A5CF6)
+  );
+  box-shadow:
+    0 0 6px var(--raiden-glow, rgba(173, 138, 255, 0.8)),
+    0 0 12px var(--raiden-electro, #8A5CF6);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform 220ms ease;
+  will-change: transform;
 }
+
+.social-icons a::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(60% 60% at 50% 50%,
+    rgba(138, 92, 246, 0.25),
+    transparent 70%
+  );
+  filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 240ms ease, transform 240ms ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.social-icons a:hover,
+.social-icons a:focus-visible {
+  color: var(--raiden-electro, #8A5CF6);
+  text-shadow:
+    0 0 6px var(--raiden-glow, rgba(173, 138, 255, 0.8)),
+    0 0 18px var(--raiden-electro, #8A5CF6);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.social-icons a:hover::after,
+.social-icons a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.social-icons a:hover::before,
+.social-icons a:focus-visible::before {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.social-icons a:focus-visible {
+  box-shadow: 0 0 0 2px rgba(138, 92, 246, 0.35), 0 0 0 6px rgba(138, 92, 246, 0.15);
+  border-radius: 6px;
+}
+
 
 /*.social-icons a::after {
     content: '✦';
