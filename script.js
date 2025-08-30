@@ -1152,6 +1152,55 @@ function flashScreen() {
         }
     }, 400);
 }
+function hydrateGenshinCard() {
+  const card = document.getElementById('genshin-card');
+  if (!card) return;
+
+  const USER_API = 'https://akasha.cv/api/user/742098574';
+
+  const toInt = (x) => {
+    if (typeof x === 'number' && Number.isFinite(x)) return Math.floor(x);
+    if (x == null) return null;
+    const m = String(x).match(/\d+/);
+    return m ? parseInt(m[0], 10) : null;
+  };
+
+  fetch(USER_API)
+    .then(r => r.json())
+    .then(userData => {
+      const p = userData?.data?.account?.playerInfo || {};
+      const avatarUrl = userData?.data?.account?.profilePictureLink || '';
+      const nameCardUrl = userData?.data?.account?.nameCardLink || '';
+
+      card.style.backgroundImage = `url(${nameCardUrl})`;
+      card.style.backgroundSize = 'cover';
+      card.style.backgroundPosition = 'center';
+
+      const img = card.querySelector('.enka-avatar');
+      img.src = avatarUrl;
+      img.alt = `${p.nickname || 'Traveler'} avatar`;
+
+      card.querySelector('.enka-name').textContent = p.nickname || 'Traveler';
+
+      const arShort = toInt(p.level);
+      const wlText = p.worldLevel != null ? `WL ${p.worldLevel}` : '';
+      const ach = toInt(p.finishAchievementNum);
+      const achText = ach != null ? `Achv.${ach}` : '';
+      const metaLine = [arShort != null ? `AR ${arShort}` : '', wlText, achText]
+        .filter(Boolean)
+        .join(' • ');
+      const metaElem = card.querySelector('.enka-meta');
+      if (metaElem) metaElem.textContent = metaLine;
+
+      card.querySelector('.enka-signature').textContent = p.signature || '';
+
+      const skeleton = card.querySelector('.enka-skeleton');
+      if (skeleton) skeleton.style.display = 'none';
+      card.querySelector('.enka-content')?.classList.remove('is-hidden');
+    })
+    .catch(err => console.error('Genshin card error:', err));
+}
+
 
    function initializePage() {
     handleIntroOverlay();
@@ -1164,7 +1213,7 @@ function flashScreen() {
     
 //initializeBirthdayCountdown();
 startBirthdayCelebration();
-    
+    hydrateGenshinCard()
     
 }
 
