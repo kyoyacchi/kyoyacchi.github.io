@@ -2415,3 +2415,26 @@ html {
 .section-title:first-of-type {
   margin-top: 0;
 }
+.enka-skeleton.stopped .enka-avatar-skel,
+.enka-skeleton.stopped .enka-line {
+  animation: none !important;
+}
+
+.enka-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: rgba(255, 117, 143, 0.08);
+  color: var(--text-light);
+  box-shadow: 0 0 12px rgba(255, 117, 143, 0.12);
+  font-size: 0.95rem;
+}
+
+.enka-error .fa-solid {
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
