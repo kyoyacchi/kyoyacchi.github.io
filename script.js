@@ -1169,10 +1169,26 @@ function flashScreen() {
 }
 
 
+function preloadImages(urls) {
+  if (!Array.isArray(urls)) return;
+  
+  urls.forEach(url => {
+    const img = new Image();
+    img.src = url;
+  });
+}
+
+
 
    function initializePage() {
     handleIntroOverlay();
 // connectLanyard();
+preloadImages([
+  'https://files.catbox.moe/l82m6v.png',
+  'https://files.catbox.moe/sko7xm.png',
+  'https://files.catbox.moe/rojatg.png',
+  'https://files.catbox.moe/d146hq.png'
+]);
   updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
