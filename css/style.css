@@ -9,8 +9,8 @@ margin: 0;
   --primary-light: #9D4EDD;
   --secondary: #C77DFF;
 
-  --text-secondary: #B8A8D8; /* existing */
-  --text-primary: #B8A8D8;    /* unified base text (not too light) */
+  --text-secondary: #B8A8D8;
+  --text-primary: #B8A8D8;    
   --text-muted-electro: rgba(184, 168, 216, 0.68);
   --text-soft-electro: rgba(184, 168, 216, 0.82);
   --divider-electro: rgba(184, 168, 216, 0.35);
@@ -67,15 +67,15 @@ margin: 0;
 
 body {
   font-family: 'Poppins', sans-serif;
-    background: linear-gradient(145deg, var(--bg-gradient-start) 0%,
-    var(--bg-gradient-end) 100%);
-    background-image: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%),
-                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path fill="%239D4EDD" fill-opacity="0.05" d="M0 40 L40 0 H20 L0 20 M40 40 V20 L20 40"></path></svg>');
-    background-attachment: fixed;
-    color: var(--text-light);
-    line-height: 1.6;
-    overflow-x: hidden;
-    position: relative;
+  background: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  background-image: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%),
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path fill="%239D4EDD" fill-opacity="0.05" d="M0 40 L40 0 H20 L0 20 M40 40 V20 L20 40"></path></svg>');
+  /* background-attachment: fixed;*/
+  color: var(--text-light);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh; 
 }
 a {
     text-decoration: none;
