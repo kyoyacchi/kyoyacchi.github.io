@@ -999,7 +999,7 @@ border-color: var(--raiden-electro);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: var(--raiden-electro);
   font-size: 1.8rem;
   line-height: 1;
   text-decoration: none;
