@@ -4,44 +4,56 @@ margin: 0;
     box-sizing: border-box;
 }
 :root {
-    --primary: #7B2CBF;
-    --primary-dark: #5A189A;
-    --primary-light: #9D4EDD;
-    --secondary: #C77DFF;
-  --text-secondary: #B8A8D8; 
-      --border-color: #4A3A6A;
-    --border-color-light: #7861A9;
-        --border-radius-main: 10px;
-    --border-radius-small: 6px;
-    --transition-swift: all 0.25s ease-in-out;
-    --transition-smooth: all 0.4s ease-in-out;
-    --glow-color-purple: rgba(168, 119, 244, 0.6);
-    --accent: #FF758F;
-    --accent-glow: rgba(255, 117, 143, 0.7);
-    --bg-dark: #10002B;
-    --bg-light: #240046;
-    --bg-gradient-start: #18032d;
-    --bg-gradient-end: #3c096c;
-    --text-light: #F8F9FA;
-    --text-muted: #CEC8EF;
-    --text-dark: #E0AAFF;
-    --raiden-electro: #AE63E4;
-    --raiden-glow: rgba(174, 99, 228, 0.85);
-    --raiden-dark-glow: rgba(123, 44, 191, 0.6);
-    --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    --shadow-glow: 0 0 15px var(--raiden-glow);
-    --border-radius: 12px;
-    --transition: all 0.3s ease;
-    --transition-long: all 0.5s ease;
-    --transition-fast: 200ms ease-out;
-    --transition-normal: 300ms ease-out;
-    --transition-slow: 500ms ease-out;
-    --transition-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-       --font-main: 'Poppins', sans-serif;
-    --font-headings: 'Noto Serif JP', serif;
-    --font-accent: 'Quicksand', sans-serif;
-    color-scheme: dark;
+  --primary: #7B2CBF;
+  --primary-dark: #5A189A;
+  --primary-light: #9D4EDD;
+  --secondary: #C77DFF;
+
+  --text-secondary: #B8A8D8; /* existing */
+  --text-primary: #B8A8D8;    /* unified base text (not too light) */
+  --text-muted-electro: rgba(184, 168, 216, 0.68);
+  --text-soft-electro: rgba(184, 168, 216, 0.82);
+  --divider-electro: rgba(184, 168, 216, 0.35);
+
+  --border-color: #4A3A6A;
+  --border-color-light: #7861A9;
+  --border-radius-main: 10px;
+  --border-radius-small: 6px;
+  --transition-swift: all 0.25s ease-in-out;
+  --transition-smooth: all 0.4s ease-in-out;
+  --glow-color-purple: rgba(168, 119, 244, 0.6);
+  --accent: #FF758F;
+  --accent-glow: rgba(255, 117, 143, 0.7);
+  --bg-dark: #10002B;
+  --bg-light: #240046;
+  --bg-gradient-start: #18032d;
+  --bg-gradient-end: #3c096c;
+  --text-light: #F8F9FA;
+  --text-muted: #CEC8EF;
+  --text-dark: #E0AAFF;
+
+  --raiden-electro: #AE63E4;
+  --raiden-glow: rgba(174, 99, 228, 0.85);
+  --raiden-dark-glow: rgba(123, 44, 191, 0.6);
+
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 15px var(--raiden-glow);
+  --border-radius: 12px;
+
+  --transition: all 0.3s ease;
+  --transition-long: all 0.5s ease;
+  --transition-fast: 200ms ease-out;
+  --transition-normal: 300ms ease-out;
+  --transition-slow: 500ms ease-out;
+  --transition-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --font-main: 'Poppins', sans-serif;
+  --font-headings: 'Noto Serif JP', serif;
+  --font-accent: 'Quicksand', sans-serif;
+
+  color-scheme: dark;
 }
+
 
 @keyframes fade-in {
     from { opacity: 0; }
@@ -621,136 +633,139 @@ animation-play-state: paused;
 
 
 .bio {
-    user-select: none;
-    max-width: 380px; 
-    margin: 25px auto;
-    font-size: 16px;
-    opacity: 0;
-    background: rgba(45, 27, 78, 0.6);
-    border: 1px solid var(--raiden-electro); 
-    padding: 0;
-    border-radius: 16px; 
-    backdrop-filter: blur(10px); 
-    box-shadow: 0 0 18px rgba(140, 120, 255, 0.25), var(--shadow); 
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: visible;
+  user-select: none;
+  max-width: 380px;
+  margin: 25px auto;
+  font-size: 16px;
+  opacity: 0; 
+  background: rgba(45, 27, 78, 0.6);
+  border: 1px solid var(--raiden-electro);
+  padding: 0;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 18px rgba(140, 120, 255, 0.25), var(--shadow);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
 }
+
  
 .bio-main {
   display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    color: var(--text-primary);
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 20px 24px 16px;
-    font-weight: 400;
-    background: linear-gradient(135deg, rgba(140, 120, 255, 0.08), rgba(100, 80, 200, 0.05));
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: var(--text-primary);
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px 24px 16px;
+  font-weight: 400;
+  background: linear-gradient(135deg, rgba(140, 120, 255, 0.08), rgba(100, 80, 200, 0.05));
+  border-bottom: 1px solid rgba(184, 168, 216, 0.12); 
 }
 
 .bio-heart {
   color: var(--raiden-electro);
-animation: heartBeat 2.5s ease-in-out infinite;
-    margin-left: 3px;
-    font-size: 0.9em;
+  animation: heartBeat 2.5s ease-in-out infinite;
+  margin-left: 3px;
+  font-size: 0.9em;
 }
+
 .bio-stats {
   display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr;
-    align-items: center;
-    padding: 18px 24px;
-    gap: 12px;
-    font-family: inherit;
-    
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  padding: 18px 24px;
+  gap: 12px;
+  font-family: inherit;
 }
 
 .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
 .stat-value {
-font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    background: linear-gradient(135deg, var(--raiden-electro), #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--raiden-electro), #7B2CBF); 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-label {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-align: center;
-    line-height: 1.1;
-    font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--text-muted-electro);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.1;
+  font-weight: 400;
 }
 
 .stat-divider {
-    color: rgba(255, 255, 255, 0.3);
-    font-weight: 300;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  color: var(--divider-electro);
+  font-weight: 300;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .discord-presence {
-    padding: 20px 24px; 
-    background: rgba(255, 255, 255, 0.02);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+  padding: 20px 24px;
+  background: rgba(174, 99, 228, 0.04); 
+  border-top: 1px solid rgba(184, 168, 216, 0.12);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
 .discord-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    font-weight: 400;
-}
-.discord-loading i {
-    color: #5865F2;
-    animation: pulse 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-soft-electro);
+  font-size: 0.85rem;
+  font-weight: 400;
 }
 
+.discord-loading i {
+  color: #5865F2; 
+  animation: pulse 2s ease-in-out infinite;
+}
 
 .discord-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem; 
-    font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.85rem;
 }
 
 .discord-avatar {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(184, 168, 216, 0.18);
 }
+
 .discord-info {
-  display: flex;  
-  flex-direction: column; 
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
   text-align: left;
-  flex-wrap: wrap;      
+  flex-wrap: wrap;
 }
+
 .activity-text {
-  white-space: normal;   
+  white-space: normal;
   word-break: break-word;
 }
 
@@ -762,24 +777,23 @@ font-size: 1.2rem;
 }
 
 .discord-activity {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.75rem; 
-    font-weight: 500;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-    flex-shrink: 1;
+  color: var(--text-soft-electro);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 1;
 }
-
 
 .activity-icon {
   margin-right: 4px;
 }
 
 .discord-activity i {
-  font-size: 1.2em; 
+  font-size: 1.2em;
   vertical-align: middle;
   margin-right: 2px;
   display: inline-flex;
@@ -787,22 +801,14 @@ font-size: 1.2rem;
 }
 
 .genshin-activity i.fas.fa-bolt {
-  font-size: 1.4em; 
+  font-size: 1.4em;
   color: var(--raiden-glow);
   margin-right: 2px;
 }
 
-.discord-activity i.fas.fa-gamepad {
-  font-size: 1.2em; 
-}
-
-.discord-activity i.fas.fa-music {
-  font-size: 1.3em;
-}
-
-.discord-activity i.fas.fa-desktop {
-  font-size: 1.2em;
-}
+.discord-activity i.fas.fa-gamepad { font-size: 1.2em; }
+.discord-activity i.fas.fa-music { font-size: 1.3em; }
+.discord-activity i.fas.fa-desktop { font-size: 1.2em; }
 
 .status-indicator {
   width: 15px;
@@ -813,40 +819,28 @@ font-size: 1.2rem;
   margin-left: 1rem;
 }
 
-.status-online {
-  background-image: url('https://files.catbox.moe/l82m6v.png');
-}
-
-.status-idle {
-  background-image: url('https://files.catbox.moe/sko7xm.png');
-}
-
-.status-dnd {
-  background-image: url('https://files.catbox.moe/rojatg.png');
-}
-
-.status-offline {
-  background-image: url('https://files.catbox.moe/d146hq.png');
-}
-
+.status-online  { background-image: url('https://files.catbox.moe/l82m6v.png'); }
+.status-idle    { background-image: url('https://files.catbox.moe/sko7xm.png'); }
+.status-dnd     { background-image: url('https://files.catbox.moe/rojatg.png'); }
+.status-offline { background-image: url('https://files.catbox.moe/d146hq.png'); }
 .genshin-activity {
-    border: 2px solid var(--raiden-electro);
-    border-radius: 10px;
-    padding: 6px 10px;
-    background: linear-gradient(135deg, rgba(150, 67, 199, 0.15), rgba(166, 99, 232, 0.08)) !important;
-    animation: genshinGlow 2.5s ease-in-out infinite;
+  border: 2px solid var(--raiden-electro);
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, rgba(150, 67, 199, 0.15), rgba(166, 99, 232, 0.08)) !important;
+  animation: genshinGlow 2.5s ease-in-out infinite;
 }
-
 
 .genshin-activity .discord-avatar {
-    box-shadow: 0 0 15px var(--raiden-glow);
-    border-color: var(--raiden-electro);
+  box-shadow: 0 0 15px var(--raiden-glow);
+  border-color: var(--raiden-electro);
 }
 
 .genshin-activity .activity-text {
-    font-size: 0.78rem; 
-    font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
+
 
 @keyframes heartBeat {
   0%, 100% { transform: scale(1); }
@@ -872,12 +866,12 @@ font-size: 1.2rem;
 }
 
 .bio.euthymia-bio-style {
-    border-color: rgba(130, 110, 255, 0.75);
-    box-shadow:
-        0 0 18px rgba(150, 130, 255, 0.5),
-        0 0 7px rgba(180, 160, 255, 0.6),
-        var(--shadow);
-    animation: euthymia-pulse 2.5s ease-in-out infinite;
+  border-color: rgba(130, 110, 255, 0.75);
+  box-shadow:
+    0 0 18px rgba(150, 130, 255, 0.5),
+    0 0 7px rgba(180, 160, 255, 0.6),
+    var(--shadow);
+  animation: euthymia-pulse 2.5s ease-in-out infinite;
 }
 
 .banner.euthymia-bio-style {
@@ -929,13 +923,20 @@ font-size: 1.2rem;
 @keyframes euthymia-pulse {
   0%, 100% {
     border-color: rgba(120, 90, 255, 0.7);
-    box-shadow: 0 0 18px rgba(140, 110, 255, 0.4), 0 0 7px rgba(180, 150, 255, 0.6), var(--shadow);
+    box-shadow:
+      0 0 18px rgba(140, 110, 255, 0.4),
+      0 0 7px rgba(180, 150, 255, 0.6),
+      var(--shadow);
   }
   50% {
     border-color: rgba(160, 130, 255, 1);
-    box-shadow: 0 0 28px rgba(170, 140, 255, 0.8), 0 0 12px rgba(200, 170, 255, 1), var(--shadow);
+    box-shadow:
+      0 0 28px rgba(170, 140, 255, 0.8),
+      0 0 12px rgba(200, 170, 255, 1),
+      var(--shadow);
   }
 }
+
 .bio:hover .bio-kitsune-icon {
 }
 
