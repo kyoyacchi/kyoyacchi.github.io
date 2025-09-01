@@ -1208,12 +1208,22 @@ function flashScreen() {
 
 function preloadImages(urls) {
   if (!Array.isArray(urls)) return;
-  
+
   urls.forEach(url => {
     const img = new Image();
+
+    img.onload = () => {
+     console.log(`✅ Loaded: ${url}`);
+    };
+
+    img.onerror = () => {
+      console.error(`❌ Failed to load: ${url}`);
+    };
+
     img.src = url;
   });
 }
+
 
 
 
