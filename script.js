@@ -867,9 +867,16 @@ let heartbeatInterval = null;
 
 async function connectLanyard() {
   if (isConnecting || isConnected) return;
+
+  // Clear any stale reconnect timers before starting a new connection
+  clearTimeout(reconnectTimer);
+  reconnectTimer = null;
+
   isConnecting = true;
 
   const presenceElement = document.getElementById("discord-presence");
+  if (!presenceElement) return; 
+
   presenceElement.innerHTML = `
     <div class="discord-status">
       <i class="fab fa-discord"></i> Connecting...
@@ -1026,13 +1033,12 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+// Cleanup on unload
 window.addEventListener("beforeunload", () => {
   clearInterval(heartbeatInterval);
   clearTimeout(reconnectTimer);
   lanyardWS?.close();
 });
-
-
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
