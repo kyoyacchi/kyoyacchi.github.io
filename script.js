@@ -1224,7 +1224,9 @@ preloadImages([
   'https://files.catbox.moe/l82m6v.png',
   'https://files.catbox.moe/sko7xm.png',
   'https://files.catbox.moe/rojatg.png',
-  'https://files.catbox.moe/d146hq.png'
+  'https://files.catbox.moe/d146hq.png',
+  'https://files.catbox.moe/1s76mj.jpg',
+  'https://files.catbox.moe/dczsae.png'
 ]);
   updateDiscordAvatar();
     setupHeartEffect();
