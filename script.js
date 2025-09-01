@@ -1014,7 +1014,7 @@ function renderPresence(data) {
   const genshinClass = isGenshin ? "genshin-activity" : "";
   document.getElementById("discord-presence").innerHTML = `
     <div class="discord-status ${genshinClass}">
-      <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar">
+    <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar" onerror="this.style.display='none';"/>
       <div class="discord-info">
         <div class="discord-username">${displayName}</div>
         <div class="discord-activity">
