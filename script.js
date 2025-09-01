@@ -862,6 +862,8 @@ let lanyardWS = null;
 let isConnecting = false;
 let isConnected = false;
 let userDataCache = null;
+let reconnectTimer = null;
+let heartbeatInterval = null;
 
 async function connectLanyard() {
   if (isConnecting || isConnected) return;
@@ -874,6 +876,7 @@ async function connectLanyard() {
     </div>
   `;
 
+  // Initial REST fetch for instant presence
   if (!userDataCache) {
     try {
       const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
@@ -889,6 +892,7 @@ async function connectLanyard() {
     renderPresence(userDataCache);
   }
 
+  // Open WebSocket
   lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
 
   lanyardWS.addEventListener("open", () => {
@@ -907,27 +911,50 @@ async function connectLanyard() {
   lanyardWS.addEventListener("close", () => {
     isConnected = false;
     isConnecting = false;
-    setTimeout(connectLanyard, 2000);
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+
+    if (!reconnectTimer) {
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectLanyard();
+      }, 2000);
+    }
   });
 
   lanyardWS.addEventListener("message", ({ data }) => {
-    const { t, d } = JSON.parse(data);
-    if (t !== "INIT_STATE" && t !== "PRESENCE_UPDATE") return;
-    const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
-    if (presence && presence.discord_user) {
-      userDataCache = presence;
-      renderPresence(userDataCache);
+    const { op, t, d } = JSON.parse(data);
+
+    // Heartbeat setup
+    if (op === 1 && d?.heartbeat_interval) {
+      clearInterval(heartbeatInterval);
+      heartbeatInterval = setInterval(() => {
+        if (lanyardWS?.readyState === WebSocket.OPEN) {
+          lanyardWS.send(JSON.stringify({ op: 3 }));
+        }
+      }, d.heartbeat_interval);
+    }
+
+    // Presence updates
+    if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
+      const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
+      if (presence?.discord_user) {
+        userDataCache = presence;
+        renderPresence(userDataCache);
+      }
     }
   });
 }
 
 function renderPresence(data) {
-  if (!data || !data.discord_user) return;
+  if (!data?.discord_user) return;
+
   const user = data.discord_user;
   const status = data.discord_status || "offline";
   const activities = data.activities || [];
   const displayName = user.global_name || user.username;
 
+  // Avatar logic preserved
   let avatarUrl;
   if (user.avatar) {
     const isGif = user.avatar.startsWith("a_");
@@ -943,9 +970,13 @@ function renderPresence(data) {
   if (status === "offline") {
     activityText = `<i class="fab fa-discord"></i> Offline`;
   } else {
-    const activity = activities.find(a => a.type !== 4);
+    const priority = { 2: 1, 0: 2, 1: 3, default: 99 };
+    const activity = activities
+      .filter(a => a.type !== 4)
+      .sort((a, b) => (priority[a.type] || priority.default) - (priority[b.type] || priority.default))[0];
+
     if (activity) {
-      if (activity.name && activity.name.toLowerCase().includes("genshin")) {
+      if (activity.name?.toLowerCase().includes("genshin")) {
         isGenshin = true;
         activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
       } else {
@@ -965,17 +996,11 @@ function renderPresence(data) {
         }
       }
     } else {
-      switch (status) {
-        case "online":
-          activityText = "Online";
-          break;
-        case "idle":
-          activityText = "Idle";
-          break;
-        case "dnd":
-          activityText = "Do Not Disturb";
-          break;
-      }
+      activityText = {
+        online: "Online",
+        idle: "Idle",
+        dnd: "Do Not Disturb"
+      }[status] || "";
     }
   }
 
@@ -994,12 +1019,18 @@ function renderPresence(data) {
   `;
 }
 
+// Wake up when tab becomes visible
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && !isConnected && !isConnecting) {
     connectLanyard();
   }
 });
 
+window.addEventListener("beforeunload", () => {
+  clearInterval(heartbeatInterval);
+  clearTimeout(reconnectTimer);
+  lanyardWS?.close();
+});
 
 
 
