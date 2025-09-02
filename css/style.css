@@ -1540,6 +1540,9 @@ footer::before {
     color: var(--primary-light);
     transition: color 0.25s ease, text-shadow 0.3s ease;
     cursor: pointer;
+    margin-left: -5px;
+    margin-right: -5px;
+    font-size: 19px;
 }
 
 #Footer_heart:hover {
@@ -1563,7 +1566,7 @@ footer::before {
     line-height: 1.5;
 }
 
-.almighty-raiden {
+.almighty-raiden, .euthymia-glow {
     color: var(--raiden-electro);
     font-weight: bold;
     font-family: 'Noto Serif JP', serif;
@@ -1572,7 +1575,7 @@ footer::before {
      display: inline-block;
 }
 
-.almighty-raiden:hover {
+.almighty-raiden, .euthymia-glow:hover {
     color: var(--text-light);
     text-shadow: 0 0 18px var(--secondary), 0 0 10px var(--text-light);
     animation-play-state: paused;
