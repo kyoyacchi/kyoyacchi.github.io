@@ -1024,12 +1024,22 @@ document.addEventListener("visibilitychange", () => {
     connectLanyard();
   }
 });
+
 window.addEventListener("beforeunload", () => {
   clearInterval(heartbeatInterval);
   clearTimeout(reconnectTimer);
   lanyardWS?.close();
+  isConnected = false;
+  isConnecting = false;
 });
 
+window.addEventListener("pagehide", () => {
+  clearInterval(heartbeatInterval);
+  clearTimeout(reconnectTimer);
+  lanyardWS?.close();
+  isConnected = false;
+  isConnecting = false;
+});
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
