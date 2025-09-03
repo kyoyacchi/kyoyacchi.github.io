@@ -184,7 +184,13 @@ function handleIntroOverlay() {
     'https://files.catbox.moe/p0duyn.jpg',
     'https://files.catbox.moe/590yyq.png',
     'https://files.catbox.moe/dvxsv8.jpg',
-    'https://files.catbox.moe/a8y5q1.jpg'
+    'https://files.catbox.moe/a8y5q1.jpg',
+    'https://files.catbox.moe/l82m6v.png',
+    'https://files.catbox.moe/sko7xm.png',
+    'https://files.catbox.moe/rojatg.png',
+    'https://files.catbox.moe/d146hq.png',
+    'https://files.catbox.moe/1s76mj.jpg',
+    'https://files.catbox.moe/dczsae.png'
   ],
   2, 
   350 
