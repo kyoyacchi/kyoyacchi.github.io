@@ -1031,7 +1031,7 @@ async function connectLanyard() {
   });
 
   lanyardWS.addEventListener("error", (ev) => {
-    console.warn("Lanyard WS error", ev);
+    //
     try { lanyardWS?.close(); } catch(e){}
   });
 
