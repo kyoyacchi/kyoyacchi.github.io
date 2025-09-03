@@ -868,9 +868,23 @@ let isConnected = false;
 let isConnecting = false;
 let reconnectTimer = null;
 let heartbeatInterval = null;
-let userDataCache = null;
 let lanyardBackoff = 1000;
 const LANYARD_MAX_BACKOFF = 30000;
+
+let userDataCache = { data: null, ts: 0 };
+const CACHE_TTL = 60000;
+
+let currentSessionID = null;
+let lastConnectAttempt = 0;
+const CONNECT_DEBOUNCE = 1500; // ms
+
+function setUserDataCache(data) {
+  userDataCache = { data, ts: Date.now() };
+}
+
+function getUserDataCache() {
+  return Date.now() - userDataCache.ts < CACHE_TTL ? userDataCache.data : null;
+}
 
 function setAvatar(hash) {
   const avatarElement = document.getElementById("discord_pfp");
@@ -891,18 +905,21 @@ function renderPresence(data) {
   if (!data?.discord_user) return;
   const user = data.discord_user;
   const status = data.discord_status || "offline";
-  const activities = data.activities || [];
-  const displayName = user.global_name || user.username;
+  const activities = Array.isArray(data.activities) ? data.activities : [];
+  const displayName = user.global_name || user.username || "Unknown";
   setAvatar(user.avatar);
+
   let activityText = "";
   let isGenshin = false;
+
   if (status === "offline") {
     activityText = `<i class="fab fa-discord"></i> Offline`;
   } else {
     const priority = { 2: 1, 0: 2, 1: 3, default: 99 };
     const activity = activities
-      .filter(a => a.type !== 4)
+      .filter(a => a && a.type !== 4)
       .sort((a, b) => (priority[a.type] || priority.default) - (priority[b.type] || priority.default))[0];
+
     if (activity) {
       if (activity.name?.toLowerCase().includes("genshin")) {
         isGenshin = true;
@@ -931,31 +948,42 @@ function renderPresence(data) {
       }[status] || "";
     }
   }
+
   const genshinClass = isGenshin ? "genshin-activity" : "";
-  document.getElementById("discord-presence").innerHTML = `
-    <div class="discord-status ${genshinClass}">
-      <img src="${user.avatar
-        ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
-        : `https://cdn.discordapp.com/embed/avatars/0.png`}" 
-        alt="${displayName}" class="discord-avatar" onerror="this.style.display='none';"/>
-      <div class="discord-info">
-        <div class="discord-username">${displayName}</div>
-        <div class="discord-activity">
-          <span class="activity-text">${activityText}</span>
+  const presenceEl = document.getElementById("discord-presence");
+  if (!presenceEl) return;
+
+  // Fade polish
+  presenceEl.style.opacity = 0;
+  setTimeout(() => {
+    presenceEl.innerHTML = `
+      <div class="discord-status ${genshinClass}">
+        <img src="${user.avatar
+          ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
+          : `https://cdn.discordapp.com/embed/avatars/0.png`}" 
+          alt="${displayName}" class="discord-avatar" loading="lazy" onerror="this.style.display='none';"/>
+        <div class="discord-info">
+          <div class="discord-username">${displayName}</div>
+          <div class="discord-activity">
+            <span class="activity-text">${activityText}</span>
+          </div>
         </div>
+        <div class="status-indicator status-${status}"></div>
       </div>
-      <div class="status-indicator status-${status}"></div>
-    </div>
-  `;
+    `;
+    presenceEl.style.opacity = 1;
+  }, 150);
 }
 
 async function connectLanyard() {
-  // avoid getting stuck if no DOM
+  const now = Date.now();
+  if (now - lastConnectAttempt < CONNECT_DEBOUNCE) return;
+  lastConnectAttempt = now;
+
   const presenceElement = document.getElementById("discord-presence");
   if (!presenceElement) return;
-
   if (isConnecting || isConnected) return;
-  // ensure previous reconnect timer cleared
+
   if (reconnectTimer) {
     clearTimeout(reconnectTimer);
     reconnectTimer = null;
@@ -964,34 +992,27 @@ async function connectLanyard() {
   isConnecting = true;
   presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
 
-  // quick REST fallback (safe)
-  if (!userDataCache) {
+  const cached = getUserDataCache();
+  if (!cached) {
     try {
       const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
       const json = await res.json();
-      if (json && json.success && json.data) {
-        userDataCache = json.data;
-        try { renderPresence(userDataCache); } catch(e){}
+      if (json?.success && json.data) {
+        setUserDataCache(json.data);
+        renderPresence(json.data);
       }
     } catch (err) {
       console.warn("Lanyard REST fetch failed:", err);
     }
   } else {
-    try { renderPresence(userDataCache); } catch(e){}
+    renderPresence(cached);
   }
 
-  // prevent duplicate sockets
-  if (lanyardWS && (lanyardWS.readyState === WebSocket.OPEN || lanyardWS.readyState === WebSocket.CONNECTING)) {
-    isConnecting = false;
-    return;
-  }
+  try { lanyardWS?.close?.(); } catch(e){}
 
+  let ws;
   try {
-    lanyardWS?.close?.();
-  } catch(e){/* ignore */}
-
-  try {
-    lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
+    ws = new WebSocket("wss://api.lanyard.rest/socket");
   } catch (err) {
     console.error("WS create error:", err);
     isConnecting = false;
@@ -999,52 +1020,55 @@ async function connectLanyard() {
     return;
   }
 
-  lanyardWS.addEventListener("open", () => {
+  // Session ID for this connection
+  const sessionID = Symbol("lanyardSession");
+  currentSessionID = sessionID;
+  lanyardWS = ws;
+
+  ws.onopen = () => {
+    if (currentSessionID !== sessionID) return; // stale
     isConnected = true;
     isConnecting = false;
-    lanyardBackoff = 1000; // reset backoff on success
+    lanyardBackoff = 1000;
     try {
-      lanyardWS.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
     } catch (e) { console.warn("send subscribe failed", e); }
-  });
+  };
 
-  lanyardWS.addEventListener("message", ({ data }) => {
+  ws.onmessage = ({ data }) => {
+    if (currentSessionID !== sessionID) return;
     let parsed;
-    try {
-      parsed = JSON.parse(data);
-    } catch (err) {
-      console.warn("Ignored non-JSON WS message:", err);
-      return;
-    }
+    try { parsed = JSON.parse(data); } catch { return; }
     const { op, t, d } = parsed || {};
     if (op === 1 && d?.heartbeat_interval) {
       clearInterval(heartbeatInterval);
       heartbeatInterval = setInterval(() => {
         try {
-          if (lanyardWS?.readyState === WebSocket.OPEN) lanyardWS.send(JSON.stringify({ op: 3 }));
-        } catch (e) { /* ignore send errors */ }
+          if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
+        } catch {}
       }, d.heartbeat_interval);
     }
     if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
       const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
       if (presence?.discord_user) {
-        userDataCache = presence;
-        try { renderPresence(userDataCache); } catch(e){}
+        setUserDataCache(presence);
+        renderPresence(presence);
       }
     }
-  });
+  };
 
-  lanyardWS.addEventListener("error", (ev) => {
-    //
-    try { lanyardWS?.close(); } catch(e){}
-  });
+  ws.onerror = () => {
+    try { ws.close(); } catch {}
+  };
 
-  lanyardWS.addEventListener("close", () => {
+  ws.onclose = () => {
+    if (currentSessionID !== sessionID) return;
     isConnected = false;
     isConnecting = false;
-    if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
     scheduleReconnect();
-  });
+  };
 }
 
 function scheduleReconnect() {
@@ -1057,29 +1081,21 @@ function scheduleReconnect() {
   lanyardBackoff = Math.min(Math.floor(lanyardBackoff * 1.8), LANYARD_MAX_BACKOFF);
 }
 
-
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && !isConnected && !isConnecting) {
     connectLanyard();
   }
 });
 
-window.addEventListener("beforeunload", () => {
-  clearInterval(heartbeatInterval);
-  clearTimeout(reconnectTimer);
-  lanyardWS?.close();
-  isConnected = false;
-  isConnecting = false;
+["beforeunload", "pagehide"].forEach(evt => {
+  window.addEventListener(evt, () => {
+    clearInterval(heartbeatInterval);
+    clearTimeout(reconnectTimer);
+    lanyardWS?.close();
+    isConnected = false;
+    isConnecting = false;
+  });
 });
-
-window.addEventListener("pagehide", () => {
-  clearInterval(heartbeatInterval);
-  clearTimeout(reconnectTimer);
-  lanyardWS?.close();
-  isConnected = false;
-  isConnecting = false;
-});
-
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
     const heroTitle = document.querySelector('.namae');
