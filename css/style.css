@@ -347,7 +347,7 @@ body::before {
 
 .banner:hover {
     box-shadow: 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary);
-    transform: translateY(-2px);
+    
     filter: brightness(1.05);
 }
 
@@ -474,9 +474,7 @@ body::before {
     transition: transform 0.4s ease, box-shadow 0.4s ease;
     cursor: pointer;
 }
-.banner.euthymia-bio-style .banner-progress-bar {
-  background-color: #E63946; 
-}
+
 .profile-img:hover {
         box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5),
                 0 0 28px var(--raiden-glow),
@@ -876,39 +874,15 @@ animation-play-state: paused;
 }
 
 .banner.euthymia-bio-style {
-    border-color: rgba(220, 70, 90, 0.85);
-    box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),
-        0 0 7px rgba(255, 80, 100, 0.8),
-        var(--shadow);
-    animation: euthymia-pulse 2.5s ease-in-out infinite;
+  border-color: rgba(130, 110, 255, 0.75);
+  box-shadow:
+    0 0 18px rgba(150, 130, 255, 0.5),
+    0 0 7px rgba(180, 160, 255, 0.6),
+    var(--shadow);
+  animation: euthymia-pulse 2.5s ease-in-out infinite;
 }
 
-.profile-img.euthymia-bio-style {
-    border-color: rgba(220, 70, 90, 0.85);
-    box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),
-        0 0 7px rgba(255, 80, 100, 0.8),
-        var(--shadow);
-    animation: euthymia-pulse 2.5s ease-in-out infinite;
-}
-.tweet-embed-container.euthymia-bio-style {
-    border-color: rgba(220, 70, 90, 0.85);
-    box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),
-        0 0 7px rgba(255, 80, 100, 0.8),
-        var(--shadow);
-    animation: euthymia-pulse 2.5s ease-in-out infinite;
-}
 
-.tweet-content.euthymia-bio-style {
-    border-color: rgba(220, 70, 90, 0.85);
-    box-shadow:
-        0 0 18px rgba(230, 60, 80, 0.6),
-        0 0 7px rgba(255, 80, 100, 0.8),
-        var(--shadow);
-    animation: euthymia-pulse 2.5s ease-in-out infinite;
-}
 .bio-kitsune-icon {
     position: absolute;
     width: 30px;
