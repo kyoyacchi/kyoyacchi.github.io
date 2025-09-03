@@ -489,6 +489,7 @@ function initializeDynamicBanner() {
         progressBar: document.querySelector('.banner-progress-bar'),
         progressGif: document.querySelector('.progress-gif'),
         bio: document.querySelector('.bio')
+        
     };
 
     const makotoBannerUrl = 'https://files.catbox.moe/a8y5q1.jpg';
@@ -664,6 +665,9 @@ function initializeDynamicBanner() {
 
     function updateBioStyle(currentUrl) {
         elements.bio?.classList.toggle('euthymia-bio-style', euthymiaBannerUrls.has(currentUrl));
+        
+        elements.bannerContainer?.classList.toggle('euthymia-bio-style',
+        euthymiaBannerUrls.has(currentUrl));
     }
 
     function updateMakotoMemoryTag(currentUrl) {
