@@ -25,43 +25,7 @@ function shakeCheckmark(event) {
     }
 }
 
-// from AutumnVN/chino.pages.dev
-function updateDiscordAvatar() {
-  
-const ws = new WebSocket('wss://api.lanyard.rest/socket');  
-const avatarElement = document.getElementById("discord_pfp");
 
-    ws.addEventListener('open', () => {
-        ws.send(JSON.stringify({
-            op: 2,
-            d: { subscribe_to_id: DISCORD_USER_ID }
-        }));
-    });
-
-    ws.addEventListener('error', () => ws.close());
-    ws.addEventListener('close', () => setTimeout(connectLanyard, 2000));
-
-    ws.addEventListener('message', ({ data }) => {
-        const { t, d } = JSON.parse(data);
-        if (t !== 'INIT_STATE' && t !== 'PRESENCE_UPDATE') return;
-
-        const avatarHash = d.discord_user?.avatar;
-        if (!avatarHash) {
-            avatarElement.src = GITHUB_AVATAR_URL;
-            return;
-        }
-
-        const isGif = avatarHash.startsWith("a_");
-        const format = isGif ? "gif" : "webp";
-        const avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${avatarHash}.${format}?size=128`;
-
-        avatarElement.src = avatarUrl;
-
-        avatarElement.onerror = () => {
-            avatarElement.src = GITHUB_AVATAR_URL;
-        };
-    });
-}
 
 
 function setupHeartEffect() {
@@ -858,122 +822,39 @@ const raidenDiff = Math.abs(today - RAIDEN_OBTAINED_DATE);
   }
 }
 
-let lanyardWS = null;
-let isConnecting = false;
+
+
+let lanyardWS;
 let isConnected = false;
-let userDataCache = null;
+let isConnecting = false;
 let reconnectTimer = null;
 let heartbeatInterval = null;
+let userDataCache = null;
 
-async function connectLanyard() {
-  if (isConnecting || isConnected) return;
-
-  // Clear any stale reconnect timers before starting a new connection
-  clearTimeout(reconnectTimer);
-  reconnectTimer = null;
-
-  isConnecting = true;
-
-  const presenceElement = document.getElementById("discord-presence");
-  if (!presenceElement) return; 
-
-  presenceElement.innerHTML = `
-    <div class="discord-status">
-      <i class="fab fa-discord"></i> Connecting...
-    </div>
-  `;
-
-  // Initial REST fetch for instant presence
-  if (!userDataCache) {
-    try {
-      const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-      const json = await res.json();
-      if (json.success) {
-        userDataCache = json.data;
-        renderPresence(userDataCache);
-      }
-    } catch (err) {
-      console.error("REST API error:", err);
-    }
-  } else {
-    renderPresence(userDataCache);
+function setAvatar(hash) {
+  const avatarElement = document.getElementById("discord_pfp");
+  if (!avatarElement) return;
+  if (!hash) {
+    avatarElement.src = GITHUB_AVATAR_URL;
+    return;
   }
-
-  // Open WebSocket
-  lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
-
-  lanyardWS.addEventListener("open", () => {
-    isConnected = true;
-    isConnecting = false;
-    lanyardWS.send(JSON.stringify({
-      op: 2,
-      d: { subscribe_to_id: DISCORD_USER_ID }
-    }));
-  });
-
-  lanyardWS.addEventListener("error", () => {
-    lanyardWS.close();
-  });
-
-  lanyardWS.addEventListener("close", () => {
-    isConnected = false;
-    isConnecting = false;
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
-
-    if (!reconnectTimer) {
-      reconnectTimer = setTimeout(() => {
-        reconnectTimer = null;
-        connectLanyard();
-      }, 2000);
-    }
-  });
-
-  lanyardWS.addEventListener("message", ({ data }) => {
-    const { op, t, d } = JSON.parse(data);
-
-    // Heartbeat setup
-    if (op === 1 && d?.heartbeat_interval) {
-      clearInterval(heartbeatInterval);
-      heartbeatInterval = setInterval(() => {
-        if (lanyardWS?.readyState === WebSocket.OPEN) {
-          lanyardWS.send(JSON.stringify({ op: 3 }));
-        }
-      }, d.heartbeat_interval);
-    }
-
-    // Presence updates
-    if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
-      const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
-      if (presence?.discord_user) {
-        userDataCache = presence;
-        renderPresence(userDataCache);
-      }
-    }
-  });
+  const isGif = hash.startsWith("a_");
+  const format = isGif ? "gif" : "webp";
+  avatarElement.src = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${hash}.${format}?size=128`;
+  avatarElement.onerror = () => {
+    avatarElement.src = GITHUB_AVATAR_URL;
+  };
 }
 
 function renderPresence(data) {
   if (!data?.discord_user) return;
-
   const user = data.discord_user;
   const status = data.discord_status || "offline";
   const activities = data.activities || [];
   const displayName = user.global_name || user.username;
-
-  // Avatar logic preserved
-  let avatarUrl;
-  if (user.avatar) {
-    const isGif = user.avatar.startsWith("a_");
-    const format = isGif ? "gif" : "webp";
-    avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${format}?size=64`;
-  } else {
-    avatarUrl = `https://cdn.discordapp.com/embed/avatars/0.png`;
-  }
-
+  setAvatar(user.avatar);
   let activityText = "";
   let isGenshin = false;
-
   if (status === "offline") {
     activityText = `<i class="fab fa-discord"></i> Offline`;
   } else {
@@ -981,7 +862,6 @@ function renderPresence(data) {
     const activity = activities
       .filter(a => a.type !== 4)
       .sort((a, b) => (priority[a.type] || priority.default) - (priority[b.type] || priority.default))[0];
-
     if (activity) {
       if (activity.name?.toLowerCase().includes("genshin")) {
         isGenshin = true;
@@ -1010,11 +890,13 @@ function renderPresence(data) {
       }[status] || "";
     }
   }
-
   const genshinClass = isGenshin ? "genshin-activity" : "";
   document.getElementById("discord-presence").innerHTML = `
     <div class="discord-status ${genshinClass}">
-    <img src="${avatarUrl}" alt="${displayName}" class="discord-avatar" onerror="this.style.display='none';"/>
+      <img src="${user.avatar
+        ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`}" 
+        alt="${displayName}" class="discord-avatar" onerror="this.style.display='none';"/>
       <div class="discord-info">
         <div class="discord-username">${displayName}</div>
         <div class="discord-activity">
@@ -1026,13 +908,81 @@ function renderPresence(data) {
   `;
 }
 
-// Wake up when tab becomes visible
+async function connectLanyard() {
+  if (isConnecting || isConnected) return;
+  clearTimeout(reconnectTimer);
+  reconnectTimer = null;
+  isConnecting = true;
+  const presenceElement = document.getElementById("discord-presence");
+  if (!presenceElement) return;
+  presenceElement.innerHTML = `
+    <div class="discord-status">
+      <i class="fab fa-discord"></i> Connecting...
+    </div>
+  `;
+  if (!userDataCache) {
+    try {
+      const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+      const json = await res.json();
+      if (json.success) {
+        userDataCache = json.data;
+        renderPresence(userDataCache);
+      }
+    } catch (err) {
+      console.error("REST API error:", err);
+    }
+  } else {
+    renderPresence(userDataCache);
+  }
+  lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
+  lanyardWS.addEventListener("open", () => {
+    isConnected = true;
+    isConnecting = false;
+    lanyardWS.send(JSON.stringify({
+      op: 2,
+      d: { subscribe_to_id: DISCORD_USER_ID }
+    }));
+  });
+  lanyardWS.addEventListener("error", () => {
+    lanyardWS.close();
+  });
+  lanyardWS.addEventListener("close", () => {
+    isConnected = false;
+    isConnecting = false;
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+    if (!reconnectTimer) {
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectLanyard();
+      }, 2000);
+    }
+  });
+  lanyardWS.addEventListener("message", ({ data }) => {
+    const { op, t, d } = JSON.parse(data);
+    if (op === 1 && d?.heartbeat_interval) {
+      clearInterval(heartbeatInterval);
+      heartbeatInterval = setInterval(() => {
+        if (lanyardWS?.readyState === WebSocket.OPEN) {
+          lanyardWS.send(JSON.stringify({ op: 3 }));
+        }
+      }, d.heartbeat_interval);
+    }
+    if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
+      const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
+      if (presence?.discord_user) {
+        userDataCache = presence;
+        renderPresence(userDataCache);
+      }
+    }
+  });
+}
+
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && !isConnected && !isConnecting) {
     connectLanyard();
   }
 });
-
 // Cleanup on unload
 window.addEventListener("beforeunload", () => {
   clearInterval(heartbeatInterval);
@@ -1238,7 +1188,6 @@ preloadImages([
   'https://files.catbox.moe/1s76mj.jpg',
   'https://files.catbox.moe/dczsae.png'
 ]);
-  updateDiscordAvatar();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
   setupParticleCanvas();
