@@ -321,7 +321,8 @@ body::before {
 .banner {
     position: relative;
     width: 100%;
-    height: 500px;
+    aspect-ratio: 16 / 9;
+    height: auto;
     overflow: hidden;
     border-radius: var(--border-radius);
     border: 2px solid transparent;
@@ -1580,9 +1581,7 @@ footer::before {
         background-attachment: scroll;
     }
     
-    .banner {
-        height: 260px;
-    }
+
     .banner-img {
       object-position: 60% center;
     }
@@ -1679,9 +1678,6 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
         background-attachment: scroll;
     }
     
-    .banner {
-        height: 200px;
-    }
         .banner-img {
       object-position: 55% center;
     }
