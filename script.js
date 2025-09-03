@@ -830,6 +830,8 @@ let isConnecting = false;
 let reconnectTimer = null;
 let heartbeatInterval = null;
 let userDataCache = null;
+let lanyardBackoff = 1000;
+const LANYARD_MAX_BACKOFF = 30000;
 
 function setAvatar(hash) {
   const avatarElement = document.getElementById("discord_pfp");
