@@ -1249,8 +1249,8 @@ function preloadImagesThrottled(urls, perTick = 2, delay = 350) {
       const url = queue.shift();
       const img = new Image();
       img.src = url;
-      img.onload = () => console.log('preloaded', url);
-      img.onerror = () => console.warn('failed', url);
+    //  img.onload = () => console.log('preloaded', url);
+ //     img.onerror = () => console.warn('failed', url);
     }
     if (queue.length) setTimeout(tick, delay);
   }
