@@ -160,6 +160,35 @@ function handleIntroOverlay() {
     setTimeout(WritingAnimate, 2100);
     setTimeout(calculateStats, 1500);
     setTimeout(initializeDynamicBanner, 1500);
+    preloadImagesThrottled(
+  [
+    'https://files.catbox.moe/9cvf8l.jpeg',
+    'https://files.catbox.moe/c6vwxv.gif',
+    'https://files.catbox.moe/a53d5g.jpg',
+    'https://files.catbox.moe/dx4dym.jpg',
+    'https://files.catbox.moe/kfn36d.jpg',
+    'https://files.catbox.moe/5fwex5.jpg',
+    'https://files.catbox.moe/1m7rx3.jpg',
+    'https://files.catbox.moe/ymqw8y.jpg',
+    'https://files.catbox.moe/7c6pr2.jpg',
+    'https://files.catbox.moe/bpr8u5.jpg',
+    'https://files.catbox.moe/yf43bj.jpg',
+    'https://files.catbox.moe/ph6zj4.jpeg',
+    'https://files.catbox.moe/ox23f5.jpeg',
+    'https://files.catbox.moe/ai4oz2.gif',
+    'https://files.catbox.moe/25kggw.gif',
+    'https://files.catbox.moe/obaond.jpg',
+    'https://files.catbox.moe/vywstu.jpg',
+    'https://files.catbox.moe/m0nyat.jpg',
+    'https://files.catbox.moe/4nz27h.jpg',
+    'https://files.catbox.moe/p0duyn.jpg',
+    'https://files.catbox.moe/590yyq.png',
+    'https://files.catbox.moe/dvxsv8.jpg',
+    'https://files.catbox.moe/a8y5q1.jpg'
+  ],
+  2, 
+  350 
+);
   setTimeout(connectLanyard, 2500);
 }
 
@@ -1207,22 +1236,20 @@ function flashScreen() {
 }
 
 
-function preloadImages(urls) {
-  if (!Array.isArray(urls)) return;
-
-  urls.forEach(url => {
-    const img = new Image();
-
-    img.onload = () => {
-     console.log(`✅ Loaded: ${url}`);
-    };
-
-    img.onerror = () => {
-      console.error(`❌ Failed to load: ${url}`);
-    };
-
-    img.src = url;
-  });
+function preloadImagesThrottled(urls, perTick = 2, delay = 350) {
+  const queue = Array.from(urls);
+  function tick() {
+    for (let i=0;i<perTick && queue.length;i++){
+      const url = queue.shift();
+      const img = new Image();
+      img.src = url;
+      img.onload = () => console.log('preloaded', url);
+      img.onerror = () => console.warn('failed', url);
+    }
+    if (queue.length) setTimeout(tick, delay);
+  }
+  // allow page to settle first
+  setTimeout(tick, 1200);
 }
 
 
@@ -1231,14 +1258,7 @@ function preloadImages(urls) {
    function initializePage() {
     handleIntroOverlay();
 // connectLanyard();
-preloadImages([
-  'https://files.catbox.moe/l82m6v.png',
-  'https://files.catbox.moe/sko7xm.png',
-  'https://files.catbox.moe/rojatg.png',
-  'https://files.catbox.moe/d146hq.png',
-  'https://files.catbox.moe/1s76mj.jpg',
-  'https://files.catbox.moe/dczsae.png'
-]);
+
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
   setupParticleCanvas();
