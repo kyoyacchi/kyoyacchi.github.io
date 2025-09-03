@@ -1242,22 +1242,31 @@ function flashScreen() {
 }
 
 
-function preloadImagesThrottled(urls, perTick = 2, delay = 350) {
-  const queue = Array.from(urls);
+function preloadImagesThrottled(urls, perTick = 2, delay = 350, settleDelay = 1200) {
+  const queue = [...new Set(urls)]; // remove duplicates
+  const cache = new Set(); // track loaded URLs
+
   function tick() {
-    for (let i=0;i<perTick && queue.length;i++){
+    let count = 0;
+    while (count < perTick && queue.length) {
       const url = queue.shift();
+      if (!url || cache.has(url)) continue;
+
       const img = new Image();
+      img.decoding = 'async'; // hint for async decode
+      img.loading = 'eager';  // force preload
       img.src = url;
-    //  img.onload = () => console.log('preloaded', url);
- //     img.onerror = () => console.warn('failed', url);
+
+      img.onload = () => cache.add(url);
+      img.onerror = () => console.warn('Failed to preload:', url);
+
+      count++;
     }
     if (queue.length) setTimeout(tick, delay);
   }
-  // allow page to settle first
-  setTimeout(tick, 1200);
-}
 
+  setTimeout(tick, settleDelay);
+}
 
 
 
