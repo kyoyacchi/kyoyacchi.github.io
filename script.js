@@ -909,86 +909,125 @@ function renderPresence(data) {
 }
 
 async function connectLanyard() {
-  if (isConnecting || isConnected) return;
-  clearTimeout(reconnectTimer);
-  reconnectTimer = null;
-  isConnecting = true;
+  // avoid getting stuck if no DOM
   const presenceElement = document.getElementById("discord-presence");
   if (!presenceElement) return;
-  presenceElement.innerHTML = `
-    <div class="discord-status">
-      <i class="fab fa-discord"></i> Connecting...
-    </div>
-  `;
+
+  if (isConnecting || isConnected) return;
+  // ensure previous reconnect timer cleared
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
+  isConnecting = true;
+  presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
+
+  // quick REST fallback (safe)
   if (!userDataCache) {
     try {
       const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
       const json = await res.json();
-      if (json.success) {
+      if (json && json.success && json.data) {
         userDataCache = json.data;
-        renderPresence(userDataCache);
+        try { renderPresence(userDataCache); } catch(e){}
       }
     } catch (err) {
-      console.error("REST API error:", err);
+      console.warn("Lanyard REST fetch failed:", err);
     }
   } else {
-    renderPresence(userDataCache);
+    try { renderPresence(userDataCache); } catch(e){}
   }
-  lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
+
+  // prevent duplicate sockets
+  if (lanyardWS && (lanyardWS.readyState === WebSocket.OPEN || lanyardWS.readyState === WebSocket.CONNECTING)) {
+    isConnecting = false;
+    return;
+  }
+
+  try {
+    lanyardWS?.close?.();
+  } catch(e){/* ignore */}
+
+  try {
+    lanyardWS = new WebSocket("wss://api.lanyard.rest/socket");
+  } catch (err) {
+    console.error("WS create error:", err);
+    isConnecting = false;
+    scheduleReconnect();
+    return;
+  }
+
   lanyardWS.addEventListener("open", () => {
     isConnected = true;
     isConnecting = false;
-    lanyardWS.send(JSON.stringify({
-      op: 2,
-      d: { subscribe_to_id: DISCORD_USER_ID }
-    }));
+    lanyardBackoff = 1000; // reset backoff on success
+    try {
+      lanyardWS.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+    } catch (e) { console.warn("send subscribe failed", e); }
   });
-  lanyardWS.addEventListener("error", () => {
-    lanyardWS.close();
-  });
-  lanyardWS.addEventListener("close", () => {
-    isConnected = false;
-    isConnecting = false;
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
-    if (!reconnectTimer) {
-      reconnectTimer = setTimeout(() => {
-        reconnectTimer = null;
-        connectLanyard();
-      }, 2000);
-    }
-  });
+
   lanyardWS.addEventListener("message", ({ data }) => {
-    const { op, t, d } = JSON.parse(data);
+    let parsed;
+    try {
+      parsed = JSON.parse(data);
+    } catch (err) {
+      console.warn("Ignored non-JSON WS message:", err);
+      return;
+    }
+    const { op, t, d } = parsed || {};
     if (op === 1 && d?.heartbeat_interval) {
       clearInterval(heartbeatInterval);
       heartbeatInterval = setInterval(() => {
-        if (lanyardWS?.readyState === WebSocket.OPEN) {
-          lanyardWS.send(JSON.stringify({ op: 3 }));
-        }
+        try {
+          if (lanyardWS?.readyState === WebSocket.OPEN) lanyardWS.send(JSON.stringify({ op: 3 }));
+        } catch (e) { /* ignore send errors */ }
       }, d.heartbeat_interval);
     }
     if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
       const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
       if (presence?.discord_user) {
         userDataCache = presence;
-        renderPresence(userDataCache);
+        try { renderPresence(userDataCache); } catch(e){}
       }
     }
   });
+
+  lanyardWS.addEventListener("error", (ev) => {
+    console.warn("Lanyard WS error", ev);
+    try { lanyardWS?.close(); } catch(e){}
+  });
+
+  lanyardWS.addEventListener("close", () => {
+    isConnected = false;
+    isConnecting = false;
+    if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
+    scheduleReconnect();
+  });
 }
+
+function scheduleReconnect() {
+  if (reconnectTimer) return;
+  const wait = lanyardBackoff;
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    connectLanyard();
+  }, wait);
+  lanyardBackoff = Math.min(Math.floor(lanyardBackoff * 1.8), LANYARD_MAX_BACKOFF);
+}
+
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && !isConnected && !isConnecting) {
     connectLanyard();
   }
 });
-// Cleanup on unload
 window.addEventListener("beforeunload", () => {
   clearInterval(heartbeatInterval);
   clearTimeout(reconnectTimer);
   lanyardWS?.close();
 });
+
 
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
