@@ -990,7 +990,7 @@ async function connectLanyard() {
   }
 
   isConnecting = true;
-  presenceElement.innerHTML = `<div class="discord-status"><i class="fab fa-discord"></i> Connecting...</div>`;
+  presenceElement.innerHTML = `<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>`;
 
   const cached = getUserDataCache();
   if (!cached) {
