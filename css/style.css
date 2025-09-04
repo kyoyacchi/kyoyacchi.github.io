@@ -744,8 +744,11 @@ animation-play-state: paused;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 1rem;
   font-size: 0.85rem;
+}
+.discord-status.connecting {
+  gap: 0.25rem;
 }
 
 .discord-avatar {
