@@ -2257,7 +2257,7 @@ html {
 
 .activity-text i.fab.fa-discord,
 .discord-status i.fab.fa-discord {
-  color: var(--raiden-electro);
+  color: var(--primary-light);
   font-size: 1.1rem;
   margin-right: 2px;
   transition: var(--transition-smooth);
