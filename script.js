@@ -456,30 +456,6 @@ function setupScrollAnimations() {
 }
 
 
-    function summonYae(){
-      document.addEventListener("click", (e) => {
-
-
-            const kitsune = document.createElement("img");
-            kitsune.src = "https://files.catbox.moe/g87kzk.gif";
-
-            kitsune.classList.add("kitsune");
-
-            kitsune.style.left = `${e.clientX}px`;
-            kitsune.style.top = `${e.clientY}px`;
-
-            document.body.appendChild(kitsune);
-
-            setTimeout(() => {
-                kitsune.classList.add("active");
-            }, 10);
-
-            setTimeout(() => {
-                kitsune.classList.remove("active");
-                setTimeout(() => kitsune.remove(), 300);
-            }, 1500);
-        });
-    }
 
 function initializeDynamicBanner() {
     const elements = {
@@ -728,69 +704,6 @@ function toggleNamaeVisibility() {
   } else {
     namae.style.visibility = "visible"
   }
-}
-
-
-/*function initializeBirthdayCountdown() {
-    const timerElement = document.getElementById('countdown-timer');
-
-    if (!timerElement) {
-        console.error("Element with ID 'countdown-timer' not found.");
-        return;
-    }
-
-    let countdownIntervalId = null;
-
-    function updateAndDisplay() {
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentDay = now.getDate();
-
-        if (currentMonth === 5 && currentDay === 26) { 
-            timerElement.innerText = "Happy birthday, Raiden Shogun!";
-            if (countdownIntervalId) {
-                clearInterval(countdownIntervalId);
-                countdownIntervalId = null;
-            }
-            triggerSingleConfettiBurst();
-            setTimeout(triggerSingleConfettiBurst, 600);
-            setTimeout(triggerSingleConfettiBurst, 1200);
-            return;
-        }
-
-        let targetDate = new Date(now.getFullYear(), 5, 26, 0, 0, 0); 
-
-        if (now > targetDate) {
-            targetDate.setFullYear(targetDate.getFullYear() + 1);
-        }
-
-        const diff = targetDate - now;
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-
-        timerElement.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateAndDisplay();
-
-    if (countdownIntervalId) clearInterval(countdownIntervalId);
-    countdownIntervalId = setInterval(updateAndDisplay, 1000);
-}*/
-
-
-
-
-
-    function PreventRightClick() {
-    const allImages = document.querySelectorAll('img');
-    allImages.forEach(function(img) {
-        img.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
-    });
 }
 
 function triggerSingleConfettiBurst() {
