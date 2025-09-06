@@ -887,7 +887,7 @@ animation-play-state: paused;
 }
 
 
-.bio-kitsune-icon {
+.bio-icon1 {
     position: absolute;
     width: 30px;
     height: auto;
@@ -916,7 +916,7 @@ animation-play-state: paused;
   }
 }
 
-.bio:hover .bio-kitsune-icon {
+.bio:hover .bio-icon1 {
 }
 
 .bio .fa-heart {
@@ -1639,7 +1639,7 @@ footer::before {
         height: 45px;
     }
     
-    .bio-kitsune-icon {
+    .bio-icon1 {
         width: 30px;
         top: -12px;
         right: -8.4px;
@@ -1726,7 +1726,7 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
         height: 45px;
     }
     
-.bio-kitsune-icon {
+.bio-icon1 {
     width: 30px;
     top: -12px; 
     right: -8.4px;
