@@ -1267,10 +1267,34 @@ background-size: 300% 100%;
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 5px solid var(--raiden-glow);
-  border-top: 5px solid var(--secondary);
+  border: 4px solid transparent;
+  border-top: 4px solid var(--raiden-glow);
+  border-left: 4px solid var(--secondary);
   border-radius: 50%;
-  animation: spin 1.2s linear infinite;
+  animation: spin 1s linear infinite, colorShift 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--raiden-glow);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes colorShift {
+  0% {
+    border-top-color: #d8b4fe; 
+    border-left-color: #c084fc;
+    box-shadow: 0 0 8px #d8b4fe;
+  }
+  50% {
+    border-top-color: #7e22ce; 
+    border-left-color: #6d28d9;
+    box-shadow: 0 0 14px #7e22ce;
+  }
+  100% {
+    border-top-color: #d8b4fe; 
+    border-left-color: #c084fc;
+    box-shadow: 0 0 8px #d8b4fe;
+  }
 }
 .loading-text {
   margin-top: 15px;
