@@ -580,9 +580,11 @@ function initializeDynamicBanner() {
         if (elements.progressGif) elements.progressGif.classList.add('hidden');
         requestAnimationFrame(() => {});
     }
+let startTime = null;
+let pauseStartTime = null;
 
     function runProgressAnimation() {
-        const startTime = Date.now();
+        
         clearTimers();
         if (elements.progressGif) elements.progressGif.classList.remove('hidden');
         progressIntervalId = setInterval(() => {
@@ -604,11 +606,12 @@ function initializeDynamicBanner() {
     }
 
     function startProgressCycle() {
-        clearTimers();
-        isLoadingNext = false;
-        resetProgress();
-        setTimeout(runProgressAnimation, 50);
-    }
+    clearTimers();
+    isLoadingNext = false;
+    resetProgress();
+    startTime = Date.now(); 
+    setTimeout(runProgressAnimation, 50);
+}
 
     function prepareBannerChange() {
         if (isLoadingNext) return;
@@ -664,13 +667,33 @@ function initializeDynamicBanner() {
     }
 
     function handleVisibilityChange() {
-        if (document.hidden) {
-            clearTimers();
-        } else {
-            clearTimers();
-            if (!isLoadingNext) startProgressCycle();
+    if (document.hidden) {
+        clearTimers();
+        pauseStartTime = Date.now();
+    } else {
+        if (pauseStartTime && startTime) {
+            const pausedDuration = Date.now() - pauseStartTime;
+            startTime += pausedDuration;  
+            pauseStartTime = null;
+
+
+            const elapsedTime = (Date.now() - startTime) / 1000;
+            let progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
+
+            if (progress >= 100) {
+
+
+                prepareBannerChange();
+                return;
+            } else {
+                setProgressStyles(progress, false);
+                if (elements.progressGif) elements.progressGif.classList.remove('hidden');
+            }
         }
+
+        runProgressAnimation();
     }
+}
 
     function initializeBanner() {
         if (bannerUrls.length === 0) {
