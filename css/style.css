@@ -2099,30 +2099,6 @@ html {
     text-shadow: none;
 }
 
-.birthday-countdown {
-  color: #ddbfff;
-  background: rgba(45, 27, 78, 0.7);
-    border: 1px solid var(--primary-dark);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  width: max-content;
-  margin: 10px auto 0;
-  text-align: center;
-  border: 1px solid #b084f5;
-  box-shadow: 0 0 5px rgba(178, 122, 255, 0.3);
-  font-family: 'Poppins', sans-serif;
-}
-.birthday-countdown h2 {
-  font-size: 1rem; 
-  margin-top: 0;
-  margin-bottom: 6px; 
-  font-weight: 600; 
-}
-#countdown-timer {
-  font-size: 0.9rem;
-  margin-top: 4px;
-}
 
 .makoto-memory {
     position: absolute;
