@@ -801,8 +801,11 @@ let heartbeatInterval = null;
 let lanyardBackoff = 1000;
 const LANYARD_MAX_BACKOFF = 30000;
 
-let userDataCache = { data: null, ts: 0 };
+let userDataCache = { data: null, ts: 0, isRevalidating: false };
+
 const CACHE_TTL = 60000;
+const SWR_THRESHOLD = 120000;
+
 
 let currentSessionID = null;
 let lastConnectAttempt = 0;
@@ -811,32 +814,79 @@ const CONNECT_DEBOUNCE = 1500; // ms
 function setUserDataCache(data) {
   userDataCache = { data, ts: Date.now() };
 }
-
 function getUserDataCache() {
-  return Date.now() - userDataCache.ts < CACHE_TTL ? userDataCache.data : null;
+  const cacheAge = Date.now() - userDataCache.ts;
+  
+  if (cacheAge < CACHE_TTL) return userDataCache.data;
+  
+  if (cacheAge < SWR_THRESHOLD && !userDataCache.isRevalidating) {
+    revalidateCache(); 
+    return userDataCache.data;
+  }
+  
+  return null; 
+}
+// --- safer revalidate with AbortController + guard ---
+async function revalidateCache() {
+  if (userDataCache.isRevalidating) return;
+  userDataCache.isRevalidating = true;
+  const ac = new AbortController();
+  const timeout = setTimeout(() => ac.abort(), 8000);
+  try {
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
+    const json = await res.json();
+    if (json?.success && json.data) {
+      if (presenceChanged(userDataCache.data, json.data)) {
+        setUserDataCache(json.data);
+        renderPresence(json.data);
+      } else {
+        setUserDataCache(json.data); // refresh ts
+      }
+    }
+  } catch (err) {
+    // debug or ignore
+  } finally {
+    clearTimeout(timeout);
+    userDataCache.isRevalidating = false;
+  }
+}
+
+
+// --- helper improvements ---
+function safeAvatarUrl(id, hash, size = 128) {
+  if (!hash) return `https://cdn.discordapp.com/embed/avatars/0.png`;
+  const isGif = hash.startsWith("a_");
+  const ext = isGif ? "gif" : "webp";
+  return `https://cdn.discordapp.com/avatars/${id}/${hash}.${ext}?size=${size}`;
 }
 
 function setAvatar(hash) {
-  const avatarElement = document.getElementById("discord_pfp");
-  if (!avatarElement) return;
-  if (!hash) {
-    avatarElement.src = GITHUB_AVATAR_URL;
-    return;
-  }
-  const isGif = hash.startsWith("a_");
-  const format = isGif ? "gif" : "webp";
-  avatarElement.src = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${hash}.${format}?size=128`;
-  avatarElement.onerror = () => {
-    avatarElement.src = GITHUB_AVATAR_URL;
-  };
+  const el = document.getElementById("discord_pfp");
+  if (!el) return;
+  el.onerror = () => { el.src = `https://cdn.discordapp.com/embed/avatars/0.png`; };
+  el.src = safeAvatarUrl(DISCORD_USER_ID, hash, 128);
 }
 
+// Compare only important presence bits instead of JSON.stringify everything
+function presenceChanged(oldP, newP) {
+  if (!oldP || !newP) return true;
+  if (oldP.discord_status !== newP.discord_status) return true;
+  if ((oldP.discord_user?.avatar || "") !== (newP.discord_user?.avatar || "")) return true;
+  // compare activities length + names/types as a cheap check
+  const a = oldP.activities || [], b = newP.activities || [];
+  if (a.length !== b.length) return true;
+  for (let i=0;i<Math.min(a.length,b.length);i++){
+    if (a[i].name !== b[i].name || a[i].type !== b[i].type) return true;
+  }
+  return false;
+}
 function renderPresence(data) {
   if (!data?.discord_user) return;
   const user = data.discord_user;
   const status = data.discord_status || "offline";
   const activities = Array.isArray(data.activities) ? data.activities : [];
   const displayName = user.global_name || user.username || "Unknown";
+  
   setAvatar(user.avatar);
 
   let activityText = "";
@@ -887,20 +937,14 @@ function renderPresence(data) {
   presenceEl.style.opacity = 0;
   setTimeout(() => {
     presenceEl.innerHTML = `
-      <div class="discord-status ${genshinClass}">
-        <img src="${user.avatar
-          ? `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "webp"}?size=64`
-          : `https://cdn.discordapp.com/embed/avatars/0.png`}" 
-          alt="${displayName}" class="discord-avatar" loading="lazy" onerror="this.style.display='none';"/>
+      <div class="discord-status ${isGenshin ? "genshin-activity" : ""}">
+        <img src="${safeAvatarUrl(DISCORD_USER_ID, user.avatar, 64)}" alt="${displayName}" class="discord-avatar" loading="lazy"/>
         <div class="discord-info">
           <div class="discord-username">${displayName}</div>
-          <div class="discord-activity">
-            <span class="activity-text">${activityText}</span>
-          </div>
+          <div class="discord-activity"><span class="activity-text">${activityText}</span></div>
         </div>
         <div class="status-indicator status-${status}"></div>
-      </div>
-    `;
+      </div>`;
     presenceEl.style.opacity = 1;
   }, 150);
 }
@@ -914,11 +958,12 @@ async function connectLanyard() {
   if (!presenceElement) return;
   if (isConnecting || isConnected) return;
 
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer);
-    reconnectTimer = null;
-  }
+  if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
 
+try { if (lanyardWS?.readyState === WebSocket.OPEN || lanyardWS?.readyState === WebSocket.CONNECTING) lanyardWS.close(); } catch(e){}
+  clearInterval(heartbeatInterval); heartbeatInterval = null;
+  
+  
   isConnecting = true;
   presenceElement.innerHTML = `<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>`;
 
@@ -951,21 +996,18 @@ async function connectLanyard() {
   }
 
   // Session ID for this connection
-  const sessionID = Symbol("lanyardSession");
+  const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
   currentSessionID = sessionID;
   lanyardWS = ws;
 
-  ws.onopen = () => {
-    if (currentSessionID !== sessionID) return; // stale
-    isConnected = true;
-    isConnecting = false;
-    lanyardBackoff = 1000;
-    try {
-      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
-    } catch (e) { console.warn("send subscribe failed", e); }
+ws.onopen = () => {
+    if (currentSessionID !== sessionID) return;
+    isConnected = true; isConnecting = false; lanyardBackoff = 1000;
+    try { ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); } catch {}
   };
 
-  ws.onmessage = ({ data }) => {
+
+ws.onmessage = ({ data }) => {
     if (currentSessionID !== sessionID) return;
     let parsed;
     try { parsed = JSON.parse(data); } catch { return; }
@@ -973,9 +1015,7 @@ async function connectLanyard() {
     if (op === 1 && d?.heartbeat_interval) {
       clearInterval(heartbeatInterval);
       heartbeatInterval = setInterval(() => {
-        try {
-          if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
-        } catch {}
+        try { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 })); } catch {}
       }, d.heartbeat_interval);
     }
     if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
@@ -987,23 +1027,25 @@ async function connectLanyard() {
     }
   };
 
+
   ws.onerror = () => {
     try { ws.close(); } catch {}
   };
 
-  ws.onclose = () => {
+  ws.onclose = (ev) => {
     if (currentSessionID !== sessionID) return;
-    isConnected = false;
-    isConnecting = false;
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
+    isConnected = false; isConnecting = false;
+    clearInterval(heartbeatInterval); heartbeatInterval = null;
     scheduleReconnect();
   };
 }
 
+// --- Backoff with jitter and caps ---;
 function scheduleReconnect() {
   if (reconnectTimer) return;
-  const wait = lanyardBackoff;
+  // jittered exponential backoff
+  const jitter = Math.floor(Math.random() * Math.min(1000, lanyardBackoff));
+  const wait = Math.min(lanyardBackoff + jitter, LANYARD_MAX_BACKOFF);
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
     connectLanyard();
