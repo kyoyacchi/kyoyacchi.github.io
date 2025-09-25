@@ -1580,9 +1580,11 @@ footer::before {
 .almighty-raiden, .euthymia-glow:hover {
     color: var(--text-light);
     text-shadow: 0 0 18px var(--secondary), 0 0 10px var(--text-light);
-    animation-play-state: paused;
+   /* animation-play-state: paused;*/
 }
-
+ .almighty-raiden:hover {
+   animation-play-state: paused;
+ }
 @keyframes raidenNameGlowNoScale {
     0% {
         color: var(--raiden-electro);
