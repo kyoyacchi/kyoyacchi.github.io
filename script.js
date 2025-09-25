@@ -117,6 +117,7 @@ function handleIntroOverlay() {
     
     if (overlayImage && randomIntroImages.length > 0) {
         const randomIndex = Math.floor(Math.random() * randomIntroImages.length);
+        overlayImage.style.display = "block"
         overlayImage.src = randomIntroImages[randomIndex];
     }
 
