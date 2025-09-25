@@ -2680,3 +2680,35 @@ html {
     }
 }
 
+.overlay-image {
+    position: absolute;
+    z-index: 10;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border: 3px solid transparent;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards 1s, 
+               pulseBorder 1.5s infinite alternate 1.5s; 
+}
+@keyframes pulseBorder {
+    0% {
+        border-color: transparent;
+    }
+    50% {
+        border-color: #8A2BE2; 
+        box-shadow: 0 0 10px #8A2BE2; 
+    }
+    100% {
+        border-color: transparent; 
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
