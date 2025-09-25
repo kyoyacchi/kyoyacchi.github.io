@@ -110,7 +110,10 @@
   <a href="https://myanimelist.net/profile/kyoyatempest" target="_blank" rel="noopener noreferrer" aria-label="MyAnimeList"><i class="fas fa-list"></i></a>
 </div>
 
-
+<h2 class="section-title animate-on-scroll">
+              <i class="fas fa-bolt"></i>
+              C2 Flexing
+          </h2>
 
 <div class="tweet-embed-container animate-on-scroll">
   <div class="loading-wrapper">
@@ -122,6 +125,38 @@
     <blockquote class="twitter-tweet" data-lang="en" data-theme="dark"></blockquote>
   </div>
 </div>
+<h2 class="section-title animate-on-scroll">
+              <i class="fas fa-gem"></i>
+              My Raiden Shogun Collection (WIP)
+              <i class="fas fa-sparkles"></i>
+          </h2>
+
+          <div class="collection-section animate-on-scroll">
+              <div class="collection-slider" id="collectionSlider">
+                  <button class="collection-nav-btn collection-nav-prev" id="collectionPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                  <button class="collection-nav-btn collection-nav-next" id="collectionNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+                  <div class="slider-rail" id="collectionRail">
+                      <div class="collection-slide active">
+                          <img src="https://i.ibb.co/PsRYpDB2/20250815-020502.jpg" alt="Raiden Shogun Collection 1">
+                          <a class="collection-insta-link" href="https://instagram.com/kyoyacchi" target="_blank">
+                              <i class="fab fa-instagram"></i> https://instagram.com/kyoyacchi
+                          </a>
+                      </div>
+                      <div class="collection-slide">
+                          <img src="https://i.ibb.co/PsRYpDB2/20250815-020502.jpg" alt="Raiden Shogun Collection 2">
+                          <a class="collection-insta-link" href="https://instagram.com/kyoyacchi" target="_blank">
+                              <i class="fab fa-instagram"></i> https://instagram.com/kyoyacchi
+                          </a>
+                      </div>
+                      <div class="collection-slide">
+                          <img src="https://i.ibb.co/PsRYpDB2/20250815-020502.jpg" alt="Raiden Shogun Collection 3">
+                          <a class="collection-insta-link" href="https://instagram.com/kyoyacchi" target="_blank">
+                              <i class="fab fa-instagram"></i> https://instagram.com/kyoyacchi
+                          </a>
+                      </div>
+                  </div>
+              </div>
+              <div class="collection-indicators" id="collectionIndicators"></div>
           </div> </div> 
 <footer class="animate-on-scroll">
 <div class="footer-main">
@@ -150,6 +185,17 @@
   </p>
 </section>
   </footer>
+  
+<div class="collection-modal" id="collectionModal">
+      <button class="collection-close-btn" id="collectionCloseModal"><i class="fa-solid fa-xmark"></i></button>
+      <img id="collectionModalImg" src="" alt="Fullscreen Collection">
+      <a id="collectionModalInstaLink" class="collection-insta-link" href="#" target="_blank">
+          <i class="fab fa-instagram"></i> <span id="collectionModalInstaText"></span>
+      </a>
+      <div class="collection-modal-indicators" id="collectionModalIndicators"></div>
+      <button id="collectionModalPrev" class="modal-nav-btn collection-modal-prev"><i class="fa-solid fa-chevron-left"></i></button>
+      <button id="collectionModalNext" class="modal-nav-btn collection-modal-next"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
 
 
   <script src="script.js" defer></script>
