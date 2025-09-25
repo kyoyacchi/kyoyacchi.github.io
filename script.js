@@ -61,15 +61,51 @@ function setupHeartEffect() {
     heartIcon.addEventListener('mouseleave', stopColorChanging);
 }
 
+const preloadImages = [
+    'https://files.catbox.moe/9cvf8l.jpeg',
+    'https://files.catbox.moe/c6vwxv.gif',
+    'https://files.catbox.moe/a53d5g.jpg',
+    'https://files.catbox.moe/dx4dym.jpg',
+    'https://files.catbox.moe/kfn36d.jpg',
+    'https://files.catbox.moe/5fwex5.jpg',
+    'https://files.catbox.moe/1m7rx3.jpg',
+    'https://files.catbox.moe/ymqw8y.jpg',
+    'https://files.catbox.moe/7c6pr2.jpg',
+    'https://files.catbox.moe/yf43bj.jpg',
+    'https://files.catbox.moe/ox23f5.jpeg',
+    'https://files.catbox.moe/ai4oz2.gif',
+    'https://files.catbox.moe/25kggw.gif',
+    'https://files.catbox.moe/obaond.jpg',
+    'https://files.catbox.moe/vywstu.jpg',
+    'https://files.catbox.moe/4nz27h.jpg',
+    'https://files.catbox.moe/p0duyn.jpg',
+    'https://files.catbox.moe/590yyq.png',
+    'https://files.catbox.moe/dvxsv8.jpg',
+    'https://files.catbox.moe/a8y5q1.jpg',
+    'https://files.catbox.moe/l82m6v.png',
+    'https://files.catbox.moe/sko7xm.png',
+    'https://files.catbox.moe/rojatg.png',
+    'https://files.catbox.moe/d146hq.png',
+    'https://files.catbox.moe/1s76mj.jpg',
+    'https://files.catbox.moe/dczsae.png'
+];
+
+const randomIntroImages = [
+    'https://files.catbox.moe/b0fq4l.jpg',
+    'https://files.catbox.moe/6fdl5v.jpg',
+    'https://files.catbox.moe/ncf10w.gif',
+    'https://files.catbox.moe/1s76mj.jpg'
+];
+
 function handleIntroOverlay() {
     const introOverlay = document.querySelector('.intro-overlay');
     if (!introOverlay) return;
 
     const preloaderText = document.querySelector('.preloader-text');
     const subtitleText = document.querySelector('.subtitle-text');
+    const overlayImage = document.querySelector('.overlay-image');
 
     const hidePreloader = () => {
-        // Start animations immediately as preloader begins fading
         triggerMainContentAnimations();
         
         introOverlay.style.opacity = '0';
@@ -78,6 +114,11 @@ function handleIntroOverlay() {
             document.body.style.overflow = 'auto';
         }, 1000);
     };
+    
+    if (overlayImage && randomIntroImages.length > 0) {
+        const randomIndex = Math.floor(Math.random() * randomIntroImages.length);
+        overlayImage.src = randomIntroImages[randomIndex];
+    }
 
     const today = new Date();
     const isRaidenBirthday = today.getMonth() === 5 && today.getDate() === 26;
@@ -121,7 +162,6 @@ function handleIntroOverlay() {
         return;
     }
 
-    // Random texts
     const texts = [
         { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
         { romaji: 'Mikirimashita', jp: '見切りました。' },
@@ -161,39 +201,13 @@ function handleIntroOverlay() {
     setTimeout(calculateStats, 1500);
     setTimeout(initializeDynamicBanner, 1500);
     preloadImagesThrottled(
-  [
-    'https://files.catbox.moe/9cvf8l.jpeg',
-    'https://files.catbox.moe/c6vwxv.gif',
-    'https://files.catbox.moe/a53d5g.jpg',
-    'https://files.catbox.moe/dx4dym.jpg',
-    'https://files.catbox.moe/kfn36d.jpg',
-    'https://files.catbox.moe/5fwex5.jpg',
-    'https://files.catbox.moe/1m7rx3.jpg',
-    'https://files.catbox.moe/ymqw8y.jpg',
-    'https://files.catbox.moe/7c6pr2.jpg',,
-    'https://files.catbox.moe/yf43bj.jpg',
-    'https://files.catbox.moe/ox23f5.jpeg',
-    'https://files.catbox.moe/ai4oz2.gif',
-    'https://files.catbox.moe/25kggw.gif',
-    'https://files.catbox.moe/obaond.jpg',
-    'https://files.catbox.moe/vywstu.jpg',
-    'https://files.catbox.moe/4nz27h.jpg',
-    'https://files.catbox.moe/p0duyn.jpg',
-    'https://files.catbox.moe/590yyq.png',
-    'https://files.catbox.moe/dvxsv8.jpg',
-    'https://files.catbox.moe/a8y5q1.jpg',
-    'https://files.catbox.moe/l82m6v.png',
-    'https://files.catbox.moe/sko7xm.png',
-    'https://files.catbox.moe/rojatg.png',
-    'https://files.catbox.moe/d146hq.png',
-    'https://files.catbox.moe/1s76mj.jpg',
-    'https://files.catbox.moe/dczsae.png'
-  ],
-  2, 
-  350 
-);
-  setTimeout(connectLanyard, 2500);
+        [...preloadImages],
+        2, 
+        350 
+    );
+    setTimeout(connectLanyard, 2500);
 }
+
 
 
 
