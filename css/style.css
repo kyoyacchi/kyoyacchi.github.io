@@ -2282,11 +2282,11 @@ html {
     font-size: 2rem;
     font-weight: bold;
     font-family: var(--font-headings);
-    color: var(--text-light);
+    color: #CED4DA; 
     margin: 30px auto 20px;
-    text-shadow: 0 0 12px var(--raiden-glow), 
-                 0 0 25px var(--raiden-electro), 
-                 0 0 40px var(--primary-light);
+    text-shadow: 0 0 8px var(--raiden-glow), 
+                 0 0 18px var(--raiden-electro), 
+                 0 0 28px var(--primary-light);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -2295,23 +2295,23 @@ html {
 }
 
 .section-title i {
-    color: var(--secondary);
-    filter: drop-shadow(0 0 8px var(--raiden-glow));
+    color: #ADB5BD; 
+    filter: drop-shadow(0 0 4px var(--raiden-glow)); 
     transition: all 0.3s ease;
 }
 
 .section-title:hover {
-    text-shadow: 0 0 15px var(--raiden-glow), 
-                 0 0 30px var(--raiden-electro), 
-                 0 0 45px var(--primary-light);
+    text-shadow: 0 0 8px var(--raiden-glow), 
+                 0 0 16px var(--raiden-electro), 
+                 0 0 24px var(--primary-light);
     transform: translateY(-2px);
 }
-
 .section-title:hover i {
     color: var(--raiden-electro);
     filter: drop-shadow(0 0 12px var(--raiden-glow));
     transform: scale(1.1);
 }
+
 @media (max-width: 768px) {
     .section-title {
         font-size: clamp(1.5rem, 5vw, 1.8rem);
