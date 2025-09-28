@@ -953,7 +953,8 @@ function renderPresence(data) {
   setTimeout(() => {
     presenceEl.innerHTML = `
       <div class="discord-status ${isGenshin ? "genshin-activity" : ""}">
-        <img src="${safeAvatarUrl(DISCORD_USER_ID, user.avatar, 64)}" alt="${displayName}" class="discord-avatar" loading="lazy"/>
+        <img src="${safeAvatarUrl(DISCORD_USER_ID, user.avatar, 64)}"
+        alt="Discord Avatar" class="discord-avatar" loading="lazy"/>
         <div class="discord-info">
           <div class="discord-username">${displayName}</div>
           <div class="discord-activity"><span class="activity-text">${activityText}</span></div>
