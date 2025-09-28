@@ -474,6 +474,15 @@ body::before {
     object-fit: cover;
     transition: transform 0.4s ease, box-shadow 0.4s ease;
     cursor: pointer;
+        -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    
+    outline: none !important;
 }
 
 .profile-img:hover {
@@ -482,6 +491,15 @@ body::before {
                 0 0 18px var(--secondary);
     border-color: var(--raiden-electro);
     transition: box-shadow 0.4s ease;
+        -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    
+    outline: none !important;
 }
 .name-container {
   /*  user-select: none;*/
