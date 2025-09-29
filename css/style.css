@@ -775,6 +775,8 @@ animation-play-state: paused;
 }
 .discord-status.connecting {
   gap: 0.25rem;
+  color: #9ca3af;
+  opacity: 0.8;
 }
 
 .discord-avatar {
