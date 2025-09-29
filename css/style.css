@@ -742,6 +742,14 @@ animation-play-state: paused;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
 }
+#discord-presence {
+  transition: opacity 0.15s ease;
+  opacity: 1;
+}
+
+#discord-presence.fade-out {
+  opacity: 0;
+}
 
 .discord-loading {
   display: flex;
