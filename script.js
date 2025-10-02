@@ -470,6 +470,7 @@ function setupScrollAnimations() {
 
 
 function initializeDynamicBanner() {
+ // return null;
     const elements = {
         bannerContainer: document.querySelector('.banner'),
         bannerImg1: document.querySelector('.banner-img-1'),
@@ -767,15 +768,25 @@ function startBirthdayCelebration() {
 
 
 function animateNumber(element, start, end, duration) {
+  if (!element) return; // Safety check
+  
   const startTime = performance.now();
+  
   const animate = (currentTime) => {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-   const current = Math.floor(start + (end - start) * progress);
+    
+    // Easing function for smoother animation (optional)
+    const easeOutQuad = progress * (2 - progress); // Makes it slow down at the end
+    
+    const current = Math.floor(start + (end - start) * easeOutQuad);
     element.textContent = current.toLocaleString();
     
     if (progress < 1) {
       requestAnimationFrame(animate);
+    } else {
+      // Ensure final value is exact
+      element.textContent = end.toLocaleString();
     }
   };
   
@@ -785,27 +796,38 @@ function animateNumber(element, start, end, duration) {
 function calculateStats() {
   const today = new Date();
   
-
-  const genshinDiff = Math.abs(today - GENSHIN_START_DATE);
-  const genshinDays = Math.ceil(genshinDiff / (1000 * 60 * 60 * 24));
-const raidenDiff = Math.abs(today - RAIDEN_OBTAINED_DATE);
-  const raidenDays = Math.ceil(raidenDiff / (1000 * 60 * 60 * 24));
-  const genshinElement = document.getElementById('genshin-days');
-  const raidenElement = document.getElementById('raiden-days');
-  const constellationElement = document.getElementById('constellation');
-  if (genshinElement) {
-    animateNumber(genshinElement, 0, genshinDays, 2000);
-  }
+  const stats = [
+    {
+      id: 'genshin-days',
+      value: Math.ceil((today - GENSHIN_START_DATE) / 86400000), // 86400000 = 1000*60*60*24
+      duration: 2000,
+      delay: 0
+    },
+    {
+      id: 'raiden-days',
+      value: Math.ceil((today - RAIDEN_OBTAINED_DATE) / 86400000),
+      duration: 2500,
+      delay: 150
+    }
+  ];
   
-  if (raidenElement) {
-    animateNumber(raidenElement, 0, raidenDays, 2500);
-  }
-  if (constellationElement) {
-    constellationElement.style.textShadow = '0 0 8px var(--raiden-glow)';
-    constellationElement.textContent = RAIDEN_CONSTELLATION;
+  // Animate all stats
+  stats.forEach(stat => {
+    const el = document.getElementById(stat.id);
+    if (el) {
+      setTimeout(() => {
+        animateNumber(el, 0, stat.value, stat.duration);
+      }, stat.delay);
+    }
+  });
+  
+  // Constellation display
+  const constellationEl = document.getElementById('constellation');
+  if (constellationEl) {
+    constellationEl.textContent = `${RAIDEN_CONSTELLATION}`;
+    constellationEl.style.textShadow = '0 0 8px var(--raiden-glow)';
   }
 }
-
 
 
 let lanyardWS;
