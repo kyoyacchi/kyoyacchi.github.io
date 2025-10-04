@@ -1607,191 +1607,247 @@ function preloadImagesThrottled(urls, perTick = 2, delay = 350, settleDelay = 12
 
 
 // ===== COLLECTION SLIDER FUNCTIONALITY =====
-let collectionSlides = [];
-let collectionCurrentIndex = 0;
-let collectionAutoplayTimer;
-let collectionIndicators = [];
-let collectionModalIndicators = [];
+// State management
+const collectionState = {
+  slides: [],
+  currentIndex: 0,
+  autoplayTimer: null,
+  indicators: [],
+  modalIndicators: []
+};
+
+// Config
+const COLLECTION_CONFIG = {
+  autoplayInterval: 5000,
+  swipeThreshold: 50,
+  modalFadeDuration: 250,
+  imageFadeDuration: 150
+};
 
 function initializeCollectionSlider() {
-    const sliderContainer = document.getElementById('collectionSlider');
-    if (!sliderContainer) return;
+  const elements = {
+    container: document.getElementById('collectionSlider'),
+    rail: document.getElementById('collectionRail'),
+    indicatorsWrap: document.getElementById('collectionIndicators'),
+    modalIndicatorsWrap: document.getElementById('collectionModalIndicators'),
+    modal: document.getElementById('collectionModal'),
+    modalImg: document.getElementById('collectionModalImg'),
+    modalInstaLink: document.getElementById('collectionModalInstaLink'),
+    modalInstaText: document.getElementById('collectionModalInstaText'),
+    prevBtn: document.getElementById('collectionPrevBtn'),
+    nextBtn: document.getElementById('collectionNextBtn'),
+    modalPrevBtn: document.getElementById('collectionModalPrev'),
+    modalNextBtn: document.getElementById('collectionModalNext'),
+    closeBtn: document.getElementById('collectionCloseModal')
+  };
 
-    collectionSlides = [...document.querySelectorAll('.collection-slide')];
-    const rail = document.getElementById('collectionRail');
-    const indicatorsWrap = document.getElementById('collectionIndicators');
-    const modalIndicatorsWrap = document.getElementById('collectionModalIndicators');
-    const modal = document.getElementById('collectionModal');
-    const modalImg = document.getElementById('collectionModalImg');
-    const modalInstaLink = document.getElementById('collectionModalInstaLink');
-    const modalInstaText = document.getElementById('collectionModalInstaText');
+  if (!elements.container) return;
 
-    if (!collectionSlides.length) return;
+  collectionState.slides = [...document.querySelectorAll('.collection-slide')];
+  if (!collectionState.slides.length) return;
 
-    // Create indicators
-    function createCollectionIndicators(container, clickFn) {
-        container.innerHTML = '';
-        return collectionSlides.map((_, i) => {
-            let b = document.createElement('button');
-            b.className = 'collection-indicator';
-            b.innerHTML = '<i class="fa-solid fa-bolt"></i>';
-            b.onclick = () => clickFn(i);
-            container.appendChild(b);
-            return b;
-        });
-    }
-
-    function updateCollectionIndicators(inds, active) {
-        inds.forEach((el, idx) => el.classList.toggle('active', idx === active));
-    }
-
-    collectionIndicators = createCollectionIndicators(indicatorsWrap, goToCollectionSlide);
-    collectionModalIndicators = createCollectionIndicators(modalIndicatorsWrap, (i) => {
-        goToCollectionSlide(i);
-        showCollectionModalImage(i, true);
+  // Create indicators
+  function createIndicators(container, clickFn) {
+    container.innerHTML = '';
+    return collectionState.slides.map((_, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'collection-indicator';
+      btn.innerHTML = '<i class="fa-solid fa-bolt"></i>';
+      btn.onclick = () => clickFn(i);
+      container.appendChild(btn);
+      return btn;
     });
+  }
 
-    // Slider functions
-    function goToCollectionSlide(i, skipHash = false) {
-        const len = collectionSlides.length;
-        collectionCurrentIndex = (i + len) % len;
-        
-        // Hide all slides
-        collectionSlides.forEach(slide => slide.classList.remove('active'));
-        
-        // Show active slide
-        collectionSlides[collectionCurrentIndex].classList.add('active');
-        
-        updateCollectionIndicators(collectionIndicators, collectionCurrentIndex);
-        if (modal.style.display === 'flex') {
-            showCollectionModalImage(collectionCurrentIndex, true);
-        }
-        if (!skipHash) location.hash = `#collection-slide-${collectionCurrentIndex + 1}`;
-        startCollectionAutoplay();
-    }
-
-    function nextCollectionSlide() { 
-        goToCollectionSlide(collectionCurrentIndex + 1); 
-    }
-
-    function prevCollectionSlide() { 
-        goToCollectionSlide(collectionCurrentIndex - 1); 
-    }
-
-    // Modal functions
-    function showCollectionModalImage(i, skipHash = false) {
-        const s = collectionSlides[i];
-        modalImg.style.opacity = '0';
-        setTimeout(() => {
-            modalImg.src = s.querySelector('img').src;
-            const linkEl = s.querySelector('.collection-insta-link');
-            modalInstaLink.href = linkEl.href;
-            modalInstaText.textContent = linkEl.textContent.trim();
-            modalImg.style.opacity = '1';
-            updateCollectionIndicators(collectionModalIndicators, i);
-        }, 150);
-        if (!skipHash) location.hash = `#collection-slide-${i + 1}`;
-    }
-
-    function openCollectionModal(i) {
-        modal.style.display = 'flex';
-        modal.classList.add('fade-in');
-        goToCollectionSlide(i);
-        stopCollectionAutoplay();
-    }
-
-    function closeCollectionModal() {
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('fade-in', 'fade-out');
-            startCollectionAutoplay();
-        }, 250);
-    }
-
-    // Event listeners
-    collectionSlides.forEach((s, i) => {
-        const img = s.querySelector('img');
-        if (img) {
-            img.onclick = () => openCollectionModal(i);
-        }
+  function updateIndicators(indicators, activeIndex) {
+    indicators.forEach((el, idx) => {
+      el.classList.toggle('active', idx === activeIndex);
     });
+  }
 
-    // Navigation buttons
-    const prevBtn = document.getElementById('collectionPrevBtn');
-    const nextBtn = document.getElementById('collectionNextBtn');
-    const modalPrevBtn = document.getElementById('collectionModalPrev');
-    const modalNextBtn = document.getElementById('collectionModalNext');
-    const closeBtn = document.getElementById('collectionCloseModal');
+  collectionState.indicators = createIndicators(
+    elements.indicatorsWrap, 
+    goToSlide
+  );
+  
+  collectionState.modalIndicators = createIndicators(
+    elements.modalIndicatorsWrap, 
+    (i) => {
+      goToSlide(i);
+      showModalImage(i, true);
+    }
+  );
 
-    if (prevBtn) prevBtn.onclick = prevCollectionSlide;
-    if (nextBtn) nextBtn.onclick = nextCollectionSlide;
-    if (modalPrevBtn) modalPrevBtn.onclick = prevCollectionSlide;
-    if (modalNextBtn) modalNextBtn.onclick = nextCollectionSlide;
-    if (closeBtn) closeBtn.onclick = closeCollectionModal;
-
-    // Modal click to close
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeCollectionModal();
-        }
+  // Navigation functions
+  function goToSlide(index, skipHash = false) {
+    const len = collectionState.slides.length;
+    collectionState.currentIndex = (index + len) % len;
+    
+    collectionState.slides.forEach(slide => {
+      slide.classList.remove('active');
     });
-
-    // Swipe functionality
-    function handleCollectionSwipe(el, leftFn, rightFn) {
-        let startX = 0;
-        el.addEventListener('touchstart', e => startX = e.changedTouches[0].screenX, { passive: true });
-        el.addEventListener('touchend', e => {
-            let dist = e.changedTouches[0].screenX - startX;
-            if (Math.abs(dist) > 50) { 
-                dist < 0 ? leftFn() : rightFn(); 
-            }
-        }, { passive: true });
+    
+    collectionState.slides[collectionState.currentIndex].classList.add('active');
+    
+    updateIndicators(collectionState.indicators, collectionState.currentIndex);
+    
+    if (elements.modal.style.display === 'flex') {
+      showModalImage(collectionState.currentIndex, true);
     }
-
-    handleCollectionSwipe(sliderContainer, nextCollectionSlide, prevCollectionSlide);
-    handleCollectionSwipe(modal, nextCollectionSlide, prevCollectionSlide);
-
-    // Autoplay functions
-    function startCollectionAutoplay() {
-        stopCollectionAutoplay();
-        collectionAutoplayTimer = setInterval(nextCollectionSlide, 5000);
+    
+    if (!skipHash) {
+      location.hash = `#collection-slide-${collectionState.currentIndex + 1}`;
     }
+    
+    startAutoplay();
+  }
 
-    function stopCollectionAutoplay() { 
-        clearInterval(collectionAutoplayTimer); 
+  function nextSlide() {
+    goToSlide(collectionState.currentIndex + 1);
+  }
+
+  function prevSlide() {
+    goToSlide(collectionState.currentIndex - 1);
+  }
+
+  // Modal functions
+  function showModalImage(index, skipHash = false) {
+    const slide = collectionState.slides[index];
+    elements.modalImg.style.opacity = '0';
+    
+    setTimeout(() => {
+      elements.modalImg.src = slide.querySelector('img').src;
+      
+      const linkEl = slide.querySelector('.collection-insta-link');
+      elements.modalInstaLink.href = linkEl.href;
+      elements.modalInstaText.textContent = linkEl.textContent.trim();
+      
+      elements.modalImg.style.opacity = '1';
+      updateIndicators(collectionState.modalIndicators, index);
+    }, COLLECTION_CONFIG.imageFadeDuration);
+    
+    if (!skipHash) {
+      location.hash = `#collection-slide-${index + 1}`;
     }
+  }
 
-    // Mouse events for autoplay
-    sliderContainer.addEventListener('mouseenter', stopCollectionAutoplay);
-    sliderContainer.addEventListener('mouseleave', startCollectionAutoplay);
-    modal.addEventListener('mouseenter', stopCollectionAutoplay);
-    modal.addEventListener('mouseleave', startCollectionAutoplay);
+  function openModal(index) {
+    elements.modal.style.display = 'flex';
+    elements.modal.classList.add('fade-in');
+    goToSlide(index);
+    stopAutoplay();
+  }
 
-    // Keyboard navigation
-    document.addEventListener('keydown', e => {
-        if (modal.style.display === 'flex') {
-            if (e.key === 'ArrowLeft') prevCollectionSlide();
-            if (e.key === 'ArrowRight') nextCollectionSlide();
-            if (e.key === 'Escape') closeCollectionModal();
-        }
-    });
+  function closeModal() {
+    elements.modal.classList.add('fade-out');
+    
+    setTimeout(() => {
+      elements.modal.style.display = 'none';
+      elements.modal.classList.remove('fade-in', 'fade-out');
+      startAutoplay();
+    }, COLLECTION_CONFIG.modalFadeDuration);
+  }
 
-    // Hash deep link
-    function openFromCollectionHash() {
-        const match = location.hash.match(/collection-slide-(\d+)/);
-        if (match) {
-            const idx = parseInt(match[1], 10) - 1;
-            if (idx >= 0 && idx < collectionSlides.length) {
-                goToCollectionSlide(idx, true);
-            }
-        }
+  // Event listeners - Slide images
+  collectionState.slides.forEach((slide, i) => {
+    const img = slide.querySelector('img');
+    if (img) {
+      img.onclick = () => openModal(i);
     }
+  });
 
-    // Initialize
-    goToCollectionSlide(0, true);
-    startCollectionAutoplay();
-    window.addEventListener('load', openFromCollectionHash);
+  // Navigation buttons
+  if (elements.prevBtn) elements.prevBtn.onclick = prevSlide;
+  if (elements.nextBtn) elements.nextBtn.onclick = nextSlide;
+  if (elements.modalPrevBtn) elements.modalPrevBtn.onclick = prevSlide;
+  if (elements.modalNextBtn) elements.modalNextBtn.onclick = nextSlide;
+  if (elements.closeBtn) elements.closeBtn.onclick = closeModal;
+
+  // Modal click outside to close
+  elements.modal.addEventListener('click', (e) => {
+    if (e.target === elements.modal) {
+      closeModal();
+    }
+  });
+
+  // Swipe functionality
+  function setupSwipe(element, onSwipeLeft, onSwipeRight) {
+    let startX = 0;
+    
+    element.addEventListener('touchstart', (e) => {
+      startX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    element.addEventListener('touchend', (e) => {
+      const endX = e.changedTouches[0].screenX;
+      const distance = endX - startX;
+      
+      if (Math.abs(distance) > COLLECTION_CONFIG.swipeThreshold) {
+        distance < 0 ? onSwipeLeft() : onSwipeRight();
+      }
+    }, { passive: true });
+  }
+
+  setupSwipe(elements.container, nextSlide, prevSlide);
+  setupSwipe(elements.modal, nextSlide, prevSlide);
+
+  // Autoplay functions
+  function startAutoplay() {
+    stopAutoplay();
+    collectionState.autoplayTimer = setInterval(
+      nextSlide, 
+      COLLECTION_CONFIG.autoplayInterval
+    );
+  }
+
+  function stopAutoplay() {
+    if (collectionState.autoplayTimer) {
+      clearInterval(collectionState.autoplayTimer);
+      collectionState.autoplayTimer = null;
+    }
+  }
+
+  // Mouse events for autoplay
+  elements.container.addEventListener('mouseenter', stopAutoplay);
+  elements.container.addEventListener('mouseleave', startAutoplay);
+  elements.modal.addEventListener('mouseenter', stopAutoplay);
+  elements.modal.addEventListener('mouseleave', startAutoplay);
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (elements.modal.style.display === 'flex') {
+      switch (e.key) {
+        case 'ArrowLeft':
+          prevSlide();
+          break;
+        case 'ArrowRight':
+          nextSlide();
+          break;
+        case 'Escape':
+          closeModal();
+          break;
+      }
+    }
+  });
+
+  // Hash-based deep linking
+  function openFromHash() {
+    const match = location.hash.match(/collection-slide-(\d+)/);
+    if (match) {
+      const index = parseInt(match[1], 10) - 1;
+      if (index >= 0 && index < collectionState.slides.length) {
+        goToSlide(index, true);
+      }
+    }
+  }
+
+  // Initialize
+  goToSlide(0, true);
+  startAutoplay();
+  window.addEventListener('load', openFromHash);
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', stopAutoplay);
 }
 
    function initializePage() {
