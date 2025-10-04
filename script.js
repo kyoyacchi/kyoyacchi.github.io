@@ -876,101 +876,146 @@ function calculateStats() {
 }
 
 
-let lanyardWS;
-let isConnected = false;
-let isConnecting = false;
-let reconnectTimer = null;
-let heartbeatInterval = null;
-let initTimeout = null;
-let renderDebounceTimer = null;
-let lanyardBackoff = 1000;
-const LANYARD_MAX_BACKOFF = 30000;
+// State management
+const state = {
+  ws: null,
+  isConnected: false,
+  isConnecting: false,
+  reconnectTimer: null,
+  heartbeatInterval: null,
+  initTimeout: null,
+  renderDebounceTimer: null,
+  backoff: 1000,
+  currentSessionID: null,
+  lastConnectAttempt: 0,
+  lastPresenceHash: null
+};
 
-let userDataCache = { data: null, ts: 0, isRevalidating: false };
+// Cache management
+const cache = {
+  data: null,
+  timestamp: 0,
+  isRevalidating: false
+};
 
-const CACHE_TTL = 60000;
-const SWR_THRESHOLD = 120000;
+// DOM elements cache
+const elements = {
+  presence: null,
+  avatar: null
+};
 
-let currentSessionID = null;
-let lastConnectAttempt = 0;
-const CONNECT_DEBOUNCE = 1500;
+// Constants
+const CONFIG = {
+  MAX_BACKOFF: 30000,
+  CACHE_TTL: 60000,
+  SWR_THRESHOLD: 120000,
+  CONNECT_DEBOUNCE: 1500,
+  INIT_TIMEOUT: 10000,
+  REVALIDATE_TIMEOUT: 8000,
+  RENDER_DEBOUNCE: 150,
+  AVATAR_SIZE: 128
+};
 
-let presenceElement = null;
-let avatarElement = null;
-let lastPresenceHash = null;
-
-function setUserDataCache(data) {
-  userDataCache = { data, ts: Date.now() };
+// Cache utilities
+function setCache(data) {
+  cache.data = data;
+  cache.timestamp = Date.now();
 }
 
-function getUserDataCache() {
-  const cacheAge = Date.now() - userDataCache.ts;
+function getCache() {
+  const age = Date.now() - cache.timestamp;
   
-  if (cacheAge < CACHE_TTL) return userDataCache.data;
+  if (age < CONFIG.CACHE_TTL) return cache.data;
   
-  if (cacheAge < SWR_THRESHOLD && !userDataCache.isRevalidating) {
-    revalidateCache(); 
-    return userDataCache.data;
+  if (age < CONFIG.SWR_THRESHOLD && !cache.isRevalidating) {
+    revalidateCache();
+    return cache.data;
   }
   
-  return null; 
+  return null;
 }
 
 async function revalidateCache() {
-  if (userDataCache.isRevalidating) return;
-  userDataCache.isRevalidating = true;
+  if (cache.isRevalidating) return;
+  cache.isRevalidating = true;
+  
   const ac = new AbortController();
-  const timeout = setTimeout(() => ac.abort(), 8000);
+  const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
+  
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { 
+      signal: ac.signal 
+    });
     const json = await res.json();
+    
     if (json?.success && json.data) {
-      if (presenceChanged(userDataCache.data, json.data)) {
-        setUserDataCache(json.data);
+      if (presenceChanged(cache.data, json.data)) {
+        setCache(json.data);
         debouncedRenderPresence(json.data);
       } else {
-        setUserDataCache(json.data);
+        setCache(json.data);
       }
     }
   } catch (err) {
-    console.warn("Revalidate failed:", err);
+    console.warn("Cache revalidation failed:", err);
   } finally {
     clearTimeout(timeout);
-    userDataCache.isRevalidating = false;
+    cache.isRevalidating = false;
   }
 }
 
-function safeAvatarUrl(id, hash, size = 128) {
-  if (!hash) return `https://cdn.discordapp.com/embed/avatars/0.png`;
-  const isGif = hash.startsWith("a_");
-  const ext = isGif ? "gif" : "webp";
+// Avatar utilities
+function safeAvatarUrl(id, hash, size = CONFIG.AVATAR_SIZE) {
+  if (!hash) return 'https://cdn.discordapp.com/embed/avatars/0.png';
+  
+  const isGif = hash.startsWith('a_');
+  const ext = isGif ? 'gif' : 'webp';
   return `https://cdn.discordapp.com/avatars/${id}/${hash}.${ext}?size=${size}`;
 }
 
 function setAvatar(hash) {
-  if (!avatarElement) avatarElement = document.getElementById("discord_pfp");
-  if (!avatarElement) return;
-  avatarElement.onerror = () => { avatarElement.src = `https://cdn.discordapp.com/embed/avatars/0.png`; };
-  avatarElement.src = safeAvatarUrl(DISCORD_USER_ID, hash, 128);
+  if (!elements.avatar) {
+    elements.avatar = document.getElementById('discord_pfp');
+  }
+  if (!elements.avatar) return;
+  
+  elements.avatar.onerror = () => {
+    elements.avatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+  };
+  elements.avatar.src = safeAvatarUrl(DISCORD_USER_ID, hash);
 }
 
+// Presence comparison
 function presenceChanged(oldP, newP) {
   if (!oldP || !newP) return true;
   if (oldP.discord_status !== newP.discord_status) return true;
-  if ((oldP.discord_user?.avatar || "") !== (newP.discord_user?.avatar || "")) return true;
-  const a = oldP.activities || [], b = newP.activities || [];
-  if (a.length !== b.length) return true;
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
-    if (a[i].name !== b[i].name || a[i].type !== b[i].type) return true;
+  if ((oldP.discord_user?.avatar || '') !== (newP.discord_user?.avatar || '')) return true;
+  
+  const oldActs = oldP.activities || [];
+  const newActs = newP.activities || [];
+  if (oldActs.length !== newActs.length) return true;
+  
+  for (let i = 0; i < Math.min(oldActs.length, newActs.length); i++) {
+    if (oldActs[i].name !== newActs[i].name || oldActs[i].type !== newActs[i].type) {
+      return true;
+    }
   }
+  
   return false;
 }
 
 function getPresenceHash(data) {
   if (!data?.discord_user) return null;
+  
   const activities = (data.activities || [])
     .filter(a => a && a.type !== 4)
-    .map(a => ({ name: a.name, type: a.type, details: a.details, state: a.state }));
+    .map(a => ({
+      name: a.name,
+      type: a.type,
+      details: a.details,
+      state: a.state
+    }));
+  
   return JSON.stringify({
     status: data.discord_status,
     avatar: data.discord_user.avatar,
@@ -979,14 +1024,15 @@ function getPresenceHash(data) {
   });
 }
 
+// Render functions
 function debouncedRenderPresence(data) {
-  if (renderDebounceTimer) {
-    cancelAnimationFrame(renderDebounceTimer);
+  if (state.renderDebounceTimer) {
+    cancelAnimationFrame(state.renderDebounceTimer);
   }
   
-  renderDebounceTimer = requestAnimationFrame(() => {
+  state.renderDebounceTimer = requestAnimationFrame(() => {
     renderPresence(data);
-    renderDebounceTimer = null;
+    state.renderDebounceTimer = null;
   });
 }
 
@@ -994,38 +1040,38 @@ function renderPresence(data) {
   if (!data?.discord_user) return;
   
   const currentHash = getPresenceHash(data);
-  if (currentHash === lastPresenceHash) return;
-  lastPresenceHash = currentHash;
+  if (currentHash === state.lastPresenceHash) return;
+  state.lastPresenceHash = currentHash;
   
   const user = data.discord_user;
-  const status = data.discord_status || "offline";
+  const status = data.discord_status || 'offline';
   const activities = Array.isArray(data.activities) ? data.activities : [];
-  const displayName = user.global_name || user.username || "Unknown";
+  const displayName = user.global_name || user.username || 'Unknown';
   
   setAvatar(user.avatar);
 
-  let activityText = "";
+  let activityText = '';
   let isGenshin = false;
 
-  if (status === "offline") {
-    activityText = `<i class="fab fa-discord"></i> Offline`;
+  if (status === 'offline') {
+    activityText = '<i class="fab fa-discord"></i> Offline';
   } else {
-    const priority = { 2: 1, 0: 2, 1: 3, default: 99 };
+    const priority = { 2: 1, 0: 2, 1: 3 };
     const activity = activities
       .filter(a => a && a.type !== 4)
-      .sort((a, b) => (priority[a.type] || priority.default) - (priority[b.type] || priority.default))[0];
+      .sort((a, b) => (priority[a.type] ?? 99) - (priority[b.type] ?? 99))[0];
 
     if (activity) {
-      if (activity.name?.toLowerCase().includes("genshin")) {
+      if (activity.name?.toLowerCase().includes('genshin')) {
         isGenshin = true;
-        activityText = `<i class="fas fa-bolt"></i> Playing Genshin Impact`;
+        activityText = '<i class="fas fa-bolt"></i> Playing Genshin Impact';
       } else {
         switch (activity.type) {
           case 0:
             activityText = `<i class="fas fa-gamepad"></i> Playing ${activity.name}`;
             break;
           case 2:
-            if (activity.name === "Spotify" && activity.details && activity.state) {
+            if (activity.name === 'Spotify' && activity.details && activity.state) {
               activityText = `<i class="fas fa-music"></i> ${activity.details} - ${activity.state}`;
             } else {
               activityText = `<i class="fas fa-music"></i> Listening to ${activity.name}`;
@@ -1036,201 +1082,264 @@ function renderPresence(data) {
         }
       }
     } else {
-      activityText = {
-        online: "Online",
-        idle: "Idle",
-        dnd: "Do Not Disturb"
-      }[status] || "";
+      const statusText = {
+        online: 'Online',
+        idle: 'Idle',
+        dnd: 'Do Not Disturb'
+      };
+      activityText = statusText[status] || '';
     }
   }
 
-  if (!presenceElement) presenceElement = document.getElementById("discord-presence");
-  if (!presenceElement) return;
+  if (!elements.presence) {
+    elements.presence = document.getElementById('discord-presence');
+  }
+  if (!elements.presence) return;
 
-  presenceElement.classList.add('fade-out');
+  elements.presence.classList.add('fade-out');
   
   setTimeout(() => {
-    presenceElement.innerHTML = `
-      <div class="discord-status ${isGenshin ? "genshin-activity" : ""}">
+    elements.presence.innerHTML = `
+      <div class="discord-status ${isGenshin ? 'genshin-activity' : ''}">
         <img src="${safeAvatarUrl(DISCORD_USER_ID, user.avatar, 64)}"
-        alt="Discord Avatar" class="discord-avatar" loading="lazy"/>
+             alt="Discord Avatar" 
+             class="discord-avatar" 
+             loading="lazy"/>
         <div class="discord-info">
           <div class="discord-username">${displayName}</div>
-          <div class="discord-activity"><span class="activity-text">${activityText}</span></div>
+          <div class="discord-activity">
+            <span class="activity-text">${activityText}</span>
+          </div>
         </div>
         <div class="status-indicator status-${status}"></div>
       </div>`;
-    presenceElement.classList.remove('fade-out');
-  }, 150);
+    elements.presence.classList.remove('fade-out');
+  }, CONFIG.RENDER_DEBOUNCE);
 }
 
+// Cleanup utilities
+function clearTimers() {
+  if (state.reconnectTimer) {
+    clearTimeout(state.reconnectTimer);
+    state.reconnectTimer = null;
+  }
+  if (state.heartbeatInterval) {
+    clearInterval(state.heartbeatInterval);
+    state.heartbeatInterval = null;
+  }
+  if (state.initTimeout) {
+    clearTimeout(state.initTimeout);
+    state.initTimeout = null;
+  }
+  if (state.renderDebounceTimer) {
+    cancelAnimationFrame(state.renderDebounceTimer);
+    state.renderDebounceTimer = null;
+  }
+}
+
+function closeWebSocket() {
+  try {
+    if (state.ws?.readyState === WebSocket.OPEN || 
+        state.ws?.readyState === WebSocket.CONNECTING) {
+      state.ws.close();
+    }
+  } catch (e) {
+    console.warn('WS close error:', e);
+  }
+}
+
+// Connection management
 async function connectLanyard() {
   const now = Date.now();
-  if (now - lastConnectAttempt < CONNECT_DEBOUNCE) return;
-  lastConnectAttempt = now;
+  if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
+  state.lastConnectAttempt = now;
 
-  if (!presenceElement) presenceElement = document.getElementById("discord-presence");
-  if (!presenceElement) return;
-  if (isConnecting || isConnected) return;
-
-  if (reconnectTimer) { 
-    clearTimeout(reconnectTimer); 
-    reconnectTimer = null; 
+  if (!elements.presence) {
+    elements.presence = document.getElementById('discord-presence');
   }
+  if (!elements.presence) return;
+  if (state.isConnecting || state.isConnected) return;
 
-  try { 
-    if (lanyardWS?.readyState === WebSocket.OPEN || lanyardWS?.readyState === WebSocket.CONNECTING) {
-      lanyardWS.close(); 
-    }
-  } catch(e) {}
+  clearTimers();
+  closeWebSocket();
   
-  clearInterval(heartbeatInterval); 
-  heartbeatInterval = null;
-  clearTimeout(initTimeout);
-  initTimeout = null;
-  
-  isConnecting = true;
-  presenceElement.innerHTML = `<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>`;
+  state.isConnecting = true;
+  elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>';
 
-  const cached = getUserDataCache();
+  // Try to use cached data first
+  const cached = getCache();
   if (!cached) {
     try {
-      const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+      const ac = new AbortController();
+      const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
+      
+      const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, {
+        signal: ac.signal
+      });
+      clearTimeout(timeout);
+      
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
       const json = await res.json();
       if (json?.success && json.data) {
-        setUserDataCache(json.data);
+        setCache(json.data);
         debouncedRenderPresence(json.data);
+      } else {
+        throw new Error('Invalid API response');
       }
     } catch (err) {
-      console.warn("Lanyard REST fetch failed:", err);
+      console.warn('Lanyard REST fetch failed:', err);
+      // REST failed, but we'll continue with WebSocket
+      // If WebSocket also fails, reconnect will handle retry
     }
   } else {
     debouncedRenderPresence(cached);
   }
 
-  try { lanyardWS?.close?.(); } catch(e) {}
-
+  // Create WebSocket
   let ws;
   try {
-    ws = new WebSocket("wss://api.lanyard.rest/socket");
+    ws = new WebSocket('wss://api.lanyard.rest/socket');
   } catch (err) {
-    console.error("WS create error:", err);
-    isConnecting = false;
+    console.error('WS creation error:', err);
+    state.isConnecting = false;
     scheduleReconnect();
     return;
   }
 
   const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
-  currentSessionID = sessionID;
-  lanyardWS = ws;
+  state.currentSessionID = sessionID;
+  state.ws = ws;
 
   ws.onopen = () => {
-    if (currentSessionID !== sessionID) return;
-    isConnected = true; 
-    isConnecting = false; 
-    lanyardBackoff = 1000;
+    if (state.currentSessionID !== sessionID) return;
     
-    try { 
-      ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); 
-    } catch {}
+    state.isConnected = true;
+    state.isConnecting = false;
+    state.backoff = 1000;
     
-    initTimeout = setTimeout(() => {
-      if (currentSessionID !== sessionID) return;
-      console.warn("INIT_STATE timeout - forcing reconnect");
-      isConnected = false;
-      isConnecting = false;
-      clearInterval(heartbeatInterval);
-      heartbeatInterval = null;
-      try { ws.close(); } catch {}
+    try {
+      ws.send(JSON.stringify({ 
+        op: 2, 
+        d: { subscribe_to_id: DISCORD_USER_ID } 
+      }));
+    } catch (e) {
+      console.warn('Send subscribe error:', e);
+    }
+    
+    state.initTimeout = setTimeout(() => {
+      if (state.currentSessionID !== sessionID) return;
+      console.warn('INIT_STATE timeout - forcing reconnect');
+      state.isConnected = false;
+      state.isConnecting = false;
+      clearTimers();
+      closeWebSocket();
       scheduleReconnect();
-    }, 10000);
+    }, CONFIG.INIT_TIMEOUT);
   };
 
   ws.onmessage = ({ data }) => {
-    if (currentSessionID !== sessionID) return;
+    if (state.currentSessionID !== sessionID) return;
+    
     let parsed;
-    try { parsed = JSON.parse(data); } catch { return; }
+    try {
+      parsed = JSON.parse(data);
+    } catch {
+      return;
+    }
+    
     const { op, t, d } = parsed || {};
     
+    // Setup heartbeat
     if (op === 1 && d?.heartbeat_interval) {
-      clearInterval(heartbeatInterval);
-      heartbeatInterval = setInterval(() => {
-        try { 
+      clearInterval(state.heartbeatInterval);
+      state.heartbeatInterval = setInterval(() => {
+        try {
           if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ op: 3 })); 
+            ws.send(JSON.stringify({ op: 3 }));
           }
-        } catch {}
+        } catch (e) {
+          console.warn('Heartbeat send error:', e);
+        }
       }, d.heartbeat_interval);
     }
     
-    if (t === "INIT_STATE") {
-      clearTimeout(initTimeout);
-      initTimeout = null;
+    // Clear init timeout on INIT_STATE
+    if (t === 'INIT_STATE') {
+      clearTimeout(state.initTimeout);
+      state.initTimeout = null;
     }
     
-    if (t === "INIT_STATE" || t === "PRESENCE_UPDATE") {
-      const presence = t === "INIT_STATE" ? d[DISCORD_USER_ID] : d;
+    // Handle presence updates
+    if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
+      const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
       if (presence?.discord_user) {
-        setUserDataCache(presence);
+        setCache(presence);
         debouncedRenderPresence(presence);
       }
     }
   };
 
   ws.onerror = (err) => {
-    console.error("WS error:", err);
-    if (currentSessionID !== sessionID) return;
-    isConnected = false;
-    isConnecting = false;
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
-    clearTimeout(initTimeout);
-    initTimeout = null;
-    try { ws.close(); } catch {}
+    console.error('WS error:', err);
+    if (state.currentSessionID !== sessionID) return;
+    
+    state.isConnected = false;
+    state.isConnecting = false;
+    clearTimers();
+    closeWebSocket();
+    
+    // Show error state if no cached data
+    if (!cache.data && elements.presence) {
+      elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connection failed, retrying...</div>';
+    }
+    
     scheduleReconnect();
   };
 
-  ws.onclose = (ev) => {
-    if (currentSessionID !== sessionID) return;
-    isConnected = false; 
-    isConnecting = false;
-    clearInterval(heartbeatInterval); 
-    heartbeatInterval = null;
-    clearTimeout(initTimeout);
-    initTimeout = null;
+  ws.onclose = () => {
+    if (state.currentSessionID !== sessionID) return;
+    
+    state.isConnected = false;
+    state.isConnecting = false;
+    clearTimers();
+    
+    // Show error state if no cached data
+    if (!cache.data && elements.presence) {
+      elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Reconnecting...</div>';
+    }
+    
     scheduleReconnect();
   };
 }
 
 function scheduleReconnect() {
-  if (reconnectTimer) return;
-  const jitter = Math.floor(Math.random() * Math.min(1000, lanyardBackoff));
-  const wait = Math.min(lanyardBackoff + jitter, LANYARD_MAX_BACKOFF);
-  reconnectTimer = setTimeout(() => {
-    reconnectTimer = null;
+  if (state.reconnectTimer) return;
+  
+  const jitter = Math.floor(Math.random() * Math.min(1000, state.backoff));
+  const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
+  
+  state.reconnectTimer = setTimeout(() => {
+    state.reconnectTimer = null;
     connectLanyard();
   }, wait);
-  lanyardBackoff = Math.min(Math.floor(lanyardBackoff * 1.8), LANYARD_MAX_BACKOFF);
+  
+  state.backoff = Math.min(Math.floor(state.backoff * 1.8), CONFIG.MAX_BACKOFF);
 }
 
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && !isConnected && !isConnecting) {
+// Event listeners
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !state.isConnected && !state.isConnecting) {
     connectLanyard();
   }
 });
 
-["beforeunload", "pagehide"].forEach(evt => {
+['beforeunload', 'pagehide'].forEach(evt => {
   window.addEventListener(evt, () => {
-    clearInterval(heartbeatInterval);
-    clearTimeout(reconnectTimer);
-    clearTimeout(initTimeout);
-    if (renderDebounceTimer) {
-      cancelAnimationFrame(renderDebounceTimer);
-      renderDebounceTimer = null;
-    }
-    lanyardWS?.close();
-    isConnected = false;
-    isConnecting = false;
+    clearTimers();
+    closeWebSocket();
+    state.isConnected = false;
+    state.isConnecting = false;
   });
 });
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
