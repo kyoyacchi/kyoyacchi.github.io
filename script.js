@@ -62,153 +62,209 @@ function setupHeartEffect() {
 }
 
 const preloadImages = [
-    'https://files.catbox.moe/9cvf8l.jpeg',
-    'https://files.catbox.moe/c6vwxv.gif',
-    'https://files.catbox.moe/a53d5g.jpg',
-    'https://files.catbox.moe/dx4dym.jpg',
-    'https://files.catbox.moe/kfn36d.jpg',
-    'https://files.catbox.moe/5fwex5.jpg',
-    'https://files.catbox.moe/1m7rx3.jpg',
-    'https://files.catbox.moe/ymqw8y.jpg',
-    'https://files.catbox.moe/7c6pr2.jpg',
-    'https://files.catbox.moe/yf43bj.jpg',
-    'https://files.catbox.moe/ox23f5.jpeg',
-    'https://files.catbox.moe/ai4oz2.gif',
-    'https://files.catbox.moe/25kggw.gif',
-    'https://files.catbox.moe/obaond.jpg',
-    'https://files.catbox.moe/vywstu.jpg',
-    'https://files.catbox.moe/4nz27h.jpg',
-    'https://files.catbox.moe/p0duyn.jpg',
-    'https://files.catbox.moe/590yyq.png',
-    'https://files.catbox.moe/dvxsv8.jpg',
-    'https://files.catbox.moe/a8y5q1.jpg',
-    'https://files.catbox.moe/l82m6v.png',
-    'https://files.catbox.moe/sko7xm.png',
-    'https://files.catbox.moe/rojatg.png',
-    'https://files.catbox.moe/d146hq.png',
-    'https://files.catbox.moe/1s76mj.jpg',
-    'https://files.catbox.moe/dczsae.png'
+  'https://files.catbox.moe/9cvf8l.jpeg',
+  'https://files.catbox.moe/c6vwxv.gif',
+  'https://files.catbox.moe/a53d5g.jpg',
+  'https://files.catbox.moe/dx4dym.jpg',
+  'https://files.catbox.moe/kfn36d.jpg',
+  'https://files.catbox.moe/5fwex5.jpg',
+  'https://files.catbox.moe/1m7rx3.jpg',
+  'https://files.catbox.moe/ymqw8y.jpg',
+  'https://files.catbox.moe/7c6pr2.jpg',
+  'https://files.catbox.moe/yf43bj.jpg',
+  'https://files.catbox.moe/ox23f5.jpeg',
+  'https://files.catbox.moe/ai4oz2.gif',
+  'https://files.catbox.moe/25kggw.gif',
+  'https://files.catbox.moe/obaond.jpg',
+  'https://files.catbox.moe/vywstu.jpg',
+  'https://files.catbox.moe/4nz27h.jpg',
+  'https://files.catbox.moe/p0duyn.jpg',
+  'https://files.catbox.moe/590yyq.png',
+  'https://files.catbox.moe/dvxsv8.jpg',
+  'https://files.catbox.moe/a8y5q1.jpg',
+  'https://files.catbox.moe/l82m6v.png',
+  'https://files.catbox.moe/sko7xm.png',
+  'https://files.catbox.moe/rojatg.png',
+  'https://files.catbox.moe/d146hq.png',
+  'https://files.catbox.moe/1s76mj.jpg',
+  'https://files.catbox.moe/dczsae.png'
 ];
 
 const randomIntroImages = [
-    'https://files.catbox.moe/b0fq4l.jpg',
-    'https://files.catbox.moe/6fdl5v.jpg',
-    'https://files.catbox.moe/ncf10w.gif',
-    'https://files.catbox.moe/1s76mj.jpg'
+  'https://files.catbox.moe/b0fq4l.jpg',
+  'https://files.catbox.moe/6fdl5v.jpg',
+  'https://files.catbox.moe/ncf10w.gif',
+  'https://files.catbox.moe/1s76mj.jpg'
 ];
 
+const INTRO_CONFIG = {
+  fadeOutDuration: 1000,
+  birthdayDisplayTime: 2500,
+  deniedDisplayTime: 1500,
+  deniedToApprovedDelay: 2000,
+  normalDisplayTime: 2000,
+  writingAnimateDelay: 2100,
+  statsCalculateDelay: 1500,
+  bannerInitDelay: 1500,
+  lanyardConnectDelay: 2500,
+  preloadBatchSize: 2,
+  preloadThrottle: 350,
+  deniedChance: 0.002
+};
+
 function handleIntroOverlay() {
-    const introOverlay = document.querySelector('.intro-overlay');
-    if (!introOverlay) return;
+  const elements = {
+    overlay: document.querySelector('.intro-overlay'),
+    preloaderText: document.querySelector('.preloader-text'),
+    subtitleText: document.querySelector('.subtitle-text'),
+    overlayImage: document.querySelector('.overlay-image')
+  };
 
-    const preloaderText = document.querySelector('.preloader-text');
-    const subtitleText = document.querySelector('.subtitle-text');
-    const overlayImage = document.querySelector('.overlay-image');
+  if (!elements.overlay) return;
 
-    const hidePreloader = () => {
-        triggerMainContentAnimations();
-        
-        introOverlay.style.opacity = '0';
-        setTimeout(() => {
-            introOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 1000);
-    };
+  // Hide overlay and start main animations
+  const hideOverlay = () => {
+    if (typeof triggerMainContentAnimations === 'function') {
+      triggerMainContentAnimations();
+    }
     
-    if (overlayImage && randomIntroImages.length > 0) {
-        const randomIndex = Math.floor(Math.random() * randomIntroImages.length);
-        overlayImage.style.display = "block"
-        overlayImage.src = randomIntroImages[randomIndex];
-    }
+    elements.overlay.style.opacity = '0';
+    setTimeout(() => {
+      elements.overlay.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }, INTRO_CONFIG.fadeOutDuration);
+  };
 
-    const today = new Date();
-    const isRaidenBirthday = today.getMonth() === 5 && today.getDate() === 26;
+  // Set random intro image
+  if (elements.overlayImage && randomIntroImages.length > 0) {
+    const randomIndex = Math.floor(Math.random() * randomIntroImages.length);
+    elements.overlayImage.style.display = 'block';
+    elements.overlayImage.src = randomIntroImages[randomIndex];
+  }
 
-    if (isRaidenBirthday) {
-        preloaderText.textContent = "Happy birthday, Almighty Raiden Shogun!";
-        subtitleText.textContent = "🎉 Glory to the Shogun!⚡️";
-        subtitleText.style.top = '61%';
-        
-        introOverlay.classList.remove('shake-it', 'shogun-denied');
-        introOverlay.querySelector('.denied-icon')?.remove();
-        
-        setTimeout(hidePreloader, 2500);
-        return;
-    }
+  // Check for Raiden's birthday (June 26)
+  const today = new Date();
+  const isRaidenBirthday = today.getMonth() === 5 && today.getDate() === 26;
 
-    subtitleText.style.top = '';
+  if (isRaidenBirthday) {
+    handleBirthdayMode(elements, hideOverlay);
+    return;
+  }
 
+  // Reset subtitle position for non-birthday
+  elements.subtitleText.style.top = '';
 
-    if (Math.random() < 0.002) {
-        preloaderText.textContent = "The Almighty Raiden Shogun has denied your access.";
-        preloaderText.className = 'preloader-text denied-text';
-        subtitleText.textContent = '';
-        
-        introOverlay.classList.remove('shake-it');
-        introOverlay.classList.add('shogun-denied');
-        
-        const iconElement = document.createElement('i');
-        iconElement.className = 'fas fa-times denied-icon';
-        introOverlay.appendChild(iconElement);
+  // Rare denied access event
+  if (Math.random() < INTRO_CONFIG.deniedChance) {
+    handleDeniedMode(elements, hideOverlay);
+    return;
+  }
 
-        setTimeout(() => {
-            introOverlay.classList.remove('shogun-denied');
-            introOverlay.querySelector('.denied-icon')?.remove();
-            
-            preloaderText.textContent = "The Almighty Raiden Shogun has approved your access.";
-            preloaderText.className = 'preloader-text approved-text';
-            
-            setTimeout(hidePreloader, 2000);
-        }, 1500);
-        return;
-    }
-
-    const texts = [
-        { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
-        { romaji: 'Mikirimashita', jp: '見切りました。' },
-        { romaji: 'Sabaki no ikazuchi', jp: '裁きの雷。' },
-        { romaji: 'Nigemichi wa arimasen', jp: '逃げ道はありません。' },
-        { romaji: 'Muga no kyouchi he', jp: '無我の境地へ。' },
-        { romaji: 'Koko yori, jakumetsu no toki!', jp: 'ここより、寂滅の時！' },
-        'Now, you shall perish!',
-        'There is no escape!',
-        'Inazuma shines eternal!',
-        'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
-        'Shine down!',
-        'Illusion shattered!',
-        'Torn to oblivion!',
-        'Musou me harder, mommy'
-    ];
-
-    const randomText = texts[Math.floor(Math.random() * texts.length)];
-
-    if (typeof randomText === 'string') {
-        preloaderText.textContent = randomText;
-        subtitleText.textContent = randomText === 'Musou me harder, mommy' 
-            ? '- A Turkish guy who is obsessed over Raiden Shogun' 
-            : '';
-            
-        if (randomText === 'Musou me harder, mommy') {
-            introOverlay.classList.add('shake-it');
-            setTimeout(() => introOverlay.classList.remove('shake-it'), 300);
-        }
-    } else {
-        preloaderText.textContent = randomText.romaji;
-        subtitleText.textContent = randomText.jp;
-    }
-
-    setTimeout(hidePreloader, 2000);
-    setTimeout(WritingAnimate, 2100);
-    setTimeout(calculateStats, 1500);
-    setTimeout(initializeDynamicBanner, 1500);
-    preloadImagesThrottled(
-        [...preloadImages],
-        2, 
-        350 
-    );
-    setTimeout(connectLanyard, 2500);
+  // Normal mode with random Raiden quotes
+  handleNormalMode(elements, hideOverlay);
 }
 
+function handleBirthdayMode(elements, hideOverlay) {
+  elements.preloaderText.textContent = 'Happy birthday, Almighty Raiden Shogun!';
+  elements.subtitleText.textContent = '🎉 Glory to the Shogun!⚡️';
+  elements.subtitleText.style.top = '61%';
+  
+  elements.overlay.classList.remove('shake-it', 'shogun-denied');
+  elements.overlay.querySelector('.denied-icon')?.remove();
+  
+  setTimeout(hideOverlay, INTRO_CONFIG.birthdayDisplayTime);
+  initializePageSystems();
+}
+
+function handleDeniedMode(elements, hideOverlay) {
+  elements.preloaderText.textContent = 'The Almighty Raiden Shogun has denied your access.';
+  elements.preloaderText.className = 'preloader-text denied-text';
+  elements.subtitleText.textContent = '';
+  
+  elements.overlay.classList.remove('shake-it');
+  elements.overlay.classList.add('shogun-denied');
+  
+  const iconElement = document.createElement('i');
+  iconElement.className = 'fas fa-times denied-icon';
+  elements.overlay.appendChild(iconElement);
+
+  setTimeout(() => {
+    elements.overlay.classList.remove('shogun-denied');
+    elements.overlay.querySelector('.denied-icon')?.remove();
+    
+    elements.preloaderText.textContent = 'The Almighty Raiden Shogun has approved your access.';
+    elements.preloaderText.className = 'preloader-text approved-text';
+    
+    setTimeout(hideOverlay, INTRO_CONFIG.deniedToApprovedDelay);
+    initializePageSystems();
+  }, INTRO_CONFIG.deniedDisplayTime);
+}
+
+function handleNormalMode(elements, hideOverlay) {
+  const quotes = [
+    { romaji: 'Inabikari, sunawachi Eien nari', jp: '稲光、すなわち永遠なり。' },
+    { romaji: 'Mikirimashita', jp: '見切りました。' },
+    { romaji: 'Sabaki no ikazuchi', jp: '裁きの雷。' },
+    { romaji: 'Nigemichi wa arimasen', jp: '逃げ道はありません。' },
+    { romaji: 'Muga no kyouchi he', jp: '無我の境地へ。' },
+    { romaji: 'Koko yori, jakumetsu no toki!', jp: 'ここより、寂滅の時！' },
+    'Now, you shall perish!',
+    'There is no escape!',
+    'Inazuma shines eternal!',
+    'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+    'Shine down!',
+    'Illusion shattered!',
+    'Torn to oblivion!',
+    'Musou me harder, mommy'
+  ];
+
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  if (typeof randomQuote === 'string') {
+    elements.preloaderText.textContent = randomQuote;
+    elements.subtitleText.textContent = randomQuote === 'Musou me harder, mommy'
+      ? '- A Turkish guy who is obsessed over Raiden Shogun'
+      : '';
+    
+    if (randomQuote === 'Musou me harder, mommy') {
+      elements.overlay.classList.add('shake-it');
+      setTimeout(() => elements.overlay.classList.remove('shake-it'), 300);
+    }
+  } else {
+    elements.preloaderText.textContent = randomQuote.romaji;
+    elements.subtitleText.textContent = randomQuote.jp;
+  }
+
+  setTimeout(hideOverlay, INTRO_CONFIG.normalDisplayTime);
+  initializePageSystems();
+}
+
+function initializePageSystems() {
+  // Initialize various page systems with proper delays
+  setTimeout(() => {
+    if (typeof WritingAnimate === 'function') WritingAnimate();
+  }, INTRO_CONFIG.writingAnimateDelay);
+  
+  setTimeout(() => {
+    if (typeof calculateStats === 'function') calculateStats();
+  }, INTRO_CONFIG.statsCalculateDelay);
+  
+  setTimeout(() => {
+    if (typeof initializeDynamicBanner === 'function') initializeDynamicBanner();
+  }, INTRO_CONFIG.bannerInitDelay);
+  
+  if (typeof preloadImagesThrottled === 'function') {
+    preloadImagesThrottled(
+      [...preloadImages],
+      INTRO_CONFIG.preloadBatchSize,
+      INTRO_CONFIG.preloadThrottle
+    );
+  }
+  
+  setTimeout(() => {
+    if (typeof connectLanyard === 'function') connectLanyard();
+  }, INTRO_CONFIG.lanyardConnectDelay);
+}
 
 
 
@@ -1414,6 +1470,8 @@ document.addEventListener('visibilitychange', () => {
   });
 });
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
+
+
 function WritingAnimate() {
   const heroTitle = document.querySelector('.namae');
   if (!heroTitle) return;
