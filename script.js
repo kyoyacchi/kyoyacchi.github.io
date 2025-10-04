@@ -406,13 +406,13 @@ function triggerMainContentAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     if (!animatedElements.length) return;
     
-    // Add CSS variables for social icons staggered animation
+    // Setup social icons with staggered animation indices
     const socialIcons = document.querySelectorAll('.social-icons.animate-on-scroll a');
     socialIcons.forEach((icon, index) => {
         icon.style.setProperty('--social-icon-index', index);
     });
     
-    // Define animation order and delays - balanced timing
+    // Define animation sequence with delays (in ms)
     const animationOrder = [
         { selector: '.profile-header', delay: 250 },
         { selector: '.bio', delay: 400 },
@@ -421,28 +421,42 @@ function triggerMainContentAnimations() {
         { selector: 'footer', delay: 850 }
     ];
     
+    // Trigger animations in sequence
     animationOrder.forEach(({ selector, delay }) => {
-        const element = document.querySelector(selector + '.animate-on-scroll');
-        if (element) {
-            setTimeout(() => {
-                element.classList.add('is-visible');
-                if (element.matches('.profile-header, .bio, .social-icons, footer, .tweet-embed-container')) {
-                    element.classList.add('slide-up');
-                }
-                
-                // Add special effect for the banner
-                if (element.matches('.banner')) {
-                    element.style.filter = 'blur(0px)';
-                }
-            }, delay);
-        }
+        const element = document.querySelector(`${selector}.animate-on-scroll`);
+        if (!element) return;
+        
+        setTimeout(() => {
+            element.classList.add('is-visible');
+            
+            // Add slide-up animation to specific elements
+            const slideUpSelectors = [
+                '.profile-header',
+                '.bio',
+                '.social-icons',
+                '.footer',
+                '.tweet-embed-container'
+            ];
+            
+            if (slideUpSelectors.some(s => element.matches(s))) {
+                element.classList.add('slide-up');
+            }
+            
+            // Special blur effect for banner
+            if (element.matches('.banner')) {
+                element.style.filter = 'blur(0px)';
+            }
+        }, delay);
     });
     
-    // Setup scroll animations for any future elements or if page is scrolled
+    // Initialize scroll animations after initial sequence
     setTimeout(() => {
-        setupScrollAnimations();
+        if (typeof setupScrollAnimations === 'function') {
+            setupScrollAnimations();
+        }
     }, 1000);
 }
+
 
 function setupScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
@@ -450,27 +464,37 @@ function setupScrollAnimations() {
 
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
+            if (!entry.isIntersecting) return;
+            
+            const target = entry.target;
+            target.classList.add('is-visible');
 
-                if (entry.target.matches('.profile-header, .bio, .social-icons, footer, .tweet-embed-container')) {
-                   entry.target.classList.add('slide-up');
-                }
-                obs.unobserve(entry.target);
+            // Slide-up animation for specific elements
+            const slideUpSelectors = [
+                '.profile-header',
+                '.bio',
+                '.social-icons',
+                'footer',
+                '.tweet-embed-container'
+            ];
+
+            if (slideUpSelectors.some(selector => target.matches(selector))) {
+                target.classList.add('slide-up');
             }
+
+            obs.unobserve(target);
         });
     }, {
         threshold: 0.15,
         rootMargin: "0px 0px -50px 0px"
     });
 
-    animatedElements.forEach(el => { observer.observe(el); });
+    animatedElements.forEach(el => observer.observe(el));
 }
 
 
 
 function initializeDynamicBanner() {
- // return null;
     const elements = {
         bannerContainer: document.querySelector('.banner'),
         bannerImg1: document.querySelector('.banner-img-1'),
@@ -478,7 +502,6 @@ function initializeDynamicBanner() {
         progressBar: document.querySelector('.banner-progress-bar'),
         progressGif: document.querySelector('.progress-gif'),
         bio: document.querySelector('.bio')
-        
     };
 
     const makotoBannerUrl = 'https://files.catbox.moe/a8y5q1.jpg';
@@ -487,7 +510,7 @@ function initializeDynamicBanner() {
     makotoMemoryTag.className = 'makoto-memory';
     makotoMemoryTag.innerText = "🌸 In memory of Makoto...";
     makotoMemoryTag.style.display = 'none';
-    elements.bannerContainer.appendChild(makotoMemoryTag);
+    elements.bannerContainer?.appendChild(makotoMemoryTag);
 
     const config = {
         changeInterval: 5.5,
@@ -528,20 +551,28 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/4nz27h.jpg'
     ]);
 
-    let currentBannerIndex = 0;
-    let progressIntervalId = null;
-    let nextChangeTimeoutId = null;
-    let isBanner1Active = true;
-    let isLoadingNext = false;
-    let shuffledIndexes = shuffleArray([...Array(bannerUrls.length).keys()]);
-    let currentShuffledIndex = 0;
+    // State management
+    const state = {
+        currentBannerIndex: 0,
+        progressIntervalId: null,
+        nextChangeTimeoutId: null,
+        isBanner1Active: true,
+        isLoadingNext: false,
+        shuffledIndexes: shuffleArray([...Array(bannerUrls.length).keys()]),
+        currentShuffledIndex: 0,
+        startTime: null,
+        pauseStartTime: null
+    };
 
     if (!validateElements()) return;
 
     function validateElements() {
-        if (!elements.bannerContainer || !elements.bannerImg1 || !elements.bannerImg2) return false;
-        if (bannerUrls.length === 0) return false;
-        return true;
+        return !!(
+            elements.bannerContainer && 
+            elements.bannerImg1 && 
+            elements.bannerImg2 && 
+            bannerUrls.length > 0
+        );
     }
 
     function shuffleArray(array) {
@@ -554,32 +585,36 @@ function initializeDynamicBanner() {
     }
 
     function getNextIndex() {
-        if (currentShuffledIndex >= shuffledIndexes.length - 1) {
-            shuffledIndexes = shuffleArray(shuffledIndexes);
-            currentShuffledIndex = -1;
+        if (state.currentShuffledIndex >= state.shuffledIndexes.length - 1) {
+            state.shuffledIndexes = shuffleArray(state.shuffledIndexes);
+            state.currentShuffledIndex = -1;
         }
-        return shuffledIndexes[++currentShuffledIndex];
+        return state.shuffledIndexes[++state.currentShuffledIndex];
     }
 
     function clearTimers() {
-        if (progressIntervalId) {
-            clearInterval(progressIntervalId);
-            progressIntervalId = null;
+        if (state.progressIntervalId) {
+            clearInterval(state.progressIntervalId);
+            state.progressIntervalId = null;
         }
-        if (nextChangeTimeoutId) {
-            clearTimeout(nextChangeTimeoutId);
-            nextChangeTimeoutId = null;
+        if (state.nextChangeTimeoutId) {
+            clearTimeout(state.nextChangeTimeoutId);
+            state.nextChangeTimeoutId = null;
         }
     }
 
     function setProgressStyles(progress, useTransition = true) {
         if (elements.progressBar) {
-            elements.progressBar.style.transition = useTransition ? `width ${config.progressUpdateFrequency}s linear` : 'none';
+            elements.progressBar.style.transition = useTransition 
+                ? `width ${config.progressUpdateFrequency}s linear` 
+                : 'none';
             elements.progressBar.style.width = `${progress}%`;
         }
+        
         if (elements.progressGif) {
-            const transition = useTransition ? 
-                `left ${config.progressUpdateFrequency}s linear, opacity ${config.gifFadeDuration}s ease-in-out` : 'none';
+            const transition = useTransition 
+                ? `left ${config.progressUpdateFrequency}s linear, opacity ${config.gifFadeDuration}s ease-in-out` 
+                : 'none';
             elements.progressGif.style.transition = transition;
             elements.progressGif.style.left = `${progress}%`;
         }
@@ -587,27 +622,27 @@ function initializeDynamicBanner() {
 
     function resetProgress() {
         setProgressStyles(0, false);
-        if (elements.progressGif) elements.progressGif.classList.add('hidden');
-        requestAnimationFrame(() => {});
+        elements.progressGif?.classList.add('hidden');
     }
-let startTime = null;
-let pauseStartTime = null;
 
     function runProgressAnimation() {
-        
         clearTimers();
-        if (elements.progressGif) elements.progressGif.classList.remove('hidden');
-        progressIntervalId = setInterval(() => {
-            if (isLoadingNext) return;
-            const elapsedTime = (Date.now() - startTime) / 1000;
+        elements.progressGif?.classList.remove('hidden');
+        
+        state.progressIntervalId = setInterval(() => {
+            if (state.isLoadingNext) return;
+            
+            const elapsedTime = (Date.now() - state.startTime) / 1000;
             const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
+            
             if (progress >= 100) {
-                clearInterval(progressIntervalId);
-                progressIntervalId = null;
+                clearInterval(state.progressIntervalId);
+                state.progressIntervalId = null;
                 setProgressStyles(100, false);
-                nextChangeTimeoutId = setTimeout(() => {
+                
+                state.nextChangeTimeoutId = setTimeout(() => {
                     if (!document.hidden) prepareBannerChange();
-                    nextChangeTimeoutId = null;
+                    state.nextChangeTimeoutId = null;
                 }, config.renderDelay * 1000);
             } else {
                 setProgressStyles(progress, true);
@@ -616,47 +651,55 @@ let pauseStartTime = null;
     }
 
     function startProgressCycle() {
-    clearTimers();
-    isLoadingNext = false;
-    resetProgress();
-    startTime = Date.now(); 
-    setTimeout(runProgressAnimation, 50);
-}
+        clearTimers();
+        state.isLoadingNext = false;
+        resetProgress();
+        state.startTime = Date.now();
+        setTimeout(runProgressAnimation, 50);
+    }
 
     function prepareBannerChange() {
-        if (isLoadingNext) return;
-        isLoadingNext = true;
+        if (state.isLoadingNext) return;
+        state.isLoadingNext = true;
+        
         const newIndex = getNextIndex();
         const newBannerUrl = bannerUrls[newIndex];
-        const activeBanner = isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
-        const nextBanner = isBanner1Active ? elements.bannerImg2 : elements.bannerImg1;
+        const activeBanner = state.isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
+        const nextBanner = state.isBanner1Active ? elements.bannerImg2 : elements.bannerImg1;
+        
         const img = new Image();
+        
         img.onload = () => {
-            currentBannerIndex = newIndex;
+            state.currentBannerIndex = newIndex;
             resetProgress();
+            
             activeBanner.classList.remove('active');
             nextBanner.classList.add('active');
             nextBanner.src = newBannerUrl;
-            isBanner1Active = !isBanner1Active;
+            
+            state.isBanner1Active = !state.isBanner1Active;
+            
             updateBioStyle(newBannerUrl);
             updateMakotoMemoryTag(newBannerUrl);
+            
             setTimeout(() => {
-                isLoadingNext = false;
+                state.isLoadingNext = false;
                 startProgressCycle();
             }, config.fadeTransitionDuration * 1000);
         };
+        
         img.onerror = () => {
-            isLoadingNext = false;
+            state.isLoadingNext = false;
             startProgressCycle();
         };
+        
         img.src = newBannerUrl;
     }
 
     function updateBioStyle(currentUrl) {
-        elements.bio?.classList.toggle('euthymia-bio-style', euthymiaBannerUrls.has(currentUrl));
-        
-        elements.bannerContainer?.classList.toggle('euthymia-bio-style',
-        euthymiaBannerUrls.has(currentUrl));
+        const isEuthymia = euthymiaBannerUrls.has(currentUrl);
+        elements.bio?.classList.toggle('euthymia-bio-style', isEuthymia);
+        elements.bannerContainer?.classList.toggle('euthymia-bio-style', isEuthymia);
     }
 
     function updateMakotoMemoryTag(currentUrl) {
@@ -665,63 +708,66 @@ let pauseStartTime = null;
             makotoMemoryTag.classList.remove('hide');
         } else {
             makotoMemoryTag.classList.add('hide');
-            const handler = () => {
+            
+            const handleAnimationEnd = () => {
                 if (makotoMemoryTag.classList.contains('hide')) {
                     makotoMemoryTag.style.display = 'none';
                     makotoMemoryTag.classList.remove('hide');
                 }
-                makotoMemoryTag.removeEventListener('animationend', handler);
+                makotoMemoryTag.removeEventListener('animationend', handleAnimationEnd);
             };
-            makotoMemoryTag.addEventListener('animationend', handler);
+            
+            makotoMemoryTag.addEventListener('animationend', handleAnimationEnd);
         }
     }
 
     function handleVisibilityChange() {
-    if (document.hidden) {
-        clearTimers();
-        pauseStartTime = Date.now();
-    } else {
-        if (pauseStartTime && startTime) {
-            const pausedDuration = Date.now() - pauseStartTime;
-            startTime += pausedDuration;  
-            pauseStartTime = null;
+        if (document.hidden) {
+            clearTimers();
+            state.pauseStartTime = Date.now();
+        } else {
+            if (state.pauseStartTime && state.startTime) {
+                const pausedDuration = Date.now() - state.pauseStartTime;
+                state.startTime += pausedDuration;
+                state.pauseStartTime = null;
 
+                const elapsedTime = (Date.now() - state.startTime) / 1000;
+                const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
 
-            const elapsedTime = (Date.now() - startTime) / 1000;
-            let progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
-
-            if (progress >= 100) {
-
-
-                prepareBannerChange();
-                return;
-            } else {
-                setProgressStyles(progress, false);
-                if (elements.progressGif) elements.progressGif.classList.remove('hidden');
+                if (progress >= 100) {
+                    prepareBannerChange();
+                    return;
+                } else {
+                    setProgressStyles(progress, false);
+                    elements.progressGif?.classList.remove('hidden');
+                }
             }
+            
+            runProgressAnimation();
         }
-
-        runProgressAnimation();
     }
-}
 
     function initializeBanner() {
         if (bannerUrls.length === 0) {
             elements.bannerContainer.style.display = 'none';
             return;
         }
-        elements.bannerImg1.src = bannerUrls[currentBannerIndex];
+        
+        elements.bannerImg1.src = bannerUrls[state.currentBannerIndex];
+        
         elements.bannerImg1.onload = () => {
             elements.bannerImg1.classList.add('active');
             elements.bannerImg2.classList.remove('active');
             startProgressCycle();
         };
+        
         elements.bannerImg1.onerror = () => {
             elements.bannerImg2.classList.remove('active');
             startProgressCycle();
         };
-        updateBioStyle(bannerUrls[currentBannerIndex]);
-        updateMakotoMemoryTag(bannerUrls[currentBannerIndex]);
+        
+        updateBioStyle(bannerUrls[state.currentBannerIndex]);
+        updateMakotoMemoryTag(bannerUrls[state.currentBannerIndex]);
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
