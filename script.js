@@ -885,10 +885,12 @@ const state = {
   heartbeatInterval: null,
   initTimeout: null,
   renderDebounceTimer: null,
+  fallbackTimeout: null,
   backoff: 1000,
   currentSessionID: null,
   lastConnectAttempt: 0,
-  lastPresenceHash: null
+  lastPresenceHash: null,
+  hasEverConnected: false
 };
 
 // Cache management
@@ -913,7 +915,16 @@ const CONFIG = {
   INIT_TIMEOUT: 10000,
   REVALIDATE_TIMEOUT: 8000,
   RENDER_DEBOUNCE: 150,
-  AVATAR_SIZE: 128
+  AVATAR_SIZE: 128,
+  FALLBACK_TIMEOUT: 15000 // 15 sec
+};
+
+// Placeholder config
+const PLACEHOLDER = {
+  username: 'Kyoや',
+  avatar: null,
+  status: 'offline',
+  activity: null // or { text: 'Custom status', icon: 'fas fa-circle' }
 };
 
 // Cache utilities
@@ -1117,6 +1128,45 @@ function renderPresence(data) {
   }, CONFIG.RENDER_DEBOUNCE);
 }
 
+// Render placeholder fallback
+function renderPlaceholder() {
+  if (!elements.presence) {
+    elements.presence = document.getElementById('discord-presence');
+  }
+  if (!elements.presence) return;
+  
+  const avatarUrl = PLACEHOLDER.avatar 
+    ? safeAvatarUrl(DISCORD_USER_ID, PLACEHOLDER.avatar, 64)
+    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+  
+  let activityText = '';
+  if (PLACEHOLDER.activity) {
+    activityText = `<i class="${PLACEHOLDER.activity.icon}"></i> ${PLACEHOLDER.activity.text}`;
+  } else {
+    activityText = '<i class="fab fa-discord"></i> Offline';
+  }
+  
+  elements.presence.classList.add('fade-out');
+  
+  setTimeout(() => {
+    elements.presence.innerHTML = `
+      <div class="discord-status">
+        <img src="${avatarUrl}"
+             alt="Discord Avatar" 
+             class="discord-avatar" 
+             loading="lazy"/>
+        <div class="discord-info">
+          <div class="discord-username">${PLACEHOLDER.username}</div>
+          <div class="discord-activity">
+            <span class="activity-text">${activityText}</span>
+          </div>
+        </div>
+        <div class="status-indicator status-${PLACEHOLDER.status}"></div>
+      </div>`;
+    elements.presence.classList.remove('fade-out');
+  }, CONFIG.RENDER_DEBOUNCE);
+}
+
 // Cleanup utilities
 function clearTimers() {
   if (state.reconnectTimer) {
@@ -1134,6 +1184,10 @@ function clearTimers() {
   if (state.renderDebounceTimer) {
     cancelAnimationFrame(state.renderDebounceTimer);
     state.renderDebounceTimer = null;
+  }
+  if (state.fallbackTimeout) {
+    clearTimeout(state.fallbackTimeout);
+    state.fallbackTimeout = null;
   }
 }
 
@@ -1165,6 +1219,16 @@ async function connectLanyard() {
   
   state.isConnecting = true;
   elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>';
+
+  // Fallback timer -
+  if (!state.hasEverConnected && !cache.data) {
+    state.fallbackTimeout = setTimeout(() => {
+      if (!state.hasEverConnected && !cache.data) {
+        console.warn('Lanyard connection timeout - showing placeholder');
+        renderPlaceholder();
+      }
+    }, CONFIG.FALLBACK_TIMEOUT);
+  }
 
   // Try to use cached data first
   const cached = getCache();
@@ -1216,7 +1280,14 @@ async function connectLanyard() {
     
     state.isConnected = true;
     state.isConnecting = false;
+    state.hasEverConnected = true;
     state.backoff = 1000;
+    
+    // Clear fallback timeout - başarıyla bağlandık
+    if (state.fallbackTimeout) {
+      clearTimeout(state.fallbackTimeout);
+      state.fallbackTimeout = null;
+    }
     
     try {
       ws.send(JSON.stringify({ 
