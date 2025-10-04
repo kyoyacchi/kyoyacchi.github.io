@@ -1415,36 +1415,60 @@ document.addEventListener('visibilitychange', () => {
 });
 document.addEventListener("visibilitychange", toggleNamaeVisibility);
 function WritingAnimate() {
-    const heroTitle = document.querySelector('.namae');
-    const titleText = heroTitle.textContent;
-    heroTitle.textContent = '';
+  const heroTitle = document.querySelector('.namae');
+  if (!heroTitle) return;
+  
+  const titleText = heroTitle.textContent;
+  heroTitle.textContent = '';
+  
+  const CONFIG = {
+    initialDelay: 1000,
+    minTypeSpeed: 100,
+    maxTypeSpeed: 200,
+    cursorBlinkDuration: 75,
+    glowDuration: 100,
+    glowIntense: '0 0 10px #9945ff, 0 0 20px #9945ff',
+    glowNormal: '0 0 5px #9945ff'
+  };
+  
+  let currentIndex = 0;
+  let isTyping = false;
+  
+  function typeCharacter() {
+    if (currentIndex >= titleText.length || isTyping) return;
     
-    let i = 0;
-    function typeTitle() {
-        if (i < titleText.length) {
-            heroTitle.textContent += titleText.charAt(i);
-            
-            
-            heroTitle.style.textShadow = '0 0 10px #9945ff, 0 0 20px #9945ff';
-            setTimeout(() => {
-                heroTitle.style.textShadow = '0 0 5px #9945ff';
-            }, 100);
-            
-            
-            heroTitle.textContent += '|';
-            setTimeout(() => {
-                heroTitle.textContent = heroTitle.textContent.slice(0, -1);
-            }, 75);
-            
-            i++;
-            
-            const speed = Math.random() * 100 + 100;
-            setTimeout(typeTitle, speed);
-        }
-    }
+    isTyping = true;
     
-    setTimeout(typeTitle, 1000);
+    // Add next character
+    const nextChar = titleText.charAt(currentIndex);
+    heroTitle.textContent += nextChar;
+    
+    // Glow effect
+    heroTitle.style.textShadow = CONFIG.glowIntense;
+    setTimeout(() => {
+      heroTitle.style.textShadow = CONFIG.glowNormal;
+    }, CONFIG.glowDuration);
+    
+    // Cursor blink effect
+    heroTitle.textContent += '|';
+    setTimeout(() => {
+      heroTitle.textContent = heroTitle.textContent.slice(0, -1);
+      currentIndex++;
+      isTyping = false;
+      
+      // Continue typing if not finished
+      if (currentIndex < titleText.length) {
+        const speed = Math.random() * CONFIG.maxTypeSpeed + CONFIG.minTypeSpeed;
+        setTimeout(typeCharacter, speed);
+      }
+    }, CONFIG.cursorBlinkDuration);
+  }
+  
+  // Start animation after initial delay
+  setTimeout(typeCharacter, CONFIG.initialDelay);
 }
+
+
 
 function random(min, max) {
     return Math.random() * (max - min) + min;
