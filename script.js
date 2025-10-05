@@ -1119,7 +1119,7 @@ function renderPresence(data) {
   const user = data.discord_user;
   const status = data.discord_status || 'offline';
   const activities = Array.isArray(data.activities) ? data.activities : [];
-  const displayName = user.global_name || user.username || 'Unknown';
+  const displayName = user.global_name || user.username || 'Kyo';
   
   setAvatar(user.avatar);
 
@@ -1421,7 +1421,7 @@ async function connectLanyard() {
   };
 
   ws.onerror = (err) => {
-    console.error('WS error:', err);
+   // console.error('WS error:', err);
     if (state.currentSessionID !== sessionID) return;
     
     state.isConnected = false;
