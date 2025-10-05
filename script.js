@@ -975,12 +975,12 @@ const CONFIG = {
   FALLBACK_TIMEOUT: 15000 // 15 sec
 };
 
-// Placeholder config
+// Placeholder config 
 const PLACEHOLDER = {
-  username: 'Kyoや',
-  avatar: null,
+  username: 'Kyo',
+  avatar: null, 
   status: 'offline',
-  activity: null // or { text: 'Custom status', icon: 'fas fa-circle' }
+  activity: null // { text: 'Custom status', icon: 'fas fa-circle' }
 };
 
 // Cache utilities
@@ -1276,11 +1276,13 @@ async function connectLanyard() {
   state.isConnecting = true;
   elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>';
 
-  // Fallback timer -
+  // Fallback timer
   if (!state.hasEverConnected && !cache.data) {
     state.fallbackTimeout = setTimeout(() => {
       if (!state.hasEverConnected && !cache.data) {
         console.warn('Lanyard connection timeout - showing placeholder');
+        state.isConnecting = false;
+        state.isConnected = false;
         renderPlaceholder();
       }
     }, CONFIG.FALLBACK_TIMEOUT);
@@ -1421,6 +1423,16 @@ async function connectLanyard() {
       elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connection failed, retrying...</div>';
     }
     
+    // Trigger fallback if we've never connected
+    if (!state.hasEverConnected && !cache.data) {
+      state.fallbackTimeout = setTimeout(() => {
+        if (!state.hasEverConnected && !cache.data) {
+          console.warn('Multiple failures - showing placeholder');
+          renderPlaceholder();
+        }
+      }, 5000); // 5 saniye daha bekle sonra placeholder göster
+    }
+    
     scheduleReconnect();
   };
 
@@ -1456,8 +1468,23 @@ function scheduleReconnect() {
 
 // Event listeners
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && !state.isConnected && !state.isConnecting) {
-    connectLanyard();
+  if (document.hidden) {
+    // Tab hidden - cleanup timers but keep WebSocket if connected
+    if (state.fallbackTimeout) {
+      clearTimeout(state.fallbackTimeout);
+      state.fallbackTimeout = null;
+    }
+  } else {
+    // Tab visible again
+    if (!state.isConnected && !state.isConnecting) {
+      // Only reconnect if we're truly disconnected
+      const cached = getCache();
+      if (cached) {
+        // We have cache, render it immediately
+        debouncedRenderPresence(cached);
+      }
+      connectLanyard();
+    }
   }
 });
 
