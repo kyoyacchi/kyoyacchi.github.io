@@ -1854,13 +1854,14 @@ function initializeCollectionSlider() {
   function openModal(index) {
     elements.modal.style.display = 'flex';
     elements.modal.classList.add('fade-in');
+    document.body.style.overflow = 'hidden'
     goToSlide(index);
     stopAutoplay();
   }
 
   function closeModal() {
     elements.modal.classList.add('fade-out');
-    
+    document.body.style.overflow = ''
     setTimeout(() => {
       elements.modal.style.display = 'none';
       elements.modal.classList.remove('fade-in', 'fade-out');
