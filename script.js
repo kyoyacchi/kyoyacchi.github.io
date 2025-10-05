@@ -972,13 +972,13 @@ const CONFIG = {
   REVALIDATE_TIMEOUT: 8000,
   RENDER_DEBOUNCE: 150,
   AVATAR_SIZE: 128,
-  FALLBACK_TIMEOUT: 15000 // 15 sec
+  FALLBACK_TIMEOUT: 15000 // 15 saniye sonra placeholder göster
 };
 
 // Placeholder config 
 const PLACEHOLDER = {
   username: 'Kyo',
-  avatar: null, 
+  avatar: null, // null ise default Discord avatar
   status: 'offline',
   activity: null // { text: 'Custom status', icon: 'fas fa-circle' }
 };
@@ -1104,10 +1104,16 @@ function debouncedRenderPresence(data) {
 }
 
 function renderPresence(data) {
-  if (!data?.discord_user) return;
+  if (!data?.discord_user) {
+    console.warn('renderPresence: No discord_user data');
+    return;
+  }
   
   const currentHash = getPresenceHash(data);
-  if (currentHash === state.lastPresenceHash) return;
+  if (currentHash === state.lastPresenceHash) {
+    console.log('renderPresence: Hash unchanged, skipping render');
+    return;
+  }
   state.lastPresenceHash = currentHash;
   
   const user = data.discord_user;
@@ -1274,9 +1280,10 @@ async function connectLanyard() {
   closeWebSocket();
   
   state.isConnecting = true;
+  state.lastPresenceHash = null; // Reset hash to force render
   elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>';
 
-  // Fallback timer
+  // Fallback timer - eğer X saniye içinde veri gelmezse placeholder göster
   if (!state.hasEverConnected && !cache.data) {
     state.fallbackTimeout = setTimeout(() => {
       if (!state.hasEverConnected && !cache.data) {
@@ -1306,6 +1313,8 @@ async function connectLanyard() {
       if (json?.success && json.data) {
         setCache(json.data);
         debouncedRenderPresence(json.data);
+        // REST başarılı, "Connecting..." text'ini kaldır
+        state.isConnecting = false;
       } else {
         throw new Error('Invalid API response');
       }
@@ -1316,6 +1325,8 @@ async function connectLanyard() {
     }
   } else {
     debouncedRenderPresence(cached);
+    // Cache var, "Connecting..." text'ini kaldır
+    state.isConnecting = false;
   }
 
   // Create WebSocket
