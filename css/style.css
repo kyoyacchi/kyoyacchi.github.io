@@ -321,8 +321,8 @@ body::before {
 .banner {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 500px;
+    aspect-ratio: 3 / 1;
+    max-height: 300px;
     height: auto;
     overflow: hidden;
     border-radius: var(--border-radius);
