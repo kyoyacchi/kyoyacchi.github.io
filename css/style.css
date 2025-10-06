@@ -322,7 +322,7 @@ body::before {
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 1;
-    max-height: 300px;
+    max-height: 250px;
     height: auto;
     overflow: hidden;
     border-radius: var(--border-radius);
@@ -1743,11 +1743,7 @@ footer { font-size: 0.9rem; padding: 35px 20px; gap: 12px; }
   body {
         background-attachment: scroll;
     }
-    
-    .banner {
- aspect-ratio: 16 / 9; 
- max-height: 500px;
-}
+  
 
         .banner-img {
       object-position: 55% center;
