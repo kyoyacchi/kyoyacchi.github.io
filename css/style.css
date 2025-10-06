@@ -321,8 +321,8 @@ body::before {
 .banner {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 1;
-    max-height: 300px;
+    aspect-ratio: 16 / 9;
+    max-height: 500px;
     height: auto;
     overflow: hidden;
     border-radius: var(--border-radius);
@@ -347,6 +347,12 @@ body::before {
     outline: none !important;
 }
 
+@media (min-width: 769px) {
+    .banner {
+        aspect-ratio: 3 / 1;
+        max-height: 300px;
+    }
+}
 .banner:hover {
     box-shadow: 0 0 30px var(--raiden-glow), 0 0 15px var(--secondary);
     filter: brightness(1.05);
