@@ -322,6 +322,7 @@ body::before {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
+    max-height: 500px;
     height: auto;
     overflow: hidden;
     border-radius: var(--border-radius);
