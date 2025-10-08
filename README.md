@@ -32,6 +32,8 @@ _This website is a personal project and is not affiliated with HoYoverse. Genshi
 
 <div align="center">
 
+---
+
 **⚡ 雷電将軍 ⚡**
 
 </div>
