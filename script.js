@@ -607,7 +607,6 @@ function initializeDynamicBanner() {
         'https://files.catbox.moe/4nz27h.jpg'
     ]);
 
-    // State management
     const state = {
         currentBannerIndex: 0,
         progressIntervalId: null,
@@ -617,7 +616,19 @@ function initializeDynamicBanner() {
         shuffledIndexes: shuffleArray([...Array(bannerUrls.length).keys()]),
         currentShuffledIndex: 0,
         startTime: null,
-        pauseStartTime: null
+        pauseStartTime: null,
+        isPaused: false,
+        touchStartTime: null,
+        isDestroyed: false
+    };
+
+    // Store event handlers for cleanup
+    const eventHandlers = {
+        mouseenter: null,
+        mouseleave: null,
+        touchstart: null,
+        touchend: null,
+        visibilitychange: null
     };
 
     if (!validateElements()) return;
@@ -660,6 +671,8 @@ function initializeDynamicBanner() {
     }
 
     function setProgressStyles(progress, useTransition = true) {
+        if (state.isDestroyed) return;
+        
         if (elements.progressBar) {
             elements.progressBar.style.transition = useTransition 
                 ? `width ${config.progressUpdateFrequency}s linear` 
@@ -682,11 +695,13 @@ function initializeDynamicBanner() {
     }
 
     function runProgressAnimation() {
+        if (state.isDestroyed) return;
+        
         clearTimers();
         elements.progressGif?.classList.remove('hidden');
         
         state.progressIntervalId = setInterval(() => {
-            if (state.isLoadingNext) return;
+            if (state.isDestroyed || state.isLoadingNext || state.isPaused) return;
             
             const elapsedTime = (Date.now() - state.startTime) / 1000;
             const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
@@ -697,7 +712,9 @@ function initializeDynamicBanner() {
                 setProgressStyles(100, false);
                 
                 state.nextChangeTimeoutId = setTimeout(() => {
-                    if (!document.hidden) prepareBannerChange();
+                    if (!state.isDestroyed && !document.hidden && !state.isPaused) {
+                        prepareBannerChange();
+                    }
                     state.nextChangeTimeoutId = null;
                 }, config.renderDelay * 1000);
             } else {
@@ -707,15 +724,19 @@ function initializeDynamicBanner() {
     }
 
     function startProgressCycle() {
+        if (state.isDestroyed) return;
+        
         clearTimers();
         state.isLoadingNext = false;
         resetProgress();
         state.startTime = Date.now();
-        setTimeout(runProgressAnimation, 50);
+        setTimeout(() => {
+            if (!state.isDestroyed) runProgressAnimation();
+        }, 50);
     }
 
     function prepareBannerChange() {
-        if (state.isLoadingNext) return;
+        if (state.isLoadingNext || state.isDestroyed) return;
         state.isLoadingNext = true;
         
         const newIndex = getNextIndex();
@@ -725,7 +746,12 @@ function initializeDynamicBanner() {
         
         const img = new Image();
         
-        img.onload = () => {
+        const onload = () => {
+            if (state.isDestroyed) {
+                cleanup();
+                return;
+            }
+            
             state.currentBannerIndex = newIndex;
             resetProgress();
             
@@ -739,26 +765,43 @@ function initializeDynamicBanner() {
             updateMakotoMemoryTag(newBannerUrl);
             
             setTimeout(() => {
-                state.isLoadingNext = false;
-                startProgressCycle();
+                if (!state.isDestroyed) {
+                    state.isLoadingNext = false;
+                    startProgressCycle();
+                }
+                cleanup();
             }, config.fadeTransitionDuration * 1000);
         };
         
-        img.onerror = () => {
-            state.isLoadingNext = false;
-            startProgressCycle();
+        const onerror = () => {
+            if (!state.isDestroyed) {
+                state.isLoadingNext = false;
+                startProgressCycle();
+            }
+            cleanup();
         };
         
+        const cleanup = () => {
+            img.onload = null;
+            img.onerror = null;
+        };
+        
+        img.onload = onload;
+        img.onerror = onerror;
         img.src = newBannerUrl;
     }
 
     function updateBioStyle(currentUrl) {
+        if (state.isDestroyed) return;
+        
         const isEuthymia = euthymiaBannerUrls.has(currentUrl);
         elements.bio?.classList.toggle('euthymia-bio-style', isEuthymia);
         elements.bannerContainer?.classList.toggle('euthymia-bio-style', isEuthymia);
     }
 
     function updateMakotoMemoryTag(currentUrl) {
+        if (state.isDestroyed) return;
+        
         if (currentUrl === makotoBannerUrl) {
             makotoMemoryTag.style.display = 'block';
             makotoMemoryTag.classList.remove('hide');
@@ -778,6 +821,8 @@ function initializeDynamicBanner() {
     }
 
     function handleVisibilityChange() {
+        if (state.isDestroyed) return;
+        
         if (document.hidden) {
             clearTimers();
             state.pauseStartTime = Date.now();
@@ -803,6 +848,68 @@ function initializeDynamicBanner() {
         }
     }
 
+    function pauseAnimation() {
+        if (state.isDestroyed) return;
+        
+        state.isPaused = true;
+        state.pauseStartTime = Date.now();
+        
+        const activeBanner = state.isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
+        if (activeBanner.src.endsWith('.gif')) {
+            activeBanner.style.animationPlayState = 'paused';
+        }
+    }
+
+    function resumeAnimation() {
+        if (state.isDestroyed) return;
+        
+        state.isPaused = false;
+        
+        const activeBanner = state.isBanner1Active ? elements.bannerImg1 : elements.bannerImg2;
+        if (activeBanner.src.endsWith('.gif')) {
+            activeBanner.style.animationPlayState = 'running';
+        }
+        
+        if (state.pauseStartTime && state.startTime) {
+            const pausedDuration = Date.now() - state.pauseStartTime;
+            state.startTime += pausedDuration;
+            state.pauseStartTime = null;
+
+            const elapsedTime = (Date.now() - state.startTime) / 1000;
+            const progress = Math.min((elapsedTime / config.changeInterval) * 100, 100);
+
+            if (progress >= 100) {
+                prepareBannerChange();
+                return;
+            } else {
+                setProgressStyles(progress, false);
+            }
+        }
+        
+        if (!state.progressIntervalId && !state.isLoadingNext) {
+            runProgressAnimation();
+        }
+    }
+
+    function handleMouseEnter() {
+        pauseAnimation();
+    }
+
+    function handleMouseLeave() {
+        resumeAnimation();
+    }
+
+    function handleTouchStart(e) {
+        state.touchStartTime = Date.now();
+        pauseAnimation();
+    }
+
+    function handleTouchEnd(e) {
+        setTimeout(() => {
+            resumeAnimation();
+        }, 100);
+    }
+
     function initializeBanner() {
         if (bannerUrls.length === 0) {
             elements.bannerContainer.style.display = 'none';
@@ -811,23 +918,70 @@ function initializeDynamicBanner() {
         
         elements.bannerImg1.src = bannerUrls[state.currentBannerIndex];
         
-        elements.bannerImg1.onload = () => {
-            elements.bannerImg1.classList.add('active');
-            elements.bannerImg2.classList.remove('active');
-            startProgressCycle();
+        const onload = () => {
+            if (!state.isDestroyed) {
+                elements.bannerImg1.classList.add('active');
+                elements.bannerImg2.classList.remove('active');
+                startProgressCycle();
+            }
+            elements.bannerImg1.onload = null;
         };
         
-        elements.bannerImg1.onerror = () => {
-            elements.bannerImg2.classList.remove('active');
-            startProgressCycle();
+        const onerror = () => {
+            if (!state.isDestroyed) {
+                elements.bannerImg2.classList.remove('active');
+                startProgressCycle();
+            }
+            elements.bannerImg1.onerror = null;
         };
+        
+        elements.bannerImg1.onload = onload;
+        elements.bannerImg1.onerror = onerror;
         
         updateBioStyle(bannerUrls[state.currentBannerIndex]);
         updateMakotoMemoryTag(bannerUrls[state.currentBannerIndex]);
     }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Store handlers for cleanup
+    eventHandlers.mouseenter = handleMouseEnter;
+    eventHandlers.mouseleave = handleMouseLeave;
+    eventHandlers.touchstart = handleTouchStart;
+    eventHandlers.touchend = handleTouchEnd;
+    eventHandlers.visibilitychange = handleVisibilityChange;
+
+    // Add event listeners
+    elements.bannerContainer.addEventListener('mouseenter', eventHandlers.mouseenter);
+    elements.bannerContainer.addEventListener('mouseleave', eventHandlers.mouseleave);
+    elements.bannerContainer.addEventListener('touchstart', eventHandlers.touchstart, { passive: true });
+    elements.bannerContainer.addEventListener('touchend', eventHandlers.touchend, { passive: true });
+    document.addEventListener('visibilitychange', eventHandlers.visibilitychange);
+    
     initializeBanner();
+
+    // Cleanup function (optional - call this if you ever need to destroy the banner)
+    return function destroy() {
+        state.isDestroyed = true;
+        clearTimers();
+        
+        // Remove all event listeners
+        if (elements.bannerContainer) {
+            elements.bannerContainer.removeEventListener('mouseenter', eventHandlers.mouseenter);
+            elements.bannerContainer.removeEventListener('mouseleave', eventHandlers.mouseleave);
+            elements.bannerContainer.removeEventListener('touchstart', eventHandlers.touchstart);
+            elements.bannerContainer.removeEventListener('touchend', eventHandlers.touchend);
+        }
+        document.removeEventListener('visibilitychange', eventHandlers.visibilitychange);
+        
+        // Clear image handlers
+        if (elements.bannerImg1) {
+            elements.bannerImg1.onload = null;
+            elements.bannerImg1.onerror = null;
+        }
+        if (elements.bannerImg2) {
+            elements.bannerImg2.onload = null;
+            elements.bannerImg2.onerror = null;
+        }
+    };
 }
 
 function toggleNamaeVisibility() {
