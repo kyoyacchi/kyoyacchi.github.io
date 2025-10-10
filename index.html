@@ -217,16 +217,20 @@
     </section>
   </footer>
 
-  <!-- Collection Modal -->
+<!-- Collection Modal -->
   <div class="collection-modal" id="collectionModal" role="dialog" aria-label="Full size collection image">
-    <button class="collection-close-btn" id="collectionCloseModal" aria-label="Close modal">
-      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-    </button>
-    <img id="collectionModalImg" src="" alt="Full size collection item">
-    <a id="collectionModalInstaLink" class="collection-insta-link" href="#" target="_blank" rel="noopener noreferrer">
-      <i class="fab fa-instagram" aria-hidden="true"></i> 
-      <span id="collectionModalInstaText"></span>
-    </a>
+    <!-- ↓↓↓ NEW WRAPPER START ↓↓↓ -->
+    <div class="modal-content-wrapper">
+      <button class="collection-close-btn" id="collectionCloseModal" aria-label="Close modal">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <img id="collectionModalImg" src="" alt="Full size collection item">
+      <a id="collectionModalInstaLink" class="collection-insta-link" href="#" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-instagram" aria-hidden="true"></i> 
+        <span id="collectionModalInstaText"></span>
+      </a>
+    </div>
+    <!-- ↑↑↑ NEW WRAPPER END ↑↑↑ -->
     <div class="collection-modal-indicators" id="collectionModalIndicators" role="tablist" aria-label="Modal slide indicators"></div>
     <button id="collectionModalPrev" class="modal-nav-btn collection-modal-prev" aria-label="Previous image">
       <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
