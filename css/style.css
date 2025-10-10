@@ -2772,11 +2772,11 @@ html {
   }
 
   .collection-modal-prev {
-    left: 20px;
+    left: 40px;
   }
 
   .collection-modal-next {
-    right: 20px;
+    right: 40px;
   }
 
   .collection-close-btn {
