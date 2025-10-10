@@ -2732,10 +2732,19 @@ html {
   .collection-slider {
     max-width: 800px;
   }
+  
+  /* ↓↓↓ YENİ EKLENEN OK HİZALAMA KODU ↓↓↓ */
+  .collection-nav-prev {
+    left: 40px; /* Okları içeri taşır */
+  }
+  .collection-nav-next {
+    right: 40px; /* Okları içeri taşır */
+  }
+  /* ↑↑↑ YENİ EKLENEN OK HİZALAMA KODU ↑↑↑ */
 
-  /* Wrapper'ın SADECE masaüstü için olan stili */
+  /* New wrapper for modal content */
   .modal-content-wrapper {
-    display: flex; /* 'contents' özelliğini ezer */
+    display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
@@ -2760,8 +2769,8 @@ html {
   /* Modal Close Button Final Position & Size */
   .collection-close-btn {
     position: absolute;
-    top: -75px !important;
-    right: -25px !important;
+    top: -75px;
+    right: -25px;
     z-index: 10;
     font-size: 28px;
     padding: 15px;
