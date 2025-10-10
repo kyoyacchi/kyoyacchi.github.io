@@ -2740,6 +2740,7 @@ html {
 
   .collection-slider {
     max-width: 800px;
+    width: 95%;
   }
 
   .modal-content-wrapper {
