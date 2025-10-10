@@ -2735,10 +2735,10 @@ html {
   
   /* ↓↓↓ YENİ EKLENEN OK HİZALAMA KODU ↓↓↓ */
   .collection-nav-prev {
-    left: 40px; /* Okları içeri taşır */
+    left: 15vw;
   }
   .collection-nav-next {
-    right: 40px; /* Okları içeri taşır */
+    right: 15vw;
   }
   /* ↑↑↑ YENİ EKLENEN OK HİZALAMA KODU ↑↑↑ */
 
