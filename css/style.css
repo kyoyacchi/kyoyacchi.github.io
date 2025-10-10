@@ -2380,14 +2380,16 @@ html {
 }
 
 .collection-slide img {
-    width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
     display: block;
     cursor: pointer;
     transition: filter 0.3s ease;
+    max-width: 100%;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
 }
-
 .collection-slide img:hover {
     filter: brightness(1.1) saturate(1.1);
 }
@@ -2703,8 +2705,21 @@ html {
 
 /* Mobil Modal Hizalama Düzeltmesi */
 .modal-content-wrapper {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 90vw;
+  max-width: 95%;
+  gap: 10px;
 }
+
+
+
+.collection-slider {
+    max-width: 500px;
+}
+
 @media (min-width: 769px) {
   .banner,
   .profile-content {
@@ -2726,26 +2741,15 @@ html {
   }
 
   .collection-slider {
-    max-width: 800px;
-  }
-  
-  .collection-nav-prev {
-    left: 10px;
-  }
-  .collection-nav-next {
-    right: 10px;
+    max-width: 500px;
   }
 
   .modal-content-wrapper {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 90vw;
+     width: auto;
+     max-width: 90vw;
   }
   
-/*  .collection-modal img {
+  .collection-modal img {
     max-width: 100%;
     max-height: 85vh;
   }
@@ -2755,7 +2759,7 @@ html {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 20;
+    z-index: 1001;
   }
 
   .collection-modal-prev {
@@ -2767,11 +2771,11 @@ html {
   }
 
   .collection-close-btn {
-    position: absolute;
-    top: -75px;
-    right: -25px;
-    z-index: 10;
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 1002;
     font-size: 28px;
     padding: 15px;
-  }*/
+  }
 }
