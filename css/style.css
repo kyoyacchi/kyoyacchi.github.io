@@ -2485,7 +2485,7 @@ html {
 
 /* Collection Modal */
 .collection-modal {
-    
+ display: none;   
     position: fixed;
     inset: 0;
     background: rgba(16, 0, 43, 0.9);
