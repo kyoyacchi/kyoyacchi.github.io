@@ -2706,7 +2706,6 @@ html {
   display: contents;
 }
 @media (min-width: 769px) {
-  /* Banner and Profile Content Alignment */
   .banner,
   .profile-content {
     max-width: 850px;
@@ -2718,17 +2717,14 @@ html {
     margin-top: -110px;
   }
 
-  /* Bio Element Width */
   .bio {
     max-width: 550px;
   }
 
-  /* Handle Text Font Size */
   .handle {
     font-size: 1.1rem;
   }
 
-  /* Collection Slider Width */
   .collection-slider {
     max-width: 800px;
   }
@@ -2746,27 +2742,30 @@ html {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    width: 85vw;
+    width: 90vw;
   }
   
-  /* Modal Image */
-  .collection-modal img {
+/*  .collection-modal img {
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 85vh;
   }
 
-  /* Modal Buttons - wrapper içinde kalıyor */
-  .collection-modal-prev {
+  .collection-modal-prev,
+  .collection-modal-next {
     position: absolute;
-    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+  }
+
+  .collection-modal-prev {
+    left: 20px;
   }
 
   .collection-modal-next {
-    position: absolute;
-    right: 10px;
+    right: 20px;
   }
 
-  /* Modal Close Button */
   .collection-close-btn {
     position: absolute;
     top: -75px;
@@ -2774,6 +2773,5 @@ html {
     z-index: 10;
     font-size: 28px;
     padding: 15px;
-  }
+  }*/
 }
-
