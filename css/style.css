@@ -2746,7 +2746,7 @@ html {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    width: 80vw;
+    width: 85vw;
   }
   
   /* Modal Image */
@@ -2755,13 +2755,15 @@ html {
     max-height: 80vh;
   }
 
-  /* Modal Buttons - Wrapper'a göre konumlanır */
+  /* Modal Buttons - wrapper içinde kalıyor */
   .collection-modal-prev {
-    left: -50px;
+    position: absolute;
+    left: 10px;
   }
 
   .collection-modal-next {
-    right: -50px;
+    position: absolute;
+    right: 10px;
   }
 
   /* Modal Close Button */
@@ -2774,3 +2776,4 @@ html {
     padding: 15px;
   }
 }
+
