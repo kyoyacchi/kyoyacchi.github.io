@@ -2700,3 +2700,66 @@ html {
         opacity: 1;
     }
 }
+
+@media (min-width: 769px) {
+  /* Banner and Profile Content Alignment */
+  .banner,
+  .profile-content {
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .profile-content {
+    margin-top: -110px;
+  }
+
+  /* Bio Element Width */
+  .bio {
+    max-width: 550px;
+  }
+
+  /* Handle Text Font Size */
+  .handle {
+    font-size: 1.1rem;
+  }
+
+  /* Collection Slider Width */
+  .collection-slider {
+    max-width: 800px;
+  }
+
+  /* New wrapper for modal content */
+  .modal-content-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Modal Image Size Constraint */
+  .collection-modal img {
+    max-width: 70vw;
+    max-height: 85vh;
+  }
+
+  /* Modal Buttons Positioning */
+  .collection-modal-prev {
+    left: 15vw;
+  }
+
+  .collection-modal-next {
+    right: 15vw;
+  }
+
+  /* Modal Close Button Final Position & Size */
+.collection-close-btn {
+    position: absolute !important;
+    top: -75px !important;
+    right: -25px !important;
+    z-index: 10;
+    font-size: 28px;
+    padding: 15px;
+}
+}
