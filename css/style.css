@@ -2733,45 +2733,44 @@ html {
     max-width: 800px;
   }
   
-  /* ↓↓↓ YENİ EKLENEN OK HİZALAMA KODU ↓↓↓ */
   .collection-nav-prev {
-    left: 15vw;
+    left: 10px;
   }
   .collection-nav-next {
-    right: 15vw;
+    right: 10px;
   }
-  /* ↑↑↑ YENİ EKLENEN OK HİZALAMA KODU ↑↑↑ */
 
-  /* New wrapper for modal content */
   .modal-content-wrapper {
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    width: 80vw;
   }
   
-  /* Modal Image Size Constraint */
+  /* Modal Image */
   .collection-modal img {
-    max-width: 70vw;
-    max-height: 85vh;
+    max-width: 100%;
+    max-height: 80vh;
   }
 
-  /* Modal Buttons Positioning */
+  /* Modal Buttons - Wrapper'a göre konumlanır */
   .collection-modal-prev {
-    left: 15vw;
+    left: -50px;
   }
 
   .collection-modal-next {
-    right: 15vw;
+    right: -50px;
   }
 
-  /* Modal Close Button Final Position & Size */
+  /* Modal Close Button */
   .collection-close-btn {
     position: absolute;
     top: -75px;
     right: -25px;
     z-index: 10;
     font-size: 28px;
+    padding: 15px;
   }
 }
