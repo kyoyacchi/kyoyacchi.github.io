@@ -2346,6 +2346,10 @@ html {
     border-radius: var(--border-radius);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.4s ease, animation-play-state 0.2s ease;
+    padding: 0; /* Tüm padding'i kaldır */
+    max-width: 100%; /* 800px veya 500px yerine tam genişlik */
+    width: 100%;
+    margin: 0 auto;
 }
 
 .collection-slider:hover {
@@ -2356,6 +2360,7 @@ html {
 .slider-rail {
     position: relative;
     height: auto;
+    padding: 0;
 }
 
 .collection-slide {
@@ -2366,8 +2371,8 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding-bottom: 20px;
+    gap: 0;
+    padding-bottom: 0;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
     visibility: hidden;
@@ -2385,10 +2390,11 @@ html {
     transition: filter 0.3s ease;
     max-width: 100%;
     max-height: 70vh;
-    width: auto;
+    width: 100%;
     height: auto;
-    margin: 0 auto;
+    margin: 0;
     object-fit: contain;
+    padding: 0;
 }
 .collection-slide img:hover {
     filter: brightness(1.1) saturate(1.1);
