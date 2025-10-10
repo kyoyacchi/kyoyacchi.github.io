@@ -2701,6 +2701,10 @@ html {
     }
 }
 
+/* Mobil Modal Hizalama Düzeltmesi */
+.modal-content-wrapper {
+  display: contents;
+}
 @media (min-width: 769px) {
   /* Banner and Profile Content Alignment */
   .banner,
@@ -2729,10 +2733,10 @@ html {
     max-width: 800px;
   }
 
-  /* New wrapper for modal content */
+  /* Wrapper'ın SADECE masaüstü için olan stili */
   .modal-content-wrapper {
+    display: flex; /* 'contents' özelliğini ezer */
     position: relative;
-    display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
@@ -2754,12 +2758,12 @@ html {
   }
 
   /* Modal Close Button Final Position & Size */
-.collection-close-btn {
-    position: absolute !important;
+  .collection-close-btn {
+    position: absolute;
     top: -75px !important;
     right: -25px !important;
     z-index: 10;
     font-size: 28px;
     padding: 15px;
-}
+  }
 }
