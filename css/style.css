@@ -2370,7 +2370,7 @@ html {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 0;
     padding-bottom: 0;
     opacity: 0;
@@ -2388,13 +2388,13 @@ html {
     display: block;
     cursor: pointer;
     transition: filter 0.3s ease;
-    max-width: 100%;
-    max-height: 70vh;
-    width: 100%;
+    width: 100% !important; /* ZORLA 100% */
     height: auto;
+    max-width: 100%;
+    max-height: none; /* 70vh'yi kaldır */
     margin: 0;
-    object-fit: contain;
     padding: 0;
+    object-fit: cover; /* contain yerine cover */
 }
 .collection-slide img:hover {
     filter: brightness(1.1) saturate(1.1);
@@ -2403,12 +2403,16 @@ html {
 .collection-insta-link {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center; /* Bunu ekle */
+    gap: 5px;
     font-size: 14px;
     color: var(--text-light);
     text-decoration: none;
     font-style: italic;
     transition: var(--transition);
+    margin-top: 3px;
+    width: 100%; /* Bunu da ekle */
+    text-align: center; /* Ekstra güvence */
 }
 
 .collection-insta-link:hover {
