@@ -1086,7 +1086,6 @@ function calculateStats() {
 }
 
 
-// State management
 const state = {
   ws: null,
   isConnected: false,
@@ -1113,7 +1112,8 @@ const cache = {
 // DOM elements cache
 const elements = {
   presence: null,
-  avatar: null
+  avatar: null,
+  avatarErrorHandlerSet: false
 };
 
 // Constants
@@ -1126,7 +1126,7 @@ const CONFIG = {
   REVALIDATE_TIMEOUT: 8000,
   RENDER_DEBOUNCE: 150,
   AVATAR_SIZE: 128,
-  FALLBACK_TIMEOUT: 15000 // 15 saniye sonra placeholder göster
+  FALLBACK_TIMEOUT: 8000 // Reduced from 15s to 8s
 };
 
 // Placeholder config 
@@ -1200,10 +1200,34 @@ function setAvatar(hash) {
   }
   if (!elements.avatar) return;
   
-  elements.avatar.onerror = () => {
-    elements.avatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-  };
+  // Set error handler only once
+  if (!elements.avatarErrorHandlerSet) {
+    elements.avatar.onerror = () => {
+      elements.avatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+    };
+    elements.avatarErrorHandlerSet = true;
+  }
+  
   elements.avatar.src = safeAvatarUrl(DISCORD_USER_ID, hash);
+}
+
+// Activity normalization for comparison
+function normalizeActivities(activities) {
+  if (!Array.isArray(activities)) return [];
+  
+  return activities
+    .filter(a => a && a.type !== 4)
+    .map(a => ({
+      name: a.name || '',
+      type: a.type,
+      details: a.details || '',
+      state: a.state || ''
+    }))
+    .sort((a, b) => {
+      // Sort by type first, then name for consistent comparison
+      if (a.type !== b.type) return a.type - b.type;
+      return (a.name || '').localeCompare(b.name || '');
+    });
 }
 
 // Presence comparison
@@ -1212,12 +1236,16 @@ function presenceChanged(oldP, newP) {
   if (oldP.discord_status !== newP.discord_status) return true;
   if ((oldP.discord_user?.avatar || '') !== (newP.discord_user?.avatar || '')) return true;
   
-  const oldActs = oldP.activities || [];
-  const newActs = newP.activities || [];
+  const oldActs = normalizeActivities(oldP.activities);
+  const newActs = normalizeActivities(newP.activities);
+  
   if (oldActs.length !== newActs.length) return true;
   
-  for (let i = 0; i < Math.min(oldActs.length, newActs.length); i++) {
-    if (oldActs[i].name !== newActs[i].name || oldActs[i].type !== newActs[i].type) {
+  for (let i = 0; i < oldActs.length; i++) {
+    const o = oldActs[i];
+    const n = newActs[i];
+    if (o.name !== n.name || o.type !== n.type || 
+        o.details !== n.details || o.state !== n.state) {
       return true;
     }
   }
@@ -1228,14 +1256,7 @@ function presenceChanged(oldP, newP) {
 function getPresenceHash(data) {
   if (!data?.discord_user) return null;
   
-  const activities = (data.activities || [])
-    .filter(a => a && a.type !== 4)
-    .map(a => ({
-      name: a.name,
-      type: a.type,
-      details: a.details,
-      state: a.state
-    }));
+  const activities = normalizeActivities(data.activities);
   
   return JSON.stringify({
     status: data.discord_status,
@@ -1437,7 +1458,7 @@ async function connectLanyard() {
   state.lastPresenceHash = null; // Reset hash to force render
   elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connecting...</div>';
 
-  // Fallback timer - eğer X saniye içinde veri gelmezse placeholder göster
+  // Fallback timer - reduced to 8 seconds
   if (!state.hasEverConnected && !cache.data) {
     state.fallbackTimeout = setTimeout(() => {
       if (!state.hasEverConnected && !cache.data) {
@@ -1467,19 +1488,15 @@ async function connectLanyard() {
       if (json?.success && json.data) {
         setCache(json.data);
         debouncedRenderPresence(json.data);
-        // REST başarılı, "Connecting..." text'ini kaldır
         state.isConnecting = false;
       } else {
         throw new Error('Invalid API response');
       }
     } catch (err) {
       console.warn('Lanyard REST fetch failed:', err);
-      // REST failed, but we'll continue with WebSocket
-      // If WebSocket also fails, reconnect will handle retry
     }
   } else {
     debouncedRenderPresence(cached);
-    // Cache var, "Connecting..." text'ini kaldır
     state.isConnecting = false;
   }
 
@@ -1506,7 +1523,6 @@ async function connectLanyard() {
     state.hasEverConnected = true;
     state.backoff = 1000;
     
-    // Clear fallback timeout - başarıyla bağlandık
     if (state.fallbackTimeout) {
       clearTimeout(state.fallbackTimeout);
       state.fallbackTimeout = null;
@@ -1544,7 +1560,6 @@ async function connectLanyard() {
     
     const { op, t, d } = parsed || {};
     
-    // Setup heartbeat
     if (op === 1 && d?.heartbeat_interval) {
       clearInterval(state.heartbeatInterval);
       state.heartbeatInterval = setInterval(() => {
@@ -1558,13 +1573,11 @@ async function connectLanyard() {
       }, d.heartbeat_interval);
     }
     
-    // Clear init timeout on INIT_STATE
     if (t === 'INIT_STATE') {
       clearTimeout(state.initTimeout);
       state.initTimeout = null;
     }
     
-    // Handle presence updates
     if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
       const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
       if (presence?.discord_user) {
@@ -1575,7 +1588,6 @@ async function connectLanyard() {
   };
 
   ws.onerror = (err) => {
-   // console.error('WS error:', err);
     if (state.currentSessionID !== sessionID) return;
     
     state.isConnected = false;
@@ -1583,19 +1595,17 @@ async function connectLanyard() {
     clearTimers();
     closeWebSocket();
     
-    // Show error state if no cached data
     if (!cache.data && elements.presence) {
       elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Connection failed, retrying...</div>';
     }
     
-    // Trigger fallback if we've never connected
     if (!state.hasEverConnected && !cache.data) {
       state.fallbackTimeout = setTimeout(() => {
         if (!state.hasEverConnected && !cache.data) {
           console.warn('Multiple failures - showing placeholder');
           renderPlaceholder();
         }
-      }, 5000); // 5 saniye daha bekle sonra placeholder göster
+      }, 5000);
     }
     
     scheduleReconnect();
@@ -1608,7 +1618,6 @@ async function connectLanyard() {
     state.isConnecting = false;
     clearTimers();
     
-    // Show error state if no cached data
     if (!cache.data && elements.presence) {
       elements.presence.innerHTML = '<div class="discord-status connecting"><i class="fab fa-discord"></i> Reconnecting...</div>';
     }
@@ -1634,18 +1643,14 @@ function scheduleReconnect() {
 // Event listeners
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
-    // Tab hidden - cleanup timers but keep WebSocket if connected
     if (state.fallbackTimeout) {
       clearTimeout(state.fallbackTimeout);
       state.fallbackTimeout = null;
     }
   } else {
-    // Tab visible again
     if (!state.isConnected && !state.isConnecting) {
-      // Only reconnect if we're truly disconnected
       const cached = getCache();
       if (cached) {
-        // We have cache, render it immediately
         debouncedRenderPresence(cached);
       }
       connectLanyard();
