@@ -1756,107 +1756,171 @@ function WritingAnimate() {
 }
 
 
+// Performance optimization
+let lastTriggerTime = 0;
+const THROTTLE_DELAY = 800;
+let activeEffects = 0;
+const MAX_ACTIVE_EFFECTS = 50;
+
 function random(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function createElement(tag, className, innerHTML) {
-    const element = document.createElement(tag);
+function createElement(tag, className) {
+    const element = document.createElement('div');
     if (className) element.className = className;
-    if (innerHTML) element.innerHTML = innerHTML;
     return element;
 }
 
+function safeRemove(element, delay) {
+    setTimeout(() => {
+        if (element && element.parentNode) {
+            element.parentNode.removeChild(element);
+            activeEffects--;
+        }
+    }, delay);
+}
 
-function triggerElectroShock(event) {
-    const element = event.currentTarget;
+function screenShake() {
+    document.body.classList.add('screen-shake');
+    setTimeout(() => {
+        document.body.classList.remove('screen-shake');
+    }, 500);
+}
+
+function createSlashEffect(centerX, centerY) {
+    const numSlashes = 3;
+    for (let i = 0; i < numSlashes; i++) {
+        setTimeout(() => {
+            const slash = createElement('div', 'slash-effect');
+            const angle = random(0, 360);
+            
+            slash.style.left = `${centerX - 150}px`;
+            slash.style.top = `${centerY}px`;
+            slash.style.transform = `rotate(${angle}deg)`;
+            slash.style.opacity = '0';
+            slash.style.transition = 'all 0.4s ease-out';
+            
+            document.body.appendChild(slash);
+            activeEffects++;
+            
+            setTimeout(() => {
+                slash.style.opacity = '1';
+                slash.style.width = '500px';
+            }, 10);
+            
+            safeRemove(slash, 400);
+        }, i * 150);
+    }
+}
+
+function createElectroRing(centerX, centerY) {
+    const ring = createElement('div', 'electro-ring');
     
+    ring.style.left = `${centerX}px`;
+    ring.style.top = `${centerY}px`;
+    ring.style.width = '0px';
+    ring.style.height = '0px';
+    ring.style.transform = 'translate(-50%, -50%)';
+    ring.style.opacity = '1';
+    ring.style.transition = 'all 0.8s ease-out';
     
-    element.style.transform = 'scale(1.2) rotate(360deg)';
-    element.style.filter = 'brightness(2) saturate(2)';
-    
-    
-    createSparkEffect(element);
-    
+    document.body.appendChild(ring);
+    activeEffects++;
     
     setTimeout(() => {
-        element.style.transform = '';
-        element.style.filter = '';
-    }, 600);
-
+        ring.style.width = '400px';
+        ring.style.height = '400px';
+        ring.style.opacity = '0';
+    }, 10);
     
-    for (let i = 0; i < 5; i++) {
+    safeRemove(ring, 800);
+}
+
+function createBranchingLightning() {
+    const numBolts = Math.min(8, Math.floor(window.innerWidth / 200));
+    
+    for (let i = 0; i < numBolts; i++) {
         setTimeout(() => {
             const bolt = createElement('div', 'lightning-bolt');
             const left = random(0, window.innerWidth);
-            const height = random(200, 500);
+            const height = random(150, 400);
             
             bolt.style.left = `${left}px`;
             bolt.style.height = `${height}px`;
             bolt.style.top = `${random(0, window.innerHeight - height)}px`;
-            bolt.style.animationDuration = '0.5s';
-            bolt.style.animationTimingFunction = 'steps(5)';
-            bolt.style.opacity = '1';
+            bolt.style.opacity = '0';
+            bolt.style.transition = 'opacity 0.05s ease-in';
             
             document.body.appendChild(bolt);
+            activeEffects++;
             
-            setTimeout(() => {
-                if (bolt.parentNode) {
-                    bolt.parentNode.removeChild(bolt);
-                }
-            }, 500);
-        }, i * 100);
+            setTimeout(() => bolt.style.opacity = '1', 10);
+            setTimeout(() => bolt.style.opacity = '0', 60);
+            setTimeout(() => bolt.style.opacity = '1', 120);
+            
+            const numBranches = Math.floor(random(2, 4));
+            for (let j = 0; j < numBranches; j++) {
+                const branch = createElement('div', 'lightning-branch');
+                const branchTop = random(height * 0.2, height * 0.8);
+                const branchLeft = left + (j % 2 === 0 ? random(10, 40) : random(-40, -10));
+                
+                branch.style.left = `${branchLeft}px`;
+                branch.style.top = `${parseInt(bolt.style.top) + branchTop}px`;
+                branch.style.transform = `rotate(${random(-45, 45)}deg)`;
+                branch.style.opacity = '0';
+                branch.style.transition = 'opacity 0.1s ease-in';
+                
+                document.body.appendChild(branch);
+                activeEffects++;
+                
+                setTimeout(() => branch.style.opacity = '1', 80);
+                safeRemove(branch, 250);
+            }
+            
+            safeRemove(bolt, 300);
+        }, i * 80);
     }
-    
-    
-    flashScreen();
 }
 
-
-function createSparkEffect(element) {
+function createEnhancedSparks(element) {
     const rect = element.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    for (let i = 0; i < 12; i++) {
+    const numSparks = 20;
+    for (let i = 0; i < numSparks; i++) {
         const spark = createElement('div', 'spark-particle');
         
-        spark.style.position = 'fixed';
         spark.style.left = `${centerX}px`;
         spark.style.top = `${centerY}px`;
-        spark.style.width = '4px';
-        spark.style.height = '4px';
-        spark.style.background = '#A663E8';  
+        spark.style.width = `${random(3, 6)}px`;
+        spark.style.height = `${random(3, 6)}px`;
+        spark.style.background = i % 3 === 0 ? '#E0AAFF' : (i % 3 === 1 ? '#C77DFF' : '#9945C7');
         spark.style.borderRadius = '50%';
-        spark.style.pointerEvents = 'none';
-        spark.style.zIndex = '10000';
-        spark.style.boxShadow = '0 0 10px #A663E8';
-        
-        const angle = (i / 12) * Math.PI * 2;
-        const distance = random(50, 150);
-        const endX = centerX + Math.cos(angle) * distance;
-        const endY = centerY + Math.sin(angle) * distance;
-        
-        spark.style.transform = `translate(-50%, -50%)`;
-        spark.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        spark.style.boxShadow = `0 0 ${random(8, 15)}px ${spark.style.background}`;
+        spark.style.transform = 'translate(-50%, -50%)';
+        spark.style.transition = `all ${random(0.6, 1.2)}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+        spark.style.opacity = '1';
         
         document.body.appendChild(spark);
+        activeEffects++;
+        
+        const angle = (i / numSparks) * Math.PI * 2;
+        const distance = random(80, 200);
+        const endX = centerX + Math.cos(angle) * distance;
+        const endY = centerY + Math.sin(angle) * distance;
         
         setTimeout(() => {
             spark.style.left = `${endX}px`;
             spark.style.top = `${endY}px`;
             spark.style.opacity = '0';
             spark.style.transform = 'translate(-50%, -50%) scale(0)';
-        }, 50);
+        }, 20);
         
-        setTimeout(() => {
-            if (spark.parentNode) {
-                spark.parentNode.removeChild(spark);
-            }
-        }, 850);
+        safeRemove(spark, 1200);
     }
 }
-
 
 function flashScreen() {
     const flash = createElement('div');
@@ -1865,28 +1929,58 @@ function flashScreen() {
     flash.style.left = '0';
     flash.style.width = '100%';
     flash.style.height = '100%';
-    flash.style.background = 'rgba(166, 99, 232, 0.3)';  // Based on electro-accent
+    flash.style.background = 'radial-gradient(circle, rgba(224, 170, 255, 0.4) 0%, rgba(153, 69, 199, 0.2) 50%, transparent 100%)';
     flash.style.pointerEvents = 'none';
     flash.style.zIndex = '9998';
     flash.style.opacity = '0';
-    flash.style.transition = 'opacity 0.2s ease';
+    flash.style.transition = 'opacity 0.1s ease';
     
     document.body.appendChild(flash);
+    activeEffects++;
     
-    setTimeout(() => {
-        flash.style.opacity = '1';
-    }, 10);
-    
-    setTimeout(() => {
-        flash.style.opacity = '0';
-    }, 200);
-    
-    setTimeout(() => {
-        if (flash.parentNode) {
-            flash.parentNode.removeChild(flash);
-        }
-    }, 400);
+    setTimeout(() => flash.style.opacity = '1', 10);
+    setTimeout(() => flash.style.opacity = '0', 150);
+    safeRemove(flash, 350);
 }
+
+function triggerElectroShock(event) {
+    const now = Date.now();
+    
+    if (now - lastTriggerTime < THROTTLE_DELAY) {
+        return;
+    }
+    
+    if (activeEffects > MAX_ACTIVE_EFFECTS) {
+        return;
+    }
+    
+    lastTriggerTime = now;
+    
+    const element = event.currentTarget;
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    element.style.transform = 'scale(1.15) rotate(5deg)';
+    element.style.filter = 'brightness(1.8) saturate(1.5)';
+    element.style.boxShadow = '0 0 60px rgba(224, 170, 255, 1)';
+    
+    setTimeout(() => {
+        element.style.transform = '';
+        element.style.filter = '';
+        element.style.boxShadow = '';
+    }, 600);
+    
+    createElectroRing(centerX, centerY);
+    createEnhancedSparks(element);
+    
+    setTimeout(() => createSlashEffect(centerX, centerY), 100);
+    setTimeout(() => createBranchingLightning(), 150);
+    setTimeout(() => flashScreen(), 200);
+    setTimeout(() => screenShake(), 250);
+}
+
+
 
 
 function preloadImagesThrottled(urls, perTick = 2, delay = 350, settleDelay = 1200) {
