@@ -2211,13 +2211,67 @@ html {
 }
 
 .lightning-bolt {
-    position: absolute;
+    position: fixed;
+    width: 3px;
+    background: linear-gradient(180deg, #E0AAFF 0%, #9945C7 50%, #C77DFF 100%);
+    box-shadow: 0 0 20px rgba(224, 170, 255, 0.9), 0 0 40px rgba(153, 69, 199, 0.6);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    filter: brightness(1.5);
+}
+
+.lightning-branch {
+    position: fixed;
     width: 2px;
-    background: linear-gradient(135deg, #9945C7 0%, #7B2CBF 50%, #A855F7 100%);
-    box-shadow: 0 0 20px rgba(153, 69, 199, 0.8);
-    border-radius: 1px;
-    animation: lightning-strike 0.8s ease-out forwards;
-    opacity: 0;
+    height: 50px;
+    background: linear-gradient(180deg, #C77DFF, transparent);
+    box-shadow: 0 0 10px rgba(199, 125, 255, 0.8);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.spark-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.electro-ring {
+    position: fixed;
+    border: 3px solid #C77DFF;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9997;
+    box-shadow: 0 0 20px rgba(199, 125, 255, 0.8), inset 0 0 20px rgba(199, 125, 255, 0.4);
+}
+
+.slash-effect {
+    position: fixed;
+    width: 300px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #E0AAFF, #C77DFF, transparent);
+    box-shadow: 0 0 20px rgba(224, 170, 255, 1);
+    pointer-events: none;
+    z-index: 9998;
+    transform-origin: center;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5px, 2px); }
+    20% { transform: translate(5px, -2px); }
+    30% { transform: translate(-3px, 3px); }
+    40% { transform: translate(3px, -3px); }
+    50% { transform: translate(-2px, 1px); }
+    60% { transform: translate(2px, -1px); }
+    70% { transform: translate(-1px, 2px); }
+    80% { transform: translate(1px, -2px); }
+    90% { transform: translate(-1px, 1px); }
+}
+
+.screen-shake {
+    animation: shake 0.5s ease-in-out;
 }
 
 @keyframes lightning-strike {
