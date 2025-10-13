@@ -1705,10 +1705,6 @@ function WritingAnimate() {
   const heroTitle = document.querySelector('.namae');
   if (!heroTitle) return;
   
-  // Cleanup previous animation
-  if (heroTitle.dataset.animating === 'true') return;
-  heroTitle.dataset.animating = 'true';
-  
   const titleText = heroTitle.textContent;
   heroTitle.textContent = '';
   
@@ -1716,50 +1712,46 @@ function WritingAnimate() {
     initialDelay: 1000,
     minTypeSpeed: 100,
     maxTypeSpeed: 200,
+    cursorBlinkDuration: 75,
     glowDuration: 100,
     glowIntense: '0 0 10px #9945ff, 0 0 20px #9945ff',
-    glowNormal: '0 0 5px #9945ff',
-    cursorBlinkSpeed: 530
+    glowNormal: '0 0 5px #9945ff'
   };
   
   let currentIndex = 0;
-  let cursorInterval = null;
-  
-  function startCursorBlink() {
-    let visible = true;
-    cursorInterval = setInterval(() => {
-      const currentText = heroTitle.textContent.replace('|', '');
-      heroTitle.textContent = visible ? currentText + '|' : currentText;
-      visible = !visible;
-    }, CONFIG.cursorBlinkSpeed);
-  }
+  let isTyping = false;
   
   function typeCharacter() {
-    if (currentIndex >= titleText.length) {
-      heroTitle.dataset.animating = 'false';
-      return;
-    }
+    if (currentIndex >= titleText.length || isTyping) return;
     
-    // Stop cursor blink during typing
-    if (cursorInterval) {
-      clearInterval(cursorInterval);
-      cursorInterval = null;
-    }
+    isTyping = true;
     
+    // Add next character
     const nextChar = titleText.charAt(currentIndex);
-    heroTitle.textContent = titleText.substring(0, currentIndex + 1);
+    heroTitle.textContent += nextChar;
     
-    // Glow
+    // Glow effect
     heroTitle.style.textShadow = CONFIG.glowIntense;
     setTimeout(() => {
       heroTitle.style.textShadow = CONFIG.glowNormal;
     }, CONFIG.glowDuration);
     
-    currentIndex++;
-    const speed = Math.random() * CONFIG.maxTypeSpeed + CONFIG.minTypeSpeed;
-    setTimeout(typeCharacter, speed);
+    // Cursor blink effect
+    heroTitle.textContent += '|';
+    setTimeout(() => {
+      heroTitle.textContent = heroTitle.textContent.slice(0, -1);
+      currentIndex++;
+      isTyping = false;
+      
+      // Continue typing if not finished
+      if (currentIndex < titleText.length) {
+        const speed = Math.random() * CONFIG.maxTypeSpeed + CONFIG.minTypeSpeed;
+        setTimeout(typeCharacter, speed);
+      }
+    }, CONFIG.cursorBlinkDuration);
   }
   
+  // Start animation after initial delay
   setTimeout(typeCharacter, CONFIG.initialDelay);
 }
 
