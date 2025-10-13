@@ -271,7 +271,6 @@ function initializePageSystems() {
 
 
 
-
 function setupTweetEmbed(containerSelector) {
     const tweetContainer = document.querySelector(containerSelector);
     if (!tweetContainer) {
@@ -279,25 +278,36 @@ function setupTweetEmbed(containerSelector) {
         return;
     }
 
+    // Prevent multiple initializations
+    if (tweetContainer.dataset.tweetInitialized === 'true') {
+        console.warn(`Tweet in '${containerSelector}' already initialized.`);
+        return;
+    }
+    tweetContainer.dataset.tweetInitialized = 'true';
+
     const tweetContent = tweetContainer.querySelector('.tweet-content');
-    const loadingIndicator = tweetContainer.querySelector('.loading-wrapper') || tweetContainer.querySelector('.loading-spinner');
+    const loadingIndicator = tweetContainer.querySelector('.loading-wrapper, .loading-spinner');
+    
     if (!tweetContent) {
         console.error(`Required element '.tweet-content' not found inside '${containerSelector}'.`);
         return;
     }
-    if (!loadingIndicator) console.warn(`Optional loading indicator not found in '${containerSelector}'.`);
 
     const isTurkish = navigator.language.toLowerCase().startsWith('tr');
+    
     const tweetEmbedHTML = `
         <blockquote class="twitter-tweet" data-lang="${isTurkish ? 'tr' : 'en'}" data-dnt="true" data-theme="dark">
             <p lang="en" dir="ltr">C2 RAIDEN SHOOOOGUUUUUN!<br><br>YAYYYY!!!!!🥳🥳💜<a href="https://twitter.com/hashtag/RaidenShogun?src=hash&ref_src=twsrc%5Etfw">#RaidenShogun</a> <a href="https://twitter.com/hashtag/GenshinImpact?src=hash&ref_src=twsrc%5Etfw">#GenshinImpact</a> <a href="https://t.co/5FMRjZZGz2">pic.twitter.com/5FMRjZZGz2</a></p>
             — Kyoや (@kyoyacchi) <a href="https://twitter.com/kyoyacchi/status/1927412978376126845?ref_src=twsrc%5Etfw">May 27, 2025</a>
         </blockquote>`;
-
+    
     tweetContent.innerHTML = tweetEmbedHTML;
+
+    let timeoutId;
 
     function showContent() {
         if (!tweetContent.classList.contains('loaded')) {
+            clearTimeout(timeoutId);
             tweetContent.classList.add('loaded');
             tweetContent.style.opacity = '1';
             tweetContent.style.visibility = 'visible';
@@ -307,8 +317,12 @@ function setupTweetEmbed(containerSelector) {
 
     function showErrorState(message = 'Could not load Tweet.') {
         console.error(`Error loading tweet in ${containerSelector}:`, message);
-        if (loadingIndicator?.classList.contains('loading-wrapper')) {
-            loadingIndicator.innerHTML = `<div style="color: red; text-align: center;"><i class="fas fa-times-circle"></i> ${message}</div>`;
+        clearTimeout(timeoutId);
+        if (loadingIndicator) {
+            loadingIndicator.innerHTML = `
+                <div style="color: #f44336; text-align: center; padding: 20px;">
+                    <i class="fas fa-times-circle"></i> ${message}
+                </div>`;
             loadingIndicator.style.display = 'flex';
         }
         tweetContent.style.opacity = '0';
@@ -316,42 +330,60 @@ function setupTweetEmbed(containerSelector) {
     }
 
     function loadTweet() {
-        window.twttr = (function(d, s, id) {
-            const t = window.twttr || {};
-            if (d.getElementById(id)) return t;
-            const js = d.createElement(s); 
-            js.id = id; 
-            js.src = "https://platform.twitter.com/widgets.js"; 
-            js.async = true;
-            d.getElementsByTagName(s)[0].parentNode.insertBefore(js, d.getElementsByTagName(s)[0]); 
-            t._e = []; 
-            t.ready = f => t._e.push(f); 
-            return t;
-        }(document, "script", "twitter-wjs"));
+        // 10 second timeout - if tweet doesn't load, show error
+        timeoutId = setTimeout(() => {
+            showErrorState('Tweet loading timed out.');
+        }, 10000);
 
-        twttr.ready(twttr => {
-            twttr.events.bind('loaded', e => {
-                if (e.widgets?.some(w => tweetContainer.contains(w))) showContent();
-            });
-            twttr.widgets.load(tweetContainer).catch(showErrorState);
-        });
+        if (!window.twttr) {
+            const script = document.createElement('script');
+            script.id = 'twitter-wjs';
+            script.src = 'https://platform.twitter.com/widgets.js';
+            script.async = true;
+            script.onerror = () => showErrorState('Failed to load Twitter script.');
+            document.head.appendChild(script);
+        }
+
+        const checkAndLoad = () => {
+            if (window.twttr?.widgets) {
+                window.twttr.events.bind('loaded', e => {
+                    if (e.widgets?.some(w => tweetContainer.contains(w))) {
+                        showContent();
+                    }
+                });
+                
+                window.twttr.widgets.load(tweetContainer).catch(() => {
+                    showErrorState('Tweet failed to render.');
+                });
+            } else {
+                setTimeout(checkAndLoad, 100);
+            }
+        };
+        
+        checkAndLoad();
     }
 
     if (loadingIndicator) loadingIndicator.style.display = 'flex';
     tweetContent.style.opacity = '0';
     tweetContent.style.visibility = 'hidden';
-    tweetContent.classList.remove('loaded');
 
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 loadTweet();
-                observer.unobserve(tweetContainer);
+                observer.disconnect();
             }
         });
     }, { threshold: 0.1 });
 
     observer.observe(tweetContainer);
+
+    // Return cleanup function
+    return () => {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+        tweetContainer.dataset.tweetInitialized = 'false';
+    };
 }
 
 
@@ -1673,6 +1705,10 @@ function WritingAnimate() {
   const heroTitle = document.querySelector('.namae');
   if (!heroTitle) return;
   
+  // Cleanup previous animation
+  if (heroTitle.dataset.animating === 'true') return;
+  heroTitle.dataset.animating = 'true';
+  
   const titleText = heroTitle.textContent;
   heroTitle.textContent = '';
   
@@ -1680,49 +1716,52 @@ function WritingAnimate() {
     initialDelay: 1000,
     minTypeSpeed: 100,
     maxTypeSpeed: 200,
-    cursorBlinkDuration: 75,
     glowDuration: 100,
     glowIntense: '0 0 10px #9945ff, 0 0 20px #9945ff',
-    glowNormal: '0 0 5px #9945ff'
+    glowNormal: '0 0 5px #9945ff',
+    cursorBlinkSpeed: 530
   };
   
   let currentIndex = 0;
-  let isTyping = false;
+  let cursorInterval = null;
+  
+  function startCursorBlink() {
+    let visible = true;
+    cursorInterval = setInterval(() => {
+      const currentText = heroTitle.textContent.replace('|', '');
+      heroTitle.textContent = visible ? currentText + '|' : currentText;
+      visible = !visible;
+    }, CONFIG.cursorBlinkSpeed);
+  }
   
   function typeCharacter() {
-    if (currentIndex >= titleText.length || isTyping) return;
+    if (currentIndex >= titleText.length) {
+      heroTitle.dataset.animating = 'false';
+      return;
+    }
     
-    isTyping = true;
+    // Stop cursor blink during typing
+    if (cursorInterval) {
+      clearInterval(cursorInterval);
+      cursorInterval = null;
+    }
     
-    // Add next character
     const nextChar = titleText.charAt(currentIndex);
-    heroTitle.textContent += nextChar;
+    heroTitle.textContent = titleText.substring(0, currentIndex + 1);
     
-    // Glow effect
+    // Glow
     heroTitle.style.textShadow = CONFIG.glowIntense;
     setTimeout(() => {
       heroTitle.style.textShadow = CONFIG.glowNormal;
     }, CONFIG.glowDuration);
     
-    // Cursor blink effect
-    heroTitle.textContent += '|';
-    setTimeout(() => {
-      heroTitle.textContent = heroTitle.textContent.slice(0, -1);
-      currentIndex++;
-      isTyping = false;
-      
-      // Continue typing if not finished
-      if (currentIndex < titleText.length) {
-        const speed = Math.random() * CONFIG.maxTypeSpeed + CONFIG.minTypeSpeed;
-        setTimeout(typeCharacter, speed);
-      }
-    }, CONFIG.cursorBlinkDuration);
+    currentIndex++;
+    const speed = Math.random() * CONFIG.maxTypeSpeed + CONFIG.minTypeSpeed;
+    setTimeout(typeCharacter, speed);
   }
   
-  // Start animation after initial delay
   setTimeout(typeCharacter, CONFIG.initialDelay);
 }
-
 
 
 function random(min, max) {
