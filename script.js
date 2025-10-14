@@ -431,7 +431,7 @@ function setupParticleCanvas() {
         }
         update(scrollSpeed) {
             this.x += this.speedX;
-            this.y += this.speedY + scrollSpeed * 0.05;
+            this.y += this.speedY + Math.sign(scrollSpeed) * 0.8;
             this.life -= 1;
             this.opacity = (this.life / this.initialLife) * 0.6;
             if (this.x < -this.size || this.x > canvas.width + this.size ||
@@ -442,6 +442,7 @@ function setupParticleCanvas() {
         }
         draw() {
             if (this.opacity <= 0) return;
+            ctx.globalCompositeOperation = 'lighter';
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(155, 89, 182, ${this.opacity * 0.8})`;
@@ -488,7 +489,6 @@ function setupParticleCanvas() {
         }
     });
 }
-
 
 function triggerMainContentAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
