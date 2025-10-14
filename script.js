@@ -1082,12 +1082,12 @@ function animateNumber(element, start, end, duration, easing = 'easeOutQuad') {
     element.textContent = current.toLocaleString();
     
     if (progress < 1) {
-      element.style.textShadow = `0 0 ${15 * (1 - progress)}px var(--raiden-glow)`;
+   //   element.style.textShadow = `0 0 ${15 * (1 - progress)}px var(--raiden-glow)`;
       const frameId = requestAnimationFrame(animate);
       animationFrameIds.set(id, frameId);
     } else {
       element.textContent = end.toLocaleString();
-      element.style.textShadow = '0 0 8px var(--raiden-glow)';
+   //   element.style.textShadow = '0 0 8px var(--raiden-glow)';
       animationFrameIds.delete(id);
     }
   };
