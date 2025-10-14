@@ -2967,7 +2967,7 @@ html {
 .popup-avatar {
   position: relative;
   display: inline-block;
-  margin-bottom: 12px;
+  margin: 0 auto 15px;
 }
 
 .popup-avatar img {
@@ -2979,6 +2979,7 @@ html {
               0 0 60px rgba(168, 85, 247, 0.3);
   position: relative;
   z-index: 2;
+  display: block;
 }
 
 .avatar-ring {
@@ -3018,9 +3019,9 @@ html {
   100% { background-position: 0% 50%; }
 }
 
-/* Special Badge */
+/* Special Badge - Avatar altında */
 .special-badge {
-  display: inline-block;
+  display: block;
   background: rgba(168, 85, 247, 0.25);
   color: white;
   padding: 6px 16px;
@@ -3029,6 +3030,10 @@ html {
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
   border: 1px solid rgba(168, 85, 247, 0.4);
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 /* Body */
@@ -3047,15 +3052,15 @@ html {
   background-clip: text;
 }
 
-/* Stats Grid */
-.stats-grid {
+/* Stats Grid - Benzersiz isimler */
+.secret-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-bottom: 18px;
 }
 
-.stat-card {
+.secret-stat-box {
   background: rgba(168, 85, 247, 0.1);
   border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 12px;
@@ -3064,38 +3069,38 @@ html {
   transition: all 0.3s ease;
 }
 
-.stat-card:hover {
+.secret-stat-box:hover {
   background: rgba(168, 85, 247, 0.2);
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
 }
 
-.stat-icon {
+.secret-stat-emoji {
   font-size: 22px;
   margin-bottom: 6px;
 }
 
-.stat-value {
+.secret-stat-number {
   color: #a855f7;
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 3px;
 }
 
-.stat-label {
+.secret-stat-text {
   color: rgba(255, 255, 255, 0.7);
   font-size: 10px;
 }
 
-/* Badges Section */
-.badges-section {
+/* Badges Section - Benzersiz isimler */
+.secret-badges-wrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 18px;
 }
 
-.badge-item {
+.secret-badge-box {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(168, 85, 247, 0.2);
   border-radius: 10px;
@@ -3106,21 +3111,21 @@ html {
   text-align: center;
 }
 
-.badge-item:hover {
+.secret-badge-box:hover {
   border-color: rgba(168, 85, 247, 0.5);
   background: rgba(168, 85, 247, 0.1);
   transform: translateX(5px);
 }
 
-.badge-item.electro {
+.secret-badge-box.electro {
   border-left: 3px solid #a855f7;
 }
 
-.badge-item.collector {
+.secret-badge-box.collector {
   border-left: 3px solid #8b5cf6;
 }
 
-.badge-item.gacha {
+.secret-badge-box.gacha {
   border-left: 3px solid #9333ea;
 }
 
@@ -3159,6 +3164,10 @@ html {
     padding: 40px 25px 28px;
   }
   
+  .popup-avatar {
+    margin-bottom: 18px;
+  }
+  
   .popup-avatar img {
     width: 110px;
     height: 110px;
@@ -3183,28 +3192,28 @@ html {
     margin-bottom: 22px;
   }
   
-  .stats-grid {
+  .secret-stats-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
   
-  .stat-card {
+  .secret-stat-box {
     padding: 14px 10px;
   }
   
-  .stat-icon {
+  .secret-stat-emoji {
     font-size: 24px;
   }
   
-  .stat-value {
+  .secret-stat-number {
     font-size: 17px;
   }
   
-  .stat-label {
+  .secret-stat-text {
     font-size: 11px;
   }
   
-  .badge-item {
+  .secret-badge-box {
     font-size: 13px;
     padding: 10px 14px;
   }
@@ -3232,6 +3241,10 @@ html {
     padding: 45px 30px 30px;
   }
   
+  .popup-avatar {
+    margin-bottom: 20px;
+  }
+  
   .popup-avatar img {
     width: 120px;
     height: 120px;
@@ -3252,15 +3265,15 @@ html {
     margin-bottom: 25px;
   }
   
-  .stat-card {
+  .secret-stat-box {
     padding: 15px 10px;
   }
   
-  .stat-value {
+  .secret-stat-number {
     font-size: 18px;
   }
   
-  .badge-item {
+  .secret-badge-box {
     padding: 10px 15px;
   }
   
@@ -3286,6 +3299,10 @@ html {
     padding: 30px 15px 20px;
   }
   
+  .popup-avatar {
+    margin-bottom: 12px;
+  }
+  
   .popup-avatar img {
     width: 90px;
     height: 90px;
@@ -3305,19 +3322,19 @@ html {
     font-size: 17px;
   }
   
-  .stat-icon {
+  .secret-stat-emoji {
     font-size: 20px;
   }
   
-  .stat-value {
+  .secret-stat-number {
     font-size: 15px;
   }
   
-  .stat-label {
+  .secret-stat-text {
     font-size: 9px;
   }
   
-  .badge-item {
+  .secret-badge-box {
     font-size: 11px;
     padding: 9px 10px;
   }
