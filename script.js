@@ -1055,30 +1055,45 @@ function startBirthdayCelebration() {
 }
 
 
-function animateNumber(element, start, end, duration) {
-  if (!element) return; // Safety check
+
+let animationFrameIds = new Map();
+
+function animateNumber(element, start, end, duration, easing = 'easeOutQuad') {
+  if (!element) return;
+  
+  const id = element.id;
+  if (animationFrameIds.has(id)) {
+    cancelAnimationFrame(animationFrameIds.get(id));
+  }
+  
+  const easings = {
+    easeOutQuad: t => t * (2 - t),
+    easeOutExpo: t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t)
+  };
   
   const startTime = performance.now();
   
   const animate = (currentTime) => {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
+    const eased = easings[easing](progress);
     
-    // Easing function for smoother animation (optional)
-    const easeOutQuad = progress * (2 - progress); // Makes it slow down at the end
-    
-    const current = Math.floor(start + (end - start) * easeOutQuad);
+    const current = Math.floor(start + (end - start) * eased);
     element.textContent = current.toLocaleString();
     
     if (progress < 1) {
-      requestAnimationFrame(animate);
+      element.style.textShadow = `0 0 ${15 * (1 - progress)}px var(--raiden-glow)`;
+      const frameId = requestAnimationFrame(animate);
+      animationFrameIds.set(id, frameId);
     } else {
-      // Ensure final value is exact
       element.textContent = end.toLocaleString();
+      element.style.textShadow = '0 0 8px var(--raiden-glow)';
+      animationFrameIds.delete(id);
     }
   };
   
-  requestAnimationFrame(animate);
+  const frameId = requestAnimationFrame(animate);
+  animationFrameIds.set(id, frameId);
 }
 
 function calculateStats() {
