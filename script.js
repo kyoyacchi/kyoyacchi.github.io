@@ -2270,10 +2270,120 @@ function initializeCollectionSlider() {
   window.addEventListener('beforeunload', stopAutoplay);
 }
 
+function initSecretPopup() {
+  const discordPfp = document.querySelector('#discord_pfp');
+  if (!discordPfp) return;
+  
+  let clickCount = 0;
+  let clickTimer = null;
+
+  discordPfp.addEventListener('click', () => {
+    clickCount++;
+    
+    if (clickCount === 1) {
+      clickTimer = setTimeout(() => {
+        clickCount = 0;
+      }, 1000);
+    }
+    
+    if (clickCount === 3) {
+      clearTimeout(clickTimer);
+      clickCount = 0;
+      openPopup();
+    }
+  });
+
+  function openPopup() {
+    const avatarSrc = discordPfp.src;
+    
+    document.body.style.overflow = 'hidden';
+    
+    const popup = document.createElement('div');
+    popup.className = 'secret-popup';
+    popup.innerHTML = `
+      <div class="popup-overlay"></div>
+      <div class="popup-content">
+        <button class="popup-close">&times;</button>
+        
+        <div class="popup-header">
+          <div class="popup-avatar">
+            <img src="${avatarSrc}" alt="Avatar">
+            <div class="avatar-ring"></div>
+          </div>
+          <div class="special-badge">
+            ✦ Raiden Shogun simp
+          </div>
+        </div>
+
+        <div class="popup-body">
+          <h2 class="popup-title">Secret Profile Unlocked!</h2>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-value">C2</div>
+              <div class="stat-label">Raiden Cons</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🎮</div>
+              <div class="stat-value">AR 58</div>
+              <div class="stat-label">World Level</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📺</div>
+              <div class="stat-value">710+</div>
+              <div class="stat-label">Anime Watched</div>
+            </div>
+          </div>
+
+          <div class="badges-section">
+            <div class="badge-item electro">⚡ Electro Archon Devotee</div>
+            <div class="badge-item collector">🗡️ Musou Isshin Collector</div>
+            <div class="badge-item gacha">🎲 Lucky Gacha Master</div>
+          </div>
+
+          <div class="quote-section">
+            <div class="quote-text">"Inazuma Shines Eternal!"</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    setTimeout(() => {
+      popup.classList.add('active');
+    }, 10);
+    
+    const closeBtn = popup.querySelector('.popup-close');
+    const overlay = popup.querySelector('.popup-overlay');
+    
+    const closePopup = () => {
+      popup.classList.remove('active');
+      setTimeout(() => {
+        popup.remove();
+        document.body.style.overflow = '';
+      }, 300);
+    };
+    
+    closeBtn.addEventListener('click', closePopup);
+    overlay.addEventListener('click', closePopup);
+    
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        closePopup();
+        document.removeEventListener('keydown', handleEsc);
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+  }
+}
+
+
    function initializePage() {
     handleIntroOverlay();
 // connectLanyard();
-
+initSecretPopup();
     setupHeartEffect();
     setupTweetEmbed('.tweet-embed-container');
   setupParticleCanvas();
