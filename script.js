@@ -2294,7 +2294,7 @@ function initSecretPopup() {
   });
 
   function openPopup() {
-    const avatarSrc = discordPfp.src;
+    const avatarSrc = discordPfp?.src || '';
     
     document.body.style.overflow = 'hidden';
     
@@ -2310,6 +2310,8 @@ function initSecretPopup() {
             <img src="${avatarSrc}" alt="Avatar">
             <div class="avatar-ring"></div>
           </div>
+                  <div class="discord-presence" id="discord-presence" aria-live="polite"></div>
+      </section>
           <div class="special-badge">
             ✦ Raiden Shogun simp
           </div>
