@@ -2843,7 +2843,7 @@ html {
   }
 }
 
-/* Popup stilleri */
+/* ===== POPUP BASE STYLES ===== */
 .secret-popup {
   position: fixed;
   top: 0;
@@ -2869,6 +2869,12 @@ html {
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .popup-content {
@@ -2885,15 +2891,25 @@ html {
   max-height: 90vh;
   overflow-y: auto;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 20px 60px rgba(168, 85, 247, 0.4), 
-              0 0 100px rgba(168, 85, 247, 0.2);
+  box-shadow: 
+    0 20px 60px rgba(168, 85, 247, 0.4), 
+    0 0 100px rgba(168, 85, 247, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.popup-content:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 
+    0 25px 70px rgba(168, 85, 247, 0.5), 
+    0 0 120px rgba(168, 85, 247, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .secret-popup.active .popup-content {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Scrollbar */
+/* ===== SCROLLBAR ===== */
 .popup-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -2906,13 +2922,14 @@ html {
 .popup-content::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #a855f7 0%, #8b5cf6 100%);
   border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
 .popup-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #9333ea 0%, #7c3aed 100%);
 }
 
-/* Close button */
+/* ===== CLOSE BUTTON ===== */
 .popup-close {
   position: absolute;
   top: 12px;
@@ -2925,19 +2942,26 @@ html {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  backdrop-filter: blur(10px);
 }
 
 .popup-close:hover {
   background: rgba(168, 85, 247, 0.3);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
 }
 
-/* Header */
+.popup-close:active {
+ /* transform: rotate(90deg) scale(0.95);*/
+}
+
+/* ===== HEADER ===== */
 .popup-header {
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.08) 100%);
   padding: 35px 20px 25px;
@@ -2954,16 +2978,33 @@ html {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
   animation: pulse 3s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.1); opacity: 0.8; }
+.popup-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+  bottom: 0;
 }
 
-/* Avatar */
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.5; 
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 0.8; 
+  }
+}
+
+/* ===== AVATAR ===== */
 .popup-avatar {
   position: relative;
   display: inline-block;
@@ -2975,11 +3016,22 @@ html {
   height: 100px;
   border-radius: 50%;
   border: 3px solid #a855f7;
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.6),
-              0 0 60px rgba(168, 85, 247, 0.3);
+  box-shadow: 
+    0 0 30px rgba(168, 85, 247, 0.6),
+    0 0 60px rgba(168, 85, 247, 0.3),
+    inset 0 0 20px rgba(168, 85, 247, 0.2);
   position: relative;
   z-index: 2;
   display: block;
+  transition: all 0.3s ease;
+}
+
+.popup-avatar:hover img {
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 40px rgba(168, 85, 247, 0.8),
+    0 0 80px rgba(168, 85, 247, 0.4),
+    inset 0 0 30px rgba(168, 85, 247, 0.3);
 }
 
 .avatar-ring {
@@ -3000,6 +3052,7 @@ html {
   animation: gradientBorderFlow 3s linear infinite;
   z-index: 1;
   padding: 3px;
+  filter: blur(2px);
 }
 
 .avatar-ring::before {
@@ -3019,7 +3072,7 @@ html {
   100% { background-position: 0% 50%; }
 }
 
-/* Special Badge - Avatar altında */
+/* ===== SPECIAL BADGE ===== */
 .special-badge {
   display: block;
   background: rgba(168, 85, 247, 0.25);
@@ -3034,9 +3087,17 @@ html {
   z-index: 2;
   width: fit-content;
   margin: 0 auto;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-/* Body */
+.special-badge:hover {
+  background: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== BODY ===== */
 .popup-body {
   padding: 20px;
 }
@@ -3050,9 +3111,22 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  animation: titleGlow 2s ease-in-out infinite;
 }
 
-/* Stats Grid - Benzersiz isimler */
+@keyframes titleGlow {
+  0%, 100% { 
+    filter: brightness(1);
+  }
+  50% { 
+    filter: brightness(1.2);
+  }
+}
+
+/* ===== STATS GRID ===== */
 .secret-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -3067,17 +3141,49 @@ html {
   padding: 12px 8px;
   text-align: center;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.secret-stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(168, 85, 247, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.secret-stat-box:hover::before {
+  left: 100%;
 }
 
 .secret-stat-box:hover {
   background: rgba(168, 85, 247, 0.2);
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 
+    0 8px 20px rgba(168, 85, 247, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(168, 85, 247, 0.5);
 }
 
 .secret-stat-emoji {
   font-size: 22px;
   margin-bottom: 6px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.secret-stat-box:hover .secret-stat-emoji {
+  transform: scale(1.2) rotate(10deg);
 }
 
 .secret-stat-number {
@@ -3085,14 +3191,22 @@ html {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 3px;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  transition: all 0.3s ease;
+}
+
+.secret-stat-box:hover .secret-stat-number {
+  transform: scale(1.1);
+  text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
 }
 
 .secret-stat-text {
   color: rgba(255, 255, 255, 0.7);
   font-size: 10px;
+  font-weight: 500;
 }
 
-/* Badges Section - Benzersiz isimler */
+/* ===== BADGES SECTION ===== */
 .secret-badges-wrapper {
   display: flex;
   flex-direction: column;
@@ -3109,27 +3223,60 @@ html {
   font-size: 12px;
   transition: all 0.3s ease;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+}
+
+.secret-badge-box::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: rgba(168, 85, 247, 0.1);
+  transition: width 0.3s ease;
+  z-index: 0;
+}
+
+.secret-badge-box:hover::before {
+  width: 100%;
 }
 
 .secret-badge-box:hover {
   border-color: rgba(168, 85, 247, 0.5);
-  background: rgba(168, 85, 247, 0.1);
-  transform: translateX(5px);
+  background: rgba(168, 85, 247, 0.15);
+  transform: translateX(8px);
+  box-shadow: -4px 0 15px rgba(168, 85, 247, 0.3);
 }
 
 .secret-badge-box.electro {
   border-left: 3px solid #a855f7;
 }
 
+.secret-badge-box.electro:hover {
+  box-shadow: -4px 0 20px rgba(168, 85, 247, 0.5);
+}
+
 .secret-badge-box.collector {
   border-left: 3px solid #8b5cf6;
+}
+
+.secret-badge-box.collector:hover {
+  box-shadow: -4px 0 20px rgba(139, 92, 246, 0.5);
 }
 
 .secret-badge-box.gacha {
   border-left: 3px solid #9333ea;
 }
 
-/* Quote Section */
+.secret-badge-box.gacha:hover {
+  box-shadow: -4px 0 20px rgba(147, 51, 234, 0.5);
+}
+
+/* ===== QUOTE SECTION ===== */
 .quote-section {
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.08) 100%);
   border-left: 4px solid #a855f7;
@@ -3138,10 +3285,32 @@ html {
   margin-top: 18px;
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-section::before {
+  content: '⚡';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+
+.quote-section:hover::before {
+  opacity: 0.5;
+  transform: translateY(-50%) scale(1.2);
 }
 
 .quote-section:hover {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  box-shadow: 
+    0 0 25px rgba(168, 85, 247, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.12) 100%);
+  transform: translateX(4px);
 }
 
 .quote-text {
@@ -3149,6 +3318,9 @@ html {
   font-style: italic;
   text-align: center;
   font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
@@ -3291,9 +3463,13 @@ html {
   .popup-content {
     max-width: 460px;
   }
+  
+  .popup-content:hover {
+    transform: translate(-50%, -50%) scale(1.02);
+  }
 }
 
-/* Çok küçük ekranlar (320px-) */
+/* Very small screens (320px-) */
 @media (max-width: 360px) {
   .popup-header {
     padding: 30px 15px 20px;
