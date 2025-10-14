@@ -2318,28 +2318,28 @@ function initSecretPopup() {
         <div class="popup-body">
           <h2 class="popup-title">Secret Profile Unlocked!</h2>
           
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon">⚡</div>
-              <div class="stat-value">C2</div>
-              <div class="stat-label">Raiden Cons</div>
+          <div class="secret-stats-grid">
+            <div class="secret-stat-box">
+              <div class="secret-stat-emoji">⚡</div>
+              <div class="secret-stat-number">C2</div>
+              <div class="secret-stat-text">Raiden Cons</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon">🎮</div>
-              <div class="stat-value">AR 58</div>
-              <div class="stat-label">World Level</div>
+            <div class="secret-stat-box">
+              <div class="secret-stat-emoji">🎮</div>
+              <div class="secret-stat-number">AR 58</div>
+              <div class="secret-stat-text">World Level</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-icon">📺</div>
-              <div class="stat-value">710+</div>
-              <div class="stat-label">Anime Watched</div>
+            <div class="secret-stat-box">
+              <div class="secret-stat-emoji">📺</div>
+              <div class="secret-stat-number">710+</div>
+              <div class="secret-stat-text">Anime Watched</div>
             </div>
           </div>
 
-          <div class="badges-section">
-            <div class="badge-item electro">⚡ Electro Archon Devotee</div>
-            <div class="badge-item collector">🗡️ Musou Isshin Collector</div>
-            <div class="badge-item gacha">🎲 Lucky Gacha Master</div>
+          <div class="secret-badges-wrapper">
+            <div class="secret-badge-box electro">⚡ Electro Archon Devotee</div>
+            <div class="secret-badge-box collector">🗡️ Musou Isshin Collector</div>
+            <div class="secret-badge-box gacha">🎲 Lucky Gacha Master</div>
           </div>
 
           <div class="quote-section">
