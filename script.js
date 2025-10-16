@@ -211,7 +211,7 @@ function handleNormalMode(elements, hideOverlay) {
     'Now, you shall perish!',
     'There is no escape!',
     'Inazuma shines eternal!',
-    'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
+    'NONE CAN CONTEND WITH THE SUPREME POWER OF THE ALMMIGHTY RAIDEN SHOGUN AND THE MUSOU NO HITOTACHI!',
     'Shine down!',
     'Illusion shattered!',
     'Torn to oblivion!',
@@ -2270,6 +2270,37 @@ function initializeCollectionSlider() {
   window.addEventListener('beforeunload', stopAutoplay);
 }
 
+// --- START: Secret Popup Banner Fetch ---
+let cachedDiscordBannerUrl = null;
+
+async function fetchDiscordBanner() {
+    if (cachedDiscordBannerUrl) {
+        return cachedDiscordBannerUrl;
+    }
+
+    try {
+        const response = await fetch(`https://kyopi.vercel.app/api/discord?id=${DISCORD_USER_ID}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        if (data && data.banner) {
+            cachedDiscordBannerUrl = data.banner;
+            return cachedDiscordBannerUrl;
+        } else {
+            console.warn('Discord banner URL not found in API response.');
+            console.log(data)
+            return null;
+        }
+    } catch (error) {
+        console.error('Failed to fetch Discord banner:', error);
+        return null;
+    }
+}
+// --- END: Secret Popup Banner Fetch ---
+
+
 function initSecretPopup() {
   const discordPfp = document.querySelector('#discord_pfp');
   if (!discordPfp) return;
@@ -2293,8 +2324,9 @@ function initSecretPopup() {
     }
   });
 
-  function openPopup() {
+  async function openPopup() {
     const avatarSrc = discordPfp?.src || '';
+    const bannerUrl = await fetchDiscordBanner();
     
     document.body.style.overflow = 'hidden';
     
@@ -2305,7 +2337,7 @@ function initSecretPopup() {
       <div class="popup-content">
         <button class="popup-close">&times;</button>
         
-        <div class="popup-header">
+        <div class="popup-header" style="background-image: ${bannerUrl ? `url('${bannerUrl}'), ` : ''}linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.08) 100%); background-size: cover; background-position: center;">
           <div class="popup-avatar">
             <img src="${avatarSrc}" alt="Avatar">
             <div class="avatar-ring"></div>
