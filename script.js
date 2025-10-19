@@ -2307,6 +2307,8 @@ function initSecretPopup() {
   
   let clickCount = 0;
   let clickTimer = null;
+let isOpen = false;
+
 
   discordPfp.addEventListener('click', () => {
     clickCount++;
@@ -2325,6 +2327,9 @@ function initSecretPopup() {
   });
 
   async function openPopup() {
+    if (isOpen) return;
+    isOpen = true;
+    
     const avatarSrc = discordPfp?.src || '';
     const bannerUrl = await fetchDiscordBanner();
     
@@ -2397,6 +2402,7 @@ function initSecretPopup() {
       setTimeout(() => {
         popup.remove();
         document.body.style.overflow = '';
+        isOpen = false;
       }, 300);
     };
     
