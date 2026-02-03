@@ -239,21 +239,28 @@
 </div>
 
 
+
 <script>
   const monikaPaths = ['/m', '/monika', '/justmonika'];
   const urlParams = new URLSearchParams(window.location.search);
 
   if (monikaPaths.includes(window.location.pathname.toLowerCase()) || urlParams.has('m')) {
     
-    const introOverlay = document.querySelector('.intro-overlay');
-    if (introOverlay) {
-        introOverlay.style.opacity = '1';
-        introOverlay.style.visibility = 'visible';
-        introOverlay.style.backgroundColor = 'black';
-        introOverlay.style.zIndex = '99999';
-        document.querySelector('.preloader-text').innerHTML = '';
-        document.querySelector('.subtitle-text').innerHTML = '';
+    const mainContent = document.querySelectorAll('body > *:not(.intro-overlay)');
+    mainContent.forEach(el => el.remove());
+
+    const intro = document.querySelector('.intro-overlay');
+    if (intro) {
+      intro.style.display = 'block';
+      intro.style.opacity = '1';
+      intro.style.visibility = 'visible';
+      intro.style.backgroundColor = 'black';
+      intro.style.zIndex = '999999';
+      intro.innerHTML = ''; 
     }
+
+    document.body.style.backgroundColor = 'black';
+    document.body.style.overflow = 'hidden';
 
     const ddlcConsole = document.createElement('div');
     Object.assign(ddlcConsole.style, {
@@ -265,10 +272,9 @@
       padding: '15px 25px',
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: '14px',
-      zIndex: '100000',
+      zIndex: '1000000',
       minWidth: '300px',
-      textAlign: 'left',
-      pointerEvents: 'none'
+      textAlign: 'left'
     });
 
     const styleSheet = document.createElement("style");
@@ -279,13 +285,15 @@
     document.body.appendChild(ddlcConsole);
 
     const logsContainer = document.getElementById('logs');
-    
     const messages = [
       "sayori.chr deleted successfully.",
       "natsuki.chr deleted successfully.",
       "yuri.chr deleted successfully.",
-      "raiden_ei.chr deleted successfully."
+      "raiden_ei.chr deleted successfully.",
+     // "CRITICAL_ERROR: Main sequence terminated."
     ];
+
+    window.stop();
 
     let i = 0;
     const interval = setInterval(() => {
@@ -294,9 +302,6 @@
         p.style.margin = "5px 0 0 0";
         p.textContent = messages[i];
         logsContainer.appendChild(p);
-        
-        document.body.style.transform = `translate(${Math.random()*3}px, ${Math.random()*3}px)`;
-        
         i++;
       } else {
         clearInterval(interval);
@@ -307,6 +312,7 @@
     }, 1000);
   }
 </script>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
