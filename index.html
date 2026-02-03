@@ -239,49 +239,64 @@
 </div>
 
 <script>
-
   const monikaPaths = ['/m', '/monika', '/justmonika'];
-  const currentPath = window.location.pathname.toLowerCase();
+  const urlParams = new URLSearchParams(window.location.search);
 
-  if (monikaPaths.includes(currentPath)) {
+  if (monikaPaths.includes(window.location.pathname.toLowerCase()) || urlParams.has('m')) {
+    
+    // 1. Terminal Kutusu ve CSS'i JS ile Yarat
+    const consoleBox = document.createElement('div');
+    Object.assign(consoleBox.style, {
+      position: 'fixed',
+      top: '20px',
+      left: '20px',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      color: 'white',
+      padding: '15px 25px',
+      fontFamily: "'Courier New', Courier, monospace",
+      fontSize: '14px',
+      zIndex: '10000',
+      minWidth: '320px',
+      textAlign: 'left',
+      pointerEvents: 'none'
+    });
 
-    document.body.style.overflow = 'hidden';
-    document.body.innerHTML += `
-      <div id="monika-overlay" style="
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: black; color: #ff00ff; z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center;
-        align-items: center; font-family: 'Courier New', Courier, monospace;
-        text-shadow: 2px 2px #00ffff; overflow: hidden;">
-        <h1 id="glitch-text">SWITCHING TO MONIKA MODE...</h1>
-        <p id="terminal-log"></p>
-      </div>
-    `;
+    // Yanıp sönen imleç için stil ekle
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = "@keyframes blink { 50% { opacity: 0; } }";
+    document.head.appendChild(styleSheet);
 
-    const log = document.getElementById('terminal-log');
-    const logs = [
-      "Checking character files...",
+    consoleBox.innerHTML = `<span style="font-weight:bold">></span> <span id="cursor" style="animation: blink 1s step-end infinite;">_</span><div id="logs"></div>`;
+    document.body.appendChild(consoleBox);
+
+    // 2. Silinme Mesajları
+    const logsContainer = document.getElementById('logs');
+    const messages = [
+      "natsuki.chr deleted successfully.",
+      "yuri.chr deleted successfully.",
       "raiden_ei.chr deleted successfully.",
-      "Overwriting Teyvat.sys...",
-      "Initializing Just_Monika.exe...",
       "See you soon, Kyo."
     ];
 
     let i = 0;
     const interval = setInterval(() => {
-      if (i < logs.length) {
-        log.innerHTML += `> ${logs[i]}<br>`;
+      if (i < messages.length) {
+        const p = document.createElement('p');
+        p.style.margin = "5px 0 0 0";
+        p.textContent = messages[i];
+        logsContainer.appendChild(p);
+        
+        // Ekranı hafifçe salla (Glitch efekti)
+        document.body.style.transform = `translate(${Math.random()*4}px, ${Math.random()*4}px)`;
         i++;
-
-        document.getElementById('monika-overlay').style.transform = `translate(${Math.random()*5}px, ${Math.random()*5}px)`;
       } else {
         clearInterval(interval);
-        // 2 saniye sonra yönlendir
+        // Yazılar bittikten 1.5 saniye sonra Monika'ya fırlat
         setTimeout(() => {
-          window.location.href = '/monika.html'; 
+          window.location.href = '/monika.html';
         }, 1500);
       }
-    }, 600);
+    }, 900); // Yazı hızı
   }
 </script>
   <!-- Scripts -->
