@@ -238,44 +238,53 @@
     <div class="collection-modal-indicators" id="collectionModalIndicators" role="tablist" aria-label="Modal slide indicators"></div>
 </div>
 
+
 <script>
   const monikaPaths = ['/m', '/monika', '/justmonika'];
   const urlParams = new URLSearchParams(window.location.search);
 
   if (monikaPaths.includes(window.location.pathname.toLowerCase()) || urlParams.has('m')) {
     
-    // 1. Terminal Kutusu ve CSS'i JS ile Yarat
-    const consoleBox = document.createElement('div');
-    Object.assign(consoleBox.style, {
+    const introOverlay = document.querySelector('.intro-overlay');
+    if (introOverlay) {
+        introOverlay.style.opacity = '1';
+        introOverlay.style.visibility = 'visible';
+        introOverlay.style.backgroundColor = 'black';
+        introOverlay.style.zIndex = '99999';
+        document.querySelector('.preloader-text').innerHTML = '';
+        document.querySelector('.subtitle-text').innerHTML = '';
+    }
+
+    const ddlcConsole = document.createElement('div');
+    Object.assign(ddlcConsole.style, {
       position: 'fixed',
       top: '20px',
       left: '20px',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       color: 'white',
       padding: '15px 25px',
       fontFamily: "'Courier New', Courier, monospace",
       fontSize: '14px',
-      zIndex: '10000',
-      minWidth: '320px',
+      zIndex: '100000',
+      minWidth: '300px',
       textAlign: 'left',
       pointerEvents: 'none'
     });
 
-    // Yanıp sönen imleç için stil ekle
     const styleSheet = document.createElement("style");
     styleSheet.innerText = "@keyframes blink { 50% { opacity: 0; } }";
     document.head.appendChild(styleSheet);
 
-    consoleBox.innerHTML = `<span style="font-weight:bold">></span> <span id="cursor" style="animation: blink 1s step-end infinite;">_</span><div id="logs"></div>`;
-    document.body.appendChild(consoleBox);
+    ddlcConsole.innerHTML = `<span style="font-weight:bold">></span> <span id="cursor" style="animation: blink 1s step-end infinite;">_</span><div id="logs" style="margin-top:5px;"></div>`;
+    document.body.appendChild(ddlcConsole);
 
-    // 2. Silinme Mesajları
     const logsContainer = document.getElementById('logs');
+    
     const messages = [
+      "sayori.chr deleted successfully.",
       "natsuki.chr deleted successfully.",
       "yuri.chr deleted successfully.",
-      "raiden_ei.chr deleted successfully.",
-      "See you soon, Kyo."
+      "raiden_ei.chr deleted successfully."
     ];
 
     let i = 0;
@@ -286,17 +295,16 @@
         p.textContent = messages[i];
         logsContainer.appendChild(p);
         
-        // Ekranı hafifçe salla (Glitch efekti)
-        document.body.style.transform = `translate(${Math.random()*4}px, ${Math.random()*4}px)`;
+        document.body.style.transform = `translate(${Math.random()*3}px, ${Math.random()*3}px)`;
+        
         i++;
       } else {
         clearInterval(interval);
-        // Yazılar bittikten 1.5 saniye sonra Monika'ya fırlat
         setTimeout(() => {
           window.location.href = '/monika.html';
         }, 1500);
       }
-    }, 900); // Yazı hızı
+    }, 1000);
   }
 </script>
   <!-- Scripts -->
