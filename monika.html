@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kyo's World</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kyo-emerald': '#50C878',
+                        'kyo-orange': '#FFA500',
+                        'kyo-purple': '#800080',
+                        'dark-bg': '#050505',
+                        'discord-dark': '#1e1f22',
+                    },
+                    fontFamily: {
+                        'header': ['Fredoka', 'sans-serif'],
+                        'body': ['Quicksand', 'sans-serif'],
+                    },
+                    animation: {
+                        'breathe': 'breathe 3s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        breathe: {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 5px rgba(80, 200, 120, 0.1)', 
+                                borderColor: 'rgba(255, 255, 255, 0.1)' 
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 25px rgba(80, 200, 120, 0.4)', 
+                                borderColor: 'rgba(80, 200, 120, 0.6)' 
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* --- STATUS INDICATORS --- */
+        .status-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid #0a0a0c; /* Match card background */
+            z-index: 20;
+            transition: background-image 0.3s ease;
+        }
+        .status-online  { background-image: url('https://files.catbox.moe/l82m6v.png'); }
+        .status-idle    { background-image: url('https://files.catbox.moe/sko7xm.png'); }
+        .status-dnd     { background-image: url('https://files.catbox.moe/rojatg.png'); }
+        .status-offline { background-image: url('https://files.catbox.moe/d146hq.png'); }
+
+        /* --- TAM EKRAN SİYAH MENÜ --- */
+        #nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+            touch-action: none;
+        }
+
+        #nav-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-link {
+            position: relative;
+            transition: transform 0.2s ease, color 0.3s ease;
+        }
+        .menu-link:active {
+            transform: scale(0.95);
+        }
+        @media (min-width: 768px) {
+            .menu-link:hover {
+                transform: scale(1.1);
+            }
+        }
+
+        /* --- LİSTE STİLLERİ --- */
+        .text-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+        .text-card:active {
+            transform: scale(0.98);
+        }
+
+        .theme-raiden:hover { border-color: #800080; background: rgba(128, 0, 128, 0.05); }
+        .theme-monika:hover { border-color: #50C878; }
+
+        .list-item-row {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: padding-left 0.3s ease, background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            height: 70px; /* Slightly shorter for mobile */
+        }
+        .list-item-row:active {
+            background-color: rgba(255,255,255,0.05);
+        }
+        @media (min-width: 768px) {
+            .list-item-row:hover {
+                padding-left: 1rem;
+                border-bottom-color: rgba(255,255,255,0.3);
+            }
+            .list-item-row { height: 80px; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- DISCORD CARD STYLES --- */
+        .discord-compact {
+            background: #0a0a0c; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .discord-compact:active {
+            transform: scale(0.98);
+        }
+        
+        @media (min-width: 768px) {
+            .discord-compact:hover {
+                transform: translateY(-5px) scale(1.02);
+                animation: breathe 3s infinite ease-in-out;
+            }
+        }
+        
+        .card-bg-media {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .text-shadow-strong {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.7);
+        }
+
+        /* --- MONIKA HARFLERİ --- */
+        .monika-letter {
+            display: inline-block;
+            color: #1a1a1a;
+            text-shadow: none;
+            animation: letterGlow 3s infinite;
+        }
+        @keyframes letterGlow {
+            0%, 100% { color: #1a1a1a; text-shadow: none; transform: translateY(0); }
+            50% { color: #50C878; text-shadow: 0 0 10px #50C878; transform: translateY(-1px); }
+        }
+        .monika-letter:nth-child(1) { animation-delay: 0.0s; }
+        .monika-letter:nth-child(2) { animation-delay: 0.1s; }
+        .monika-letter:nth-child(3) { animation-delay: 0.2s; }
+        .monika-letter:nth-child(4) { animation-delay: 0.3s; }
+        .monika-letter:nth-child(5) { animation-delay: 0.4s; } 
+        .monika-letter:nth-child(6) { animation-delay: 0.5s; }
+        .monika-letter:nth-child(7) { animation-delay: 0.6s; }
+        .monika-letter:nth-child(8) { animation-delay: 0.7s; }
+        .monika-letter:nth-child(9) { animation-delay: 0.8s; }
+        .monika-letter:nth-child(10) { animation-delay: 0.9s; }
+        .monika-letter:nth-child(11) { animation-delay: 1.0s; }
+    </style>
+</head>
+<body class="selection:bg-kyo-emerald selection:text-black">
+
+    <!-- HEADER (Absolute) -->
+    <header class="absolute w-full top-0 left-0 p-6 flex justify-between items-center z-50 pointer-events-none">
+        <span id="site-logo" class="text-2xl font-bold font-header tracking-wider text-white pointer-events-auto mix-blend-difference transition-colors duration-300">KYO</span>
+        <button id="menu-btn" class="text-2xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none pointer-events-auto p-2">
+            <i class="fa-solid fa-bars transition-transform duration-300"></i>
+        </button>
+    </header>
+
+    <!-- MENU OVERLAY -->
+    <div id="nav-overlay">
+        <a href="#waifus" class="menu-link text-4xl md:text-5xl font-bold font-header text-gray-500 hover:text-kyo-purple py-2">WAIFUS</a>
+        <a href="#anime" class="menu-link text-4xl md:text-5xl font-bold font-header text-gray-500 hover:text-kyo-orange py-2">ANIME</a>
+        <a href="#games" class="menu-link text-4xl md:text-5xl font-bold font-header text-gray-500 hover:text-kyo-emerald py-2">GAMES</a>
+
+        <div class="absolute bottom-10 text-gray-500 text-sm font-body">
+            JUST MONIKA
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <section class="pt-40 pb-10 flex flex-col items-center justify-center text-center px-4 relative z-10 border-b border-white/5">
+        <h1 class="text-6xl md:text-9xl font-bold font-header mb-4 text-white drop-shadow-2xl">
+            KYO
+        </h1>
+        
+        <p class="text-kyo-emerald font-body text-sm md:text-xl tracking-[0.2em] uppercase mb-12 opacity-80 animate-pulse px-4">
+            "Every day, I imagine a future where I can be with you."
+        </p>
+        
+        <!-- COMPACT DISCORD ID CARD -->
+        <div id="discord-profile" class="discord-compact w-full max-w-[90vw] md:max-w-[340px] h-28 rounded-2xl flex items-center px-4 md:px-5 gap-4 md:gap-5 opacity-0 cursor-default group mx-auto">
+            
+            <!-- Video Background (Namecard) -->
+            <video id="d-bg-video" loop muted autoplay playsinline class="card-bg-media hidden"></video>
+            
+            <!-- Image Background (Fallback) -->
+            <img id="d-bg-image" src="" class="card-bg-media hidden" alt="Banner">
+
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-0"></div>
+
+            <!-- Avatar & Status -->
+            <div class="relative z-10 shrink-0">
+                <div class="relative">
+                    <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="w-14 h-14 md:w-16 md:h-16 rounded-full border-[3px] border-[#1e1f22] group-hover:border-kyo-emerald/50 transition duration-500 shadow-xl bg-black">
+                    <!-- Status Indicator -->
+                    <div id="d-status-indicator" class="status-indicator status-offline"></div>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="relative z-10 text-left flex flex-col justify-center h-full pt-1 overflow-hidden">
+                <span id="d-global-name" class="text-white font-bold font-header text-lg md:text-xl tracking-wide text-shadow-strong truncate">Loading...</span>
+                <span id="d-username" class="text-gray-300 text-[10px] md:text-xs font-mono font-semibold tracking-wider text-shadow-strong">@kyomoe</span>
+                
+                <div class="mt-2 flex items-center gap-2">
+                    <span id="d-activity" class="text-white text-[9px] md:text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-black/60 border border-kyo-emerald/50 backdrop-blur-sm shadow-lg truncate max-w-[140px]">
+                        OFFLINE
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Characters -->
+    <section id="waifus" class="py-16 md:py-24 max-w-4xl mx-auto px-6 relative z-10">
+        <h2 class="text-2xl md:text-3xl font-bold mb-12 text-red-500 font-header uppercase tracking-widest text-center reveal">Favorites</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+            <div class="text-card theme-raiden p-6 md:p-8 rounded-lg reveal">
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">Raiden Ei</h3>
+                <div class="border-l-2 border-kyo-purple pl-4 my-6">
+                    <p class="italic text-gray-400 text-base md:text-lg">"Inazuma shines eternal!"</p>
+                </div>
+                <p class="text-xs md:text-sm text-gray-500">Archon of Eternity. Musou no Hitotachi.</p>
+            </div>
+
+            <!-- Monika Card: Added ID and cursor-pointer for JS targeting -->
+            <div id="monika-card" class="text-card theme-monika p-6 md:p-8 rounded-lg reveal relative overflow-hidden isolate cursor-pointer">
+                <!-- Monika BG -->
+                <div class="absolute inset-0 -z-10">
+                    <img src="https://files.catbox.moe/f2pajl.jpg" alt="Monika Background" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-black/60"></div>
+                </div>
+
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-2 relative z-10">Monika</h3>
+                <div class="border-l-2 border-kyo-emerald pl-4 my-6 relative z-10">
+                    <p class="italic text-gray-200 text-base md:text-lg">"Just Monika."</p>
+                </div>
+                <p class="text-xs md:text-sm text-gray-300 font-semibold relative z-10">Club President.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Anime List -->
+    <section id="anime" class="py-16 md:py-24 bg-white/5 relative z-10">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-2xl md:text-3xl font-bold mb-12 text-kyo-orange font-header uppercase tracking-widest text-center reveal">ANIME</h2>
+            
+            <div class="space-y-2 md:space-y-4">
+                <div class="list-item-row cursor-default reveal group">
+                    <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-kyo-orange transition">One Piece</h3>
+                </div>
+                <div class="list-item-row cursor-default reveal group">
+                    <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-pink-400 transition">Madoka Magica</h3>
+                </div>
+                <div class="list-item-row cursor-default reveal group">
+                    <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-blue-300 transition">Koe No Katachi</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games List -->
+    <section id="games" class="py-16 md:py-24 max-w-4xl mx-auto px-6 relative z-10">
+        <h2 class="text-2xl md:text-3xl font-bold mb-12 text-kyo-emerald font-header uppercase tracking-widest text-center reveal">Games</h2>
+        
+        <div class="space-y-2 md:space-y-4">
+            <div class="list-item-row cursor-default reveal group">
+                <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-kyo-purple transition">Genshin Impact</h3>
+            </div>
+            <div class="list-item-row cursor-default reveal group">
+                <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-kyo-emerald transition">DDLC</h3>
+            </div>
+            <div class="list-item-row cursor-default reveal group">
+                <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-red-500 transition">NIKKE</h3>
+            </div>
+            <div class="list-item-row cursor-default reveal group">
+                <h3 class="text-2xl md:text-3xl font-bold text-white group-hover:text-kyo-orange transition">Clash Royale</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 md:py-24 mt-10 text-center border-t border-white/5 bg-black relative z-10">
+        <div class="reveal">
+            <!-- Footer Text scaled down for mobile -->
+            <div class="text-xl md:text-4xl font-bold font-header tracking-[0.2em] uppercase cursor-default select-none px-4">
+                <span class="monika-letter">J</span>
+                <span class="monika-letter">U</span>
+                <span class="monika-letter">S</span>
+                <span class="monika-letter">T</span>
+                <span class="monika-letter">&nbsp;</span>
+                <span class="monika-letter">M</span>
+                <span class="monika-letter">O</span>
+                <span class="monika-letter">N</span>
+                <span class="monika-letter">I</span>
+                <span class="monika-letter">K</span>
+                <span class="monika-letter">A</span>
+            </div>
+
+            <div class="mt-8 relative inline-block group h-5 w-full">
+                <!-- Default State -->
+                <div class="text-gray-600 text-xs font-mono transition-opacity duration-300 group-hover:opacity-0 absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span id="year"></span> • Made with 💚 by <a href="https://x.com/kyoyacchi" target="_blank" class="pointer-events-auto hover:text-kyo-emerald ml-1 transition-colors">@Kyo</a>
+                </div>
+                <!-- Hover State -->
+                <a href="https://x.com/kyoyacchi" target="_blank" class="text-kyo-emerald text-sm font-bold opacity-0 transition-opacity duration-300 group-hover:opacity-100 absolute inset-0 flex items-center justify-center z-10">
+                    Just Monika
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Monika POPUP Modal (Exact DDLC Style) -->
+    <div id="monika-popup" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 hidden">
+        <!-- Changed bg to white, added thick pink border -->
+        <div class="bg-white border-[5px] border-[#ffbde1] rounded-sm p-8 max-w-sm w-full mx-4 text-center shadow-[0_0_0_2px_white]" id="monika-popup-content">
+            <!-- Changed text to black -->
+            <h3 class="text-3xl font-header text-black mb-6 tracking-wide">Just Monika.</h3>
+            <!-- Cleaned up button: No bg, no border, just text -->
+            <button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-3xl font-black py-2 px-6 transition-transform hover:scale-110 active:scale-95 outline-none shadow-none" style="text-shadow: 2px 2px 0px white, 4px 4px 0px rgba(255,105,180,0.2);">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- LANYARD LOGIC SCRIPT -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // --- CONFIG ---
+        const DISCORD_USER_ID = '468509605828493322';
+        const CONFIG = {
+            MAX_BACKOFF: 30000,
+            CACHE_TTL: 60000 * 5, // 5 minutes cache
+            SWR_THRESHOLD: 120000,
+            CONNECT_DEBOUNCE: 1500,
+            INIT_TIMEOUT: 10000,
+            REVALIDATE_TIMEOUT: 8000,
+            RENDER_DEBOUNCE: 150,
+            FALLBACK_TIMEOUT: 8000
+        };
+
+        const state = {
+            ws: null,
+            isConnected: false,
+            isConnecting: false,
+            reconnectTimer: null,
+            heartbeatInterval: null,
+            initTimeout: null,
+            renderDebounceTimer: null,
+            fallbackTimeout: null,
+            backoff: 1000,
+            currentSessionID: null,
+            lastConnectAttempt: 0,
+            lastPresenceHash: null,
+            hasEverConnected: false
+        };
+
+        // --- CACHE WITH LOCAL STORAGE ---
+        const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
+
+        function getCache() {
+            try {
+                const stored = localStorage.getItem(storageKey);
+                if (!stored) return null;
+                
+                const { data, timestamp } = JSON.parse(stored);
+                // Simple cache retrieval
+                return data;
+            } catch (e) {
+                console.warn('Cache parse error', e);
+                return null;
+            }
+        }
+
+        function setCache(data) {
+            try {
+                localStorage.setItem(storageKey, JSON.stringify({
+                    data: data,
+                    timestamp: Date.now()
+                }));
+            } catch (e) {
+                console.warn('LocalStorage write failed', e);
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function debouncedRenderPresence(data) {
+            if (state.renderDebounceTimer) {
+                cancelAnimationFrame(state.renderDebounceTimer);
+            }
+            state.renderDebounceTimer = requestAnimationFrame(() => {
+                renderPresence(data);
+                state.renderDebounceTimer = null;
+            });
+        }
+
+        function renderPresence(data) {
+            const card = document.getElementById('discord-profile');
+            const avatarEl = document.getElementById('d-avatar');
+            const nameEl = document.getElementById('d-global-name');
+            const userEl = document.getElementById('d-username');
+            const activityEl = document.getElementById('d-activity');
+            const statusInd = document.getElementById('d-status-indicator');
+            const videoBg = document.getElementById('d-bg-video');
+            const imgBg = document.getElementById('d-bg-image');
+
+            if (!data || !data.discord_user) return;
+
+            const user = data.discord_user;
+            const status = data.discord_status || 'offline';
+
+            // 1. Reveal Card
+            card.classList.remove('opacity-0');
+
+            // 2. Avatar
+            const avatarUrl = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128`
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+
+            // 3. Status Indicator
+            statusInd.className = `status-indicator status-${status}`;
+
+            // 4. Names
+            nameEl.textContent = user.global_name || user.username;
+            userEl.textContent = '@' + user.username;
+
+            // 5. Activity Text
+            let activityText = "OFFLINE";
+            let colorClass = "text-white";
+
+            if (status !== 'offline') {
+                const activities = data.activities || [];
+                const game = activities.find(a => a.type === 0 || a.type === 1); // Game or Streaming
+                const spotify = activities.find(a => a.type === 2); // Spotify
+
+                if (game) {
+                    activityText = "PLAYING " + game.name;
+                    colorClass = "text-kyo-emerald";
+                } else if (spotify) {
+                    activityText = "LISTENING";
+                    colorClass = "text-kyo-emerald";
+                } else {
+                    activityText = status.toUpperCase();
+                    if(status === 'dnd') activityText = "DO NOT DISTURB";
+                }
+            }
+            activityEl.textContent = activityText;
+            
+            // 6. Background Logic (Namecard Webm Priority)
+            let videoUrl = null;
+            
+            // Try to extract nameplate asset url
+            if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
+                // Construct URL based on provided format
+                videoUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+            }
+
+            if (videoUrl) {
+                if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
+                videoBg.classList.remove('hidden');
+                imgBg.classList.add('hidden');
+            } else if (user.banner) {
+                // Fallback to static banner if no video nameplate
+                const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=512`;
+                imgBg.src = bannerUrl;
+                imgBg.classList.remove('hidden');
+                videoBg.classList.add('hidden');
+            } else {
+                // Default fallback color
+                imgBg.src = 'https://color-hex.org/colors/50c878.png';
+                imgBg.classList.remove('hidden');
+                videoBg.classList.add('hidden');
+            }
+        }
+
+        // --- WEBSOCKET LOGIC ---
+        async function connectLanyard() {
+            const now = Date.now();
+            if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
+            state.lastConnectAttempt = now;
+
+            if (state.isConnecting || state.isConnected) return;
+            
+            state.isConnecting = true;
+
+            // Load cache immediately for UX
+            const cached = getCache();
+            if (cached) {
+                debouncedRenderPresence(cached);
+            }
+
+            // REST Revalidation (Update cache if stale)
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+                const json = await res.json();
+                if (json.success && json.data) {
+                    setCache(json.data);
+                    debouncedRenderPresence(json.data);
+                }
+            } catch (e) {
+                console.warn("Initial fetch failed, relying on cache or WS", e);
+            }
+
+            // WebSocket Connection
+            let ws;
+            try {
+                ws = new WebSocket('wss://api.lanyard.rest/socket');
+            } catch (err) {
+                state.isConnecting = false;
+                scheduleReconnect();
+                return;
+            }
+
+            const sessionID = Date.now().toString(36);
+            state.currentSessionID = sessionID;
+            state.ws = ws;
+
+            ws.onopen = () => {
+                if (state.currentSessionID !== sessionID) return;
+                state.isConnected = true;
+                state.isConnecting = false;
+                state.backoff = 1000;
+
+                ws.send(JSON.stringify({ 
+                    op: 2, 
+                    d: { subscribe_to_id: DISCORD_USER_ID } 
+                }));
+            };
+
+            ws.onmessage = ({ data }) => {
+                if (state.currentSessionID !== sessionID) return;
+                try {
+                    const parsed = JSON.parse(data);
+                    const { op, t, d } = parsed;
+
+                    // Heartbeat
+                    if (op === 1) {
+                        clearInterval(state.heartbeatInterval);
+                        state.heartbeatInterval = setInterval(() => {
+                            if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
+                        }, d.heartbeat_interval);
+                    }
+
+                    // Updates
+                    if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
+                        const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+                        if (presence) {
+                            setCache(presence);
+                            debouncedRenderPresence(presence);
+                        }
+                    }
+                } catch (e) { console.error(e); }
+            };
+
+            ws.onerror = () => {
+                if (state.currentSessionID !== sessionID) return;
+                state.isConnected = false;
+                state.isConnecting = false;
+                ws.close();
+                scheduleReconnect();
+            };
+
+            ws.onclose = () => {
+                if (state.currentSessionID !== sessionID) return;
+                state.isConnected = false;
+                state.isConnecting = false;
+                scheduleReconnect();
+            };
+        }
+
+        function scheduleReconnect() {
+            if (state.reconnectTimer) return;
+            const jitter = Math.floor(Math.random() * 1000);
+            const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
+            
+            state.reconnectTimer = setTimeout(() => {
+                state.reconnectTimer = null;
+                connectLanyard();
+            }, wait);
+            
+            state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
+        }
+
+        // --- INIT & MENU ---
+        document.addEventListener('DOMContentLoaded', () => {
+            connectLanyard();
+        });
+
+        // Visibility handling to save resources/reconnect
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !state.isConnected) {
+                connectLanyard();
+            }
+        });
+
+        // Menu Logic (kept from original)
+        const menuBtn = document.getElementById('menu-btn');
+        const navOverlay = document.getElementById('nav-overlay');
+        const icon = menuBtn.querySelector('i');
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const logo = document.getElementById('site-logo'); // Get Logo
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                navOverlay.classList.add('open');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+                icon.style.transform = 'rotate(90deg)';
+                document.body.style.overflow = 'hidden';
+                
+                // Change logo color to green
+                logo.classList.remove('text-white', 'mix-blend-difference');
+                logo.classList.add('text-kyo-emerald');
+                
+            } else {
+                navOverlay.classList.remove('open');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+                icon.style.transform = 'rotate(0deg)';
+                document.body.style.overflow = 'auto';
+
+                // Revert logo color
+                logo.classList.add('text-white', 'mix-blend-difference');
+                logo.classList.remove('text-kyo-emerald');
+            }
+        }
+        menuBtn.addEventListener('click', toggleMenu);
+        menuLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+        // Scroll Reveal
+        window.addEventListener('scroll', reveal);
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var revealTop = reveals[i].getBoundingClientRect().top;
+                if (revealTop < windowHeight - 50) {
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        reveal();
+
+        // --- MONIKA POPUP LOGIC ---
+        const monikaCard = document.getElementById('monika-card');
+        const monikaPopup = document.getElementById('monika-popup');
+        const monikaOkBtn = document.getElementById('monika-ok-btn');
+        const popupContent = document.getElementById('monika-popup-content');
+
+        if(monikaCard && monikaPopup && monikaOkBtn) {
+            monikaCard.addEventListener('click', () => {
+                monikaPopup.classList.remove('hidden');
+                // Removed animation logic
+            });
+
+            monikaOkBtn.addEventListener('click', () => {
+                monikaPopup.classList.add('hidden');
+            });
+            
+            // Close on background click
+            monikaPopup.addEventListener('click', (e) => {
+                if(e.target === monikaPopup) {
+                    monikaOkBtn.click();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
