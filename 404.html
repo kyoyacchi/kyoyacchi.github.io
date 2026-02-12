@@ -218,6 +218,17 @@
     </style>
 </head>
 <body>
+  <script>
+    const redirects = {
+        '/m': '/monika'
+    };
+    
+    const path = window.location.pathname;
+    if (redirects[path]) {
+        window.location.replace(redirects[path]);
+    }
+</script>
+
     <div class="container">
         <div class="yae-miko-icon">
             <img src="https://us-east-1.tixte.net/uploads/kyoya.discowd.com/33d1ed4bbe93bbc3810953d0c4e8f8b7_508243765883771814.png" alt="Yae Miko Sticker">
@@ -233,6 +244,9 @@
         </p>
             <p class="disclaimer-text">This website is a personal project and is not affiliated with HoYoverse. Genshin Impact, game content, and materials are trademarks and copyrights of HoYoverse.</p>
     </div>
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
