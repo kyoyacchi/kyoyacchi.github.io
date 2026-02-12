@@ -243,8 +243,16 @@
 <script>
   const monikaPaths = ['/m', '/monika', '/justmonika'];
   const urlParams = new URLSearchParams(window.location.search);
+  
+t
+  const requestedPath = sessionStorage.getItem('requestedPath');
+  if (requestedPath) {
+    sessionStorage.removeItem('requestedPath'); 
+  }
 
-  if (monikaPaths.includes(window.location.pathname.toLowerCase()) || urlParams.has('m')) {
+  if (monikaPaths.includes(window.location.pathname.toLowerCase()) || 
+      monikaPaths.includes(requestedPath) || 
+      urlParams.has('m')) {
     
     const mainContent = document.querySelectorAll('body > *:not(.intro-overlay)');
     mainContent.forEach(el => el.remove());
@@ -290,7 +298,6 @@
       "natsuki.chr deleted successfully.",
       "yuri.chr deleted successfully.",
       "raiden_ei.chr deleted successfully.",
-     // "CRITICAL_ERROR: Main sequence terminated."
     ];
 
     window.stop();
