@@ -219,13 +219,15 @@
 </head>
 <body>
   <script>
-    const redirects = {
-        '/m': '/monika'
-    };
+
+    const monikaPaths = ['/m', '/monika', '/justmonika'];
+    const currentPath = window.location.pathname.toLowerCase();
     
-    const path = window.location.pathname;
-    if (redirects[path]) {
-        window.location.replace(redirects[path]);
+    if (monikaPaths.includes(currentPath)) {
+
+        sessionStorage.setItem('requestedPath', currentPath);
+
+        window.location.replace('/');
     }
 </script>
 
