@@ -241,21 +241,28 @@
 
 
 <script>
-  const monikaPaths = ['/m', '/monika', '/justmonika'];
-  const urlParams = new URLSearchParams(window.location.search);
-  
-t
-  const requestedPath = sessionStorage.getItem('requestedPath');
-  if (requestedPath) {
-    sessionStorage.removeItem('requestedPath'); 
-  }
-
-  if (monikaPaths.includes(window.location.pathname.toLowerCase()) || 
-      monikaPaths.includes(requestedPath) || 
-      urlParams.has('m')) {
+  (function() {
+    const monikaPaths = ['/m', '/monika', '/justmonika'];
+    const urlParams = new URLSearchParams(window.location.search);
     
-    const mainContent = document.querySelectorAll('body > *:not(.intro-overlay)');
-    mainContent.forEach(el => el.remove());
+    // 404.html'den gelen path'i kontrol et
+    const requestedPath = sessionStorage.getItem('requestedPath');
+    
+    // Şu durumlardan biri varsa animasyonu çalıştır:
+    // 1. URL path monika path'lerinden biri
+    // 2. SessionStorage'da monika path var
+    // 3. URL'de ?m parametresi var
+    const shouldShowMonikaSequence = 
+      monikaPaths.includes(window.location.pathname.toLowerCase()) || 
+      (requestedPath && monikaPaths.includes(requestedPath.toLowerCase())) || 
+      urlParams.has('m');
+    
+    if (shouldShowMonikaSequence) {
+      // SessionStorage'ı hemen temizle
+      sessionStorage.removeItem('requestedPath');
+    
+      const mainContent = document.querySelectorAll('body > *:not(.intro-overlay)');
+      mainContent.forEach(el => el.remove());
 
     const intro = document.querySelector('.intro-overlay');
     if (intro) {
@@ -298,6 +305,7 @@ t
       "natsuki.chr deleted successfully.",
       "yuri.chr deleted successfully.",
       "raiden_ei.chr deleted successfully.",
+     // "CRITICAL_ERROR: Main sequence terminated."
     ];
 
     window.stop();
@@ -317,7 +325,8 @@ t
         }, 1500);
       }
     }, 1000);
-  }
+    }
+  })();
 </script>
 
   <!-- Scripts -->
