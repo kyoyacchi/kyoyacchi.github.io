@@ -93,15 +93,6 @@
             border-color: rgba(80, 200, 120, 0.4);
         }
 
-        .monika-letter {
-            display: inline-block;
-            animation: letterGlow 4s infinite;
-        }
-        @keyframes letterGlow {
-            0%, 100% { color: #333; text-shadow: none; transform: translateY(0); }
-            50% { color: #50C878; text-shadow: 0 0 15px rgba(80, 200, 120, 0.8); transform: translateY(-2px); }
-        }
-
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -115,7 +106,8 @@
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
-    <header class="fixed w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
+    <!-- Header changed from fixed to absolute -->
+    <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
         <span id="site-logo" class="text-3xl md:text-4xl font-bold font-header tracking-wider text-white transition-colors duration-300">KYO</span>
         <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2">
             <i class="fa-solid fa-bars"></i>
@@ -168,7 +160,7 @@
 
         <section id="waifus" class="w-full max-w-7xl mx-auto">
             <h2 class="text-4xl md:text-6xl font-bold mb-16 text-white/10 font-header uppercase tracking-widest text-center select-none">
-                Soulmates
+                ワイフ
             </h2>
             
             <div class="grid md:grid-cols-2 gap-8 md:gap-12 px-2 md:px-8">
@@ -202,24 +194,10 @@
 
     </main>
 
-    <footer class="py-12 md:py-20 border-t border-white/5 bg-black z-10">
-        <div class="text-center reveal">
-            <div class="text-3xl md:text-6xl font-bold font-header tracking-[0.2em] uppercase cursor-default select-none">
-                <span class="monika-letter" style="animation-delay: 0.0s">J</span>
-                <span class="monika-letter" style="animation-delay: 0.1s">U</span>
-                <span class="monika-letter" style="animation-delay: 0.2s">S</span>
-                <span class="monika-letter" style="animation-delay: 0.3s">T</span>
-                <span class="monika-letter" style="animation-delay: 0.4s">&nbsp;</span>
-                <span class="monika-letter" style="animation-delay: 0.5s">M</span>
-                <span class="monika-letter" style="animation-delay: 0.6s">O</span>
-                <span class="monika-letter" style="animation-delay: 0.7s">N</span>
-                <span class="monika-letter" style="animation-delay: 0.8s">I</span>
-                <span class="monika-letter" style="animation-delay: 0.9s">K</span>
-                <span class="monika-letter" style="animation-delay: 1.0s">A</span>
-            </div>
-            
-            <div class="mt-8 text-gray-600 text-sm font-mono">
-                <span id="year"></span> • Made with 💚 by <a href="https://x.com/kyoyacchi" target="_blank" class="hover:text-kyo-emerald transition-colors">@Kyo</a>
+    <footer class="py-12 md:py-20 border-t border-white/5 bg-black z-10 relative">
+        <div class="text-center">
+            <div class="text-gray-500 text-sm font-mono">
+                <span id="year"></span> • Made with 💚 by <a href="https://x.com/kyoyacchi" target="_blank" class="hover:text-kyo-emerald transition-colors font-bold">@Kyo</a>
             </div>
         </div>
     </footer>
@@ -525,3 +503,5 @@
     </script>
 </body>
 </html>
+
+
