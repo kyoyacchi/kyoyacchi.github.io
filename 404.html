@@ -84,12 +84,8 @@
         }
 
         @keyframes gradientBorderFill {
-            0% {
-                background-position: 150% 50%;
-            }
-            100% {
-                background-position: -50% 50%;
-            }
+            0% { background-position: 150% 50%; }
+            100% { background-position: -50% 50%; }
         }
 
         .yae-miko-icon {
@@ -107,6 +103,7 @@
             position: relative;
             left: 0px;
             top: 10px;
+            transition: filter 0.1s ease;
         }
 
         h1 {
@@ -175,58 +172,50 @@
             from { transform: scale(0.9); opacity: 0.2;}
             to { transform: scale(1.1); opacity: 0.3;}
         }
+        
         .disclaimer-text {
-  color: #8A7A9A;
-  font-size: 0.85em;
-  margin-top: 10px;
-  text-align: center;
-  font-style: italic;
-}
+            color: #8A7A9A;
+            font-size: 0.85em;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        body.glitching .yae-miko-icon img {
+            filter: drop-shadow(0 0 8px red) drop-shadow(0 0 8px cyan);
+        }
 
         @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
+            body { padding: 15px; }
             .container {
                 width: 95%;
                 padding: 20px 15px;
                 margin: 15px 0;
                 border-width: 2px;
             }
-            h1 {
-                font-size: 1.9rem;
-            }
+            h1 { font-size: 1.9rem; }
             .message {
                 font-size: 0.9rem;
                 line-height: 1.6;
                 margin-bottom: 25px;
             }
-            .yae-miko-icon { 
-            }
-             .yae-miko-icon img {
-                max-width: 80px;
-            }
+            .yae-miko-icon img { max-width: 80px; }
             .home-button {
                 padding: 9px 20px;
                 font-size: 0.9rem;
             }
-            .footer-note {
-                 font-size: 0.75rem;
-            }
-                .disclaimer-text { font-size: 0.65rem; }
+            .footer-note { font-size: 0.75rem; }
+            .disclaimer-text { font-size: 0.65rem; }
         }
     </style>
 </head>
 <body>
   <script>
-
     const monikaPaths = ['/m', '/monika', '/justmonika'];
     const currentPath = window.location.pathname.toLowerCase();
     
     if (monikaPaths.includes(currentPath)) {
-
         sessionStorage.setItem('requestedPath', currentPath);
-
         window.location.replace('/');
     }
 </script>
@@ -235,26 +224,79 @@
         <div class="yae-miko-icon">
             <img src="https://us-east-1.tixte.net/uploads/kyoya.discowd.com/33d1ed4bbe93bbc3810953d0c4e8f8b7_508243765883771814.png" alt="Yae Miko Sticker">
         </div>
-        <h1>Ara Ara~</h1>
-        <p class="message">
+        <h1 id="title">Ara Ara~</h1>
+        <p class="message" id="message">
             Lost, <strong>little one</strong>?
             Curious paths can be diverting, but perhaps it's time to head back to the <strong>Grand Narukami Shrine</strong>?
         </p>
         <a href="/" class="home-button" id="homeButton">Return to the Shrine</a>
-        <p class="footer-note">
+        <p class="footer-note" id="footer">
             Remember, every end is a new beginning... or perhaps just a broken link.
         </p>
-            <p class="disclaimer-text">This website is a personal project and is not affiliated with HoYoverse. Genshin Impact, game content, and materials are trademarks and copyrights of HoYoverse.</p>
+        <p class="disclaimer-text" id="disclaimer">This website is a personal project and is not affiliated with HoYoverse. Genshin Impact, game content, and materials are trademarks and copyrights of HoYoverse.</p>
     </div>
-
-
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const homeButton = document.getElementById('homeButton');
-            const redirectTime = 5000; 
+            const redirectTime = 3500; 
+            const glitchTime = 2000;
             let redirectTimer;
+
+            const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`ÆØÅæøå¥€£¢∞§¶•ªº';
+            const textElements = {
+                title: document.getElementById('title'),
+                message: document.getElementById('message'),
+                button: document.getElementById('homeButton'),
+                footer: document.getElementById('footer'),
+                disclaimer: document.getElementById('disclaimer')
+            };
+            const originalTexts = {
+                title: textElements.title.textContent,
+                message: textElements.message.innerHTML,
+                button: textElements.button.textContent,
+                footer: textElements.footer.textContent,
+                disclaimer: textElements.disclaimer.textContent
+            };
+
+            function scrambleText(element, isHTML = false) {
+                const original = isHTML ? element.innerHTML : element.textContent;
+                let scrambled = '';
+                for (let i = 0; i < original.length; i++) {
+                    if (original[i] === ' ' || original[i] === '<' || original[i] === '>') {
+                        scrambled += original[i];
+                    } else if (Math.random() > 0.5) {
+                        scrambled += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                    } else {
+                        scrambled += original[i];
+                    }
+                }
+                if (isHTML) {
+                    element.innerHTML = scrambled;
+                } else {
+                    element.textContent = scrambled;
+                }
+            }
+
+            function startGlitch() {
+                document.body.classList.add('glitching');
+                
+                const glitchInterval = setInterval(() => {
+                    scrambleText(textElements.title);
+                    scrambleText(textElements.button);
+                    scrambleText(textElements.footer);
+                    
+                    if (Math.random() > 0.7) {
+                        scrambleText(textElements.message, true);
+                    }
+                }, 100);
+
+                setTimeout(() => {
+                    clearInterval(glitchInterval);
+                }, 1200);
+            }
+
+            setTimeout(startGlitch, glitchTime);
 
             redirectTimer = setTimeout(function() {
                 window.location.href = "/"; 
