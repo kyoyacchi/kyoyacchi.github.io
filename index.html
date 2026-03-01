@@ -59,11 +59,12 @@
 
 
 <script>
-    // Only redirect from the root path to /m
-    if (window.location.pathname === '/' || window.location.pathname === '') {
+    // Simple redirect: only from root to /m
+    if (window.location.pathname === '/' && !sessionStorage.getItem('redirected')) {
+        sessionStorage.setItem('redirected', 'true');
         setTimeout(function() {
             window.location.href = '/m';
-        }, 1500); 
+        }, 1500);
     }
 </script>
 
