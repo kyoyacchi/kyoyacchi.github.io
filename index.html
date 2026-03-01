@@ -59,11 +59,13 @@
 
 
 <script>
-        
+    // Only redirect if we're NOT already at /m
+    if (window.location.pathname !== '/m' && window.location.pathname !== '/m/') {
         setTimeout(function() {
             window.location.href = '/m';
         }, 1500); 
-    </script>
+    }
+</script>
 
 
   <!-- Main Content -->
