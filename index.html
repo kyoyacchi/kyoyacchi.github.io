@@ -43,39 +43,14 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css" type="text/css">
-    <style>
-
-    body.fatal-glitch {
-        animation: fatal-tear 0.1s steps(2, end) infinite;
-        filter: grayscale(100%) contrast(150%) brightness(80%);
-        overflow: hidden;
-    }
-
-
-    body.fatal-glitch::after {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: 
-            linear-gradient(transparent 50%, rgba(0, 0, 0, 0.5) 50%),
-            linear-gradient(90deg, transparent 95%, rgba(0, 0, 0, 0.8) 95%);
-        background-size: 100% 4px, 15px 100%;
-        z-index: 9999999;
-        pointer-events: none;
-        opacity: 0.8;
-    }
-
-
-    @keyframes fatal-tear {
-        0% { transform: translate(0, 0) skew(0deg); }
-        20% { transform: translate(-25px, 5px) skew(-10deg); }
-        40% { transform: translate(15px, -15px) skew(5deg); }
-        60% { transform: translate(-10px, 20px) skew(-8deg); }
-        80% { transform: translate(30px, -5px) skew(12deg); }
-        100% { transform: translate(0, 0) skew(0deg); }
+<style>
+    /* Ana ekranın sarsıntı keyframe'i */
+    @keyframes glitch-shake {
+        0% { transform: translate(3px, 1px) skewX(1deg); }
+        50% { transform: translate(-3px, -1px) skewX(-1deg); }
+        100% { transform: translate(2px, 2px) skewX(0deg); }
     }
 </style>
-
 </head>
 <body>
   <!-- Canvas Effects -->
@@ -95,15 +70,66 @@
     if (window.location.pathname === '/' && !sessionStorage.getItem('requestedPath') && !window.location.search.includes('m')) {
         
         setTimeout(function() {
-            document.body.classList.add('fatal-glitch');
-        }, 1000);
 
+            const height = window.innerHeight;
+            let i = 0;
+            
+
+            const glitchContainer = document.createElement('div');
+            glitchContainer.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999999; pointer-events: none; overflow: hidden;';
+            
+
+            while (i < height) {
+
+                const stripHeight = Math.floor(Math.random() * 10) + 2; 
+                const actualHeight = (i + stripHeight < height) ? stripHeight : height - i;
+                
+                const strip = document.createElement('div');
+                const shiftX = Math.floor(Math.random() * 40) - 20; 
+                const isGlitchy = Math.random() > 0.4;
+                const invertVal = isGlitchy ? 1 : 0;
+                const grayscaleVal = isGlitchy ? '100%' : '0%';
+                
+                strip.style.cssText = `
+                    position: absolute;
+                    top: ${i}px;
+                    left: ${shiftX}px;
+                    width: 100%;
+                    height: ${actualHeight}px;
+                    backdrop-filter: invert(${invertVal}) contrast(150%) grayscale(${grayscaleVal});
+                    background: ${isGlitchy ? 'rgba(0, 0, 0, 0.1)' : 'transparent'};
+                `;
+                
+
+                strip.animate([
+                    { transform: 'translateX(0px)' },
+                    { transform: `translateX(${shiftX}px)` },
+                    { transform: `translateX(${shiftX * -0.5}px)` }
+                ], {
+                    duration: Math.random() * 50 + 50, // 50-100ms arası (çok hızlı)
+                    iterations: Infinity,
+                    direction: 'alternate'
+                });
+
+                glitchContainer.appendChild(strip);
+                
+
+                i += actualHeight; 
+            }
+            
+
+            document.body.style.animation = 'glitch-shake 0.1s infinite';
+            document.body.appendChild(glitchContainer);
+            
+        }, 1000); // 1. saniyede ekran paramparça olur
 
         setTimeout(function() {
             window.location.href = '/m';
-        }, 1500);
+        }, 1500); // 1.5 saniyede hedefe fırlar
     }
 </script>
+
+
 
 
 
