@@ -43,6 +43,39 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <style>
+
+    body.fatal-glitch {
+        animation: fatal-tear 0.1s steps(2, end) infinite;
+        filter: grayscale(100%) contrast(150%) brightness(80%);
+        overflow: hidden;
+    }
+
+
+    body.fatal-glitch::after {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: 
+            linear-gradient(transparent 50%, rgba(0, 0, 0, 0.5) 50%),
+            linear-gradient(90deg, transparent 95%, rgba(0, 0, 0, 0.8) 95%);
+        background-size: 100% 4px, 15px 100%;
+        z-index: 9999999;
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+
+    @keyframes fatal-tear {
+        0% { transform: translate(0, 0) skew(0deg); }
+        20% { transform: translate(-25px, 5px) skew(-10deg); }
+        40% { transform: translate(15px, -15px) skew(5deg); }
+        60% { transform: translate(-10px, 20px) skew(-8deg); }
+        80% { transform: translate(30px, -5px) skew(12deg); }
+        100% { transform: translate(0, 0) skew(0deg); }
+    }
+</style>
+
 </head>
 <body>
   <!-- Canvas Effects -->
