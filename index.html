@@ -43,42 +43,7 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css" type="text/css">
-<style>
-    /* Tam ekran fatal-glitch katmanı */
-    #fatal-glitch-overlay {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: black;
-        z-index: 1000000;
-        display: none;
-        overflow: hidden;
-    }
 
-    /* Glitch blokları için temel sınıf */
-    .glitch-block {
-        position: absolute;
-        pointer-events: none;
-    }
-
-    /* Renkli piksel blokları (Görsel 0'daki Yuri'nin köşesi gibi) */
-    .pixel-glitch {
-        background-size: 10px 10px;
-        background-image: 
-            linear-gradient(90deg, #ff00ff 25%, transparent 25%),
-            linear-gradient(#ff00ff 25%, #00ffff 25%, #00ffff 50%, #ff0000 50%, #ff0000 75%, transparent 75%);
-        opacity: 0.8;
-        mix-blend-mode: color-burn;
-    }
-
-    /* Data-moshing benzeri parçalı bloklar (Görsel 1'deki Serenity logosu gibi) */
-    .moshing-block {
-        background: rgba(123, 44, 191, 0.5); /* #7B2CBF, sitenin tema rengi */
-        border: 2px solid #ff00ff;
-        box-sizing: border-box;
-        mix-blend-mode: difference;
-    }
-</style>
 
 </head>
 <body>
@@ -96,62 +61,14 @@
 
 
 <script>
-    // Sadece ana sayfadaysak ve 404'ten (/m) sekip gelmediysek çalışsın
+
     if (window.location.pathname === '/' && !sessionStorage.getItem('requestedPath') && !window.location.search.includes('m')) {
-        
-        // 1 saniye bekle, sonra glitch'i göster
         setTimeout(function() {
-            // Tam ekran glitch katmanını oluştur
-            const overlay = document.createElement('div');
-            overlay.id = 'fatal-glitch-overlay';
-            overlay.style.display = 'block';
-            document.body.appendChild(overlay);
-
-            // Blok oluşturma fonksiyonu: CPU'yu yormamak için az sayıda büyük blok
-            function createGlitchBlocks() {
-                // Temizle
-                overlay.innerHTML = '';
-
-                // Rastgele 8-12 blok oluştur
-                const numBlocks = Math.floor(Math.random() * 5) + 8;
-                for (let j = 0; j < numBlocks; j++) {
-                    const block = document.createElement('div');
-                    block.classList.add('glitch-block');
-
-                    // Tip seç (Pixel veya Moshing)
-                    const isPixel = Math.random() > 0.5;
-                    block.classList.add(isPixel ? 'pixel-glitch' : 'moshing-block');
-
-                    // Rastgele boyut ve konum
-                    const width = Math.floor(Math.random() * 60) + 10; // % olarak
-                    const height = Math.floor(Math.random() * 60) + 10; // % olarak
-                    block.style.cssText = `
-                        width: ${width}vw;
-                        height: ${height}vh;
-                        top: ${Math.floor(Math.random() * (100 - height))}vh;
-                        left: ${Math.floor(Math.random() * (100 - width))}vw;
-                    `;
-                    overlay.appendChild(block);
-                }
-            }
-
-            // İlk blokları oluştur
-            createGlitchBlocks();
-
-            // Saniyenin onda biri hızında blokları rastgele değiştir (titreme yok, sadece parça değişimi)
-            // Performans için interval kullanıyoruz.
-            const glitchInterval = setInterval(createGlitchBlocks, 100);
-
-            // Glitch başladıktan yarım saniye sonra /m'ye fırlat
-            setTimeout(function() {
-                clearInterval(glitchInterval);
-                window.location.href = '/m';
-            }, 500); // 1.5s toplam süre için burası 500ms olmalı. 1s + 500ms = 1.5s
-
-        }, 1000); 
-
+            window.location.href = '/m';
+        }, 1500);
     }
 </script>
+
 
 
 
