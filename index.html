@@ -92,13 +92,19 @@
 
 
 <script>
-
     if (window.location.pathname === '/' && !sessionStorage.getItem('requestedPath') && !window.location.search.includes('m')) {
+        
+        setTimeout(function() {
+            document.body.classList.add('fatal-glitch');
+        }, 1000);
+
+
         setTimeout(function() {
             window.location.href = '/m';
         }, 1500);
     }
 </script>
+
 
 
 
