@@ -60,7 +60,7 @@
 
 <script>
 
-    if (window.location.pathname === '/') {
+    if (window.location.pathname === '/' && !sessionStorage.getItem('requestedPath') && !window.location.search.includes('m')) {
         setTimeout(function() {
             window.location.href = '/m';
         }, 1500);
