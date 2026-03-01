@@ -59,8 +59,8 @@
 
 
 <script>
-    // Only redirect if we're NOT already at /m
-    if (window.location.pathname !== '/m' && window.location.pathname !== '/m/') {
+    // Only redirect from the root path to /m
+    if (window.location.pathname === '/' || window.location.pathname === '') {
         setTimeout(function() {
             window.location.href = '/m';
         }, 1500); 
