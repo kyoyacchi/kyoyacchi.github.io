@@ -235,8 +235,12 @@ function handleNormalMode(elements, hideOverlay) {
     elements.subtitleText.textContent = randomQuote.jp;
   }
 
-  setTimeout(hideOverlay, INTRO_CONFIG.normalDisplayTime);
-  initializePageSystems();
+  // Stop loading after animation completes and keep the quote visible
+  setTimeout(() => {
+    window.stop(); // Stop page loading
+    initializePageSystems();
+    // Don't call hideOverlay - keep the quote visible
+  }, INTRO_CONFIG.normalDisplayTime);
 }
 
 function initializePageSystems() {
@@ -265,9 +269,6 @@ function initializePageSystems() {
     if (typeof connectLanyard === 'function') connectLanyard();
   }, INTRO_CONFIG.lanyardConnectDelay);
 }
-
-
-
 
 
 
@@ -2299,6 +2300,10 @@ async function fetchDiscordBanner() {
     }
 }
 // --- END: Secret Popup Banner Fetch ---
+
+function stopPageLoading (){
+  window.stop();
+}
 
 
 function initSecretPopup() {
