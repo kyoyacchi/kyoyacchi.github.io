@@ -484,6 +484,9 @@
         const monikaPopup = document.getElementById('monika-popup');
         const monikaOkBtn = document.getElementById('monika-ok-btn');
 
+        // Ensure page is scrollable on load
+        document.body.style.overflow = 'auto';
+
         if(monikaCard && monikaPopup && monikaOkBtn) {
             monikaCard.addEventListener('click', () => {
                 monikaPopup.classList.remove('hidden');
