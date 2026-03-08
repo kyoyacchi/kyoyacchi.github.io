@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -491,11 +491,7 @@
             monikaOkBtn.addEventListener('click', () => {
                 monikaPopup.classList.add('hidden');
             });
-            monikaPopup.addEventListener('click', (e) => {
-                if(e.target === monikaPopup) {
-                    monikaOkBtn.click();
-                }
-            });
+            // Removed click-outside handler - popup now only closes with OK button
         }
     </script>
 </body>
