@@ -51,19 +51,31 @@
             overflow-x: hidden;
         }
         
-::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #050505;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #50C878;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3eb565;
-        }
+/* Force scrollbar styling on the root elements */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 8px;
+}
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: #050505;
+}
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: #50C878;
+    border-radius: 10px;
+}
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: #3eb565;
+}
+
+/* Add the new standard for Firefox support */
+html, body {
+    scrollbar-width: thin;
+    scrollbar-color: #50C878 #050505;
+}
+
         /* Subtle Grain/Noise Effect */
         body::before {
             content: "";
