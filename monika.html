@@ -11,12 +11,20 @@
     <meta property="og:image" content="https://files.catbox.moe/p25zpe.png">
     <title>Kyo's World</title>
     <link rel="icon" type="image/x-icon" href="https://kyoya-is.a.dev/favicon.ico">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <!-- Optimized Font Loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Deferred Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
+    
+    <!-- Tailwind Config (Deferred) -->
     <script>
-        tailwind.config = {
+        window.tailwindConfig = {
             theme: {
                 extend: {
                     colors: {
@@ -35,7 +43,7 @@
                     }
                 }
             }
-        }
+        };
     </script>
 
     <style>
@@ -119,13 +127,13 @@
         <section class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
             <div id="discord-profile" class="discord-card w-full max-w-[90vw] md:max-w-[500px] h-32 md:h-40 rounded-3xl flex items-center px-6 md:px-8 gap-6 mx-auto border border-white/10 relative overflow-hidden group cursor-default">
                 
-                <video id="d-bg-video" loop muted autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
-                <img id="d-bg-image" src="" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
+                <video id="d-bg-video" loop muted autoplay playsinline loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
+                <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
                 <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
 
                 <div class="relative z-10 shrink-0">
                     <div class="relative">
-                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl">
+                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl">
                         <div id="d-status-indicator" class="status-indicator status-offline"></div>
                     </div>
                 </div>
@@ -161,10 +169,10 @@
             </div>
         </section>
 
-  <!-- Hero Image & Quote (FIXED) -->
+  <!-- Hero Image & Quote -->
         <section class="w-full z-10">
             <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[180px] md:h-[350px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10 group cursor-pointer">
-                <img src="https://files.catbox.moe/f2pajl.jpg" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700" alt="Monika">
+                <img src="https://files.catbox.moe/f2pajl.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700" alt="Monika">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
             </div>
             <div class="w-full px-6 mt-6 flex flex-col items-center justify-center">
@@ -182,9 +190,9 @@
             
             <!-- Social Icons -->
             <div class="flex justify-center gap-6 text-xl">
-                <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
-                <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://github.com/kyoyacchi" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
+                <a href="https://x.com/kyoyacchi" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@Kyoya26" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
             </div>
 
             <div class="text-gray-500 text-sm font-mono">
@@ -218,7 +226,7 @@
             <!-- Avatar & Content -->
             <div class="relative px-6 pb-6 mt-[-40px] z-10">
                 <div class="flex justify-between items-end mb-4">
-                    <img id="secret-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#0a0a0c] bg-black shadow-lg object-cover" alt="Secret Avatar">
+                    <img id="secret-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#0a0a0c] bg-black shadow-lg object-cover" alt="Secret Avatar">
                     
                     <div class="text-[10px] md:text-xs font-mono px-3 py-1 bg-kyo-emerald/10 text-kyo-emerald border border-kyo-emerald/30 rounded-full mb-1 flex items-center gap-1.5 shadow-[0_0_10px_rgba(80,200,120,0.2)]">
                         <i class="fa-solid fa-heart text-[10px]"></i> Just Monika
@@ -260,19 +268,20 @@
         </div>
     </div>
 
+    <!-- Deferred Tailwind -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
         const DISCORD_USER_ID = '468509605828493322';
         const CONFIG = {
             MAX_BACKOFF: 30000,
-            CACHE_TTL: 60000 * 5,
-            SWR_THRESHOLD: 120000,
+            INITIAL_BACKOFF: 1000,
+            BACKOFF_MULTIPLIER: 1.5,
+            CACHE_TTL: 300000,
             CONNECT_DEBOUNCE: 1500,
-            INIT_TIMEOUT: 10000,
-            REVALIDATE_TIMEOUT: 8000,
-            RENDER_DEBOUNCE: 150,
-            FALLBACK_TIMEOUT: 8000
+            RENDER_DEBOUNCE: 150
         };
 
         const state = {
@@ -281,7 +290,7 @@
             isConnecting: false,
             reconnectTimer: null,
             heartbeatInterval: null,
-            backoff: 1000,
+            backoff: CONFIG.INITIAL_BACKOFF,
             currentSessionID: null,
             lastConnectAttempt: 0,
             renderDebounceTimer: null
@@ -293,7 +302,8 @@
             try {
                 const stored = localStorage.getItem(storageKey);
                 if (!stored) return null;
-                const { data } = JSON.parse(stored);
+                const { data, timestamp } = JSON.parse(stored);
+                if (Date.now() - timestamp > CONFIG.CACHE_TTL) return null;
                 return data;
             } catch (e) {
                 return null;
@@ -337,8 +347,8 @@
             card.classList.remove('opacity-0');
 
             const avatarUrl = user.avatar 
-                ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
-                : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
             if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
 
@@ -351,7 +361,7 @@
             let colorClass = "text-white";
 
             if (status !== 'offline') {
-                const activities = data.activities ||[];
+                const activities = data.activities || [];
                 const game = activities.find(a => a.type === 0 || a.type === 1);
                 const spotify = activities.find(a => a.type === 2);
 
@@ -430,7 +440,7 @@
                 if (state.currentSessionID !== sessionID) return;
                 state.isConnected = true;
                 state.isConnecting = false;
-                state.backoff = 1000;
+                state.backoff = CONFIG.INITIAL_BACKOFF;
                 ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
             };
 
@@ -481,7 +491,7 @@
                 state.reconnectTimer = null;
                 connectLanyard();
             }, wait);
-            state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
+            state.backoff = Math.min(state.backoff * CONFIG.BACKOFF_MULTIPLIER, CONFIG.MAX_BACKOFF);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -497,7 +507,6 @@
         const menuBtn = document.getElementById('menu-btn');
         const navOverlay = document.getElementById('nav-overlay');
         const icon = menuBtn.querySelector('i');
-        const menuLinks = document.querySelectorAll('.menu-link');
         const logo = document.getElementById('site-logo');
         let isMenuOpen = false;
 
@@ -521,9 +530,8 @@
         }
 
         menuBtn.addEventListener('click', toggleMenu);
-        menuLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-        // Original Monika Popup
+        // Monika Popup
         const monikaHero = document.getElementById('monika-hero');
         const monikaPopup = document.getElementById('monika-popup');
         const monikaOkBtn = document.getElementById('monika-ok-btn');
@@ -541,7 +549,7 @@
             });
         }
 
-        // --- NEW SECRET EASTER EGG POPUP --- //
+        // Secret Easter Egg Popup
         let cachedDiscordBannerUrl = null;
 
         async function fetchDiscordBanner() {
@@ -577,21 +585,16 @@
             e.preventDefault(); 
             clickCount++;
             
-            // Allow double/single click logic, execute default navigation if less than 3
             if (clickCount === 1) {
                 clickTimer = setTimeout(() => {
-                    if (clickCount < 3) {
-             //           window.open(footerKyo.href, '_blank');
-                    }
                     clickCount = 0;
-                }, 500); // 500ms window to click 3 times
+                }, 500);
             }
             
-            // Trigger Easter Egg on 3rd click
             if (clickCount === 3) {
                 clearTimeout(clickTimer);
                 clickCount = 0;
-         //       openSecretPopup();
+            //    openSecretPopup();
             }
         });
 
@@ -599,27 +602,23 @@
             if (isSecretOpen) return;
             isSecretOpen = true;
             
-            // Sync Avatar with Discord profile on the page
             const mainAvatarSrc = document.getElementById('d-avatar').src;
             secretAvatar.src = mainAvatarSrc;
             
             document.body.style.overflow = 'hidden';
             
-            // Show popup & Trigger Animation
             secretPopup.classList.remove('hidden');
-            void secretPopup.offsetWidth; // Force CSS reflow to ensure animation runs
+            void secretPopup.offsetWidth;
             secretPopup.classList.remove('opacity-0');
             secretPopup.classList.add('opacity-100');
             
             secretPopupContent.classList.remove('scale-95');
             secretPopupContent.classList.add('scale-100');
             
-            // Try fetching the user banner
             const bannerUrl = await fetchDiscordBanner();
             if(bannerUrl) {
                 secretBanner.style.backgroundImage = `url('${bannerUrl}')`;
             } else {
-                // Thematic Fallback 
                 secretBanner.style.backgroundImage = `linear-gradient(135deg, rgba(80, 200, 120, 0.4) 0%, rgba(10, 10, 12, 100%) 100%)`;
             }
         }
@@ -630,7 +629,6 @@
             secretPopupContent.classList.remove('scale-100');
             secretPopupContent.classList.add('scale-95');
             
-            // Wait for tailwind duration-300 before hiding element
             setTimeout(() => {
                 secretPopup.classList.add('hidden');
                 document.body.style.overflow = 'auto';
@@ -640,12 +638,10 @@
 
         secretCloseBtn.addEventListener('click', closeSecretPopup);
         
-        // Close on outside click
         secretPopup.addEventListener('click', (e) => {
             if (e.target === secretPopup) closeSecretPopup();
         });
         
-        // Close on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && isSecretOpen) closeSecretPopup();
         });
