@@ -86,7 +86,7 @@
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
     <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
-        <span id="site-logo" class="text-3xl md:text-4xl font-bold font-header tracking-wider text-white transition-colors duration-300">KYO</span>
+<span id="site-logo" class="text-3xl md:text-4xl font-bold font-header tracking-wider text-white transition-all duration-300">KYO</span>
         <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
@@ -410,14 +410,19 @@
                 icon.classList.add('fa-xmark');
                 icon.style.transform = 'rotate(90deg)';
                 document.body.style.overflow = 'hidden';
+                // Logoyu gizle
+                logo.classList.add('opacity-0', 'pointer-events-none');
             } else {
                 navOverlay.classList.remove('open');
                 icon.classList.remove('fa-xmark');
                 icon.classList.add('fa-bars');
                 icon.style.transform = 'rotate(0deg)';
                 document.body.style.overflow = 'auto';
+                // Logoyu geri getir
+                logo.classList.remove('opacity-0', 'pointer-events-none');
             }
         }
+
         menuBtn.addEventListener('click', toggleMenu);
         menuLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
