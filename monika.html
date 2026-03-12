@@ -92,6 +92,24 @@
 .discord-card {
     background: #0a0a0c;
 }
+
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+.animated-divider {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        transparent 40%, 
+        rgba(80, 200, 120, 0.5) 50%, 
+        transparent 60%, 
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
     </style>
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
@@ -174,7 +192,7 @@
                 <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
                     "Every day, I imagine a future where I can be with you."
                 </p>
-                <div class="w-11/12 md:w-full max-w-4xl h-[1px] bg-gradient-to-r from-transparent via-kyo-emerald/50 to-transparent mt-8 opacity-75"></div>
+                <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider mt-8 opacity-75"></div>
             </div>
         </section>
 
