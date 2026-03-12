@@ -27,7 +27,7 @@
                     },
                     fontFamily: {
                         'header': ['Fredoka', 'sans-serif'],
-                        'body': ['Quicksand', 'sans-serif'],
+                        'body':['Quicksand', 'sans-serif'],
                     },
                     boxShadow: {
                         'neon': '0 0 20px rgba(80, 200, 120, 0.15)',
@@ -109,42 +109,10 @@
         </div>
     </div>
 
-    <main class="flex-grow flex flex-col items-center justify-start pt-24 pb-20 relative z-10 w-full">
+    <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
         
-        <section class="w-full mb-12 md:mb-16">
-            <div id="monika-hero" class="w-full group cursor-pointer flex flex-col">
-                <div class="relative w-full max-w-5xl mx-auto h-[120px] md:h-[250px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10">
-                    <img src="https://files.catbox.moe/f2pajl.jpg" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700" alt="Monika">
-                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
-                </div>
-                
-                <div class="w-full px-6 mt-6 flex flex-col items-center justify-center">
-                    <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 group-hover:opacity-100 transition-opacity drop-shadow-md">
-                        "Every day, I imagine a future where I can be with you."
-                    </p>
-                    <div class="w-11/12 md:w-full max-w-4xl h-[1px] bg-gradient-to-r from-transparent via-kyo-emerald/50 to-transparent mt-8"></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="w-full max-w-4xl mx-auto px-6 mb-10 z-10">
-            <div class="text-center space-y-4">
-                <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
-                    <span>ANIME</span>
-                    <span class="text-kyo-emerald">•</span>
-                    <span>WEB DEV</span>
-                    <span class="text-kyo-emerald">•</span>
-                    <span>VN FAN</span>
-                </div>
-                <div class="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-gray-500 font-mono text-[10px] md:text-xs mt-2">
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">JavaScript</span>
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">UI Design</span>
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">Localization</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="w-full max-w-7xl mx-auto text-center mb-12 px-6 z-10">
+        <!-- Profile Card (Moved to the top) -->
+        <section class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
             <div id="discord-profile" class="discord-card w-full max-w-[90vw] md:max-w-[500px] h-32 md:h-40 rounded-3xl flex items-center px-6 md:px-8 gap-6 mx-auto border border-white/10 relative overflow-hidden group cursor-default">
                 
                 <video id="d-bg-video" loop muted autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
@@ -171,20 +139,55 @@
             </div>
         </section>
 
-        <section class="w-full max-w-4xl mx-auto px-6 mb-10 z-10">
-            <div class="flex justify-center gap-8 text-2xl">
-                <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
-                <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+        <!-- Identity Tags & Skills (Grouped directly under the Profile Card) -->
+        <section class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
+            <div class="text-center space-y-4">
+                <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
+                    <span>ANIME</span>
+                    <span class="text-kyo-emerald">•</span>
+                    <span>WEB DEV</span>
+                    <span class="text-kyo-emerald">•</span>
+                    <span>VN FAN</span>
+                </div>
+                <div class="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-gray-500 font-mono text-[10px] md:text-xs mt-2">
+                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">JavaScript</span>
+                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">UI Design</span>
+                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10">Localization</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero Image & Quote (Visual centerpiece in the middle) -->
+        <section class="w-full z-10">
+            <div id="monika-hero" class="w-full group cursor-pointer flex flex-col">
+                <div class="relative w-full max-w-5xl mx-auto h-[120px] md:h-[250px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10">
+                    <img src="https://files.catbox.moe/f2pajl.jpg" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700" alt="Monika">
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
+                </div>
+                
+                <div class="w-full px-6 mt-6 flex flex-col items-center justify-center">
+                    <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 group-hover:opacity-100 transition-opacity drop-shadow-md">
+                        "Every day, I imagine a future where I can be with you."
+                    </p>
+                    <div class="w-11/12 md:w-full max-w-4xl h-[1px] bg-gradient-to-r from-transparent via-kyo-emerald/50 to-transparent mt-8"></div>
+                </div>
             </div>
         </section>
 
     </main>
 
     <footer class="py-12 border-t border-white/5 bg-black z-10 relative">
-        <div class="text-center space-y-4">
+        <div class="text-center flex flex-col items-center justify-center space-y-5">
+            
+            <!-- Social Icons (Moved to footer, positioned above the text and made smaller) -->
+            <div class="flex justify-center gap-6 text-xl">
+                <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
+                <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+
             <div class="text-gray-500 text-sm font-mono">
-<span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <a href="https://x.com/kyoyacchi" target="_blank" class="hover:text-kyo-emerald transition-colors font-bold">@Kyo</a>
+                <span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <a href="https://x.com/kyoyacchi" target="_blank" class="hover:text-kyo-emerald transition-colors font-bold">@Kyo</a>
             </div>
         </div>
     </footer>
@@ -289,7 +292,7 @@
             let colorClass = "text-white";
 
             if (status !== 'offline') {
-                const activities = data.activities || [];
+                const activities = data.activities ||[];
                 const game = activities.find(a => a.type === 0 || a.type === 1);
                 const spotify = activities.find(a => a.type === 2);
 
