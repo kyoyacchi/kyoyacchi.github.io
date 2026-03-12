@@ -465,7 +465,8 @@ html, body {
             }
 
             activityEl.textContent = activityText;
-            activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 border border-white/5 backdrop-blur-md truncate max-w-full ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+
             
             let videoUrl = null;
             if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
