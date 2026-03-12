@@ -94,21 +94,20 @@
 }
 
 @keyframes shimmer {
-    0% { background-position: 0% center; }
-    50% { background-position: 100% center; }
-    100% { background-position: 0% center; }
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .animated-divider {
     background: linear-gradient(90deg, 
-        transparent 0%, 
-        transparent 45%, 
-        rgba(80, 200, 120, 0.8) 50%, 
-        transparent 55%, 
-        transparent 100%
+        rgba(80, 200, 120, 0) 0%, 
+        rgba(80, 200, 120, 0.2) 20%, 
+        rgba(80, 200, 120, 1) 50%, 
+        rgba(80, 200, 120, 0.2) 80%, 
+        rgba(80, 200, 120, 0) 100%
     ) !important;
     background-size: 200% 100% !important;
-    animation: shimmer 4s ease-in-out infinite;
+    animation: shimmer 3s linear infinite !important;
 }
 
     </style>
