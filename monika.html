@@ -181,9 +181,9 @@ html, body {
     <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
         
         <!-- Profile Card -->
-        <section class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
+<section class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
             <div id="discord-profile" class="discord-card w-full max-w-[90vw]
-            md:max-w-[500px] h-32 md:h-40 rounded-3xl flex items-center px-6
+            md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
             md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden
             group cursor-default">
                 
@@ -203,13 +203,14 @@ html, body {
                     <span id="d-username" class="text-gray-400 text-sm md:text-base font-mono font-medium tracking-wide">@kyomoe</span>
                     
                     <div class="mt-3 flex items-center">
-                        <span id="d-activity" class="text-white text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 border border-white/5 backdrop-blur-md truncate max-w-full">
+                        <span id="d-activity" class="text-white text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed">
                             OFFLINE
                         </span>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <!-- Identity Tags & Skills -->
         <section class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
