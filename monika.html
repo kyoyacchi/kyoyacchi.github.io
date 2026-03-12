@@ -120,7 +120,14 @@
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
-
+.cursor::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
     </style>
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
@@ -203,9 +210,9 @@
 
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
     </div>
-    <div class="w-full px-6 mt-6 flex flex-col items-center justify-center">
-        <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
-            "Every day, I imagine a future where I can be with you."
+    <div class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[40px]">
+<p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
+            "<span id="typed-quote" class="cursor"></span>"
         </p>
         <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider my-16"></div>
     </div>
@@ -299,6 +306,25 @@
     </div>
 
     <script>
+      const textToType = "Every day, I imagine a future where I can be with you.";
+        const typeTarget = document.getElementById('typed-quote');
+        let typeIndex = 0;
+
+        function typeWriter() {
+            if (typeIndex < textToType.length) {
+                typeTarget.textContent += textToType.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(typeWriter, 50); 
+            } else {
+
+                setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
+            }
+        }
+        
+
+        setTimeout(typeWriter, 800);
+      
+      
         document.getElementById('year').textContent = new Date().getFullYear();
 
         const DISCORD_USER_ID = '468509605828493322';
