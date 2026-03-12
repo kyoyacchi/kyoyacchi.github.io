@@ -12,7 +12,6 @@
     <title>Kyo's World</title>
     <link rel="icon" type="image/x-icon" href="https://kyoya-is.a.dev/favicon.ico">
     
-    <!-- Font preconnect for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
@@ -51,30 +50,30 @@
             overflow-x: hidden;
         }
         
-/* Force scrollbar styling on the root elements */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-    width: 8px;
-}
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
-    background: #050505;
-}
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
-    background: #50C878;
-    border-radius: 10px;
-}
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover {
-    background: #3eb565;
-}
+        /* Force scrollbar styling on the root elements */
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            width: 8px;
+        }
+        html::-webkit-scrollbar-track,
+        body::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        html::-webkit-scrollbar-thumb,
+        body::-webkit-scrollbar-thumb {
+            background: #50C878;
+            border-radius: 10px;
+        }
+        html::-webkit-scrollbar-thumb:hover,
+        body::-webkit-scrollbar-thumb:hover {
+            background: #3eb565;
+        }
 
-/* Add the new standard for Firefox support */
-html, body {
-    scrollbar-width: thin;
-    scrollbar-color: #50C878 #050505;
-}
+        /* Add the new standard for Firefox support */
+        html, body {
+            scrollbar-width: thin;
+            scrollbar-color: #50C878 #050505;
+        }
 
         /* Subtle Grain/Noise Effect */
         body::before {
@@ -101,8 +100,7 @@ html, body {
         }
         .status-online  { background-image: url('https://files.catbox.moe/ma1fn2.png'); }
         .status-idle    { background-image: url('https://files.catbox.moe/qtgqzn.png'); }
-        .status-dnd     { background-image:
-        url('https://files.catbox.moe/fignnf.png'); }
+        .status-dnd     { background-image: url('https://files.catbox.moe/fignnf.png'); }
         .status-offline { background-image: url('https://files.catbox.moe/l9epn6.png'); }
 
         #nav-overlay {
@@ -115,638 +113,611 @@ html, body {
             visibility: visible;
         }
 
-.discord-card {
-    background: #0a0a0c;
-}
+        .discord-card {
+            background: #0a0a0c;
+        }
 
+        .animated-divider {
+            position: relative;
+            background: rgba(80, 200, 120, 0.1); 
+            overflow: hidden;
+        }
 
-.animated-divider {
-    position: relative;
-    background: rgba(80, 200, 120, 0.1); 
-    overflow: hidden;
-}
+        .animated-divider::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0; 
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(80, 200, 120, 0.8), 
+                transparent
+            );
+            animation: shimmer-effect 3s infinite linear;
+        }
 
-.animated-divider::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0; 
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg, 
-        transparent, 
-        rgba(80, 200, 120, 0.8), 
-        transparent
-    );
-    animation: shimmer-effect 3s infinite linear;
-}
-
-@keyframes shimmer-effect {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-.cursor::after {
-    content: '|';
-    animation: blink 1s step-end infinite;
-}
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-color-scheme: dark;
+        @keyframes shimmer-effect {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        color-scheme: dark;
     </style>
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
 <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
-<span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2">
-   Just Monika.
-   <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
-        style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
-        alt="🎀">
-</span>
+    <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2">
+       Just Monika.
+       <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
+            style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
+            alt="🎀">
+    </span>
 
     <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
         <i class="fa-solid fa-bars"></i>
     </button>
 </header>
 
-
-    <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
-        <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
-            JUST MONIKA
-        </div>
+<div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
+    <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
+        JUST MONIKA
     </div>
+</div>
 
-    <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
+<main class="flex-grow flex flex-col items-center justify-center pt-28 pb-10 relative z-10 w-full">
+    
+    <div class="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         
-        <!-- Profile Card -->
-<section class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
-            <div id="discord-profile" class="discord-card w-full max-w-[90vw]
-            md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
-            md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden
-            group cursor-default">
-                
-                <video id="d-bg-video" loop muted autoplay playsinline loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
-                <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
-                <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
-
-                <div class="relative z-10 shrink-0">
-                    <div class="relative">
-                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl">
-                        <div id="d-status-indicator" class="status-indicator status-offline"></div>
-                    </div>
-                </div>
-
-                <div class="relative z-10 text-left flex flex-col justify-center h-full py-2 min-w-0 flex-1">
-                    <span id="d-global-name" class="text-white font-bold font-header text-2xl md:text-3xl tracking-tight truncate">Loading...</span>
-                    <span id="d-username" class="text-gray-400 text-sm md:text-base font-mono font-medium tracking-wide">@kyomoe</span>
+        <div class="flex flex-col space-y-8 w-full">
+            
+            <section class="w-full z-10">
+                <div id="discord-profile" class="discord-card w-full max-w-[90vw] md:max-w-[500px] mx-auto lg:mx-0 min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6 md:px-8 gap-6 border border-kyo-emerald/20 relative overflow-hidden group cursor-default shadow-2xl">
                     
-                    <div class="mt-3 flex items-center">
-                        <span id="d-activity" class="text-white text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed">
-                            OFFLINE
-                        </span>
+                    <video id="d-bg-video" loop muted autoplay playsinline loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
+                    <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
+
+                    <div class="relative z-10 shrink-0">
+                        <div class="relative">
+                            <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl">
+                            <div id="d-status-indicator" class="status-indicator status-offline"></div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 text-left flex flex-col justify-center h-full py-2 min-w-0 flex-1">
+                        <span id="d-global-name" class="text-white font-bold font-header text-2xl md:text-3xl tracking-tight truncate">Loading...</span>
+                        <span id="d-username" class="text-gray-400 text-sm md:text-base font-mono font-medium tracking-wide">@kyomoe</span>
+                        
+                        <div class="mt-3 flex items-center">
+                            <span id="d-activity" class="text-white text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed">
+                                OFFLINE
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-
-        <!-- Identity Tags & Skills -->
-        <section class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
-            <div class="text-center space-y-4">
-                <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
-                    <span>ANIME</span>
-                    <span class="text-kyo-emerald">•</span>
-                    <span>WEB DEV</span>
-                    <span class="text-kyo-emerald">•</span>
-                    <span>VN FAN</span>
+            <section class="w-full max-w-[500px] mx-auto lg:mx-0 z-10">
+                <div class="text-center lg:text-left space-y-4">
+                    <div class="flex justify-center lg:justify-start items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
+                        <span>ANIME</span>
+                        <span class="text-kyo-emerald">•</span>
+                        <span>WEB DEV</span>
+                        <span class="text-kyo-emerald">•</span>
+                        <span>VN FAN</span>
+                    </div>
+                    <div class="flex flex-wrap justify-center lg:justify-start items-center gap-2 md:gap-4 text-gray-500 font-mono text-[10px] md:text-xs mt-2">
+                        <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">JavaScript</span>
+                        <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">UI Design</span>
+                        <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">Localization</span>
+                    </div>
                 </div>
-                <div class="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-gray-500 font-mono text-[10px] md:text-xs mt-2">
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">JavaScript</span>
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">UI Design</span>
-                    <span class="px-3 py-1 bg-white/5 rounded-full border border-white/10 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/5 hover:shadow-neon">Localization</span>
-                </div>
-            </div>
-        </section>
-
-<!-- Hero Image & Quote -->
-<section class="w-full z-10">
-    <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[180px] md:h-[350px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10 group cursor-pointer">
-        <img src="https://files.catbox.moe/f2pajl.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-all duration-700" alt="Monika" draggable="false">
-        
-        <!-- Transparent Overlay -->
-        <div class="absolute inset-0 w-full h-full z-20"></div>
-
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
-    </div>
-    <div class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[40px]">
-<p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
-            "<span id="typed-quote" class="cursor"></span>"
-        </p>
-        <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider my-16"></div>
-    </div>
-</section>
-
-    </main>
-
-    <footer class="pt-0 pb-12 border-t border-white/5 bg-black z-10 relative">
-        <div class="text-center flex flex-col items-center justify-center space-y-5">
-            
-            <!-- Social Icons -->
-            <div class="flex justify-center gap-6 text-xl">
-                <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
-                <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-
-            <div class="text-gray-500 text-sm font-mono">
-<span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
-            </div>
+            </section>
         </div>
-    </footer>
 
-    <!-- Monika Image Easter Egg Popup -->
-    <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
-        <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full
-        mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all
-        duration-200 select-none" id="monika-popup-content">
-            <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
-<button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
-    OK
-</button>
-        </div>
-    </div>
-
-    <!-- Secret 3-Click Profile Popup -->
-    <div id="secret-profile-popup" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm transition-opacity duration-300 opacity-0 px-4">
-        <div id="secret-popup-content" class="bg-[#0a0a0c] border border-kyo-emerald/30 w-full max-w-sm rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(80,200,120,0.15)] transform scale-95 transition-transform duration-300">
-            
-            <!-- Header with Banner -->
-            <div id="secret-banner" class="h-28 w-full bg-cover bg-center relative bg-[#1a1a1a]">
-                <button id="secret-close-btn" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/60 hover:bg-black text-white rounded-full transition-colors z-10 backdrop-blur-md">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] to-transparent z-0"></div>
-            </div>
-            
-            <!-- Avatar & Content -->
-            <div class="relative px-6 pb-6 mt-[-40px] z-10">
-                <div class="flex justify-between items-end mb-4">
-                    <img id="secret-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#0a0a0c] bg-black shadow-lg object-cover" alt="Secret Avatar">
+        <div class="w-full flex flex-col items-center lg:items-end justify-center z-10">
+            <section class="w-full max-w-5xl">
+                <div id="monika-hero" class="relative w-full h-[180px] md:h-[350px] lg:h-[400px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl group cursor-pointer">
+                    <img src="https://files.catbox.moe/f2pajl.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-all duration-700" alt="Monika" draggable="false">
                     
-                    <div class="text-[10px] md:text-xs font-mono px-3 py-1 bg-kyo-emerald/10 text-kyo-emerald border border-kyo-emerald/30 rounded-full mb-1 flex items-center gap-1.5 shadow-[0_0_10px_rgba(80,200,120,0.2)]">
-                        <i class="fa-solid fa-heart text-[10px]"></i> Just Monika
-                    </div>
+                    <div class="absolute inset-0 w-full h-full z-20"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
                 </div>
                 
-                <h2 class="text-2xl font-header font-bold text-white tracking-wide">You found me... <span class="text-kyo-emerald">💚</span></h2>
+                <div class="w-full mt-8 flex flex-col items-center min-h-[40px]">
+                    <p class="text-kyo-emerald font-body text-sm md:text-base lg:text-lg tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
+                        "<span id="typed-quote" class="cursor"></span>"
+                    </p>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <div class="w-full max-w-7xl px-6 mx-auto mt-12 lg:mt-24 mb-4">
+        <div class="w-full h-[1px] animated-divider"></div>
+    </div>
+</main>
+
+<footer class="pt-0 pb-12 bg-black z-10 relative">
+    <div class="text-center flex flex-col items-center justify-center space-y-5">
+        
+        <div class="flex justify-center gap-6 text-xl">
+            <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
+            <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+
+        <div class="text-gray-500 text-sm font-mono">
+            <span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
+        </div>
+    </div>
+</footer>
+
+<div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
+    <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
+        <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
+        <button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
+            OK
+        </button>
+    </div>
+</div>
+
+<div id="secret-profile-popup" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm transition-opacity duration-300 opacity-0 px-4">
+    <div id="secret-popup-content" class="bg-[#0a0a0c] border border-kyo-emerald/30 w-full max-w-sm rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(80,200,120,0.15)] transform scale-95 transition-transform duration-300">
+        
+        <div id="secret-banner" class="h-28 w-full bg-cover bg-center relative bg-[#1a1a1a]">
+            <button id="secret-close-btn" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/60 hover:bg-black text-white rounded-full transition-colors z-10 backdrop-blur-md">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] to-transparent z-0"></div>
+        </div>
+        
+        <div class="relative px-6 pb-6 mt-[-40px] z-10">
+            <div class="flex justify-between items-end mb-4">
+                <img id="secret-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#0a0a0c] bg-black shadow-lg object-cover" alt="Secret Avatar">
                 
-                <!-- Stats Grid with FA Icons -->
-                <div class="grid grid-cols-3 gap-3 mt-6">
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-kyo-emerald"><i class="fa-solid fa-bug"></i></div>
-                        <div class="text-white font-bold text-sm">100+</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Bugs Created</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#E07848]"><i class="fa-solid fa-mug-hot"></i></div>
-                        <div class="text-white font-bold text-sm">Infinite</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Coffee Consumed</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#f48024]"><i class="fa-brands fa-stack-overflow"></i></div>
-                        <div class="text-white font-bold text-sm">Master</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Stack Overflow</div>
-                    </div>
+                <div class="text-[10px] md:text-xs font-mono px-3 py-1 bg-kyo-emerald/10 text-kyo-emerald border border-kyo-emerald/30 rounded-full mb-1 flex items-center gap-1.5 shadow-[0_0_10px_rgba(80,200,120,0.2)]">
+                    <i class="fa-solid fa-heart text-[10px]"></i> Just Monika
                 </div>
-
-                <!-- Badges -->
-                <div class="flex flex-col gap-2 mt-5">
-                    <div class="bg-white/5 border border-white/10 hover:bg-white/10 transition-colors rounded-lg px-4 py-2.5 text-xs text-gray-300 flex items-center gap-3 cursor-default">
-                        <span class="text-kyo-emerald text-sm w-4 text-center"><i class="fa-solid fa-eye"></i></span> Emerald Eyes Devotee
-                    </div>
-                    <div class="bg-white/5 border border-white/10 hover:bg-white/10 transition-colors rounded-lg px-4 py-2.5 text-xs text-gray-300 flex items-center gap-3 cursor-default">
-                        <span class="text-sm w-4 text-center">🎀</span> White Ribbon Collector
-                    </div>
+            </div>
+            
+            <h2 class="text-2xl font-header font-bold text-white tracking-wide">You found me... <span class="text-kyo-emerald">💚</span></h2>
+            
+            <div class="grid grid-cols-3 gap-3 mt-6">
+                <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
+                    <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-kyo-emerald"><i class="fa-solid fa-bug"></i></div>
+                    <div class="text-white font-bold text-sm">100+</div>
+                    <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Bugs Created</div>
                 </div>
+                <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
+                    <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#E07848]"><i class="fa-solid fa-mug-hot"></i></div>
+                    <div class="text-white font-bold text-sm">Infinite</div>
+                    <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Coffee Consumed</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
+                    <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#f48024]"><i class="fa-brands fa-stack-overflow"></i></div>
+                    <div class="text-white font-bold text-sm">Master</div>
+                    <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Stack Overflow</div>
+                </div>
+            </div>
 
+            <div class="flex flex-col gap-2 mt-5">
+                <div class="bg-white/5 border border-white/10 hover:bg-white/10 transition-colors rounded-lg px-4 py-2.5 text-xs text-gray-300 flex items-center gap-3 cursor-default">
+                    <span class="text-kyo-emerald text-sm w-4 text-center"><i class="fa-solid fa-eye"></i></span> Emerald Eyes Devotee
+                </div>
+                <div class="bg-white/5 border border-white/10 hover:bg-white/10 transition-colors rounded-lg px-4 py-2.5 text-xs text-gray-300 flex items-center gap-3 cursor-default">
+                    <span class="text-sm w-4 text-center">🎀</span> White Ribbon Collector
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-      const textToType = "Every day, I imagine a future where I can be with you.";
-        const typeTarget = document.getElementById('typed-quote');
-        let typeIndex = 0;
+<script>
+    const textToType = "Every day, I imagine a future where I can be with you.";
+    const typeTarget = document.getElementById('typed-quote');
+    let typeIndex = 0;
 
-        function typeWriter() {
-            if (typeIndex < textToType.length) {
-                typeTarget.textContent += textToType.charAt(typeIndex);
-                typeIndex++;
-                setTimeout(typeWriter, 50); 
-            } else {
-
-                setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
-            }
+    function typeWriter() {
+        if (typeIndex < textToType.length) {
+            typeTarget.textContent += textToType.charAt(typeIndex);
+            typeIndex++;
+            setTimeout(typeWriter, 50); 
+        } else {
+            setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
         }
-        
+    }
+    
+    setTimeout(typeWriter, 800);
+  
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-        setTimeout(typeWriter, 800);
-      
-      
-        document.getElementById('year').textContent = new Date().getFullYear();
+    const DISCORD_USER_ID = '468509605828493322';
+    const CONFIG = {
+        MAX_BACKOFF: 30000,
+        CACHE_TTL: 60000 * 5,
+        SWR_THRESHOLD: 120000,
+        CONNECT_DEBOUNCE: 1500,
+        INIT_TIMEOUT: 10000,
+        REVALIDATE_TIMEOUT: 8000,
+        RENDER_DEBOUNCE: 150,
+        FALLBACK_TIMEOUT: 8000
+    };
 
-        const DISCORD_USER_ID = '468509605828493322';
-        const CONFIG = {
-            MAX_BACKOFF: 30000,
-            CACHE_TTL: 60000 * 5,
-            SWR_THRESHOLD: 120000,
-            CONNECT_DEBOUNCE: 1500,
-            INIT_TIMEOUT: 10000,
-            REVALIDATE_TIMEOUT: 8000,
-            RENDER_DEBOUNCE: 150,
-            FALLBACK_TIMEOUT: 8000
-        };
+    const state = {
+        ws: null,
+        isConnected: false,
+        isConnecting: false,
+        reconnectTimer: null,
+        heartbeatInterval: null,
+        backoff: 1000,
+        currentSessionID: null,
+        lastConnectAttempt: 0,
+        renderDebounceTimer: null
+    };
 
-        const state = {
-            ws: null,
-            isConnected: false,
-            isConnecting: false,
-            reconnectTimer: null,
-            heartbeatInterval: null,
-            backoff: 1000,
-            currentSessionID: null,
-            lastConnectAttempt: 0,
-            renderDebounceTimer: null
-        };
+    const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
 
-        const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
-
-        function getCache() {
-            try {
-                const stored = localStorage.getItem(storageKey);
-                if (!stored) return null;
-                const { data } = JSON.parse(stored);
-                return data;
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function setCache(data) {
-            try {
-                localStorage.setItem(storageKey, JSON.stringify({
-                    data: data,
-                    timestamp: Date.now()
-                }));
-            } catch (e) {}
-        }
-
-        function debouncedRenderPresence(data) {
-            if (state.renderDebounceTimer) {
-                cancelAnimationFrame(state.renderDebounceTimer);
-            }
-            state.renderDebounceTimer = requestAnimationFrame(() => {
-                renderPresence(data);
-                state.renderDebounceTimer = null;
-            });
-        }
-
-        function renderPresence(data) {
-            const card = document.getElementById('discord-profile');
-            const avatarEl = document.getElementById('d-avatar');
-            const nameEl = document.getElementById('d-global-name');
-            const userEl = document.getElementById('d-username');
-            const activityEl = document.getElementById('d-activity');
-            const statusInd = document.getElementById('d-status-indicator');
-            const videoBg = document.getElementById('d-bg-video');
-            const imgBg = document.getElementById('d-bg-image');
-
-            if (!data || !data.discord_user) return;
-
-            const user = data.discord_user;
-            const status = data.discord_status || 'offline';
-
-            card.classList.remove('opacity-0');
-
-            const avatarUrl = user.avatar 
-                ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
-                : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
-
-            if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
-
-            statusInd.className = `status-indicator status-${status}`;
-
-            nameEl.textContent = user.global_name || user.username;
-            userEl.textContent = '@' + user.username;
-
-            let activityText = "OFFLINE";
-            let colorClass = "text-white";
-
-                        if (status !== 'offline') {
-                const activities = data.activities || [];
-                const game = activities.find(a => a.type === 0 || a.type === 1);
-
-                const listeningActivity = activities.find(a => a.type === 2);
-
-                if (game) {
-                    activityText = "PLAYING " + game.name.toUpperCase();
-                    colorClass = "text-kyo-emerald";
-                } else if (listeningActivity) {
-
-
-                    activityText = "LISTENING TO " + listeningActivity.name.toUpperCase();
-                    colorClass = "text-kyo-emerald";
-                } else {
-                    activityText = status.toUpperCase();
-                    if(status === 'dnd') activityText = "DO NOT DISTURB";
-                }
-            }
-
-            activityEl.textContent = activityText;
-activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
-
-            
-            let videoUrl = null;
-            if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
-                videoUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
-            }
-
-            if (videoUrl) {
-                if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
-                videoBg.classList.remove('hidden');
-                imgBg.classList.add('hidden');
-            } else if (user.banner) {
-                const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
-                imgBg.src = bannerUrl;
-                imgBg.classList.remove('hidden');
-                videoBg.classList.add('hidden');
-            } else {
-                imgBg.style.background = '#50c878';
-                imgBg.src = '';
-                imgBg.classList.remove('hidden');
-                videoBg.classList.add('hidden');
-            }
-        }
-
-        async function connectLanyard() {
-            const now = Date.now();
-            if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
-            state.lastConnectAttempt = now;
-
-            if (state.isConnecting || state.isConnected) return;
-            state.isConnecting = true;
-
-            const cached = getCache();
-            if (cached) {
-                debouncedRenderPresence(cached);
-            }
-
-            try {
-                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-                const json = await res.json();
-                if (json.success && json.data) {
-                    setCache(json.data);
-                    debouncedRenderPresence(json.data);
-                }
-            } catch (e) {}
-
-            let ws;
-            try {
-                ws = new WebSocket('wss://api.lanyard.rest/socket');
-            } catch (err) {
-                state.isConnecting = false;
-                scheduleReconnect();
-                return;
-            }
-
-            const sessionID = Date.now().toString(36);
-            state.currentSessionID = sessionID;
-            state.ws = ws;
-
-            ws.onopen = () => {
-                if (state.currentSessionID !== sessionID) return;
-                state.isConnected = true;
-                state.isConnecting = false;
-                state.backoff = 1000;
-                ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
-            };
-
-            ws.onmessage = ({ data }) => {
-                if (state.currentSessionID !== sessionID) return;
-                try {
-                    const parsed = JSON.parse(data);
-                    const { op, t, d } = parsed;
-
-                    if (op === 1) {
-                        clearInterval(state.heartbeatInterval);
-                        state.heartbeatInterval = setInterval(() => {
-                            if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
-                        }, d.heartbeat_interval);
-                    }
-
-                    if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
-                        const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
-                        if (presence) {
-                            setCache(presence);
-                            debouncedRenderPresence(presence);
-                        }
-                    }
-                } catch (e) {}
-            };
-
-            ws.onerror = () => {
-                if (state.currentSessionID !== sessionID) return;
-                state.isConnected = false;
-                state.isConnecting = false;
-                ws.close();
-                scheduleReconnect();
-            };
-
-            ws.onclose = () => {
-                if (state.currentSessionID !== sessionID) return;
-                state.isConnected = false;
-                state.isConnecting = false;
-                scheduleReconnect();
-            };
-        }
-
-        function scheduleReconnect() {
-            if (state.reconnectTimer) return;
-            const jitter = Math.floor(Math.random() * 1000);
-            const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
-            state.reconnectTimer = setTimeout(() => {
-                state.reconnectTimer = null;
-                connectLanyard();
-            }, wait);
-            state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            connectLanyard();
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && !state.isConnected) {
-                connectLanyard();
-            }
-        });
-
-        const menuBtn = document.getElementById('menu-btn');
-        const navOverlay = document.getElementById('nav-overlay');
-        const icon = menuBtn.querySelector('i');
-        const logo = document.getElementById('site-logo');
-        let isMenuOpen = false;
-
-        function toggleMenu() {
-            isMenuOpen = !isMenuOpen;
-            if (isMenuOpen) {
-                navOverlay.classList.add('open');
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-xmark');
-                icon.style.transform = 'rotate(90deg)';
-                document.body.style.overflow = 'hidden';
-                logo.classList.add('opacity-0', 'pointer-events-none');
-            } else {
-                navOverlay.classList.remove('open');
-                icon.classList.remove('fa-xmark');
-                icon.classList.add('fa-bars');
-                icon.style.transform = 'rotate(0deg)';
-                document.body.style.overflow = 'auto';
-                logo.classList.remove('opacity-0', 'pointer-events-none');
-            }
-        }
-
-        menuBtn.addEventListener('click', toggleMenu);
-
-        // Original Monika Popup
-        const monikaHero = document.getElementById('monika-hero');
-        const monikaPopup = document.getElementById('monika-popup');
-        const monikaOkBtn = document.getElementById('monika-ok-btn');
-
-        document.body.style.overflow = 'auto';
-
-        if(monikaHero && monikaPopup && monikaOkBtn) {
-            monikaHero.addEventListener('click', () => {
-                monikaPopup.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-            monikaOkBtn.addEventListener('click', () => {
-                monikaPopup.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            });
-        }
-
-        // --- NEW SECRET EASTER EGG POPUP --- //
-        let cachedDiscordBannerUrl = null;
-
-        async function fetchDiscordBanner() {
-            if (cachedDiscordBannerUrl) return cachedDiscordBannerUrl;
-
-            try {
-                const response = await fetch(`https://kyopi.vercel.app/api/discord?id=${DISCORD_USER_ID}`);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                
-                if (data && data.banner) {
-                    cachedDiscordBannerUrl = data.banner;
-                    return cachedDiscordBannerUrl;
-                }
-            } catch (error) {
-                console.error('Failed to fetch Discord banner:', error);
-            }
+    function getCache() {
+        try {
+            const stored = localStorage.getItem(storageKey);
+            if (!stored) return null;
+            const { data } = JSON.parse(stored);
+            return data;
+        } catch (e) {
             return null;
         }
+    }
 
-        const footerKyo = document.getElementById('footer-kyo');
-        const secretPopup = document.getElementById('secret-profile-popup');
-        const secretPopupContent = document.getElementById('secret-popup-content');
-        const secretBanner = document.getElementById('secret-banner');
-        const secretAvatar = document.getElementById('secret-avatar');
-        const secretCloseBtn = document.getElementById('secret-close-btn');
-        
-        let clickCount = 0;
-        let clickTimer = null;
-        let isSecretOpen = false;
+    function setCache(data) {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify({
+                data: data,
+                timestamp: Date.now()
+            }));
+        } catch (e) {}
+    }
 
-        footerKyo.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            clickCount++;
-            
-            // Allow double/single click logic, execute default navigation if less than 3
-            if (clickCount === 1) {
-                clickTimer = setTimeout(() => {
-                    if (clickCount < 3) {
-             //           window.open(footerKyo.href, '_blank');
-                    }
-                    clickCount = 0;
-                }, 500); // 500ms window to click 3 times
-            }
-            
-            // Trigger Easter Egg on 3rd click
-            if (clickCount === 3) {
-                clearTimeout(clickTimer);
-                clickCount = 0;
-            //    openSecretPopup();
-            }
+    function debouncedRenderPresence(data) {
+        if (state.renderDebounceTimer) {
+            cancelAnimationFrame(state.renderDebounceTimer);
+        }
+        state.renderDebounceTimer = requestAnimationFrame(() => {
+            renderPresence(data);
+            state.renderDebounceTimer = null;
         });
+    }
 
-        async function openSecretPopup() {
-            if (isSecretOpen) return;
-            isSecretOpen = true;
-            
-            // Sync Avatar with Discord profile on the page
-            const mainAvatarSrc = document.getElementById('d-avatar').src;
-            secretAvatar.src = mainAvatarSrc;
-            
-            document.body.style.overflow = 'hidden';
-            
-            // Show popup & Trigger Animation
-            secretPopup.classList.remove('hidden');
-            void secretPopup.offsetWidth; // Force CSS reflow to ensure animation runs
-            secretPopup.classList.remove('opacity-0');
-            secretPopup.classList.add('opacity-100');
-            
-            secretPopupContent.classList.remove('scale-95');
-            secretPopupContent.classList.add('scale-100');
-            
-            // Try fetching the user banner
-            const bannerUrl = await fetchDiscordBanner();
-            if(bannerUrl) {
-                secretBanner.style.backgroundImage = `url('${bannerUrl}')`;
+    function renderPresence(data) {
+        const card = document.getElementById('discord-profile');
+        const avatarEl = document.getElementById('d-avatar');
+        const nameEl = document.getElementById('d-global-name');
+        const userEl = document.getElementById('d-username');
+        const activityEl = document.getElementById('d-activity');
+        const statusInd = document.getElementById('d-status-indicator');
+        const videoBg = document.getElementById('d-bg-video');
+        const imgBg = document.getElementById('d-bg-image');
+
+        if (!data || !data.discord_user) return;
+
+        const user = data.discord_user;
+        const status = data.discord_status || 'offline';
+
+        card.classList.remove('opacity-0');
+
+        const avatarUrl = user.avatar 
+            ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
+            : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
+
+        if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+
+        statusInd.className = `status-indicator status-${status}`;
+
+        nameEl.textContent = user.global_name || user.username;
+        userEl.textContent = '@' + user.username;
+
+        let activityText = "OFFLINE";
+        let colorClass = "text-white";
+
+        if (status !== 'offline') {
+            const activities = data.activities || [];
+            const game = activities.find(a => a.type === 0 || a.type === 1);
+            const listeningActivity = activities.find(a => a.type === 2);
+
+            if (game) {
+                activityText = "PLAYING " + game.name.toUpperCase();
+                colorClass = "text-kyo-emerald";
+            } else if (listeningActivity) {
+                activityText = "LISTENING TO " + listeningActivity.name.toUpperCase();
+                colorClass = "text-kyo-emerald";
             } else {
-                // Thematic Fallback 
-                secretBanner.style.backgroundImage = `linear-gradient(135deg, rgba(80, 200, 120, 0.4) 0%, rgba(10, 10, 12, 100%) 100%)`;
+                activityText = status.toUpperCase();
+                if(status === 'dnd') activityText = "DO NOT DISTURB";
             }
         }
 
-        function closeSecretPopup() {
-            secretPopup.classList.remove('opacity-100');
-            secretPopup.classList.add('opacity-0');
-            secretPopupContent.classList.remove('scale-100');
-            secretPopupContent.classList.add('scale-95');
-            
-            // Wait for tailwind duration-300 before hiding element
-            setTimeout(() => {
-                secretPopup.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-                isSecretOpen = false;
-            }, 300);
+        activityEl.textContent = activityText;
+        activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+        
+        let videoUrl = null;
+        if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
+            videoUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
         }
 
-        secretCloseBtn.addEventListener('click', closeSecretPopup);
-        
-        // Close on outside click
-        secretPopup.addEventListener('click', (e) => {
-            if (e.target === secretPopup) closeSecretPopup();
+        if (videoUrl) {
+            if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
+            videoBg.classList.remove('hidden');
+            imgBg.classList.add('hidden');
+        } else if (user.banner) {
+            const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+            imgBg.src = bannerUrl;
+            imgBg.classList.remove('hidden');
+            videoBg.classList.add('hidden');
+        } else {
+            imgBg.style.background = '#50c878';
+            imgBg.src = '';
+            imgBg.classList.remove('hidden');
+            videoBg.classList.add('hidden');
+        }
+    }
+
+    async function connectLanyard() {
+        const now = Date.now();
+        if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
+        state.lastConnectAttempt = now;
+
+        if (state.isConnecting || state.isConnected) return;
+        state.isConnecting = true;
+
+        const cached = getCache();
+        if (cached) {
+            debouncedRenderPresence(cached);
+        }
+
+        try {
+            const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+            const json = await res.json();
+            if (json.success && json.data) {
+                setCache(json.data);
+                debouncedRenderPresence(json.data);
+            }
+        } catch (e) {}
+
+        let ws;
+        try {
+            ws = new WebSocket('wss://api.lanyard.rest/socket');
+        } catch (err) {
+            state.isConnecting = false;
+            scheduleReconnect();
+            return;
+        }
+
+        const sessionID = Date.now().toString(36);
+        state.currentSessionID = sessionID;
+        state.ws = ws;
+
+        ws.onopen = () => {
+            if (state.currentSessionID !== sessionID) return;
+            state.isConnected = true;
+            state.isConnecting = false;
+            state.backoff = 1000;
+            ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+        };
+
+        ws.onmessage = ({ data }) => {
+            if (state.currentSessionID !== sessionID) return;
+            try {
+                const parsed = JSON.parse(data);
+                const { op, t, d } = parsed;
+
+                if (op === 1) {
+                    clearInterval(state.heartbeatInterval);
+                    state.heartbeatInterval = setInterval(() => {
+                        if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
+                    }, d.heartbeat_interval);
+                }
+
+                if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
+                    const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+                    if (presence) {
+                        setCache(presence);
+                        debouncedRenderPresence(presence);
+                    }
+                }
+            } catch (e) {}
+        };
+
+        ws.onerror = () => {
+            if (state.currentSessionID !== sessionID) return;
+            state.isConnected = false;
+            state.isConnecting = false;
+            ws.close();
+            scheduleReconnect();
+        };
+
+        ws.onclose = () => {
+            if (state.currentSessionID !== sessionID) return;
+            state.isConnected = false;
+            state.isConnecting = false;
+            scheduleReconnect();
+        };
+    }
+
+    function scheduleReconnect() {
+        if (state.reconnectTimer) return;
+        const jitter = Math.floor(Math.random() * 1000);
+        const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
+        state.reconnectTimer = setTimeout(() => {
+            state.reconnectTimer = null;
+            connectLanyard();
+        }, wait);
+        state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        connectLanyard();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !state.isConnected) {
+            connectLanyard();
+        }
+    });
+
+    const menuBtn = document.getElementById('menu-btn');
+    const navOverlay = document.getElementById('nav-overlay');
+    const icon = menuBtn.querySelector('i');
+    const logo = document.getElementById('site-logo');
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            navOverlay.classList.add('open');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-xmark');
+            icon.style.transform = 'rotate(90deg)';
+            document.body.style.overflow = 'hidden';
+            logo.classList.add('opacity-0', 'pointer-events-none');
+        } else {
+            navOverlay.classList.remove('open');
+            icon.classList.remove('fa-xmark');
+            icon.classList.add('fa-bars');
+            icon.style.transform = 'rotate(0deg)';
+            document.body.style.overflow = 'auto';
+            logo.classList.remove('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+
+    const monikaHero = document.getElementById('monika-hero');
+    const monikaPopup = document.getElementById('monika-popup');
+    const monikaOkBtn = document.getElementById('monika-ok-btn');
+
+    document.body.style.overflow = 'auto';
+
+    if(monikaHero && monikaPopup && monikaOkBtn) {
+        monikaHero.addEventListener('click', () => {
+            monikaPopup.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         });
-        
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isSecretOpen) closeSecretPopup();
+        monikaOkBtn.addEventListener('click', () => {
+            monikaPopup.classList.add('hidden');
+            document.body.style.overflow = 'auto';
         });
-    </script>
+    }
+
+    let cachedDiscordBannerUrl = null;
+
+    async function fetchDiscordBanner() {
+        if (cachedDiscordBannerUrl) return cachedDiscordBannerUrl;
+
+        try {
+            const response = await fetch(`https://kyopi.vercel.app/api/discord?id=${DISCORD_USER_ID}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            
+            if (data && data.banner) {
+                cachedDiscordBannerUrl = data.banner;
+                return cachedDiscordBannerUrl;
+            }
+        } catch (error) {
+            console.error('Failed to fetch Discord banner:', error);
+        }
+        return null;
+    }
+
+    const footerKyo = document.getElementById('footer-kyo');
+    const secretPopup = document.getElementById('secret-profile-popup');
+    const secretPopupContent = document.getElementById('secret-popup-content');
+    const secretBanner = document.getElementById('secret-banner');
+    const secretAvatar = document.getElementById('secret-avatar');
+    const secretCloseBtn = document.getElementById('secret-close-btn');
+    
+    let clickCount = 0;
+    let clickTimer = null;
+    let isSecretOpen = false;
+
+    footerKyo.addEventListener('click', (e) => {
+        e.preventDefault(); 
+        clickCount++;
+        
+        if (clickCount === 1) {
+            clickTimer = setTimeout(() => {
+                if (clickCount < 3) {
+                }
+                clickCount = 0;
+            }, 500); 
+        }
+        
+        if (clickCount === 3) {
+            clearTimeout(clickTimer);
+            clickCount = 0;
+            openSecretPopup();
+        }
+    });
+
+    async function openSecretPopup() {
+        if (isSecretOpen) return;
+        isSecretOpen = true;
+        
+        const mainAvatarSrc = document.getElementById('d-avatar').src;
+        secretAvatar.src = mainAvatarSrc;
+        
+        document.body.style.overflow = 'hidden';
+        
+        secretPopup.classList.remove('hidden');
+        void secretPopup.offsetWidth; 
+        secretPopup.classList.remove('opacity-0');
+        secretPopup.classList.add('opacity-100');
+        
+        secretPopupContent.classList.remove('scale-95');
+        secretPopupContent.classList.add('scale-100');
+        
+        const bannerUrl = await fetchDiscordBanner();
+        if(bannerUrl) {
+            secretBanner.style.backgroundImage = `url('${bannerUrl}')`;
+        } else {
+            secretBanner.style.backgroundImage = `linear-gradient(135deg, rgba(80, 200, 120, 0.4) 0%, rgba(10, 10, 12, 100%) 100%)`;
+        }
+    }
+
+    function closeSecretPopup() {
+        secretPopup.classList.remove('opacity-100');
+        secretPopup.classList.add('opacity-0');
+        secretPopupContent.classList.remove('scale-100');
+        secretPopupContent.classList.add('scale-95');
+        
+        setTimeout(() => {
+            secretPopup.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            isSecretOpen = false;
+        }, 300);
+    }
+
+    secretCloseBtn.addEventListener('click', closeSecretPopup);
+    
+    secretPopup.addEventListener('click', (e) => {
+        if (e.target === secretPopup) closeSecretPopup();
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isSecretOpen) closeSecretPopup();
+    });
+</script>
 </body>
 </html>
