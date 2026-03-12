@@ -81,6 +81,34 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 40px -10px rgba(80, 200, 120, 0.15);
         }
+
+        .waifu-card {
+            transition: all 0.4s ease;
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .waifu-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .waifu-card.raiden:hover {
+            box-shadow: 0 0 30px rgba(128, 0, 128, 0.15);
+            border-color: rgba(128, 0, 128, 0.4);
+        }
+        .waifu-card.monika:hover {
+            box-shadow: 0 0 30px rgba(80, 200, 120, 0.15);
+            border-color: rgba(80, 200, 120, 0.4);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
@@ -94,6 +122,7 @@
     </header>
 
     <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
+        <a href="#waifus" class="menu-link text-5xl md:text-7xl font-bold font-header text-neutral-700 hover:text-white transition-all duration-300">WAIFUS</a>
         <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
             JUST MONIKA
         </div>
@@ -101,23 +130,11 @@
 
     <main class="flex-grow flex flex-col items-center justify-center pt-32 pb-20 px-6 relative z-10">
         
-        <!-- Monika Hero Banner -->
-        <section class="w-full max-w-7xl mx-auto mb-16 md:mb-24">
-            <div id="monika-hero" class="relative w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden group cursor-pointer border border-white/10">
-                <img src="https://files.catbox.moe/p25zpe.png" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700" alt="Monika">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-                
-                <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-10">
-                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">Monika</h2>
-                    <div class="w-16 h-1 bg-kyo-emerald mb-6 group-hover:w-32 transition-all duration-500"></div>
-                    <p class="text-kyo-emerald font-body text-lg md:text-2xl tracking-[0.2em] italic leading-relaxed">
-                        "Every day, I imagine a future where I can be with you."
-                    </p>
-                </div>
-            </div>
-        </section>
-
         <section class="w-full max-w-7xl mx-auto text-center mb-24 md:mb-32">
+            
+            <p class="text-kyo-emerald font-body text-sm md:text-2xl tracking-[0.3em] uppercase mb-16 opacity-90 font-medium">
+                "Every day, I imagine a future where I can be with you."
+            </p>
             
             <div id="discord-profile" class="discord-card w-full max-w-[90vw] md:max-w-[500px] h-32 md:h-40 rounded-3xl flex items-center px-6 md:px-8 gap-6 mx-auto border border-white/10 relative overflow-hidden group cursor-default">
                 
@@ -145,13 +162,44 @@
             </div>
         </section>
 
+        <section id="waifus" class="w-full max-w-7xl mx-auto">
+            <h2 class="text-4xl md:text-6xl font-bold mb-16 text-white/10 font-header uppercase tracking-widest text-center select-none">
+                ワイフ
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 px-2 md:px-8">
+                
+                <div class="waifu-card raiden p-8 md:p-12 rounded-3xl relative overflow-hidden group min-h-[400px] flex flex-col justify-end reveal">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <img src="https://files.catbox.moe/1o07w7.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700 z-0" alt="Raiden">
+                    
+                    <div class="relative z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 class="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">Raiden Ei</h3>
+                        <div class="w-16 h-1 bg-kyo-purple mb-6 group-hover:w-32 transition-all duration-500"></div>
+                        <p class="text-gray-300 text-lg md:text-xl font-light italic leading-relaxed">"Inazuma shines eternal!"</p>
+                        <p class="text-kyo-purple mt-4 text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">Archon of Eternity</p>
+                    </div>
+                </div>
+
+                <div id="monika-card" class="waifu-card monika p-8 md:p-12 rounded-3xl relative overflow-hidden group min-h-[400px] flex flex-col justify-end reveal cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <img src="https://files.catbox.moe/f2pajl.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-700 z-0" alt="Monika">
+                    
+                    <div class="relative z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 class="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">Monika</h3>
+                        <div class="w-16 h-1 bg-kyo-emerald mb-6 group-hover:w-32 transition-all duration-500"></div>
+                        <p class="text-gray-300 text-lg md:text-xl font-light italic leading-relaxed">"Just Monika."</p>
+                        <p class="text-kyo-emerald mt-4 text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">Club President</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
     <footer class="py-12 md:py-20 border-t border-white/5 bg-black z-10 relative">
-        <div class="text-center space-y-4">
-            <div class="text-gray-600 text-xs font-mono">
-                <span class="text-kyo-purple">Raiden Ei</span> • Honorable Mention
-            </div>
+        <div class="text-center">
             <div class="text-gray-500 text-sm font-mono">
                 <span id="year"></span> • Made with 💚 by <a href="https://x.com/kyoyacchi" target="_blank" class="hover:text-kyo-emerald transition-colors font-bold">@Kyo</a>
             </div>
@@ -427,15 +475,28 @@
         menuBtn.addEventListener('click', toggleMenu);
         menuLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-        const monikaHero = document.getElementById('monika-hero');
+        window.addEventListener('scroll', reveal);
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var revealTop = reveals[i].getBoundingClientRect().top;
+                if (revealTop < windowHeight - 50) {
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        reveal();
+
+        const monikaCard = document.getElementById('monika-card');
         const monikaPopup = document.getElementById('monika-popup');
         const monikaOkBtn = document.getElementById('monika-ok-btn');
 
         // Ensure page is scrollable on load
         document.body.style.overflow = 'auto';
 
-        if(monikaHero && monikaPopup && monikaOkBtn) {
-            monikaHero.addEventListener('click', () => {
+        if(monikaCard && monikaPopup && monikaOkBtn) {
+            monikaCard.addEventListener('click', () => {
                 monikaPopup.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
             });
