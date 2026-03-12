@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#E07848">
+    <meta name="description" content="Kyo's personal space - anime, coding, and waifus">
+    <meta property="og:title" content="Kyo's World">
+    <meta property="og:description" content="Every day, I imagine a future where I can be with you.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://files.catbox.moe/p25zpe.png">
     <title>Kyo's World</title>
+    <link rel="icon" type="image/x-icon" href="https://kyoya-is.a.dev/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
@@ -109,7 +116,7 @@
     <!-- Header changed from fixed to absolute -->
     <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
         <span id="site-logo" class="text-3xl md:text-4xl font-bold font-header tracking-wider text-white transition-colors duration-300">KYO</span>
-        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2">
+        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
     </header>
@@ -332,7 +339,8 @@
                 imgBg.classList.remove('hidden');
                 videoBg.classList.add('hidden');
             } else {
-                imgBg.src = 'https://color-hex.org/colors/50c878.png';
+                imgBg.style.background = '#50c878';
+                imgBg.src = '';
                 imgBg.classList.remove('hidden');
                 videoBg.classList.add('hidden');
             }
