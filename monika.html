@@ -476,7 +476,7 @@ activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest upperca
             
             let videoUrl = null;
             if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
-                videoUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+                videoUrl = `https://kyopi.vercel.app/api/proxy?url=https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
             }
 
             if (videoUrl) {
@@ -484,7 +484,7 @@ activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest upperca
                 videoBg.classList.remove('hidden');
                 imgBg.classList.add('hidden');
             } else if (user.banner) {
-                const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+                const bannerUrl = `https://kyopi.vercel.app/api/proxy?url=https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
                 imgBg.src = bannerUrl;
                 imgBg.classList.remove('hidden');
                 videoBg.classList.add('hidden');
