@@ -299,7 +299,7 @@ const CONFIG = {
     INIT_TIMEOUT: 10000,
     REVALIDATE_TIMEOUT: 8000,
     RENDER_DEBOUNCE: 150,
-    FALLBACK_TIMEOUT: 8000
+    FALLBACK_TIMEOUT: 3000  // Reduced from 8000
 };
 
 const state = {
@@ -360,7 +360,7 @@ async function revalidateCache() {
         if (json?.success && json.data) {
             if (presenceChanged(cache.data, json.data)) {
                 setCache(json.data);
-                debouncedRenderPresence(json.data);
+                renderPresence(json.data);  // Direct call, no debounce
             } else {
                 setCache(json.data);
             }
@@ -417,14 +417,6 @@ function showConnectionError() {
     actEl.className = "text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-red-500/20 border border-red-500/40 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed text-red-400 animate-pulse transition-opacity duration-300";
 }
 
-function debouncedRenderPresence(data) {
-    if (state.renderDebounceTimer) cancelAnimationFrame(state.renderDebounceTimer);
-    state.renderDebounceTimer = requestAnimationFrame(() => {
-        renderPresence(data);
-        state.renderDebounceTimer = null;
-    });
-}
-
 function renderPresence(data) {
     if (!data?.discord_user) return;
     
@@ -464,15 +456,10 @@ function renderPresence(data) {
         }
     }
 
+    // INSTANT UPDATE - NO DELAYS
     const actEl = document.getElementById('d-activity');
-    if (actEl.textContent !== activityText) {
-        actEl.style.opacity = '0';
-        setTimeout(() => {
-            actEl.textContent = activityText;
-            actEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed transition-opacity duration-300 ${isHighlight ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
-            actEl.style.opacity = '1';
-        }, 150);
-    }
+    actEl.textContent = activityText;
+    actEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed transition-opacity duration-300 ${isHighlight ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
 
     // 3. Update Background (Nameplate / Banner)
     const videoBg = document.getElementById('d-bg-video');
@@ -485,7 +472,7 @@ function renderPresence(data) {
         videoBg.classList.remove('hidden');
         imgBg.classList.add('hidden');
     } else if (user.banner) {
-        imgBg.src = `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'webp'}?size=1024`)}`;
+        imgBg.src = `https://kyopi.vercel.app/api/proxy?url=${encodeURIComponent(`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'webp'}?size=1024`)}`;
         imgBg.classList.remove('hidden');
         videoBg.classList.add('hidden');
     } else {
@@ -529,29 +516,30 @@ async function connectLanyard() {
         }, CONFIG.FALLBACK_TIMEOUT);
     }
 
+    // Show cached data IMMEDIATELY if available
     const cached = getCache();
     if (cached) {
-        debouncedRenderPresence(cached);
-    } else {
-        fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`)
-            .then(res => res.json())
-            .then(json => {
-                if (json?.success && json.data && !state.isConnected) {
-                    setCache(json.data);
-                    debouncedRenderPresence(json.data);
-                }
-            })
-            .catch(err => console.warn('Lanyard REST failed:', err));
+        renderPresence(cached);  // Direct call
     }
 
+    // Parallel fetch and WebSocket init
+    const fetchPromise = !cached ? (async () => {
+        try {
+            const ac = new AbortController();
+            const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
+            const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
+            clearTimeout(timeout);
+            const json = await res.json();
+            if (json?.success && json.data) {
+                setCache(json.data);
+                renderPresence(json.data);  // Direct call
+            }
+        } catch (err) { console.warn('Lanyard REST failed:', err); }
+    })() : Promise.resolve();
+
     let ws;
-    try { 
-        ws = new WebSocket('wss://api.lanyard.rest/socket'); 
-    } catch (err) { 
-        state.isConnecting = false; 
-        scheduleReconnect(); 
-        return; 
-    }
+    try { ws = new WebSocket('wss://api.lanyard.rest/socket'); } 
+    catch (err) { state.isConnecting = false; scheduleReconnect(); return; }
 
     const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
     state.currentSessionID = sessionID;
@@ -594,7 +582,7 @@ async function connectLanyard() {
             const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
             if (presence?.discord_user) {
                 setCache(presence);
-                debouncedRenderPresence(presence);
+                renderPresence(presence);  // Direct call
             }
         }
     };
@@ -610,8 +598,10 @@ async function connectLanyard() {
         state.isConnected = state.isConnecting = false;
         clearTimers(); showConnectionError(); scheduleReconnect();
     };
-}
 
+    // Wait for fetch to complete if needed
+    await fetchPromise;
+}
 
 function scheduleReconnect() {
     if (state.reconnectTimer) return;
@@ -627,12 +617,13 @@ function scheduleReconnect() {
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && !state.isConnected && !state.isConnecting) {
         const cached = getCache();
-        if (cached) debouncedRenderPresence(cached);
+        if (cached) renderPresence(cached);  // Direct call
         connectLanyard();
     }
 });
 
 //connectLanyard();
+
 
 
 // ========================================
