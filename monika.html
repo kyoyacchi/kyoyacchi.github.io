@@ -283,62 +283,7 @@ html, body {
         </div>
     </div>
 
-    <!-- Secret 3-Click Profile Popup -->
-    <div id="secret-profile-popup" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm transition-opacity duration-300 opacity-0 px-4">
-        <div id="secret-popup-content" class="bg-[#0a0a0c] border border-kyo-emerald/30 w-full max-w-sm rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(80,200,120,0.15)] transform scale-95 transition-transform duration-300">
-            
-            <!-- Header with Banner -->
-            <div id="secret-banner" class="h-28 w-full bg-cover bg-center relative bg-[#1a1a1a]">
-                <button id="secret-close-btn" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/60 hover:bg-black text-white rounded-full transition-colors z-10 backdrop-blur-md">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] to-transparent z-0"></div>
-            </div>
-            
-            <!-- Avatar & Content -->
-            <div class="relative px-6 pb-6 mt-[-40px] z-10">
-                <div class="flex justify-between items-end mb-4">
-                    <img id="secret-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#0a0a0c] bg-black shadow-lg object-cover" alt="Secret Avatar">
-                    
-                    <div class="text-[10px] md:text-xs font-mono px-3 py-1 bg-kyo-emerald/10 text-kyo-emerald border border-kyo-emerald/30 rounded-full mb-1 flex items-center gap-1.5 shadow-[0_0_10px_rgba(80,200,120,0.2)]">
-                        <i class="fa-solid fa-heart text-[10px]"></i> Just Monika
-                    </div>
-                </div>
-                
-                <h2 class="text-2xl font-header font-bold text-white tracking-wide">You found me... <span class="text-kyo-emerald">💚</span></h2>
-                
-                <!-- Stats Grid with FA Icons -->
-                <div class="grid grid-cols-3 gap-3 mt-6">
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-kyo-emerald"><i class="fa-solid fa-bug"></i></div>
-                        <div class="text-white font-bold text-sm">100+</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Bugs Created</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#E07848]"><i class="fa-solid fa-mug-hot"></i></div>
-                        <div class="text-white font-bold text-sm">Infinite</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Coffee Consumed</div>
-                    </div>
-                    <div class="bg-white/5 border border-white/10 hover:border-kyo-emerald/30 transition-colors rounded-xl p-3 text-center cursor-default group">
-                        <div class="text-lg mb-1 transform group-hover:-translate-y-1 transition-transform text-[#f48024]"><i class="fa-brands fa-stack-overflow"></i></div>
-                        <div class="text-white font-bold text-sm">Master</div>
-                        <div class="text-[9px] text-gray-400 font-mono uppercase tracking-wider mt-1">Stack Overflow</div>
-                    </div>
-                </div>
 
-                <!-- Badges -->
-                <div class="flex flex-col gap-3 mt-6">
-                    <div class="bg-white/5 border border-white/20 hover:bg-kyo-emerald/10 hover:border-kyo-emerald/40 hover:shadow-[0_0_15px_rgba(80,200,120,0.15)] transition-all duration-300 rounded-lg px-4 py-3 text-sm text-gray-200 flex items-center gap-3 cursor-default">
-                        <span class="text-kyo-emerald text-base w-5 text-center"><i class="fa-solid fa-eye"></i></span> Emerald Eyes Devotee
-                    </div>
-                    <div class="bg-white/5 border border-white/20 hover:bg-kyo-emerald/10 hover:border-kyo-emerald/40 hover:shadow-[0_0_15px_rgba(80,200,120,0.15)] transition-all duration-300 rounded-lg px-4 py-3 text-sm text-gray-200 flex items-center gap-3 cursor-default">
-                        <span class="text-base w-5 text-center">🎀</span> White Ribbon Collector
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
     <script>
    // ========================================
