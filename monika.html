@@ -510,7 +510,7 @@ function renderPresence(data) {
     let videoUrl = null;
     if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
         const targetUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
-videoUrl = `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
+videoUrl = targetUrl;// `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
     }
 
     if (videoUrl) {
