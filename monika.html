@@ -530,25 +530,28 @@ async function connectLanyard() {
     }
 
     const cached = getCache();
-    if (!cached) {
-        try {
-            const ac = new AbortController();
-            const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
-            const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
-            clearTimeout(timeout);
-            const json = await res.json();
-            if (json?.success && json.data) {
-                setCache(json.data);
-                debouncedRenderPresence(json.data);
-            }
-        } catch (err) { console.warn('Lanyard REST failed:', err); }
-    } else {
+    if (cached) {
         debouncedRenderPresence(cached);
+    } else {
+        fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`)
+            .then(res => res.json())
+            .then(json => {
+                if (json?.success && json.data && !state.isConnected) {
+                    setCache(json.data);
+                    debouncedRenderPresence(json.data);
+                }
+            })
+            .catch(err => console.warn('Lanyard REST failed:', err));
     }
 
     let ws;
-    try { ws = new WebSocket('wss://api.lanyard.rest/socket'); } 
-    catch (err) { state.isConnecting = false; scheduleReconnect(); return; }
+    try { 
+        ws = new WebSocket('wss://api.lanyard.rest/socket'); 
+    } catch (err) { 
+        state.isConnecting = false; 
+        scheduleReconnect(); 
+        return; 
+    }
 
     const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
     state.currentSessionID = sessionID;
@@ -582,7 +585,6 @@ async function connectLanyard() {
                 try { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 })); } catch (e) {}
             }, d.heartbeat_interval);
 
-            // Send subscription AFTER receiving Hello (Fixes the dynamic issue)
             try { ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); } catch (e) {}
         }
         
@@ -609,6 +611,7 @@ async function connectLanyard() {
         clearTimers(); showConnectionError(); scheduleReconnect();
     };
 }
+
 
 function scheduleReconnect() {
     if (state.reconnectTimer) return;
