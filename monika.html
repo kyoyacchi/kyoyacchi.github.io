@@ -304,7 +304,9 @@ const state = {
     heartbeatInterval: null,
     backoff: 1000,
     currentSessionID: null,
-    lastConnectAttempt: 0
+    lastConnectAttempt: 0,
+    visibilityTimeout: null,
+    hasTyped: false
 };
 
 const DOM = {
@@ -526,18 +528,18 @@ function scheduleReconnect() {
     state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
 }
 
-
-
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !state.isConnected) {
-        const cached = getCache();
-        if (cached) renderPresence(cached);
-        connectLanyard();
+function cleanupConnection() {
+    state.isConnected = false;
+    state.isConnecting = false;
+    if (state.heartbeatInterval) {
+        clearInterval(state.heartbeatInterval);
+        state.heartbeatInterval = null;
     }
-});
-
-
-
+    if (state.ws) {
+        try { state.ws.close(); } catch (e) {}
+        state.ws = null;
+    }
+}
 
 // ========================================
 // TITLE CHANGE (DDLC AESTHETIC)
@@ -556,6 +558,8 @@ document.addEventListener("visibilitychange", () => {
             cleanupConnection();
         } else {
             document.title = originalTitle;
+            const cached = getCache();
+            if (cached) renderPresence(cached);
             connectLanyard();
         }
     }, 100);
