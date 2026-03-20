@@ -509,7 +509,8 @@ function renderPresence(data) {
     // Background (nameplate video or banner)
     let videoUrl = null;
     if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
-        videoUrl = `https://kyoverse.vercel.app/api/proxy?url=https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+        const targetUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+videoUrl = `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
     }
 
     if (videoUrl) {
