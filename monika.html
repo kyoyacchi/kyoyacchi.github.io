@@ -286,13 +286,14 @@ html, body {
 
 
     <script>
-   // ========================================
-// CONFIGURATION
+// ========================================
+// CONFIGURATION & STATE
 // ========================================
 const DISCORD_USER_ID = '468509605828493322';
+
 const CONFIG = {
     MAX_BACKOFF: 30000,
-    CACHE_TTL: 60000 * 5,
+    CACHE_TTL: 60000,
     SWR_THRESHOLD: 120000,
     CONNECT_DEBOUNCE: 1500,
     INIT_TIMEOUT: 10000,
@@ -301,144 +302,123 @@ const CONFIG = {
     FALLBACK_TIMEOUT: 8000
 };
 
-// ========================================
-// STATE
-// ========================================
 const state = {
     ws: null,
     isConnected: false,
     isConnecting: false,
     reconnectTimer: null,
     heartbeatInterval: null,
+    initTimeout: null,
+    renderDebounceTimer: null,
+    fallbackTimeout: null,
     backoff: 1000,
     currentSessionID: null,
     lastConnectAttempt: 0,
-    renderDebounceTimer: null,
-    hasTyped: false,
-    activityUpdateToken: 0,
-    visibilityTimeout: null
+    lastPresenceHash: null,
+    hasEverConnected: false
 };
 
-// Cache DOM elements once
-const DOM = {
-    card: null,
-    avatar: null,
-    name: null,
-    username: null,
-    activity: null,
-    statusInd: null,
-    videoBg: null,
-    imgBg: null,
-    typeTarget: null,
-    year: null
+const cache = {
+    data: null,
+    timestamp: 0,
+    isRevalidating: false
 };
 
 // ========================================
-// UTILITY: FETCH WITH TIMEOUT
+// CACHE & UTILS
 // ========================================
-async function fetchWithTimeout(url, timeout = 8000) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-    try {
-        const res = await fetch(url, { signal: controller.signal });
-        return res;
-    } finally {
-        clearTimeout(timeoutId);
-    }
-}
-
-// ========================================
-// CACHE MANAGEMENT (WITH TTL + SWR)
-// ========================================
-const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
-
-function getCacheWithMeta() {
-    try {
-        const stored = localStorage.getItem(storageKey);
-        if (!stored) return null;
-        return JSON.parse(stored);
-    } catch (e) {
-        console.warn('Cache read failed:', e);
-        return null;
-    }
+function setCache(data) {
+    cache.data = data;
+    cache.timestamp = Date.now();
+    try { localStorage.setItem(`lanyard_${DISCORD_USER_ID}`, JSON.stringify({ data, timestamp: cache.timestamp })); } catch(e){}
 }
 
 function getCache() {
-    const cached = getCacheWithMeta();
-    if (!cached) return null;
-
-    // Check if expired
-    if (Date.now() - cached.timestamp > CONFIG.CACHE_TTL) {
-        return null;
+    if (!cache.data) {
+        try {
+            const stored = JSON.parse(localStorage.getItem(`lanyard_${DISCORD_USER_ID}`));
+            if (stored) { cache.data = stored.data; cache.timestamp = stored.timestamp; }
+        } catch(e){}
     }
-
-    return cached.data;
+    const age = Date.now() - cache.timestamp;
+    if (age < CONFIG.CACHE_TTL) return cache.data;
+    if (age < CONFIG.SWR_THRESHOLD && !cache.isRevalidating) {
+        revalidateCache();
+        return cache.data;
+    }
+    return null;
 }
 
-function setCache(data) {
+async function revalidateCache() {
+    if (cache.isRevalidating) return;
+    cache.isRevalidating = true;
+    const ac = new AbortController();
+    const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
     try {
-        localStorage.setItem(storageKey, JSON.stringify({
-            data: data,
-            timestamp: Date.now()
-        }));
-    } catch (e) {
-        console.warn('Cache write failed:', e);
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
+        const json = await res.json();
+        if (json?.success && json.data) {
+            if (presenceChanged(cache.data, json.data)) {
+                setCache(json.data);
+                debouncedRenderPresence(json.data);
+            } else {
+                setCache(json.data);
+            }
+        }
+    } catch (err) {
+        console.warn("Cache revalidation failed:", err);
+    } finally {
+        clearTimeout(timeout);
+        cache.isRevalidating = false;
     }
 }
 
-// ========================================
-// ACTIVITY DISPLAY LOGIC
-// ========================================
-function getActivityDisplay(status, activities = []) {
-    if (status === 'offline') {
-        return { text: "OFFLINE", color: "text-white" };
+function normalizeActivities(activities) {
+    if (!Array.isArray(activities)) return [];
+    return activities.filter(a => a && a.type !== 4).map(a => ({
+        name: a.name || '', type: a.type, details: a.details || '', state: a.state || ''
+    })).sort((a, b) => {
+        if (a.type !== b.type) return a.type - b.type;
+        return (a.name || '').localeCompare(b.name || '');
+    });
+}
+
+function presenceChanged(oldP, newP) {
+    if (!oldP || !newP) return true;
+    if (oldP.discord_status !== newP.discord_status) return true;
+    if ((oldP.discord_user?.avatar || '') !== (newP.discord_user?.avatar || '')) return true;
+    const oldActs = normalizeActivities(oldP.activities);
+    const newActs = normalizeActivities(newP.activities);
+    if (oldActs.length !== newActs.length) return true;
+    for (let i = 0; i < oldActs.length; i++) {
+        if (oldActs[i].name !== newActs[i].name || oldActs[i].type !== newActs[i].type || 
+            oldActs[i].details !== newActs[i].details || oldActs[i].state !== newActs[i].state) return true;
     }
+    return false;
+}
 
-    const game = activities.find(a => a.type === 0 || a.type === 1);
-    const listeningActivity = activities.find(a => a.type === 2);
-
-    if (game) {
-        return { 
-            text: "PLAYING " + game.name.toUpperCase(), 
-            color: "text-kyo-emerald" 
-        };
-    }
-
-    if (listeningActivity) {
-        return { 
-            text: "LISTENING TO " + listeningActivity.name.toUpperCase(), 
-            color: "text-kyo-emerald" 
-        };
-    }
-
-    const statusText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
-    return { text: statusText, color: "text-white" };
+function getPresenceHash(data) {
+    if (!data?.discord_user) return null;
+    return JSON.stringify({
+        status: data.discord_status,
+        avatar: data.discord_user.avatar,
+        username: data.discord_user.global_name || data.discord_user.username,
+        activities: normalizeActivities(data.activities)
+    });
 }
 
 // ========================================
-// CONNECTION STATE FEEDBACK (DDLC META)
+// DOM UPDATES (MONIKA SPECIFIC)
 // ========================================
 function showConnectionError() {
-    if (!DOM.activity) return;
-    
-    DOM.activity.textContent = "MONIKA IS TRYING TO RECONNECT...";
-    DOM.activity.className = "text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-red-500/20 border border-red-500/40 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed text-red-400 animate-pulse transition-opacity duration-300";
-    DOM.activity.style.opacity = '1';
+    const actEl = document.getElementById('d-activity');
+    if (!actEl) return;
+    actEl.textContent = "MONIKA IS TRYING TO RECONNECT...";
+    actEl.className = "text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-red-500/20 border border-red-500/40 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed text-red-400 animate-pulse transition-opacity duration-300";
 }
 
-function clearConnectionError() {
-    if (!DOM.activity) return;
-    DOM.activity.classList.remove('animate-pulse');
-}
-
-// ========================================
-// RENDER PRESENCE
-// ========================================
 function debouncedRenderPresence(data) {
-    if (state.renderDebounceTimer) {
-        cancelAnimationFrame(state.renderDebounceTimer);
-    }
+    if (state.renderDebounceTimer) cancelAnimationFrame(state.renderDebounceTimer);
     state.renderDebounceTimer = requestAnimationFrame(() => {
         renderPresence(data);
         state.renderDebounceTimer = null;
@@ -446,279 +426,211 @@ function debouncedRenderPresence(data) {
 }
 
 function renderPresence(data) {
-    if (!data || !data.discord_user || !DOM.card) return;
+    if (!data?.discord_user) return;
+    
+    const currentHash = getPresenceHash(data);
+    if (currentHash === state.lastPresenceHash) return;
+    state.lastPresenceHash = currentHash;
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
+    const activities = Array.isArray(data.activities) ? data.activities : [];
 
-    DOM.card.classList.remove('opacity-0');
-
-    // Avatar with preload
-    const avatarUrl = user.avatar 
-        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
-        : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
-
-    if (DOM.avatar.src !== avatarUrl) {
-        const img = new Image();
-        img.onload = () => {
-            DOM.avatar.src = avatarUrl;
-        };
-        img.src = avatarUrl;
-    }
-
-    // Status indicator
-    DOM.statusInd.className = `status-indicator status-${status}`;
-
-    // Name and username (prevent unnecessary DOM writes)
-    const displayName = user.global_name || user.username;
-    if (DOM.name.textContent !== displayName) {
-        DOM.name.textContent = displayName;
-    }
-
-    const usernameDisplay = '@' + user.username;
-    if (DOM.username.textContent !== usernameDisplay) {
-        DOM.username.textContent = usernameDisplay;
-    }
-
-    // Activity with smooth transition (race condition guard)
-    const activity = getActivityDisplay(status, data.activities);
-    const currentToken = ++state.activityUpdateToken;
+    // 1. Update Profile Text & Avatar
+    document.getElementById('d-global-name').textContent = user.global_name || user.username;
+    document.getElementById('d-username').textContent = '@' + user.username;
     
-    if (DOM.activity.textContent !== activity.text) {
-        // Fade out
-        DOM.activity.style.opacity = '0';
-        
+    const avatarUrl = user.avatar 
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'webp'}?size=128`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
+    document.getElementById('d-avatar').src = avatarUrl;
+    document.getElementById('d-status-indicator').className = `status-indicator status-${status}`;
+
+    // 2. Format Activity
+    let activityText = "OFFLINE";
+    let isHighlight = false;
+
+    if (status !== 'offline') {
+        const priority = { 2: 1, 0: 2, 1: 3 };
+        const activity = activities.filter(a => a && a.type !== 4).sort((a, b) => (priority[a.type] ?? 99) - (priority[b.type] ?? 99))[0];
+
+        if (activity) {
+            isHighlight = true;
+            if (activity.type === 0) activityText = `PLAYING ${activity.name.toUpperCase()}`;
+            else if (activity.type === 2) activityText = `LISTENING TO ${activity.name.toUpperCase()}`;
+            else activityText = activity.name.toUpperCase();
+        } else {
+            activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
+        }
+    }
+
+    const actEl = document.getElementById('d-activity');
+    if (actEl.textContent !== activityText) {
+        actEl.style.opacity = '0';
         setTimeout(() => {
-            // Cancel if newer update arrived
-            if (currentToken !== state.activityUpdateToken) return;
-            
-            DOM.activity.textContent = activity.text;
-            
-            const activityClasses = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed transition-opacity duration-300 ${activity.color === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
-            
-            DOM.activity.className = activityClasses;
-            
-            // Clear any connection error animations
-            clearConnectionError();
-            
-            // Fade in
-            DOM.activity.style.opacity = '1';
+            actEl.textContent = activityText;
+            actEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed transition-opacity duration-300 ${isHighlight ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+            actEl.style.opacity = '1';
         }, 150);
     }
 
-    // Background (nameplate video or banner)
-    let videoUrl = null;
-    if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
-        const targetUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
-videoUrl = targetUrl;// `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
-    }
+    // 3. Update Background (Nameplate / Banner)
+    const videoBg = document.getElementById('d-bg-video');
+    const imgBg = document.getElementById('d-bg-image');
 
-    if (videoUrl) {
-        if (DOM.videoBg.src !== videoUrl) DOM.videoBg.src = videoUrl;
-        DOM.videoBg.classList.remove('hidden');
-        DOM.imgBg.classList.add('hidden');
+    if (user.collectibles?.nameplate?.asset) {
+        const safePath = user.collectibles.nameplate.asset.endsWith('/') ? user.collectibles.nameplate.asset : user.collectibles.nameplate.asset + '/';
+        const targetUrl = `https://cdn.discordapp.com/assets/collectibles/${safePath}asset.webm`;
+        videoBg.src = `https://kyopi.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
+        videoBg.classList.remove('hidden');
+        imgBg.classList.add('hidden');
     } else if (user.banner) {
-        const bannerUrl = `https://kyoverse.vercel.app/api/proxy?url=https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
-        
-        // Preload banner
-        const img = new Image();
-        img.onload = () => {
-            DOM.imgBg.src = bannerUrl;
-        };
-        img.src = bannerUrl;
-        
-        DOM.imgBg.classList.remove('hidden');
-        DOM.videoBg.classList.add('hidden');
+        imgBg.src = `https://kyoverse.vercel.app/api/proxy?url=${encodeURIComponent(`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'webp'}?size=1024`)}`;
+        imgBg.classList.remove('hidden');
+        videoBg.classList.add('hidden');
     } else {
-        DOM.imgBg.style.background = '#50c878';
-        DOM.imgBg.src = '';
-        DOM.imgBg.classList.remove('hidden');
-        DOM.videoBg.classList.add('hidden');
+        imgBg.style.background = '#0a0a0c';
+        imgBg.src = '';
+        imgBg.classList.remove('hidden');
+        videoBg.classList.add('hidden');
     }
 }
 
 // ========================================
-// WEBSOCKET CLEANUP (FIX MEMORY LEAKS)
+// WEBSOCKET LOGIC
 // ========================================
-function cleanupConnection() {
-    if (state.ws) {
-        state.ws.onopen = null;
-        state.ws.onmessage = null;
-        state.ws.onerror = null;
-        state.ws.onclose = null;
-        state.ws.close();
-        state.ws = null;
-    }
-
-    if (state.heartbeatInterval) {
-        clearInterval(state.heartbeatInterval);
-        state.heartbeatInterval = null;
-    }
-    
-    if (state.reconnectTimer) {
-        clearTimeout(state.reconnectTimer);
-        state.reconnectTimer = null;
-    }
+function clearTimers() {
+    if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+    if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
+    if (state.initTimeout) clearTimeout(state.initTimeout);
+    if (state.renderDebounceTimer) cancelAnimationFrame(state.renderDebounceTimer);
+    if (state.fallbackTimeout) clearTimeout(state.fallbackTimeout);
+    state.reconnectTimer = state.heartbeatInterval = state.initTimeout = state.renderDebounceTimer = state.fallbackTimeout = null;
 }
 
-// ========================================
-// LANYARD CONNECTION (WITH SWR)
-// ========================================
+function closeWebSocket() {
+    try { if (state.ws?.readyState === WebSocket.OPEN || state.ws?.readyState === WebSocket.CONNECTING) state.ws.close(); } catch (e) {}
+}
+
 async function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
     state.lastConnectAttempt = now;
 
     if (state.isConnecting || state.isConnected) return;
+
+    clearTimers();
+    closeWebSocket();
     state.isConnecting = true;
 
-    // Clean up any existing connection first
-    cleanupConnection();
-
-    // SWR: Use cache immediately if available
-    const cached = getCacheWithMeta();
-    if (cached && cached.data) {
-        debouncedRenderPresence(cached.data);
-
-        const isStale = Date.now() - cached.timestamp > CONFIG.SWR_THRESHOLD;
-        
-        if (!isStale) {
-            // Fresh enough, skip fetch but still establish WebSocket
-            state.isConnecting = false;
-            establishWebSocket();
-            return;
-        }
-        // If stale, continue to revalidate in background
+    if (!state.hasEverConnected && !cache.data) {
+        state.fallbackTimeout = setTimeout(() => {
+            if (!state.hasEverConnected && !cache.data) showConnectionError();
+        }, CONFIG.FALLBACK_TIMEOUT);
     }
 
-    // Fetch fresh data (revalidate)
-    try {
-        const res = await fetchWithTimeout(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-        const json = await res.json();
-        if (json.success && json.data) {
-            setCache(json.data);
-            debouncedRenderPresence(json.data);
-        }
-    } catch (e) {
-        console.warn('Initial fetch failed:', e);
-        if (!cached) {
-            showConnectionError();
-        }
+    const cached = getCache();
+    if (!cached) {
+        try {
+            const ac = new AbortController();
+            const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
+            const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
+            clearTimeout(timeout);
+            const json = await res.json();
+            if (json?.success && json.data) {
+                setCache(json.data);
+                debouncedRenderPresence(json.data);
+            }
+        } catch (err) { console.warn('Lanyard REST failed:', err); }
+    } else {
+        debouncedRenderPresence(cached);
     }
 
-    // Establish WebSocket
-    establishWebSocket();
-}
-
-function establishWebSocket() {
     let ws;
-    try {
-        ws = new WebSocket('wss://api.lanyard.rest/socket');
-    } catch (err) {
-        console.warn('WebSocket creation failed:', err);
-        state.isConnecting = false;
-        showConnectionError();
-        scheduleReconnect();
-        return;
-    }
+    try { ws = new WebSocket('wss://api.lanyard.rest/socket'); } 
+    catch (err) { state.isConnecting = false; scheduleReconnect(); return; }
 
-    state.ws = ws;
-    // Use crypto if available, fallback to Math.random for older browsers
-    const sessionID = (typeof crypto !== 'undefined' && crypto.randomUUID) 
-        ? crypto.randomUUID() 
-        : Math.random().toString(36);
+    const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
     state.currentSessionID = sessionID;
+    state.ws = ws;
 
     ws.onopen = () => {
         if (state.currentSessionID !== sessionID) return;
         state.isConnected = true;
         state.isConnecting = false;
+        state.hasEverConnected = true;
         state.backoff = 1000;
         
-        // Clear reconnect timer on success
-        if (state.reconnectTimer) {
-            clearTimeout(state.reconnectTimer);
-            state.reconnectTimer = null;
-        }
-
-        ws.send(JSON.stringify({
-            op: 2,
-            d: { subscribe_to_id: DISCORD_USER_ID }
-        }));
+        if (state.fallbackTimeout) clearTimeout(state.fallbackTimeout);
+        
+        state.initTimeout = setTimeout(() => {
+            if (state.currentSessionID !== sessionID) return;
+            state.isConnected = state.isConnecting = false;
+            clearTimers(); closeWebSocket(); scheduleReconnect();
+        }, CONFIG.INIT_TIMEOUT);
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = ({ data }) => {
         if (state.currentSessionID !== sessionID) return;
+        let parsed;
+        try { parsed = JSON.parse(data); } catch { return; }
+        const { op, t, d } = parsed || {};
+        
+        if (op === 1 && d?.heartbeat_interval) {
+            clearInterval(state.heartbeatInterval);
+            state.heartbeatInterval = setInterval(() => {
+                try { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 })); } catch (e) {}
+            }, d.heartbeat_interval);
 
-        try {
-            const msg = JSON.parse(event.data);
-
-            if (msg.op === 1) {
-                // Guard against duplicate heartbeat intervals
-                if (state.heartbeatInterval) {
-                    clearInterval(state.heartbeatInterval);
-                }
-                
-                state.heartbeatInterval = setInterval(() => {
-                    if (ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ op: 3 }));
-                    }
-                }, msg.d.heartbeat_interval);
+            // Send subscription AFTER receiving Hello (Fixes the dynamic issue)
+            try { ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); } catch (e) {}
+        }
+        
+        if (t === 'INIT_STATE') clearTimeout(state.initTimeout);
+        
+        if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
+            const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+            if (presence?.discord_user) {
+                setCache(presence);
+                debouncedRenderPresence(presence);
             }
-
-            if (msg.t === 'INIT_STATE') {
-                // Lanyard wraps presence in user ID key
-                const presence = msg.d[DISCORD_USER_ID];
-                if (presence) {
-                    setCache(presence);
-                    debouncedRenderPresence(presence);
-                }
-            } else if (msg.t === 'PRESENCE_UPDATE') {
-                const presence = msg.d;
-                if (presence) {
-                    setCache(presence);
-                    debouncedRenderPresence(presence);
-                }
-            }
-        } catch (e) {
-            console.warn('Message parse error:', e);
         }
     };
 
     ws.onerror = () => {
         if (state.currentSessionID !== sessionID) return;
-        console.warn('WebSocket error');
-        state.isConnected = false;
-        state.isConnecting = false;
-        showConnectionError();
-        ws.close();
-        scheduleReconnect();
+        state.isConnected = state.isConnecting = false;
+        clearTimers(); closeWebSocket(); showConnectionError(); scheduleReconnect();
     };
 
     ws.onclose = () => {
         if (state.currentSessionID !== sessionID) return;
-        console.warn('WebSocket closed');
-        state.isConnected = false;
-        state.isConnecting = false;
-        showConnectionError();
-        scheduleReconnect();
+        state.isConnected = state.isConnecting = false;
+        clearTimers(); showConnectionError(); scheduleReconnect();
     };
 }
 
 function scheduleReconnect() {
     if (state.reconnectTimer) return;
-    
-    const jitter = Math.floor(Math.random() * 1000);
+    const jitter = Math.floor(Math.random() * Math.min(1000, state.backoff));
     const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
-    
-    state.reconnectTimer = setTimeout(() => {
-        state.reconnectTimer = null;
-        connectLanyard();
-    }, wait);
-    
-    // Smoother backoff curve
-    state.backoff = Math.min(state.backoff * 1.3 + 200, CONFIG.MAX_BACKOFF);
+    state.reconnectTimer = setTimeout(() => { state.reconnectTimer = null; connectLanyard(); }, wait);
+    state.backoff = Math.min(Math.floor(state.backoff * 1.8), CONFIG.MAX_BACKOFF);
 }
+
+// ========================================
+// START CONNECTION
+// ========================================
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !state.isConnected && !state.isConnecting) {
+        const cached = getCache();
+        if (cached) debouncedRenderPresence(cached);
+        connectLanyard();
+    }
+});
+
+//connectLanyard();
+
 
 // ========================================
 // TITLE CHANGE (DDLC AESTHETIC)
