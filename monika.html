@@ -341,7 +341,7 @@ html, body {
     </div>
 
     <script>
-    // ========================================
+   // ========================================
 // CONFIGURATION
 // ========================================
 const DISCORD_USER_ID = '468509605828493322';
@@ -677,7 +677,10 @@ function establishWebSocket() {
     }
 
     state.ws = ws;
-    const sessionID = Math.random().toString(36);
+    // Use crypto if available, fallback to Math.random for older browsers
+    const sessionID = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36);
     state.currentSessionID = sessionID;
 
     ws.onopen = () => {
@@ -784,7 +787,7 @@ document.addEventListener("visibilitychange", () => {
     
     state.visibilityTimeout = setTimeout(() => {
         if (document.hidden) {
-            document.title = ".JUST MONIKA";
+            document.title = "..JUST MONIKA";
             cleanupConnection();
         } else {
             document.title = originalTitle;
@@ -902,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start Lanyard connection
     connectLanyard();
 });
-  
+   
       
     </script>
 </body>
