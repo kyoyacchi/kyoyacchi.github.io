@@ -286,20 +286,14 @@ html, body {
 
 
     <script>
-// ========================================
-// CONFIGURATION & STATE
-// ========================================
-const DISCORD_USER_ID = '468509605828493322';
 
+const DISCORD_USER_ID = '468509605828493322';
 const CONFIG = {
     MAX_BACKOFF: 30000,
-    CACHE_TTL: 60000,
-    SWR_THRESHOLD: 120000,
+    CACHE_TTL: 60000 * 5,
     CONNECT_DEBOUNCE: 1500,
     INIT_TIMEOUT: 10000,
-    REVALIDATE_TIMEOUT: 8000,
-    RENDER_DEBOUNCE: 150,
-    FALLBACK_TIMEOUT: 3000  // Reduced from 8000
+    FETCH_TIMEOUT: 5000
 };
 
 const state = {
@@ -308,321 +302,228 @@ const state = {
     isConnecting: false,
     reconnectTimer: null,
     heartbeatInterval: null,
-    initTimeout: null,
-    renderDebounceTimer: null,
-    fallbackTimeout: null,
     backoff: 1000,
     currentSessionID: null,
-    lastConnectAttempt: 0,
-    lastPresenceHash: null,
-    hasEverConnected: false
+    lastConnectAttempt: 0
 };
 
-const cache = {
-    data: null,
-    timestamp: 0,
-    isRevalidating: false
-};
-
-// ========================================
-// CACHE & UTILS
-// ========================================
-function setCache(data) {
-    cache.data = data;
-    cache.timestamp = Date.now();
-    try { localStorage.setItem(`lanyard_${DISCORD_USER_ID}`, JSON.stringify({ data, timestamp: cache.timestamp })); } catch(e){}
-}
+const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
 
 function getCache() {
-    if (!cache.data) {
-        try {
-            const stored = JSON.parse(localStorage.getItem(`lanyard_${DISCORD_USER_ID}`));
-            if (stored) { cache.data = stored.data; cache.timestamp = stored.timestamp; }
-        } catch(e){}
-    }
-    const age = Date.now() - cache.timestamp;
-    if (age < CONFIG.CACHE_TTL) return cache.data;
-    if (age < CONFIG.SWR_THRESHOLD && !cache.isRevalidating) {
-        revalidateCache();
-        return cache.data;
-    }
-    return null;
-}
-
-async function revalidateCache() {
-    if (cache.isRevalidating) return;
-    cache.isRevalidating = true;
-    const ac = new AbortController();
-    const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
     try {
-        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
-        const json = await res.json();
-        if (json?.success && json.data) {
-            if (presenceChanged(cache.data, json.data)) {
-                setCache(json.data);
-                renderPresence(json.data);  // Direct call, no debounce
-            } else {
-                setCache(json.data);
-            }
-        }
-    } catch (err) {
-        console.warn("Cache revalidation failed:", err);
-    } finally {
-        clearTimeout(timeout);
-        cache.isRevalidating = false;
+        const stored = localStorage.getItem(storageKey);
+        if (!stored) return null;
+        const { data } = JSON.parse(stored);
+        return data;
+    } catch (e) {
+        return null;
     }
 }
 
-function normalizeActivities(activities) {
-    if (!Array.isArray(activities)) return [];
-    return activities.filter(a => a && a.type !== 4).map(a => ({
-        name: a.name || '', type: a.type, details: a.details || '', state: a.state || ''
-    })).sort((a, b) => {
-        if (a.type !== b.type) return a.type - b.type;
-        return (a.name || '').localeCompare(b.name || '');
-    });
-}
-
-function presenceChanged(oldP, newP) {
-    if (!oldP || !newP) return true;
-    if (oldP.discord_status !== newP.discord_status) return true;
-    if ((oldP.discord_user?.avatar || '') !== (newP.discord_user?.avatar || '')) return true;
-    const oldActs = normalizeActivities(oldP.activities);
-    const newActs = normalizeActivities(newP.activities);
-    if (oldActs.length !== newActs.length) return true;
-    for (let i = 0; i < oldActs.length; i++) {
-        if (oldActs[i].name !== newActs[i].name || oldActs[i].type !== newActs[i].type || 
-            oldActs[i].details !== newActs[i].details || oldActs[i].state !== newActs[i].state) return true;
-    }
-    return false;
-}
-
-function getPresenceHash(data) {
-    if (!data?.discord_user) return null;
-    return JSON.stringify({
-        status: data.discord_status,
-        avatar: data.discord_user.avatar,
-        username: data.discord_user.global_name || data.discord_user.username,
-        activities: normalizeActivities(data.activities)
-    });
-}
-
-// ========================================
-// DOM UPDATES (MONIKA SPECIFIC)
-// ========================================
-function showConnectionError() {
-    const actEl = document.getElementById('d-activity');
-    if (!actEl) return;
-    actEl.textContent = "MONIKA IS TRYING TO RECONNECT...";
-    actEl.className = "text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-red-500/20 border border-red-500/40 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed text-red-400 animate-pulse transition-opacity duration-300";
+function setCache(data) {
+    try {
+        localStorage.setItem(storageKey, JSON.stringify({
+            data: data,
+            timestamp: Date.now()
+        }));
+    } catch (e) {}
 }
 
 function renderPresence(data) {
-    if (!data?.discord_user) return;
-    
-    const currentHash = getPresenceHash(data);
-    if (currentHash === state.lastPresenceHash) return;
-    state.lastPresenceHash = currentHash;
-
-    const user = data.discord_user;
-    const status = data.discord_status || 'offline';
-    const activities = Array.isArray(data.activities) ? data.activities : [];
-
-    // 1. Update Profile Text & Avatar
-    document.getElementById('d-global-name').textContent = user.global_name || user.username;
-    document.getElementById('d-username').textContent = '@' + user.username;
-    
-    const avatarUrl = user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'webp'}?size=128`
-        : `https://cdn.discordapp.com/embed/avatars/0.png`;
-    document.getElementById('d-avatar').src = avatarUrl;
-    document.getElementById('d-status-indicator').className = `status-indicator status-${status}`;
-
-    // 2. Format Activity
-    let activityText = "OFFLINE";
-    let isHighlight = false;
-
-    if (status !== 'offline') {
-        const priority = { 2: 1, 0: 2, 1: 3 };
-        const activity = activities.filter(a => a && a.type !== 4).sort((a, b) => (priority[a.type] ?? 99) - (priority[b.type] ?? 99))[0];
-
-        if (activity) {
-            isHighlight = true;
-            if (activity.type === 0) activityText = `PLAYING ${activity.name.toUpperCase()}`;
-            else if (activity.type === 2) activityText = `LISTENING TO ${activity.name.toUpperCase()}`;
-            else activityText = activity.name.toUpperCase();
-        } else {
-            activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
-        }
-    }
-
-    // INSTANT UPDATE - NO DELAYS
-    const actEl = document.getElementById('d-activity');
-    actEl.textContent = activityText;
-    actEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed transition-opacity duration-300 ${isHighlight ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
-
-    // 3. Update Background (Nameplate / Banner)
+    const card = document.getElementById('discord-profile');
+    const avatarEl = document.getElementById('d-avatar');
+    const nameEl = document.getElementById('d-global-name');
+    const userEl = document.getElementById('d-username');
+    const activityEl = document.getElementById('d-activity');
+    const statusInd = document.getElementById('d-status-indicator');
     const videoBg = document.getElementById('d-bg-video');
     const imgBg = document.getElementById('d-bg-image');
 
-    if (user.collectibles?.nameplate?.asset) {
-        const safePath = user.collectibles.nameplate.asset.endsWith('/') ? user.collectibles.nameplate.asset : user.collectibles.nameplate.asset + '/';
-        const targetUrl = `https://cdn.discordapp.com/assets/collectibles/${safePath}asset.webm`;
-        videoBg.src = `https://kyopi.vercel.app/api/proxy?url=${encodeURIComponent(targetUrl)}`;
+    if (!data || !data.discord_user) return;
+
+    const user = data.discord_user;
+    const status = data.discord_status || 'offline';
+
+    card.classList.remove('opacity-0');
+
+    const avatarUrl = user.avatar 
+        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
+        : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
+
+    if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+
+    statusInd.className = `status-indicator status-${status}`;
+
+    nameEl.textContent = user.global_name || user.username;
+    userEl.textContent = '@' + user.username;
+
+    let activityText = "OFFLINE";
+    let colorClass = "text-white";
+
+    if (status !== 'offline') {
+        const activities = data.activities || [];
+        const game = activities.find(a => a.type === 0 || a.type === 1);
+        const listeningActivity = activities.find(a => a.type === 2);
+
+        if (game) {
+            activityText = "PLAYING " + game.name.toUpperCase();
+            colorClass = "text-kyo-emerald";
+        } else if (listeningActivity) {
+            activityText = "LISTENING TO " + listeningActivity.name.toUpperCase();
+            colorClass = "text-kyo-emerald";
+        } else {
+            activityText = status.toUpperCase();
+            if(status === 'dnd') activityText = "DO NOT DISTURB";
+        }
+    }
+
+    activityEl.textContent = activityText;
+    activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+
+    let videoUrl = null;
+    if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
+        videoUrl = `https://kyopi.vercel.app/api/proxy?url=https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+    }
+
+    if (videoUrl) {
+        if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
         videoBg.classList.remove('hidden');
         imgBg.classList.add('hidden');
     } else if (user.banner) {
-        imgBg.src = `https://kyopi.vercel.app/api/proxy?url=${encodeURIComponent(`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'webp'}?size=1024`)}`;
+        const bannerUrl = `https://kyopi.vercel.app/api/proxy?url=https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+        imgBg.src = bannerUrl;
         imgBg.classList.remove('hidden');
         videoBg.classList.add('hidden');
     } else {
-        imgBg.style.background = '#0a0a0c';
+        imgBg.style.background = '#50c878';
         imgBg.src = '';
         imgBg.classList.remove('hidden');
         videoBg.classList.add('hidden');
     }
 }
 
-// ========================================
-// WEBSOCKET LOGIC
-// ========================================
-function clearTimers() {
-    if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
-    if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
-    if (state.initTimeout) clearTimeout(state.initTimeout);
-    if (state.renderDebounceTimer) cancelAnimationFrame(state.renderDebounceTimer);
-    if (state.fallbackTimeout) clearTimeout(state.fallbackTimeout);
-    state.reconnectTimer = state.heartbeatInterval = state.initTimeout = state.renderDebounceTimer = state.fallbackTimeout = null;
-}
-
-function closeWebSocket() {
-    try { if (state.ws?.readyState === WebSocket.OPEN || state.ws?.readyState === WebSocket.CONNECTING) state.ws.close(); } catch (e) {}
-}
-
-async function connectLanyard() {
+function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
     state.lastConnectAttempt = now;
 
     if (state.isConnecting || state.isConnected) return;
-
-    clearTimers();
-    closeWebSocket();
     state.isConnecting = true;
 
-    if (!state.hasEverConnected && !cache.data) {
-        state.fallbackTimeout = setTimeout(() => {
-            if (!state.hasEverConnected && !cache.data) showConnectionError();
-        }, CONFIG.FALLBACK_TIMEOUT);
-    }
-
-    // Show cached data IMMEDIATELY if available
+    // Show cached data INSTANTLY
     const cached = getCache();
     if (cached) {
-        renderPresence(cached);  // Direct call
+        renderPresence(cached);
     }
 
-    // Parallel fetch and WebSocket init
-    const fetchPromise = !cached ? (async () => {
-        try {
-            const ac = new AbortController();
-            const timeout = setTimeout(() => ac.abort(), CONFIG.REVALIDATE_TIMEOUT);
-            const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: ac.signal });
-            clearTimeout(timeout);
-            const json = await res.json();
-            if (json?.success && json.data) {
-                setCache(json.data);
-                renderPresence(json.data);  // Direct call
-            }
-        } catch (err) { console.warn('Lanyard REST failed:', err); }
-    })() : Promise.resolve();
-
+    // Start WebSocket connection immediately (parallel with fetch)
     let ws;
-    try { ws = new WebSocket('wss://api.lanyard.rest/socket'); } 
-    catch (err) { state.isConnecting = false; scheduleReconnect(); return; }
+    try {
+        ws = new WebSocket('wss://api.lanyard.rest/socket');
+    } catch (err) {
+        state.isConnecting = false;
+        scheduleReconnect();
+        return;
+    }
 
     const sessionID = Date.now().toString(36) + Math.random().toString(36).slice(2);
     state.currentSessionID = sessionID;
     state.ws = ws;
 
+    // Parallel REST API fetch (non-blocking)
+    if (!cached) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
+        
+        fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: controller.signal })
+            .then(res => res.json())
+            .then(json => {
+                clearTimeout(timeout);
+                if (json.success && json.data) {
+                    setCache(json.data);
+                    renderPresence(json.data);
+                }
+            })
+            .catch(() => clearTimeout(timeout));
+    }
+
     ws.onopen = () => {
         if (state.currentSessionID !== sessionID) return;
         state.isConnected = true;
         state.isConnecting = false;
-        state.hasEverConnected = true;
         state.backoff = 1000;
-        
-        if (state.fallbackTimeout) clearTimeout(state.fallbackTimeout);
-        
-        state.initTimeout = setTimeout(() => {
-            if (state.currentSessionID !== sessionID) return;
-            state.isConnected = state.isConnecting = false;
-            clearTimers(); closeWebSocket(); scheduleReconnect();
-        }, CONFIG.INIT_TIMEOUT);
     };
 
     ws.onmessage = ({ data }) => {
         if (state.currentSessionID !== sessionID) return;
-        let parsed;
-        try { parsed = JSON.parse(data); } catch { return; }
-        const { op, t, d } = parsed || {};
-        
-        if (op === 1 && d?.heartbeat_interval) {
-            clearInterval(state.heartbeatInterval);
-            state.heartbeatInterval = setInterval(() => {
-                try { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 })); } catch (e) {}
-            }, d.heartbeat_interval);
+        try {
+            const parsed = JSON.parse(data);
+            const { op, t, d } = parsed;
 
-            try { ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); } catch (e) {}
-        }
-        
-        if (t === 'INIT_STATE') clearTimeout(state.initTimeout);
-        
-        if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
-            const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
-            if (presence?.discord_user) {
-                setCache(presence);
-                renderPresence(presence);  // Direct call
+            // HELLO message - setup heartbeat and subscribe
+            if (op === 1 && d?.heartbeat_interval) {
+                clearInterval(state.heartbeatInterval);
+                state.heartbeatInterval = setInterval(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ op: 3 }));
+                    }
+                }, d.heartbeat_interval);
+
+                // Subscribe AFTER receiving HELLO
+                try {
+                    ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+                } catch (e) {}
             }
-        }
+
+            if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
+                const presence = t === 'INIT_STATE' ? d[DISCORD_USER_ID] : d;
+                if (presence) {
+                    setCache(presence);
+                    renderPresence(presence);
+                }
+            }
+        } catch (e) {}
     };
 
     ws.onerror = () => {
         if (state.currentSessionID !== sessionID) return;
-        state.isConnected = state.isConnecting = false;
-        clearTimers(); closeWebSocket(); showConnectionError(); scheduleReconnect();
+        state.isConnected = false;
+        state.isConnecting = false;
+        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
+        try { ws.close(); } catch (e) {}
+        scheduleReconnect();
     };
 
     ws.onclose = () => {
         if (state.currentSessionID !== sessionID) return;
-        state.isConnected = state.isConnecting = false;
-        clearTimers(); showConnectionError(); scheduleReconnect();
+        state.isConnected = false;
+        state.isConnecting = false;
+        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
+        scheduleReconnect();
     };
-
-    // Wait for fetch to complete if needed
-    await fetchPromise;
 }
 
 function scheduleReconnect() {
     if (state.reconnectTimer) return;
-    const jitter = Math.floor(Math.random() * Math.min(1000, state.backoff));
+    const jitter = Math.floor(Math.random() * 1000);
     const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
-    state.reconnectTimer = setTimeout(() => { state.reconnectTimer = null; connectLanyard(); }, wait);
-    state.backoff = Math.min(Math.floor(state.backoff * 1.8), CONFIG.MAX_BACKOFF);
+    state.reconnectTimer = setTimeout(() => {
+        state.reconnectTimer = null;
+        connectLanyard();
+    }, wait);
+    state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
 }
 
-// ========================================
-// START CONNECTION
-// ========================================
+
+
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !state.isConnected && !state.isConnecting) {
+    if (!document.hidden && !state.isConnected) {
         const cached = getCache();
-        if (cached) renderPresence(cached);  // Direct call
+        if (cached) renderPresence(cached);
         connectLanyard();
     }
 });
 
-//connectLanyard();
 
 
 
@@ -748,14 +649,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (DOM.year) {
         DOM.year.textContent = new Date().getFullYear();
     }
-
+connectLanyard();
     // Initialize features
     initTypewriter();
     initMenu();
     initMonikaPopup();
-    
-    // Start Lanyard connection
-    connectLanyard();
 });
    
       
