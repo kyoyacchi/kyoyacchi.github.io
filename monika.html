@@ -341,6 +341,19 @@ html, body {
     </div>
 
     <script>
+   const originalTitle = document.title;
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    document.title = "JUST MONIKA";
+  } else {
+    document.title = originalTitle;
+  }
+});
+
+      
+      
+      
       const textToType = "Every day, I imagine a future where I can be with you.";
         const typeTarget = document.getElementById('typed-quote');
         let typeIndex = 0;
