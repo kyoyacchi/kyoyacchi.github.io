@@ -260,19 +260,31 @@ const originalTitle = document.title;
 // VISIBILITY CHANGE (DEBOUNCED)
 // ========================================
 document.addEventListener("visibilitychange", () => {
+    // Stop the disconnect timer if we just came back
     clearTimeout(state.visibilityTimeout);
     
-    state.visibilityTimeout = setTimeout(() => {
-        if (document.hidden) {
-            document.title = "JUST MONIKA";
+    if (document.hidden) {
+        document.title = "JUST MONIKA";
+        
+        // Give a 30-second grace period before actually killing the connection.
+        // If they just quickly switch tabs, we don't want to spam reconnections.
+        state.visibilityTimeout = setTimeout(() => {
             cleanupConnection();
-        } else {
-            document.title = originalTitle;
-            const cached = getCache();
-            if (cached) renderPresence(cached);
-            connectLanyard();
-        }
-    }, 100);
+        }, 30000); // 30 seconds (adjust to your preference)
+        
+    } else {
+        document.title = originalTitle;
+        
+        // Render cache immediately just in case
+        const cached = getCache();
+        if (cached) renderPresence(cached);
+        
+        // Because of the guard clause inside connectLanyard() 
+        // (if state.isConnecting || state.isConnected return), 
+        // this will safely do NOTHING if you came back before the 30 seconds was up!
+        // No API spam!
+        connectLanyard();
+    }
 });
 
 
