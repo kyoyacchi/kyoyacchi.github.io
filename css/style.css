@@ -99,7 +99,7 @@ body::before {
 }
 
 /* Loading skeleton for Discord card */
-.discord-card.loading {
+/*.discord-card.loading {
     background: linear-gradient(
         90deg,
         #0a0a0c 25%,
@@ -113,7 +113,7 @@ body::before {
 @keyframes loading-shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
-}
+}*/
 
 .animated-divider {
     position: relative;
