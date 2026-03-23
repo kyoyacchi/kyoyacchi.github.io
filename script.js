@@ -277,6 +277,11 @@ document.addEventListener("visibilitychange", () => {
     }, 100);
 });
 
+
+
+document.querySelectorAll('.flex.justify-center.gap-6 a').forEach(link => {
+        link.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
 // ========================================
 // TYPEWRITER EFFECT
 // ========================================
