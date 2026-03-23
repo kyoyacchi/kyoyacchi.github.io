@@ -146,6 +146,19 @@ function connectLanyard() {
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
 
+    // THE FIX: Fire REST request IMMEDIATELY to populate the card instantly 
+    // while the WebSocket connects in the background.
+    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) })
+        .then(r => r.json())
+        .then(json => {
+            if (json.success && json.data) {
+                setCache(json.data);
+                renderPresence(json.data);
+            }
+        })
+        .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
+
+    // Connect WebSocket for live background updates
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
     state.ws = ws;
 
@@ -157,27 +170,12 @@ function connectLanyard() {
         }
     }, CONFIG.INIT_TIMEOUT);
 
-    // REST API fallback
-    setTimeout(() => {
-        if (state.currentSessionID !== sessionID) return;
-        if (!state.isConnected) {
-            fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT) })
-            .then(r => r.json())
-            .then(json => {
-                if (json.success && json.data) {
-                    setCache(json.data);
-                    renderPresence(json.data);
-                }
-            })
-            .catch(() => clearTimeout(timeout));
-        }
-    }, 3000);
-
     ws.onopen = () => {
         if (state.currentSessionID !== sessionID) return;
         state.isConnected = true;
         state.isConnecting = false;
         state.backoff = 1000;
+        clearTimeout(timeout);
     };
 
     ws.onmessage = ({ data }) => {
