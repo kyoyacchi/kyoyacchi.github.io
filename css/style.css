@@ -5,6 +5,11 @@ body {
     overflow-x: hidden;
 }
 
+/* Add smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Force scrollbar styling on the root elements */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -29,6 +34,7 @@ html, body {
     scrollbar-width: thin;
     scrollbar-color: #50C878 #050505;
 }
+
 * {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -38,8 +44,17 @@ html, body {
     -webkit-tap-highlight-color: transparent;
 }
 
-
-
+/* Allow text selection on specific elements */
+#typed-quote,
+#d-global-name,
+#d-username,
+#d-activity,
+footer {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
 
 /* Subtle Grain/Noise Effect */
 body::before {
@@ -83,10 +98,28 @@ body::before {
     background: #0a0a0c;
 }
 
+/* Loading skeleton for Discord card */
+.discord-card.loading {
+    background: linear-gradient(
+        90deg,
+        #0a0a0c 25%,
+        #151517 50%,
+        #0a0a0c 75%
+    );
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 .animated-divider {
     position: relative;
     background: rgba(80, 200, 120, 0.1); 
     overflow: hidden;
+    will-change: transform;
 }
 
 .animated-divider::after {
@@ -112,7 +145,9 @@ body::before {
 
 .cursor::after {
     content: '|';
+    color: #50C878;
     animation: blink 1s step-end infinite;
+    will-change: transform;
 }
 
 @keyframes blink {
@@ -122,4 +157,35 @@ body::before {
 
 :root {
     color-scheme: dark;
+}
+
+/* Better focus states for accessibility */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #50C878;
+    outline-offset: 4px;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Mobile active states */
+@media (hover: none) {
+    button:active,
+    a:active {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
 }
