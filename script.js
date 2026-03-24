@@ -72,8 +72,7 @@ function renderPresence(data) {
     DOM.card.classList.remove('opacity-0');
 
     const avatarUrl = user.avatar 
-        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/\( {user.id}/ \){user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
-        : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
+        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
 
     if (DOM.avatar.src !== avatarUrl) DOM.avatar.src = avatarUrl;
 
@@ -115,7 +114,7 @@ function renderPresence(data) {
         DOM.videoBg.classList.remove('hidden');
         DOM.imgBg.classList.add('hidden');
     } else if (user.banner) {
-        const bannerUrl = `https://cdn.discordapp.com/banners/\( {user.id}/ \){user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+        const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
         DOM.imgBg.src = bannerUrl;
         DOM.imgBg.classList.remove('hidden');
         DOM.videoBg.classList.add('hidden');
