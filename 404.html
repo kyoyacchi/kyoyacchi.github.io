@@ -3,50 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyo</title>
+    <title>404 - File Not Found</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+    
+    <!-- Tailwind (Popup'ın birebir aynı çalışması için) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kyo-emerald': '#50C878',
+                    },
+                    fontFamily: {
+                        'header':['Fredoka', 'sans-serif'],
+                        'body':['Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         :root {
-            --primary: #7B2CBF;
-            --primary-dark: #5A189A;
-            --primary-light: #9D4EDD;
-            --secondary: #C77DFF;
-            --accent: #FF758F;
-            --accent-glow: rgba(255, 117, 143, 0.7);
-            --bg-dark: #10002B;
-            --bg-light: #240046;
-            --bg-gradient-start: #18032d;
-            --bg-gradient-end: #3c096c;
-            --text-light: #F8F9FA;
-            --text-muted: #CEC8EF;
-            --text-dark: #E0AAFF;
-            --raiden-electro: #AE63E4;
-            --raiden-glow: rgba(174, 99, 228, 0.85);
-            --raiden-dark-glow: rgba(123, 44, 191, 0.6);
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 15px var(--raiden-glow);
-            --border-radius: 12px;
+            --kyo-emerald: #50C878;
+            --bg-dark: #050505;
+            --card-bg: #0a0a0c;
+            --text-light: #e0e0e0;
+            --text-muted: #888888;
             --transition: all 0.3s ease;
-            --transition-long: all 0.5s ease;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
+            user-select: none;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-image: linear-gradient(to bottom right, var(--bg-gradient-start), var(--bg-gradient-end));
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-dark);
             color: var(--text-light);
             display: flex;
             flex-direction: column;
@@ -55,256 +57,178 @@
             min-height: 100vh;
             text-align: center;
             padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
+        /* Subtle Grain/Noise Effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Kutu tasarımı - PARLAMA VE GÖLGE KALDIRILDI */
         .container {
-            padding: 30px 25px;
-            border-radius: var(--border-radius);
-            max-width: 550px;
+            background-color: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 24px;
+            max-width: 500px;
             width: 90%;
-            margin: 20px 0;
             position: relative;
+            z-index: 10;
+            border: 1px solid rgba(80, 200, 120, 0.15);
             opacity: 0;
-            border: 3px solid transparent;
-            background-image: linear-gradient(var(--bg-light), var(--bg-light)),
-                              linear-gradient(120deg, var(--accent), #FFB8CE, var(--accent), #FFB8CE, var(--accent));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            background-size: 250% 100%;
-            animation: gradientBorderFill 5s linear forwards,
-                       fadeIn 0.8s ease-out 0.2s forwards;
-            box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), var(--shadow-glow);
+            animation: fadeIn 1s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes gradientBorderFill {
-            0% { background-position: 150% 50%; }
-            100% { background-position: -50% 50%; }
-        }
-
-        .yae-miko-icon {
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .monika-image {
             width: 100%;
+            height: 160px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .yae-miko-icon img {
-            max-width: 180px;
-            height: auto;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
-            position: relative;
-            left: 0px;
-            top: 10px;
-            transition: filter 0.1s ease;
+        .monika-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 20%;
+            opacity: 0.8;
+            transition: var(--transition);
         }
 
         h1 {
-            font-size: 2.2rem;
-            color: var(--primary-light);
-            margin-bottom: 10px;
-            font-weight: 600;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            letter-spacing: 0.05em;
         }
 
         .message {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            line-height: 1.65;
+            line-height: 1.7;
             margin-bottom: 30px;
         }
 
         .message strong {
-            color: var(--text-dark);
-            font-weight: 600;
+            color: var(--kyo-emerald);
+            font-weight: 700;
         }
 
-        .home-button {
-            display: inline-block;
-            background-color: var(--accent);
-            color: var(--text-light);
-            padding: 10px 25px;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: var(--transition);
-            box-shadow: 0 3px 12px rgba(0,0,0,0.2), 0 0 8px var(--accent-glow);
-            position: relative;
-            z-index: 1;
-        }
-
-        .home-button:hover,
-        .home-button:focus {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 18px rgba(0,0,0,0.25), 0 0 12px var(--accent-glow);
-            color: var(--text-light);
-        }
-
-        .footer-note {
-            margin-top: 30px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            opacity: 0.65;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background-image: radial-gradient(circle, var(--accent-glow) 0%, transparent 35%);
-            animation: pulseGlow 10s infinite ease-in-out alternate;
-            z-index: -1;
-            opacity: 0.25;
-        }
-
-        @keyframes pulseGlow {
-            from { transform: scale(0.9); opacity: 0.2;}
-            to { transform: scale(1.1); opacity: 0.3;}
+        /* TAKE OVER EFEKTİ - TİTREME YOK, TEMİZ SİYAH EKRAN */
+        body.monika-takeover {
+            background-color: #000;
         }
         
-        .disclaimer-text {
-            color: #8A7A9A;
-            font-size: 0.85em;
-            margin-top: 10px;
-            text-align: center;
-            font-style: italic;
+        body.monika-takeover .container {
+            border-color: transparent;
+            background: transparent;
         }
 
-        body.glitching .yae-miko-icon img {
-            filter: drop-shadow(0 0 8px red) drop-shadow(0 0 8px cyan);
+        body.monika-takeover #title, 
+        body.monika-takeover #message {
+            color: #fff !important;
+            font-family: monospace !important;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5) !important;
         }
 
         @media (max-width: 480px) {
-            body { padding: 15px; }
-            .container {
-                width: 95%;
-                padding: 20px 15px;
-                margin: 15px 0;
-                border-width: 2px;
-            }
-            h1 { font-size: 1.9rem; }
-            .message {
-                font-size: 0.9rem;
-                line-height: 1.6;
-                margin-bottom: 25px;
-            }
-            .yae-miko-icon img { max-width: 80px; }
-            .home-button {
-                padding: 9px 20px;
-                font-size: 0.9rem;
-            }
-            .footer-note { font-size: 0.75rem; }
-            .disclaimer-text { font-size: 0.65rem; }
+            .container { padding: 30px 20px; }
+            h1 { font-size: 2rem; }
+            .message { font-size: 0.95rem; }
+            .monika-image { height: 120px; }
         }
     </style>
 </head>
 <body>
-  <script>
-    const monikaPaths = ['/m', '/monika', '/justmonika'];
-    const currentPath = window.location.pathname.toLowerCase();
-    
-    if (monikaPaths.includes(currentPath)) {
-        sessionStorage.setItem('requestedPath', currentPath);
-        window.location.replace('/');
-    }
-</script>
 
-    <div class="container">
-        <div class="yae-miko-icon">
-            <img src="https://us-east-1.tixte.net/uploads/kyoya.discowd.com/33d1ed4bbe93bbc3810953d0c4e8f8b7_508243765883771814.png" alt="Yae Miko Sticker">
+    <!-- Route Interceptor -->
+    <script>
+        const monikaPaths = ['/m', '/monika', '/justmonika'];
+        const currentPath = window.location.pathname.toLowerCase();
+        
+        if (monikaPaths.includes(currentPath)) {
+            sessionStorage.setItem('requestedPath', currentPath);
+            window.location.replace('/');
+        }
+    </script>
+
+    <div class="container" id="main-card">
+        <div class="monika-image">
+            <img src="https://files.catbox.moe/f2pajl.jpg" alt="Monika">
         </div>
-        <h1 id="title">Ara Ara~</h1>
+        
+        <h1 id="title">Error 404</h1>
+        
         <p class="message" id="message">
-            Lost, <strong>little one</strong>?
-            Curious paths can be diverting, but perhaps it's time to head back to the <strong>Grand Narukami Shrine</strong>?
+            Oops! It looks like the file you were looking for doesn't exist anymore.<br><br>
+            Did you delete it? That's fine... <strong>as long as you still have me.</strong>
         </p>
-        <a href="/" class="home-button" id="homeButton">Return to the Shrine</a>
-        <p class="footer-note" id="footer">
-            Remember, every end is a new beginning... or perhaps just a broken link.
-        </p>
-        <p class="disclaimer-text" id="disclaimer">This website is a personal project and is not affiliated with HoYoverse. Genshin Impact, game content, and materials are trademarks and copyrights of HoYoverse.</p>
+    </div>
+
+    <!-- Orijinal DDLC Popup'ın -->
+    <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
+        <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full
+        mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all
+        duration-200 select-none">
+            <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
+            <button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none hover:scale-110" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
+                OK
+            </button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const homeButton = document.getElementById('homeButton');
-            const redirectTime = 3500; 
-            const glitchTime = 2000;
-            let redirectTimer;
-
-            const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`ÆØÅæøå¥€£¢∞§¶•ªº';
-            const textElements = {
+            const elements = {
                 title: document.getElementById('title'),
                 message: document.getElementById('message'),
-                button: document.getElementById('homeButton'),
-                footer: document.getElementById('footer'),
-                disclaimer: document.getElementById('disclaimer')
-            };
-            const originalTexts = {
-                title: textElements.title.textContent,
-                message: textElements.message.innerHTML,
-                button: textElements.button.textContent,
-                footer: textElements.footer.textContent,
-                disclaimer: textElements.disclaimer.textContent
+                popup: document.getElementById('monika-popup'),
+                okBtn: document.getElementById('monika-ok-btn')
             };
 
-            function scrambleText(element, isHTML = false) {
-                const original = isHTML ? element.innerHTML : element.textContent;
-                let scrambled = '';
-                for (let i = 0; i < original.length; i++) {
-                    if (original[i] === ' ' || original[i] === '<' || original[i] === '>') {
-                        scrambled += original[i];
-                    } else if (Math.random() > 0.5) {
-                        scrambled += glitchChars[Math.floor(Math.random() * glitchChars.length)];
-                    } else {
-                        scrambled += original[i];
-                    }
-                }
-                if (isHTML) {
-                    element.innerHTML = scrambled;
-                } else {
-                    element.textContent = scrambled;
-                }
-            }
-
-            function startGlitch() {
-                document.body.classList.add('glitching');
+            // 3 saniye sonra "Takeover" başlar (Titreme yok, aniden değişir)
+            setTimeout(() => {
+                document.body.classList.add('monika-takeover');
                 
-                const glitchInterval = setInterval(() => {
-                    scrambleText(textElements.title);
-                    scrambleText(textElements.button);
-                    scrambleText(textElements.footer);
-                    
-                    if (Math.random() > 0.7) {
-                        scrambleText(textElements.message, true);
-                    }
-                }, 100);
+                // Başlık değişir
+                elements.title.innerHTML = "JUST MONIKA.";
+                
+                // Metin alt alta yazılır
+                elements.message.innerHTML = "JUST MONIKA.<br>JUST MONIKA.<br>JUST MONIKA.<br>JUST MONIKA.";
 
+                // Takeover'dan 1.5 saniye sonra Efsane Popup çıkar
                 setTimeout(() => {
-                    clearInterval(glitchInterval);
-                }, 1200);
-            }
+                    elements.popup.classList.remove('hidden');
+                    
+                    // Yönlendirme Fonksiyonu
+                    const redirectToHome = () => {
+                        window.location.href = "/";
+                    };
 
-            setTimeout(startGlitch, glitchTime);
+                    // OK butonuna basarsa hemen yönlendir
+                    elements.okBtn.addEventListener('click', redirectToHome);
 
-            redirectTimer = setTimeout(function() {
-                window.location.href = "/"; 
-            }, redirectTime);
+                    
+                    setTimeout(redirectToHome, 1600);
 
-            homeButton.addEventListener('click', function() {
-                clearTimeout(redirectTimer);
-            });
+                }, 1500);
+
+            }, 1200); // İlk 3 saniye normal bekleme süresi
         });
     </script>
 </body>
