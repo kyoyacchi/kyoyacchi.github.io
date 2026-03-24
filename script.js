@@ -39,27 +39,19 @@ function getCache() {
     try {
         const stored = localStorage.getItem(storageKey);
         if (!stored) return null;
-
         const parsed = JSON.parse(stored);
-
-        if (!parsed || typeof parsed !== "object") return null;
-
-        if (typeof parsed.timestamp !== "number" || !parsed.data) {
-            localStorage.removeItem(storageKey);
-            return null;
-        }
-
+        
+        // Check if the cache has expired based on TTL
         if (Date.now() - parsed.timestamp > CONFIG.CACHE_TTL) {
             localStorage.removeItem(storageKey);
             return null;
         }
-
+        
         return parsed.data;
     } catch (e) {
         return null;
     }
 }
-
 
 function setCache(data) {
     try {
