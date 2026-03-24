@@ -1,5 +1,5 @@
-
 const DISCORD_USER_ID = '468509605828493322';
+
 const CONFIG = {
     MAX_BACKOFF: 30000,
     CACHE_TTL: 60000 * 5,
@@ -33,6 +33,7 @@ const DOM = {
     typeTarget: null,
     year: null
 };
+
 const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
 
 function getCache() {
@@ -41,7 +42,6 @@ function getCache() {
         if (!stored) return null;
         const parsed = JSON.parse(stored);
         
-        // Check if the cache has expired based on TTL
         if (Date.now() - parsed.timestamp > CONFIG.CACHE_TTL) {
             localStorage.removeItem(storageKey);
             return null;
@@ -62,33 +62,25 @@ function setCache(data) {
     } catch (e) {}
 }
 
+// UPDATED: Now uses cached DOM elements
 function renderPresence(data) {
-    const card = document.getElementById('discord-profile');
-    const avatarEl = document.getElementById('d-avatar');
-    const nameEl = document.getElementById('d-global-name');
-    const userEl = document.getElementById('d-username');
-    const activityEl = document.getElementById('d-activity');
-    const statusInd = document.getElementById('d-status-indicator');
-    const videoBg = document.getElementById('d-bg-video');
-    const imgBg = document.getElementById('d-bg-image');
-
     if (!data || !data.discord_user) return;
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
 
-    card.classList.remove('opacity-0');
+    DOM.card.classList.remove('opacity-0');
 
     const avatarUrl = user.avatar 
-        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
+        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/\( {user.id}/ \){user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
         : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
 
-    if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+    if (DOM.avatar.src !== avatarUrl) DOM.avatar.src = avatarUrl;
 
-    statusInd.className = `status-indicator status-${status}`;
+    DOM.statusInd.className = `status-indicator status-${status}`;
 
-    nameEl.textContent = user.global_name || user.username;
-    userEl.textContent = '@' + user.username;
+    DOM.name.textContent = user.global_name || user.username;
+    DOM.username.textContent = '@' + user.username;
 
     let activityText = "OFFLINE";
     let colorClass = "text-white";
@@ -106,12 +98,12 @@ function renderPresence(data) {
             colorClass = "text-kyo-emerald";
         } else {
             activityText = status.toUpperCase();
-            if(status === 'dnd') activityText = "DO NOT DISTURB";
+            if (status === 'dnd') activityText = "DO NOT DISTURB";
         }
     }
 
-    activityEl.textContent = activityText;
-    activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
+    DOM.activity.textContent = activityText;
+    DOM.activity.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
 
     let videoUrl = null;
     if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
@@ -119,19 +111,19 @@ function renderPresence(data) {
     }
 
     if (videoUrl) {
-        if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
-        videoBg.classList.remove('hidden');
-        imgBg.classList.add('hidden');
+        if (DOM.videoBg.src !== videoUrl) DOM.videoBg.src = videoUrl;
+        DOM.videoBg.classList.remove('hidden');
+        DOM.imgBg.classList.add('hidden');
     } else if (user.banner) {
-        const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
-        imgBg.src = bannerUrl;
-        imgBg.classList.remove('hidden');
-        videoBg.classList.add('hidden');
+        const bannerUrl = `https://cdn.discordapp.com/banners/\( {user.id}/ \){user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+        DOM.imgBg.src = bannerUrl;
+        DOM.imgBg.classList.remove('hidden');
+        DOM.videoBg.classList.add('hidden');
     } else {
-        imgBg.style.background = '#50c878';
-        imgBg.src = '';
-        imgBg.classList.remove('hidden');
-        videoBg.classList.add('hidden');
+        DOM.imgBg.style.background = '#50c878';
+        DOM.imgBg.src = '';
+        DOM.imgBg.classList.remove('hidden');
+        DOM.videoBg.classList.add('hidden');
     }
 }
 
@@ -143,19 +135,15 @@ function connectLanyard() {
     if (state.isConnecting || state.isConnected) return;
     state.isConnecting = true;
 
-    // Show cached data INSTANTLY
     const cached = getCache();
-    if (cached) {
-        renderPresence(cached);
-    }
+    if (cached) renderPresence(cached);
 
-    // Generate unique session ID
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
 
-    // THE FIX: Fire REST request IMMEDIATELY to populate the card instantly 
-    // while the WebSocket connects in the background.
-    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) })
+    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { 
+        signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) 
+    })
         .then(r => r.json())
         .then(json => {
             if (json.success && json.data) {
@@ -165,7 +153,6 @@ function connectLanyard() {
         })
         .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
 
-    // Connect WebSocket for live background updates
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
     state.ws = ws;
 
@@ -191,7 +178,6 @@ function connectLanyard() {
             const parsed = JSON.parse(data);
             const { op, t, d } = parsed;
 
-            // HELLO message - setup heartbeat and subscribe
             if (op === 1 && d?.heartbeat_interval) {
                 clearInterval(state.heartbeatInterval);
                 state.heartbeatInterval = setInterval(() => {
@@ -200,7 +186,6 @@ function connectLanyard() {
                     }
                 }, d.heartbeat_interval);
 
-                // Subscribe AFTER receiving HELLO
                 try {
                     ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
                 } catch (e) {}
@@ -264,42 +249,28 @@ function cleanupConnection() {
 const originalTitle = document.title;
 
 // ========================================
-// VISIBILITY CHANGE (DEBOUNCED)
+// VISIBILITY CHANGE (DEBOUNCED + BULLETPROOF)
 // ========================================
 document.addEventListener("visibilitychange", () => {
-    // Stop the disconnect timer if we just came back
     clearTimeout(state.visibilityTimeout);
     
     if (document.hidden) {
         document.title = "JUST MONIKA";
         
-        // Give a 30-second grace period before actually killing the connection.
-        // If they just quickly switch tabs, we don't want to spam reconnections.
         state.visibilityTimeout = setTimeout(() => {
-            cleanupConnection();
-        }, 30000); // 30 seconds (adjust to your preference)
+            if (document.hidden) cleanupConnection();   // ← safety check
+        }, 30000);
         
     } else {
         document.title = originalTitle;
         
-        // Render cache immediately just in case
         const cached = getCache();
         if (cached) renderPresence(cached);
         
-        // Because of the guard clause inside connectLanyard() 
-        // (if state.isConnecting || state.isConnected return), 
-        // this will safely do NOTHING if you came back before the 30 seconds was up!
-        // No API spam!
         connectLanyard();
     }
 });
 
-
-
-/*document.querySelectorAll('.flex.justify-center.gap-6 a').forEach(link => {
-        link.addEventListener('contextmenu', (e) => e.preventDefault());
-    });*/
-    
 // ========================================
 // TYPEWRITER EFFECT
 // ========================================
