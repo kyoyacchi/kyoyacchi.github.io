@@ -406,4 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMenu();
     initMonikaPopup();
     connectLanyard();
+    
+    console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace;
+    font-size:16px;');
 });
