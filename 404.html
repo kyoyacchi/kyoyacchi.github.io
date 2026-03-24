@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
     
-    <!-- Tailwind (Popup'ın birebir aynı çalışması için) -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -71,7 +71,7 @@
             z-index: 1;
         }
 
-        /* Kutu tasarımı - PARLAMA VE GÖLGE KALDIRILDI */
+        /* Box design - */
         .container {
             background-color: var(--card-bg);
             padding: 40px 30px;
@@ -129,7 +129,7 @@
             font-weight: 700;
         }
 
-        /* TAKE OVER EFEKTİ - TİTREME YOK, TEMİZ SİYAH EKRAN */
+        /* TAKE OVER EFFECT */
         body.monika-takeover {
             background-color: #000;
         }
@@ -180,7 +180,7 @@
         </p>
     </div>
 
-    <!-- Orijinal DDLC Popup'ın -->
+    <!--DDLC Popup same from Main -->
     <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
         <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full
         mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all
@@ -201,34 +201,33 @@
                 okBtn: document.getElementById('monika-ok-btn')
             };
 
-            // 3 saniye sonra "Takeover" başlar (Titreme yok, aniden değişir)
+
             setTimeout(() => {
                 document.body.classList.add('monika-takeover');
-                
-                // Başlık değişir
+
                 elements.title.innerHTML = "JUST MONIKA.";
                 
-                // Metin alt alta yazılır
+
                 elements.message.innerHTML = "JUST MONIKA.<br>JUST MONIKA.<br>JUST MONIKA.<br>JUST MONIKA.";
 
-                // Takeover'dan 1.5 saniye sonra Efsane Popup çıkar
+
                 setTimeout(() => {
                     elements.popup.classList.remove('hidden');
                     
-                    // Yönlendirme Fonksiyonu
+
                     const redirectToHome = () => {
                         window.location.href = "/";
                     };
 
-                    // OK butonuna basarsa hemen yönlendir
-                    elements.okBtn.addEventListener('click', redirectToHome);
+
+  //                  elements.okBtn.addEventListener('click', redirectToHome);
 
                     
                     setTimeout(redirectToHome, 1600);
 
                 }, 1500);
 
-            }, 1200); // İlk 3 saniye normal bekleme süresi
+            }, 1200);
         });
     </script>
 </body>
