@@ -10,26 +10,22 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Force scrollbar styling on the root elements */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
+/* Scrollbar styling */
+html::-webkit-scrollbar {
     width: 8px;
 }
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track {
     background: #050505;
 }
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
     background: #50C878;
     border-radius: 10px;
 }
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
     background: #3eb565;
 }
 
-/* Add the new standard for Firefox support */
+/* Firefox support */
 html, body {
     scrollbar-width: thin;
     scrollbar-color: #50C878 #050505;
@@ -45,7 +41,6 @@ html, body {
 }
 
 /* Allow text selection on specific elements */
-
 #d-global-name,
 #d-username,
 #d-activity,
@@ -64,6 +59,12 @@ body::before {
     background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
     opacity: 0.03;
     pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure content stays above noise */
+body > * {
+    position: relative;
     z-index: 1;
 }
 
@@ -98,28 +99,10 @@ body::before {
     background: #0a0a0c;
 }
 
-/* Loading skeleton for Discord card */
-/*.discord-card.loading {
-    background: linear-gradient(
-        90deg,
-        #0a0a0c 25%,
-        #151517 50%,
-        #0a0a0c 75%
-    );
-    background-size: 200% 100%;
-    animation: loading-shimmer 1.5s infinite;
-}
-
-@keyframes loading-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}*/
-
 .animated-divider {
     position: relative;
     background: rgba(80, 200, 120, 0.1); 
     overflow: hidden;
-    will-change: transform;
 }
 
 .animated-divider::after {
@@ -147,7 +130,6 @@ body::before {
     content: '|';
     color: #50C878;
     animation: blink 1s step-end infinite;
-    will-change: transform;
 }
 
 @keyframes blink {
@@ -185,7 +167,7 @@ a:focus-visible {
 @media (hover: none) {
     button:active,
     a:active {
-        transform: scale(0.95);
+        transform: scale(0.98);
         opacity: 0.7;
     }
 }
