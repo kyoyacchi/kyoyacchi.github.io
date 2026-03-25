@@ -164,10 +164,20 @@ a:focus-visible {
 }
 
 /* Mobile active states */
-@media (hover: none) {
+/*@media (hover: none) {
     button:active,
     a:active {
         transform: scale(0.98);
         opacity: 0.7;
     }
+}*/
+
+::selection {
+    background-color: rgba(80, 200, 120, 0.3);
+    color: #ffffff;
+}
+
+::-moz-selection {
+    background-color: rgba(80, 200, 120, 0.3);
+    color: #ffffff;
 }
