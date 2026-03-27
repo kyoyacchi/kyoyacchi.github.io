@@ -29,8 +29,9 @@
     <meta name="twitter:creator" content="@kyoyacchi">
     
     <title>Kyo's Website</title>
-    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+<link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
 
+    
     <!-- Font preconnect for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,8 +40,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!-- Added Caveat font for the quote -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -51,12 +51,10 @@
                         'kyo-purple': '#800080',
                         'dark-bg': '#050505',
                         'card-bg': '#0a0a0c',
-                        'pale-pink': '#ffd1dc', /* Added Pale Pink */
                     },
                     fontFamily: {
                         'header':['Fredoka', 'sans-serif'],
                         'body':['Quicksand', 'sans-serif'],
-                        'quote':['Caveat', 'cursive'], /* Added Quote Font */
                     },
                     boxShadow: {
                         'neon': '0 0 20px rgba(80, 200, 120, 0.15)',
@@ -70,18 +68,19 @@
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
-    <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
-        <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2">
-           Just Monika.
-           <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
-                style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
-                alt="🎀">
-        </span>
+<header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
+<span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2">
+   Just Monika.
+   <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
+        style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
+        alt="🎀">
+</span>
 
-        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-    </header>
+    <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</header>
+
 
     <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
         <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
@@ -123,7 +122,7 @@
         </div>
 
         <!-- Identity Tags & Skills -->
-        <div class="w-full max-w-4xl mx-auto px-6 mb-12 z-10">
+        <div class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
             <div class="text-center space-y-4">
                 <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
                     <span>ANIME</span>
@@ -140,14 +139,7 @@
             </div>
         </div>
 
-        <!-- The Quote (Moved here & updated styling) -->
-        <div class="w-full px-6 mb-12 flex flex-col items-center justify-center min-h-[50px] z-10">
-            <p class="text-pale-pink font-quote text-2xl md:text-4xl leading-snug tracking-wide text-center drop-shadow-[0_0_8px_rgba(255,209,220,0.3)]">
-                "<span id="typed-quote" class="cursor"></span>"
-            </p>
-        </div>
-
-        <!-- Hero Image & Divider -->
+        <!-- Hero Image & Quote -->
         <div class="w-full z-10">
             <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[180px] md:h-[350px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10 group cursor-pointer">
                 <img src="https://files.catbox.moe/f2pajl.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-all duration-700" alt="Monika" draggable="false">
@@ -157,11 +149,12 @@
 
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
             </div>
-            
-            <div class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[40px]">
-                <!-- Kept the animated divider here -->
-                <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider my-16"></div>
-            </div>
+<!-- The Quote (Clean green style, but placed above the banner) -->
+        <div class="w-full px-6 mb-12 flex flex-col items-center justify-center min-h-[50px] z-10">
+            <p class="text-kyo-emerald font-body text-lg md:text-xl tracking-wide italic leading-relaxed text-center opacity-90 drop-shadow-[0_0_8px_rgba(80,200,120,0.2)]">
+                "<span id="typed-quote" class="cursor"></span>"
+            </p>
+        </div>
         </div>
 
     </main>
@@ -177,7 +170,7 @@
             </div>
 
             <div class="text-gray-500 text-sm font-mono">
-                <span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
+<span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
             </div>
         </div>
     </footer>
@@ -188,11 +181,13 @@
         mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all
         duration-200 select-none" id="monika-popup-content">
             <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
-            <button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
-                OK
-            </button>
+<button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
+    OK
+</button>
         </div>
     </div>
+
+
 
 <script src="script.js"></script>
 </body>
