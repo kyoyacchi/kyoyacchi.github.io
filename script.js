@@ -408,5 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
     connectLanyard();
     
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-    localStorage.setItem("DDLC", "JUST MONIKA")
+    const item22 = localStorage.getItem("DDLC");
+    if (!item22){
+      localStorage.setItem("DDLC", "JUST MONIKA")
+    };
 });
