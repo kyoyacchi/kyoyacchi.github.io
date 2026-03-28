@@ -1,4 +1,3 @@
-
 const DISCORD_USER_ID = '468509605828493322';
 const CONFIG = {
     MAX_BACKOFF: 30000,
@@ -21,18 +20,6 @@ const state = {
     hasTyped: false
 };
 
-const DOM = {
-    card: null,
-    avatar: null,
-    name: null,
-    username: null,
-    activity: null,
-    statusInd: null,
-    videoBg: null,
-    imgBg: null,
-    typeTarget: null,
-    year: null
-};
 const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
 
 function getCache() {
@@ -41,7 +28,6 @@ function getCache() {
         if (!stored) return null;
         const parsed = JSON.parse(stored);
         
-        // Check if the cache has expired based on TTL
         if (Date.now() - parsed.timestamp > CONFIG.CACHE_TTL) {
             localStorage.removeItem(storageKey);
             return null;
@@ -63,6 +49,8 @@ function setCache(data) {
 }
 
 function renderPresence(data) {
+    if (!data || !data.discord_user) return;
+
     const card = document.getElementById('discord-profile');
     const avatarEl = document.getElementById('d-avatar');
     const nameEl = document.getElementById('d-global-name');
@@ -72,7 +60,7 @@ function renderPresence(data) {
     const videoBg = document.getElementById('d-bg-video');
     const imgBg = document.getElementById('d-bg-image');
 
-    if (!data || !data.discord_user) return;
+    if (!card) return;
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
@@ -106,7 +94,7 @@ function renderPresence(data) {
             colorClass = "text-kyo-emerald";
         } else {
             activityText = status.toUpperCase();
-            if(status === 'dnd') activityText = "DO NOT DISTURB";
+            if (status === 'dnd') activityText = "DO NOT DISTURB";
         }
     }
 
@@ -143,18 +131,14 @@ function connectLanyard() {
     if (state.isConnecting || state.isConnected) return;
     state.isConnecting = true;
 
-    // Show cached data INSTANTLY
     const cached = getCache();
     if (cached) {
         renderPresence(cached);
     }
 
-    // Generate unique session ID
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
 
-    // THE FIX: Fire REST request IMMEDIATELY to populate the card instantly 
-    // while the WebSocket connects in the background.
     fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) })
         .then(r => r.json())
         .then(json => {
@@ -165,7 +149,6 @@ function connectLanyard() {
         })
         .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
 
-    // Connect WebSocket for live background updates
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
     state.ws = ws;
 
@@ -191,7 +174,6 @@ function connectLanyard() {
             const parsed = JSON.parse(data);
             const { op, t, d } = parsed;
 
-            // HELLO message - setup heartbeat and subscribe
             if (op === 1 && d?.heartbeat_interval) {
                 clearInterval(state.heartbeatInterval);
                 state.heartbeatInterval = setInterval(() => {
@@ -200,7 +182,6 @@ function connectLanyard() {
                     }
                 }, d.heartbeat_interval);
 
-                // Subscribe AFTER receiving HELLO
                 try {
                     ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
                 } catch (e) {}
@@ -267,29 +248,21 @@ const originalTitle = document.title;
 // VISIBILITY CHANGE (DEBOUNCED)
 // ========================================
 document.addEventListener("visibilitychange", () => {
-    // Stop the disconnect timer if we just came back
     clearTimeout(state.visibilityTimeout);
     
     if (document.hidden) {
         document.title = "JUST MONIKA";
         
-        // Give a 30-second grace period before actually killing the connection.
-        // If they just quickly switch tabs, we don't want to spam reconnections.
         state.visibilityTimeout = setTimeout(() => {
             cleanupConnection();
-        }, 30000); // 30 seconds (adjust to your preference)
+        }, 30000);
         
     } else {
         document.title = originalTitle;
         
-        // Render cache immediately just in case
         const cached = getCache();
         if (cached) renderPresence(cached);
         
-        // Because of the guard clause inside connectLanyard() 
-        // (if state.isConnecting || state.isConnected return), 
-        // this will safely do NOTHING if you came back before the 30 seconds was up!
-        // No API spam!
         connectLanyard();
     }
 });
@@ -304,7 +277,8 @@ document.addEventListener("visibilitychange", () => {
 // TYPEWRITER EFFECT
 // ========================================
 function initTypewriter() {
-    if (!DOM.typeTarget || state.hasTyped) return;
+    const typeTarget = document.getElementById('typed-quote');
+    if (!typeTarget || state.hasTyped) return;
     state.hasTyped = true;
     
     const textToType = "Every day, I imagine a future where I can be with you.";
@@ -312,10 +286,10 @@ function initTypewriter() {
 
     function typeWriter() {
         if (typeIndex < textToType.length) {
-            DOM.typeTarget.textContent += textToType[typeIndex++];
+            typeTarget.textContent += textToType[typeIndex++];
             setTimeout(typeWriter, 50);
         } else {
-            setTimeout(() => DOM.typeTarget.classList.remove('cursor'), 2000);
+            setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
         }
     }
 
@@ -384,24 +358,9 @@ function initMonikaPopup() {
 // INITIALIZATION
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Cache DOM elements
-    DOM.card = document.getElementById('discord-profile');
-    DOM.avatar = document.getElementById('d-avatar');
-    DOM.name = document.getElementById('d-global-name');
-    DOM.username = document.getElementById('d-username');
-    DOM.activity = document.getElementById('d-activity');
-    DOM.statusInd = document.getElementById('d-status-indicator');
-    DOM.videoBg = document.getElementById('d-bg-video');
-    DOM.imgBg = document.getElementById('d-bg-image');
-    DOM.typeTarget = document.getElementById('typed-quote');
-    DOM.year = document.getElementById('year');
+    const year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
 
-    // Set year
-    if (DOM.year) {
-        DOM.year.textContent = new Date().getFullYear();
-    }
-
-    // Initialize features
     initTypewriter();
     initMenu();
     initMonikaPopup();
@@ -410,10 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
     
     const ddlc = localStorage.getItem("DDLC");
-if (ddlc !== "JUST MONIKA") {
-    localStorage.setItem("DDLC", "JUST MONIKA");
-    if (ddlc !== null) {
-        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+    if (ddlc !== "JUST MONIKA") {
+        localStorage.setItem("DDLC", "JUST MONIKA");
+        if (ddlc !== null) {
+            console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        }
     }
-}
 });
