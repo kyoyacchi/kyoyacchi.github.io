@@ -408,4 +408,5 @@ document.addEventListener('DOMContentLoaded', () => {
     connectLanyard();
     
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+    localStorage.setItem("DDLC", "JUST MONIKA")
 });
