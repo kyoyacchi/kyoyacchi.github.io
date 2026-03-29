@@ -414,6 +414,7 @@ document.addEventListener('keydown', (e) => {
     if (typedKeys === secretWord) {
         toggleDDLCMode();
         typedKeys = ''; 
+        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
     }
 });
 
@@ -455,4 +456,44 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
         }
     }
+    
+  //===//
+  
+  
+  
+const _setItem = localStorage.setItem.bind(localStorage);
+localStorage.setItem = function(key, value) {
+    if (key === 'DDLC' && value !== 'JUST MONIKA') {
+        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        value = 'JUST MONIKA';
+        
+        // Jumpscare!
+        initMonikaPopup(); 
+    }
+    _setItem(key, value);
+};
+
+const _removeItem = localStorage.removeItem.bind(localStorage);
+localStorage.removeItem = function(key) {
+    if (key === 'DDLC') {
+        console.log('%cDid you really think you could escape from me?', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        initMonikaPopup();
+        return; // ssssh!
+    }
+    _removeItem(key);
+};
+
+window.addEventListener('storage', (event) => {
+    if (event.key === 'DDLC' && event.newValue !== 'JUST MONIKA') {
+      //no escape
+        localStorage.setItem('DDLC', 'JUST MONIKA'); 
+        
+        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        
+        // Jumpscare!
+        initMonikaPopup(); 
+    }
+});
+
+    
 });
