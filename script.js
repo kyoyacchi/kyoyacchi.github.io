@@ -53,6 +53,7 @@ function renderPresence(data) {
 
     const card = document.getElementById('discord-profile');
     const avatarEl = document.getElementById('d-avatar');
+    const decorationEl = document.getElementById('d-avatar-decoration');
     const nameEl = document.getElementById('d-global-name');
     const userEl = document.getElementById('d-username');
     const activityEl = document.getElementById('d-activity');
@@ -72,6 +73,19 @@ function renderPresence(data) {
         : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
 
     if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+
+    if (decorationEl) {
+        if (status !== 'offline' && user.avatar_decoration_data && user.avatar_decoration_data.asset) {
+            const decoAsset = user.avatar_decoration_data.asset;
+            const decoUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${decoAsset}.png`;
+            
+            if (decorationEl.src !== decoUrl) decorationEl.src = decoUrl;
+            decorationEl.classList.remove('hidden');
+        } else {
+            decorationEl.classList.add('hidden');
+            decorationEl.src = '';
+        }
+    }
 
     statusInd.className = `status-indicator status-${status}`;
 
@@ -122,6 +136,7 @@ function renderPresence(data) {
         videoBg.classList.add('hidden');
     }
 }
+
 
 function connectLanyard() {
     const now = Date.now();
