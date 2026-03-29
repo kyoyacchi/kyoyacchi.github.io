@@ -380,6 +380,13 @@ function initMonikaPopup() {
     });
 }
 
+
+function triggerMonikaPopup() {
+    const monikaPopup = document.getElementById('monika-popup');
+    if (!monikaPopup) return;
+    monikaPopup.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
 // ========================================
 // DDLC MODE TRIGGERS & GLITCH LOGIC
 // ========================================
@@ -468,7 +475,7 @@ localStorage.setItem = function(key, value) {
         value = 'JUST MONIKA';
         
         // Jumpscare!
-        initMonikaPopup(); 
+        triggerMonikaPopup(); 
     }
     _setItem(key, value);
 };
@@ -476,8 +483,8 @@ localStorage.setItem = function(key, value) {
 const _removeItem = localStorage.removeItem.bind(localStorage);
 localStorage.removeItem = function(key) {
     if (key === 'DDLC') {
-        console.log('%cDid you really think you could escape from me?', 'color:#ffffff; font-family:monospace; font-size:16px;');
-        initMonikaPopup();
+        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        triggerMonikaPopup();
         return; // ssssh!
     }
     _removeItem(key);
@@ -491,7 +498,7 @@ window.addEventListener('storage', (event) => {
         console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
         
         // Jumpscare!
-        initMonikaPopup(); 
+        triggerMonikaPopup(); 
     }
 });
 
