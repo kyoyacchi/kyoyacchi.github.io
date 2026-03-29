@@ -181,3 +181,16 @@ a:focus-visible {
     background-color: rgba(80, 200, 120, 0.3);
     color: #ffffff;
 }
+
+.status-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 4px solid #1e1f22;
+    z-index: 30;
+}
