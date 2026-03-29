@@ -64,9 +64,7 @@
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
     <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference transition-all duration-500">
-        <span id="site-logo" class="text-base md:text-lg font-mono
-        tracking-widest text-white/60 transition-all duration-300 flex
-        items-center gap-2 cursor-pointer">
+        <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2 cursor-pointer" title="Click me 5 times...">
            Just Monika.
            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
                 style="width: 18px; height: 18px; filter: brightness(0) invert(1); transition: all 0.5s ease;" 
@@ -165,13 +163,14 @@
                 <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
             </div>
 
-            <div class="text-gray-500 text-sm font-mono" id="year-container">
-                <span id="year"></span> • Made with <i id="footer-heart" class="fa-solid fa-heart text-kyo-emerald"></i> by 
+            <div class="text-gray-500 text-sm font-mono">
+                <span id="year-container"><span id="year"></span> • </span>Made with <i id="footer-heart" class="fa-solid fa-heart text-kyo-emerald"></i> by 
                 <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
                 <span id="footer-monika" class="hidden text-[#ff69b4] font-bold select-none cursor-default text-base tracking-wide">Monika</span>
             </div>
         </div>
     </footer>
+
 
     <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
         <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
