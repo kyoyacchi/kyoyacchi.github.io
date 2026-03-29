@@ -138,6 +138,8 @@ function renderPresence(data) {
 }
 
 
+let hasPrefetched = false;
+
 function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
@@ -151,18 +153,23 @@ function connectLanyard() {
         renderPresence(cached);
     }
 
+    if (!hasPrefetched) {
+        hasPrefetched = true;
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT || 5000);
+        fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: controller.signal })
+            .then(r => r.json())
+            .then(json => {
+                if (json.success && json.data) {
+                    setCache(json.data);
+                    renderPresence(json.data);
+                }
+            })
+            .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
+    }
+
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
-
-    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) })
-        .then(r => r.json())
-        .then(json => {
-            if (json.success && json.data) {
-                setCache(json.data);
-                renderPresence(json.data);
-            }
-        })
-        .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
 
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
     state.ws = ws;
