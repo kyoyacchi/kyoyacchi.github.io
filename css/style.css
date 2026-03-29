@@ -1,19 +1,35 @@
-/* ========================================
-   GENEL VE KARANLIK TEMA STİLLERİ
-   ======================================== */
 body {
     background-color: #050505;
     color: #e0e0e0;
     font-family: 'Quicksand', sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-html { scroll-behavior: smooth; }
-html::-webkit-scrollbar { width: 8px; }
-html::-webkit-scrollbar-track { background: #050505; }
-html::-webkit-scrollbar-thumb { background: #50C878; border-radius: 10px; }
-html::-webkit-scrollbar-thumb:hover { background: #3eb565; }
+/* Add smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+html::-webkit-scrollbar {
+    width: 8px;
+}
+html::-webkit-scrollbar-track {
+    background: #050505;
+}
+html::-webkit-scrollbar-thumb {
+    background: #50C878;
+    border-radius: 10px;
+}
+html::-webkit-scrollbar-thumb:hover {
+    background: #3eb565;
+}
+
+/* Firefox support */
+html, body {
+    scrollbar-width: thin;
+    scrollbar-color: #50C878 #050505;
+}
 
 * {
     -webkit-user-select: none;
@@ -24,25 +40,33 @@ html::-webkit-scrollbar-thumb:hover { background: #3eb565; }
     -webkit-tap-highlight-color: transparent;
 }
 
-#d-global-name, #d-username, #d-activity, footer {
+/* Allow text selection on specific elements */
+#d-global-name,
+#d-username,
+#d-activity,
+footer {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
 }
 
+/* Subtle Grain/Noise Effect */
 body::before {
     content: "";
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
     opacity: 0.03;
     pointer-events: none;
     z-index: 0;
-    transition: opacity 0.5s ease;
 }
 
-body > * { position: relative; z-index: 1; }
+/* Ensure content stays above noise */
+body > * {
+    position: relative;
+    z-index: 1;
+}
 
 .status-indicator {
     position: absolute;
@@ -54,40 +78,46 @@ body > * { position: relative; z-index: 1; }
     background-size: cover;
     background-position: center;
     border: 4px solid #1e1f22;
-    z-index: 30; /* En ustte */
+    z-index: 20;
 }
-.status-online  { background-image: url('[https://files.catbox.moe/ma1fn2.png](https://files.catbox.moe/ma1fn2.png)'); }
-.status-idle    { background-image: url('[https://files.catbox.moe/qtgqzn.png](https://files.catbox.moe/qtgqzn.png)'); }
-.status-dnd     { background-image: url('[https://files.catbox.moe/fignnf.png](https://files.catbox.moe/fignnf.png)'); }
-.status-offline { background-image: url('[https://files.catbox.moe/l9epn6.png](https://files.catbox.moe/l9epn6.png)'); }
+.status-online  { background-image: url('https://files.catbox.moe/ma1fn2.png'); }
+.status-idle    { background-image: url('https://files.catbox.moe/qtgqzn.png'); }
+.status-dnd     { background-image: url('https://files.catbox.moe/fignnf.png'); }
+.status-offline { background-image: url('https://files.catbox.moe/l9epn6.png'); }
 
-#d-avatar-decoration {
-    position: absolute;
-    width: 130%;
-    height: 130%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 20; /* Avatar ustunde, status altinda */
-    pointer-events: none;
+#nav-overlay {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+#nav-overlay.open {
+    opacity: 1;
+    visibility: visible;
 }
 
-#nav-overlay { opacity: 0; visibility: hidden; transition: all 0.4s ease; }
-#nav-overlay.open { opacity: 1; visibility: visible; }
-.discord-card { background: #0a0a0c; transition: all 0.5s ease; }
+.discord-card {
+    background: #0a0a0c;
+}
 
 .animated-divider {
     position: relative;
     background: rgba(80, 200, 120, 0.1); 
     overflow: hidden;
-    transition: all 0.5s ease;
 }
 
 .animated-divider::after {
     content: "";
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(80, 200, 120, 0.8), transparent);
+    top: 0;
+    left: 0; 
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(80, 200, 120, 0.8), 
+        transparent
+    );
     animation: shimmer-effect 3s infinite linear;
 }
 
@@ -102,120 +132,65 @@ body > * { position: relative; z-index: 1; }
     animation: blink 1s step-end infinite;
 }
 
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-::selection { background-color: rgba(80, 200, 120, 0.3); color: #ffffff; }
-::-moz-selection { background-color: rgba(80, 200, 120, 0.3); color: #ffffff; }
-
-/* ========================================
-   GLITCH EFFECT (DDLC Mode)
-   ======================================== */
-.no-transitions, .no-transitions * {
-    transition: none !important;
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
-body.is-glitching {
-    animation: ddlc-glitch 0.15s cubic-bezier(.25, .46, .45, .94) both infinite;
-    overflow: hidden;
+:root {
+    color-scheme: dark;
 }
 
-body.is-glitching::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="2" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-    opacity: 0.5;
-    z-index: 9999;
-    pointer-events: none;
-    mix-blend-mode: exclusion;
+/* Better focus states for accessibility */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #50C878;
+    outline-offset: 4px;
 }
 
-@keyframes ddlc-glitch {
-    0% { transform: translate(0) scale(1); filter: invert(0); }
-    20% { transform: translate(-15px, 10px) skewX(8deg) scale(1.02); filter: invert(1) hue-rotate(90deg); }
-    40% { transform: translate(15px, -10px) skewX(-8deg) scale(0.98); filter: invert(0) contrast(3); }
-    60% { transform: translate(-10px, 5px) skewX(15deg) scale(1.05); filter: drop-shadow(15px 0 0 red) drop-shadow(-15px 0 0 cyan); }
-    80% { transform: translate(10px, -5px) skewX(-15deg) scale(0.95); filter: invert(1) contrast(2); }
-    100% { transform: translate(0) scale(1); filter: invert(0); }
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    html {
+        scroll-behavior: auto;
+    }
 }
 
-/* ========================================
-   DDLC MODE THEME OVERRIDE (WHEN ENABLED)
-   ======================================== */
-body.ddlc-mode {
-    background-color: #fff9fc !important;
-    background-image: radial-gradient(#ffbde1 2px, transparent 2px);
-    background-size: 30px 30px;
-    color: #000000;
+/* Mobile active states */
+/*@media (hover: none) {
+    button:active,
+    a:active {
+        transform: scale(0.98);
+        opacity: 0.7;
+    }
+}*/
+
+::selection {
+    background-color: rgba(80, 200, 120, 0.3);
+    color: #ffffff;
 }
 
-/* Hero, Quote, SNS and year */
-body.ddlc-mode #monika-hero-container,
-body.ddlc-mode #quote-container,
-body.ddlc-mode #sns-links,
-body.ddlc-mode #year-container {
-    display: none !important;
+::-moz-selection {
+    background-color: rgba(80, 200, 120, 0.3);
+    color: #ffffff;
 }
 
-body.ddlc-mode::before { opacity: 0; }
-
-/* dc card */
-body.ddlc-mode .discord-card {
-    background-color: #ffffff !important;
-    border: 6px solid #ffbde1 !important;
-    box-shadow: 0 0 0 4px white !important;
-    border-radius: 0 !important;
+.status-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 4px solid #1e1f22;
+    z-index: 30;
 }
-body.ddlc-mode .discord-card .bg-gradient-to-r { display: none; }
-body.ddlc-mode #d-global-name { color: #000000 !important; font-family: 'Fredoka', sans-serif; font-weight: 700; }
-body.ddlc-mode #d-username { color: #ff69b4 !important; }
-body.ddlc-mode #d-activity {
-    background-color: #ffbde1 !important;
-    border-color: #ff69b4 !important;
-    color: #ffffff !important;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
-}
-
-/* */
-body.ddlc-mode .skill-tag {
-    background-color: #ffffff !important;
-    border: 4px solid #ffbde1 !important;
-    color: #000000 !important;
-    font-weight: bold;
-    box-shadow: 0 0 0 3px white !important;
-    border-radius: 0 !important;
-}
-body.ddlc-mode .skill-tag:hover {
-    background-color: #ffbde1 !important;
-    color: #ffffff !important;
-    border-color: #ff69b4 !important;
-    transform: scale(1.05);
-    box-shadow: 0 0 0 3px white !important;
-}
-
-/* JUST MONIKA Metni Gosterimi */
-body.ddlc-mode #just-monika-text {
-    display: flex !important;
-}
-
-/* Footer Monika */
-body.ddlc-mode #footer-kyo { display: none !important; }
-body.ddlc-mode #footer-monika { display: inline !important; }
-body.ddlc-mode #footer-heart { color: #50C878 !important; } /*  */
-
-/* Colors */
-body.ddlc-mode .text-kyo-emerald,
-body.ddlc-mode .text-gray-400 { color: #ff69b4 !important; }
-body.ddlc-mode #d-activity.text-white { color: white !important; }
-body.ddlc-mode .cursor::after { color: #ff69b4 !important; }
-
-/* Header / Footer */
-body.ddlc-mode header { mix-blend-mode: normal !important; }
-body.ddlc-mode #site-logo { color: #ff69b4 !important; font-weight: bold; text-shadow: 2px 2px 0px white; }
-body.ddlc-mode #site-logo img { filter: brightness(0) invert(1) drop-shadow(2px 2px 0px #ff69b4) !important; opacity: 1 !important; } 
-body.ddlc-mode #menu-btn { color: #ff69b4 !important; }
-body.ddlc-mode #nav-overlay { background: rgba(255, 255, 255, 0.95) !important; }
-body.ddlc-mode footer { background: transparent !important; }
-body.ddlc-mode footer .text-gray-500 { color: #888888 !important; font-weight: bold; }
-
-body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !important; color: #000000 !important; }
