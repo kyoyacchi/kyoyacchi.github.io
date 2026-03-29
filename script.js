@@ -326,7 +326,18 @@ function initMenu() {
     
     let isMenuOpen = false;
 
-    function toggleMenu() {
+function toggleMenu() {
+        // If DDLC mode is active, override menu button to open Monika popup
+        if (document.body.classList.contains('ddlc-mode')) {
+            const monikaPopup = document.getElementById('monika-popup');
+            if (monikaPopup) {
+                monikaPopup.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            return;
+        }
+
+        // Normal menu behavior
         isMenuOpen = !isMenuOpen;
         if (isMenuOpen) {
             navOverlay.classList.add('open');
@@ -370,6 +381,59 @@ function initMonikaPopup() {
 }
 
 // ========================================
+// DDLC MODE TRIGGERS & GLITCH LOGIC
+// ========================================
+let ddlcClickCount = 0;
+let clickTimer;
+let typedKeys = '';
+const secretWord = 'monika';
+
+function toggleDDLCMode() {
+    const body = document.body;
+    
+    body.classList.add('is-glitching');
+    body.classList.add('no-transitions');
+
+    setTimeout(() => {
+        body.classList.remove('is-glitching');
+        body.classList.toggle('ddlc-mode');
+
+        setTimeout(() => {
+            body.classList.remove('no-transitions');
+        }, 50);
+    }, 500); 
+}
+
+// Method 1: Typing "monika"
+document.addEventListener('keydown', (e) => {
+    if (e.key.length !== 1) return;
+    typedKeys += e.key.toLowerCase();
+    if (typedKeys.length > secretWord.length) {
+        typedKeys = typedKeys.slice(-secretWord.length);
+    }
+    if (typedKeys === secretWord) {
+        toggleDDLCMode();
+        typedKeys = ''; 
+    }
+});
+
+// Method 2: Clicking Logo 5 times
+function initDDLCClicker() {
+    const logoElement = document.getElementById('site-logo');
+    if (logoElement) {
+        logoElement.addEventListener('click', () => {
+            ddlcClickCount++;
+            clearTimeout(clickTimer);
+            if (ddlcClickCount >= 5) {
+                toggleDDLCMode();
+                ddlcClickCount = 0; 
+            }
+            clickTimer = setTimeout(() => { ddlcClickCount = 0; }, 2000);
+        });
+    }
+}
+
+// ========================================
 // INITIALIZATION
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -379,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypewriter();
     initMenu();
     initMonikaPopup();
+    initDDLCClicker();
     connectLanyard();
     
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
