@@ -101,12 +101,16 @@
                 <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
                 <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
 
-                <div class="relative z-10 shrink-0">
-                    <div class="relative">
-                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl">
-                        <div id="d-status-indicator" class="status-indicator status-offline"></div>
-                    </div>
-                </div>
+<div class="relative z-10 shrink-0">
+    <div class="relative flex items-center justify-center">
+        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl relative z-10">
+        
+        <img id="d-avatar-decoration" src="" alt="Decoration" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[125%] h-[125%] max-w-none pointer-events-none z-20 select-none">
+        
+        <div id="d-status-indicator" class="status-indicator status-offline"></div>
+    </div>
+</div>
+
 
                 <div class="relative z-10 text-left flex flex-col justify-center h-full py-2 min-w-0 flex-1">
                     <span id="d-global-name" class="text-white font-bold font-header text-2xl md:text-3xl tracking-tight truncate">Loading...</span>
