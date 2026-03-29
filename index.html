@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- SEO Meta Tags -->
     <meta name="description" content="Kyo's personal space - Web developer, anime enthusiast, and devoted DDLC fan. Just Monika.">
     <meta name="author" content="Kyoya">
     <meta name="keywords" content="Kyoya, kyoyacchi, Monika, DDLC, Doki Doki Literature Club, Just Monika, web developer, portfolio, anime, visual novel">
@@ -11,6 +12,7 @@
     <meta name="theme-color" content="#50C878">
     <meta name="color-scheme" content="dark">
     
+    <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kyo's Website - Just Monika">
     <meta property="og:description" content="Website dedicated to Monika. Just Monika.">
@@ -18,6 +20,7 @@
     <meta property="og:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
     <meta property="og:site_name" content="Kyo's Website">
     
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Kyo's Website - Just Monika">
     <meta name="twitter:description" content="Website dedicated to Monika. Just Monika.">
@@ -26,8 +29,10 @@
     <meta name="twitter:creator" content="@kyoyacchi">
     
     <title>Kyo's Website</title>
-    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+<link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+
     
+    <!-- Font preconnect for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -63,18 +68,19 @@
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
 
-    <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference transition-all duration-500">
-        <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2 cursor-pointer" title="Click me 5 times...">
-           Just Monika.
-           <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
-                style="width: 18px; height: 18px; filter: brightness(0) invert(1); transition: all 0.5s ease;" 
-                alt="🎀">
-        </span>
+<header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
+<span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2">
+   Just Monika.
+   <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
+        style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
+        alt="🎀">
+</span>
 
-        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-    </header>
+    <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</header>
+
 
     <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
         <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
@@ -84,22 +90,27 @@
 
     <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
         
+        <!-- Profile Card -->
         <div class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
-            <div id="discord-profile" class="discord-card w-full max-w-[90vw] md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6 md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden group cursor-default">
+            <div id="discord-profile" class="discord-card w-full max-w-[90vw]
+            md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
+            md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden
+            group cursor-default">
                 
                 <video id="d-bg-video" loop muted autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
                 <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
                 <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
 
-                <div class="relative z-10 shrink-0">
-                    <div class="relative flex items-center justify-center">
-                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl relative z-10">
-                        
-                        <img id="d-avatar-decoration" src="" alt="Decoration" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[125%] h-[125%] max-w-none pointer-events-none z-20 select-none">
-                        
-                        <div id="d-status-indicator" class="status-indicator status-offline"></div>
-                    </div>
-                </div>
+<div class="relative z-10 shrink-0">
+    <div class="relative flex items-center justify-center">
+        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl relative z-10">
+        
+        <img id="d-avatar-decoration" src="" alt="Decoration" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[125%] h-[125%] max-w-none pointer-events-none z-20 select-none">
+        
+        <div id="d-status-indicator" class="status-indicator status-offline"></div>
+    </div>
+</div>
+
 
                 <div class="relative z-10 text-left flex flex-col justify-center h-full py-2 min-w-0 flex-1">
                     <span id="d-global-name" class="text-white font-bold font-header text-2xl md:text-3xl tracking-tight truncate">Loading...</span>
@@ -114,6 +125,7 @@
             </div>
         </div>
 
+        <!-- Identity Tags & Skills -->
         <div class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
             <div class="text-center space-y-4">
                 <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
@@ -124,63 +136,63 @@
                     <span>VN FAN</span>
                 </div>
                 <div class="flex flex-wrap justify-center items-center gap-3 md:gap-4 text-gray-400 font-mono text-xs md:text-sm mt-3">
-                    <span class="skill-tag px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">JavaScript</span>
-                    <span class="skill-tag px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">UI Design</span>
-                    <span class="skill-tag px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">Localization</span>
+                    <span class="px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">JavaScript</span>
+                    <span class="px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">UI Design</span>
+                    <span class="px-4 py-2 bg-white/5 rounded-full border border-white/20 cursor-default transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)]">Localization</span>
                 </div>
             </div>
         </div>
 
-        <div id="monika-hero-container" class="w-full z-10 transition-all duration-500">
+        <!-- Hero Image & Quote -->
+        <div class="w-full z-10">
             <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[180px] md:h-[350px] overflow-hidden rounded-3xl border border-white/5 shadow-2xl z-10 group cursor-pointer">
                 <img src="https://files.catbox.moe/f2pajl.jpg" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-all duration-700" alt="Monika" draggable="false">
                 
+                <!-- Transparent Overlay -->
                 <div class="absolute inset-0 w-full h-full z-20"></div>
 
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
             </div>
-        </div>
-
-        <div id="just-monika-text" class="hidden flex-col items-center justify-center w-full my-12 transition-all duration-500 select-none">
-            <h2 class="text-5xl md:text-7xl font-header text-black tracking-widest" style="text-shadow: 3px 3px 0px #ffbde1, 6px 6px 0px white;">JUST MONIKA.</h2>
-        </div>
-
-        <div id="quote-container" class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[40px] transition-all duration-500">
-            <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
-                "<span id="typed-quote" class="cursor"></span>"
-            </p>
-            <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider my-16"></div>
+            <div class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[40px]">
+        <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
+                    "<span id="typed-quote" class="cursor"></span>"
+                </p>
+                <div class="w-11/12 md:w-full max-w-4xl h-[1px] animated-divider my-16"></div>
+            </div>
         </div>
 
     </main>
 
-    <footer class="pt-0 pb-12 bg-black z-10 relative transition-all duration-500">
+    <footer class="pt-0 pb-12 bg-black z-10 relative">
         <div class="text-center flex flex-col items-center justify-center space-y-5">
             
-            <div id="sns-links" class="flex justify-center gap-6 text-xl transition-all duration-500">
+            <!-- Social Icons -->
+            <div class="flex justify-center gap-6 text-xl">
                 <a href="https://github.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
                 <a href="https://x.com/kyoyacchi" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
                 <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
             </div>
 
             <div class="text-gray-500 text-sm font-mono">
-                <span id="year-container"><span id="year"></span> • </span>Made with <i id="footer-heart" class="fa-solid fa-heart text-kyo-emerald"></i> by 
-                <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
-                <span id="footer-monika" class="hidden text-[#ff69b4] font-bold select-none cursor-default text-base tracking-wide">Monika</span>
+<span id="year"></span> • Made with <i class="fa-solid fa-heart text-kyo-emerald"></i> by <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold select-none cursor-default">@Kyo</span>
             </div>
         </div>
     </footer>
 
-
+    <!-- Monika Image Easter Egg Popup -->
     <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
-        <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
+        <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full
+        mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all
+        duration-200 select-none" id="monika-popup-content">
             <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
-            <button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none hover:scale-110" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
-                OK
-            </button>
+<button id="monika-ok-btn" class="bg-transparent border-none text-[#ff69b4] text-4xl font-black py-2 px-8 transition-transform outline-none shadow-none" style="text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(255,105,180,0.3);">
+    OK
+</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+
+
+<script src="script.js"></script>
 </body>
 </html>
