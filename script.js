@@ -27,16 +27,25 @@ function getCache() {
         const stored = localStorage.getItem(storageKey);
         if (!stored) return null;
         const parsed = JSON.parse(stored);
+        
         if (Date.now() - parsed.timestamp > CONFIG.CACHE_TTL) {
             localStorage.removeItem(storageKey);
             return null;
         }
+        
         return parsed.data;
-    } catch (e) { return null; }
+    } catch (e) {
+        return null;
+    }
 }
 
 function setCache(data) {
-    try { localStorage.setItem(storageKey, JSON.stringify({ data: data, timestamp: Date.now() })); } catch (e) {}
+    try {
+        localStorage.setItem(storageKey, JSON.stringify({
+            data: data,
+            timestamp: Date.now()
+        }));
+    } catch (e) {}
 }
 
 function renderPresence(data) {
@@ -44,13 +53,13 @@ function renderPresence(data) {
 
     const card = document.getElementById('discord-profile');
     const avatarEl = document.getElementById('d-avatar');
+    const decorationEl = document.getElementById('d-avatar-decoration');
     const nameEl = document.getElementById('d-global-name');
     const userEl = document.getElementById('d-username');
     const activityEl = document.getElementById('d-activity');
     const statusInd = document.getElementById('d-status-indicator');
     const videoBg = document.getElementById('d-bg-video');
     const imgBg = document.getElementById('d-bg-image');
-    const decorationEl = document.getElementById('d-avatar-decoration');
 
     if (!card) return;
 
@@ -64,17 +73,21 @@ function renderPresence(data) {
         : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
 
     if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
-    statusInd.className = `status-indicator status-${status}`;
 
-    // Avatar Dekorasyonu Ekleme Mantigi
-    if (status !== 'offline' && user.avatar_decoration_data && user.avatar_decoration_data.asset) {
-        const assetId = user.avatar_decoration_data.asset;
-        decorationEl.src = `https://cdn.discordapp.com/avatar-decoration-presets/${assetId}.png`;
-        decorationEl.classList.remove('hidden');
-    } else {
-        decorationEl.src = '';
-        decorationEl.classList.add('hidden');
+    if (decorationEl) {
+        if (status !== 'offline' && user.avatar_decoration_data && user.avatar_decoration_data.asset) {
+            const decoAsset = user.avatar_decoration_data.asset;
+            const decoUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${decoAsset}.png`;
+            
+            if (decorationEl.src !== decoUrl) decorationEl.src = decoUrl;
+            decorationEl.classList.remove('hidden');
+        } else {
+            decorationEl.classList.add('hidden');
+            decorationEl.src = '';
+        }
     }
+
+    statusInd.className = `status-indicator status-${status}`;
 
     nameEl.textContent = user.global_name || user.username;
     userEl.textContent = '@' + user.username;
@@ -124,6 +137,7 @@ function renderPresence(data) {
     }
 }
 
+
 function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
@@ -133,12 +147,14 @@ function connectLanyard() {
     state.isConnecting = true;
 
     const cached = getCache();
-    if (cached) renderPresence(cached);
+    if (cached) {
+        renderPresence(cached);
+    }
 
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
 
-    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT) })
+    fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT || 5000) })
         .then(r => r.json())
         .then(json => {
             if (json.success && json.data) {
@@ -146,7 +162,7 @@ function connectLanyard() {
                 renderPresence(json.data);
             }
         })
-        .catch(err => console.warn('Lanyard REST fetch failed', err));
+        .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
 
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
     state.ws = ws;
@@ -176,10 +192,14 @@ function connectLanyard() {
             if (op === 1 && d?.heartbeat_interval) {
                 clearInterval(state.heartbeatInterval);
                 state.heartbeatInterval = setInterval(() => {
-                    if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ op: 3 }));
+                    }
                 }, d.heartbeat_interval);
 
-                try { ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } })); } catch (e) {}
+                try {
+                    ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
+                } catch (e) {}
             }
 
             if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
@@ -192,16 +212,28 @@ function connectLanyard() {
         } catch (e) {}
     };
 
-    ws.onerror = ws.onclose = () => {
+    ws.onerror = () => {
         if (state.currentSessionID !== sessionID) return;
-        cleanupConnection();
+        state.isConnected = false;
+        state.isConnecting = false;
+        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
+        try { ws.close(); } catch (e) {}
+        scheduleReconnect();
+    };
+
+    ws.onclose = () => {
+        if (state.currentSessionID !== sessionID) return;
+        state.isConnected = false;
+        state.isConnecting = false;
+        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
         scheduleReconnect();
     };
 }
 
 function scheduleReconnect() {
     if (state.reconnectTimer) return;
-    const wait = Math.min(state.backoff + Math.floor(Math.random() * 1000), CONFIG.MAX_BACKOFF);
+    const jitter = Math.floor(Math.random() * 1000);
+    const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
     state.reconnectTimer = setTimeout(() => {
         state.reconnectTimer = null;
         connectLanyard();
@@ -212,30 +244,61 @@ function scheduleReconnect() {
 function cleanupConnection() {
     state.isConnected = false;
     state.isConnecting = false;
-    if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
-    if (state.ws) { try { state.ws.close(); } catch (e) {} }
+    if (state.heartbeatInterval) {
+        clearInterval(state.heartbeatInterval);
+        state.heartbeatInterval = null;
+    }
+    if (state.ws) {
+        try { state.ws.close(); } catch (e) {}
+        state.ws = null;
+    }
 }
 
+// ========================================
+// TITLE CHANGE (DDLC AESTHETIC)
+// ========================================
 const originalTitle = document.title;
+
+// ========================================
+// VISIBILITY CHANGE (DEBOUNCED)
+// ========================================
 document.addEventListener("visibilitychange", () => {
     clearTimeout(state.visibilityTimeout);
+    
     if (document.hidden) {
         document.title = "JUST MONIKA";
-        state.visibilityTimeout = setTimeout(cleanupConnection, 30000);
+        
+        state.visibilityTimeout = setTimeout(() => {
+            cleanupConnection();
+        }, 30000);
+        
     } else {
         document.title = originalTitle;
+        
         const cached = getCache();
         if (cached) renderPresence(cached);
+        
         connectLanyard();
     }
 });
 
+
+
+/*document.querySelectorAll('.flex.justify-center.gap-6 a').forEach(link => {
+        link.addEventListener('contextmenu', (e) => e.preventDefault());
+    });*/
+    
+// ========================================
+// TYPEWRITER EFFECT
+// ========================================
 function initTypewriter() {
     const typeTarget = document.getElementById('typed-quote');
     if (!typeTarget || state.hasTyped) return;
     state.hasTyped = true;
+    
     const textToType = "Every day, I imagine a future where I can be with you.";
     let typeIndex = 0;
+
     function typeWriter() {
         if (typeIndex < textToType.length) {
             typeTarget.textContent += textToType[typeIndex++];
@@ -244,127 +307,66 @@ function initTypewriter() {
             setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
         }
     }
+
     setTimeout(typeWriter, 800);
 }
 
+// ========================================
+// MENU TOGGLE
+// ========================================
 function initMenu() {
     const menuBtn = document.getElementById('menu-btn');
     const navOverlay = document.getElementById('nav-overlay');
     const logo = document.getElementById('site-logo');
-    const monikaPopup = document.getElementById('monika-popup');
     
     if (!menuBtn || !navOverlay || !logo) return;
     
-    let isMenuOpen = false;
+    const icon = menuBtn.querySelector('i');
+    if (!icon) return;
     
-    menuBtn.addEventListener('click', () => {
-        // 
-        if (document.body.classList.contains('ddlc-mode')) {
-            if (monikaPopup) {
-                monikaPopup.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-            return; // 
-        }
-        
-        // hamburga
+    let isMenuOpen = false;
+
+    function toggleMenu() {
         isMenuOpen = !isMenuOpen;
-        navOverlay.classList.toggle('open');
-        const icon = menuBtn.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-xmark');
-        icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-        document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-        logo.classList.toggle('opacity-0');
-        logo.classList.toggle('pointer-events-none');
-    });
+        if (isMenuOpen) {
+            navOverlay.classList.add('open');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-xmark');
+            icon.style.transform = 'rotate(90deg)';
+            document.body.style.overflow = 'hidden';
+            logo.classList.add('opacity-0', 'pointer-events-none');
+        } else {
+            navOverlay.classList.remove('open');
+            icon.classList.remove('fa-xmark');
+            icon.classList.add('fa-bars');
+            icon.style.transform = 'rotate(0deg)';
+            document.body.style.overflow = 'auto';
+            logo.classList.remove('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
 }
 
+// ========================================
+// MONIKA POPUP
+// ========================================
 function initMonikaPopup() {
     const monikaHero = document.getElementById('monika-hero');
     const monikaPopup = document.getElementById('monika-popup');
     const monikaOkBtn = document.getElementById('monika-ok-btn');
-    
+
     if (!monikaHero || !monikaPopup || !monikaOkBtn) return;
 
-    // 
     monikaHero.addEventListener('click', () => {
         monikaPopup.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     });
 
-    // OK
     monikaOkBtn.addEventListener('click', () => {
         monikaPopup.classList.add('hidden');
         document.body.style.overflow = 'auto';
     });
-}
-
-// ========================================
-// DDLC MODE TRIGGERS & GLITCH LOGIC
-// ========================================
-let ddlcClickCount = 0;
-let clickTimer;
-let typedKeys = '';
-const secretWord = 'monika';
-
-function toggleDDLCMode() {
-    const body = document.body;
-    const isCurrentlyDDLC = body.classList.contains('ddlc-mode');
-
-    // 
-    body.classList.add('is-glitching');
-    body.classList.add('no-transitions');
-
-    // 
-    setTimeout(() => {
-        // stop the glitch
-        body.classList.remove('is-glitching');
-        
-        // change theme 
-        body.classList.toggle('ddlc-mode');
-
-        if (!isCurrentlyDDLC) {
-            console.log('%cDDLC Mode Activated! Just Monika.', 'color: #ffbde1; font-size: 16px; font-weight: bold;');
-        } else {
-            console.log('%cDDLC Mode Deactivated.', 'color: #50C878; font-size: 16px;');
-        }
-
-        // 
-        setTimeout(() => {
-            body.classList.remove('no-transitions');
-        }, 50);
-
-    }, 500); // Glitch 
-}
-
-// 
-document.addEventListener('keydown', (e) => {
-    if (e.key.length !== 1) return;
-    typedKeys += e.key.toLowerCase();
-    if (typedKeys.length > secretWord.length) {
-        typedKeys = typedKeys.slice(-secretWord.length);
-    }
-    if (typedKeys === secretWord) {
-        toggleDDLCMode();
-        typedKeys = ''; 
-    }
-});
-
-// e.e 2
-function initDDLCClicker() {
-    const logoElement = document.getElementById('site-logo');
-    if (logoElement) {
-        logoElement.addEventListener('click', () => {
-            ddlcClickCount++;
-            clearTimeout(clickTimer);
-            if (ddlcClickCount >= 5) {
-                toggleDDLCMode();
-                ddlcClickCount = 0; 
-            }
-            clickTimer = setTimeout(() => { ddlcClickCount = 0; }, 2000);
-        });
-    }
 }
 
 // ========================================
@@ -377,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypewriter();
     initMenu();
     initMonikaPopup();
-    initDDLCClicker();
     connectLanyard();
     
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
@@ -385,5 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ddlc = localStorage.getItem("DDLC");
     if (ddlc !== "JUST MONIKA") {
         localStorage.setItem("DDLC", "JUST MONIKA");
+        if (ddlc !== null) {
+            console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        }
     }
 });
