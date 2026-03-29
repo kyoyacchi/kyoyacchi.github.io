@@ -318,33 +318,35 @@ function initMenu() {
     const menuBtn = document.getElementById('menu-btn');
     const navOverlay = document.getElementById('nav-overlay');
     const logo = document.getElementById('site-logo');
-    const monikaPopup = document.getElementById('monika-popup');
     
     if (!menuBtn || !navOverlay || !logo) return;
     
-    let isMenuOpen = false;
+    const icon = menuBtn.querySelector('i');
+    if (!icon) return;
     
-    menuBtn.addEventListener('click', () => {
-        if (document.body.classList.contains('ddlc-mode')) {
-            if (monikaPopup) {
-                monikaPopup.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-            return; 
-        }
-        
-        isMenuOpen = !isMenuOpen;
-        navOverlay.classList.toggle('open');
-        const icon = menuBtn.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-xmark');
-        icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-        document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-        logo.classList.toggle('opacity-0');
-        logo.classList.toggle('pointer-events-none');
-    });
-}
+    let isMenuOpen = false;
 
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            navOverlay.classList.add('open');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-xmark');
+            icon.style.transform = 'rotate(90deg)';
+            document.body.style.overflow = 'hidden';
+            logo.classList.add('opacity-0', 'pointer-events-none');
+        } else {
+            navOverlay.classList.remove('open');
+            icon.classList.remove('fa-xmark');
+            icon.classList.add('fa-bars');
+            icon.style.transform = 'rotate(0deg)';
+            document.body.style.overflow = 'auto';
+            logo.classList.remove('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+}
 
 // ========================================
 // MONIKA POPUP
@@ -368,65 +370,6 @@ function initMonikaPopup() {
 }
 
 // ========================================
-// DDLC MODE TRIGGERS & GLITCH LOGIC
-// ========================================
-let ddlcClickCount = 0;
-let clickTimer;
-let typedKeys = '';
-const secretWord = 'monika';
-
-function toggleDDLCMode() {
-    const body = document.body;
-    const isCurrentlyDDLC = body.classList.contains('ddlc-mode');
-
-    body.classList.add('is-glitching');
-    body.classList.add('no-transitions');
-
-    setTimeout(() => {
-        body.classList.remove('is-glitching');
-        body.classList.toggle('ddlc-mode');
-
-        if (!isCurrentlyDDLC) {
-            console.log('%cDDLC Mode Activated! Just Monika.', 'color: #ffbde1; font-size: 16px; font-weight: bold;');
-        } else {
-            console.log('%cDDLC Mode Deactivated.', 'color: #50C878; font-size: 16px;');
-        }
-
-        setTimeout(() => {
-            body.classList.remove('no-transitions');
-        }, 50);
-
-    }, 500); 
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key.length !== 1) return;
-    typedKeys += e.key.toLowerCase();
-    if (typedKeys.length > secretWord.length) {
-        typedKeys = typedKeys.slice(-secretWord.length);
-    }
-    if (typedKeys === secretWord) {
-        toggleDDLCMode();
-        typedKeys = ''; 
-    }
-});
-
-function initDDLCClicker() {
-    const logoElement = document.getElementById('site-logo');
-    if (logoElement) {
-        logoElement.addEventListener('click', () => {
-            ddlcClickCount++;
-            clearTimeout(clickTimer);
-            if (ddlcClickCount >= 5) {
-                toggleDDLCMode();
-                ddlcClickCount = 0; 
-            }
-            clickTimer = setTimeout(() => { ddlcClickCount = 0; }, 2000);
-        });
-    }
-}
-
-// ========================================
 // INITIALIZATION
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -436,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypewriter();
     initMenu();
     initMonikaPopup();
-    initDDLCClicker();
     connectLanyard();
     
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
