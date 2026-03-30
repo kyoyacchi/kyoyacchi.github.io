@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Riffic';
-    src: url('/RifficFree-Bold.ttf') format('truetype');
+    src: url('../RifficFree-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
