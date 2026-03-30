@@ -226,22 +226,19 @@ function connectLanyard() {
         } catch (e) {}
     };
 
-    ws.onerror = () => {
-        if (state.currentSessionID !== sessionID) return;
-        state.isConnected = false;
-        state.isConnecting = false;
-        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
-        try { ws.close(); } catch (e) {}
-        scheduleReconnect();
-    };
+ws.onerror = () => {
+    if (state.currentSessionID !== sessionID) return;
+    clearTimeout(timeout); 
+    cleanupConnection();   
+    scheduleReconnect();
+};
 
     ws.onclose = () => {
-        if (state.currentSessionID !== sessionID) return;
-        state.isConnected = false;
-        state.isConnecting = false;
-        if (state.heartbeatInterval) clearInterval(state.heartbeatInterval);
-        scheduleReconnect();
-    };
+    if (state.currentSessionID !== sessionID) return;
+    clearTimeout(timeout);
+    cleanupConnection();
+    scheduleReconnect();
+};
 }
 
 function scheduleReconnect() {
