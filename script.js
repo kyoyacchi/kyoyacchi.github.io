@@ -16,11 +16,26 @@ const state = {
     backoff: 1000,
     currentSessionID: null,
     lastConnectAttempt: 0,
-    visibilityTimeout: null,
-    hasTyped: false
+    hasPrefetched: false // Moved inside state object for cleaner scoping
 };
 
 const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
+
+// DOM Cache for performance (lazy-loaded on first render)
+const DOM = {};
+function getElements() {
+    if (DOM.card) return DOM;
+    DOM.card = document.getElementById('discord-profile');
+    DOM.avatarEl = document.getElementById('d-avatar');
+    DOM.decorationEl = document.getElementById('d-avatar-decoration');
+    DOM.nameEl = document.getElementById('d-global-name');
+    DOM.userEl = document.getElementById('d-username');
+    DOM.activityEl = document.getElementById('d-activity');
+    DOM.statusInd = document.getElementById('d-status-indicator');
+    DOM.videoBg = document.getElementById('d-bg-video');
+    DOM.imgBg = document.getElementById('d-bg-image');
+    return DOM;
+}
 
 function getCache() {
     try {
@@ -32,7 +47,6 @@ function getCache() {
             localStorage.removeItem(storageKey);
             return null;
         }
-        
         return parsed.data;
     } catch (e) {
         return null;
@@ -51,94 +65,91 @@ function setCache(data) {
 function renderPresence(data) {
     if (!data || !data.discord_user) return;
 
-    const card = document.getElementById('discord-profile');
-    const avatarEl = document.getElementById('d-avatar');
-    const decorationEl = document.getElementById('d-avatar-decoration');
-    const nameEl = document.getElementById('d-global-name');
-    const userEl = document.getElementById('d-username');
-    const activityEl = document.getElementById('d-activity');
-    const statusInd = document.getElementById('d-status-indicator');
-    const videoBg = document.getElementById('d-bg-video');
-    const imgBg = document.getElementById('d-bg-image');
-
-    if (!card) return;
+    const els = getElements();
+    if (!els.card) return;
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
 
-    card.classList.remove('opacity-0');
+    els.card.classList.remove('opacity-0');
 
+    // Avatar
     const avatarUrl = user.avatar 
         ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
         : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
 
-    if (avatarEl.src !== avatarUrl) avatarEl.src = avatarUrl;
+    if (els.avatarEl && els.avatarEl.src !== avatarUrl) els.avatarEl.src = avatarUrl;
 
-    if (decorationEl) {
-        if (status !== 'offline' && user.avatar_decoration_data && user.avatar_decoration_data.asset) {
-            const decoAsset = user.avatar_decoration_data.asset;
+    // Avatar Decoration
+    if (els.decorationEl) {
+        const decoAsset = user.avatar_decoration_data?.asset;
+        if (status !== 'offline' && decoAsset) {
             const decoUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${decoAsset}.png`;
-            
-            if (decorationEl.src !== decoUrl) decorationEl.src = decoUrl;
-            decorationEl.classList.remove('hidden');
+            if (els.decorationEl.src !== decoUrl) els.decorationEl.src = decoUrl;
+            els.decorationEl.classList.remove('hidden');
         } else {
-            decorationEl.classList.add('hidden');
-            decorationEl.src = '';
+            els.decorationEl.classList.add('hidden');
+            els.decorationEl.src = '';
         }
     }
 
-    statusInd.className = `status-indicator status-${status}`;
+    // Basic Info
+    if (els.statusInd) els.statusInd.className = `status-indicator status-${status}`;
+    if (els.nameEl) els.nameEl.textContent = user.global_name || user.username;
+    if (els.userEl) els.userEl.textContent = '@' + user.username;
 
-    nameEl.textContent = user.global_name || user.username;
-    userEl.textContent = '@' + user.username;
-
+    // Activity Parsing
     let activityText = "OFFLINE";
     let colorClass = "text-white";
 
     if (status !== 'offline') {
         const activities = data.activities || [];
-        const game = activities.find(a => a.type === 0 || a.type === 1);
-        const listeningActivity = activities.find(a => a.type === 2);
+        const playing = activities.find(a => a.type === 0);
+        const streaming = activities.find(a => a.type === 1);
+        const listening = activities.find(a => a.type === 2);
 
-        if (game) {
-            activityText = "PLAYING " + game.name.toUpperCase();
+        if (streaming) {
+            activityText = "STREAMING " + streaming.name.toUpperCase();
+            colorClass = "text-purple-400"; // Assuming a Twitch/Streaming color
+        } else if (playing) {
+            activityText = "PLAYING " + playing.name.toUpperCase();
             colorClass = "text-kyo-emerald";
-        } else if (listeningActivity) {
-            activityText = "LISTENING TO " + listeningActivity.name.toUpperCase();
+        } else if (listening) {
+            activityText = "LISTENING TO " + listening.name.toUpperCase();
             colorClass = "text-kyo-emerald";
         } else {
-            activityText = status.toUpperCase();
-            if (status === 'dnd') activityText = "DO NOT DISTURB";
+            activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
         }
     }
 
-    activityEl.textContent = activityText;
-    activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white'}`;
-
-    let videoUrl = null;
-    if (user.collectibles && user.collectibles.nameplate && user.collectibles.nameplate.asset) {
-        videoUrl = `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`;
+    if (els.activityEl) {
+        els.activityEl.textContent = activityText;
+        els.activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : colorClass}`;
     }
+
+    // Background (Video/Banner/Fallback)
+    const videoUrl = user.collectibles?.nameplate?.asset 
+        ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm` 
+        : null;
 
     if (videoUrl) {
-        if (videoBg.src !== videoUrl) videoBg.src = videoUrl;
-        videoBg.classList.remove('hidden');
-        imgBg.classList.add('hidden');
+        if (els.videoBg && els.videoBg.src !== videoUrl) els.videoBg.src = videoUrl;
+        els.videoBg?.classList.remove('hidden');
+        els.imgBg?.classList.add('hidden');
     } else if (user.banner) {
         const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
-        imgBg.src = bannerUrl;
-        imgBg.classList.remove('hidden');
-        videoBg.classList.add('hidden');
+        if (els.imgBg) els.imgBg.src = bannerUrl;
+        els.imgBg?.classList.remove('hidden');
+        els.videoBg?.classList.add('hidden');
     } else {
-        imgBg.style.background = '#50c878';
-        imgBg.src = '';
-        imgBg.classList.remove('hidden');
-        videoBg.classList.add('hidden');
+        if (els.imgBg) {
+            els.imgBg.style.background = '#50c878';
+            els.imgBg.src = '';
+        }
+        els.imgBg?.classList.remove('hidden');
+        els.videoBg?.classList.add('hidden');
     }
 }
-
-
-let hasPrefetched = false;
 
 function connectLanyard() {
     const now = Date.now();
@@ -149,14 +160,13 @@ function connectLanyard() {
     state.isConnecting = true;
 
     const cached = getCache();
-    if (cached) {
-        renderPresence(cached);
-    }
+    if (cached) renderPresence(cached);
 
-        if (!hasPrefetched) {
-        hasPrefetched = true;
+    // Initial REST Prefetch
+    if (!state.hasPrefetched) {
+        state.hasPrefetched = true;
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT || 5000);
+        const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
 
         fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: controller.signal })
             .then(r => r.json())
@@ -169,11 +179,9 @@ function connectLanyard() {
             })
             .catch(err => {
                 clearTimeout(timeoutId); 
-                const isTimeout = err.name === 'AbortError';
-                console.warn(`Lanyard REST pre-fetch failed: ${isTimeout ? 'Timeout' : err.message}`);
+                console.warn(`Lanyard REST pre-fetch failed: ${err.name === 'AbortError' ? 'Timeout' : err.message}`);
             });
     }
-
 
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
@@ -226,19 +234,19 @@ function connectLanyard() {
         } catch (e) {}
     };
 
-ws.onerror = () => {
-    if (state.currentSessionID !== sessionID) return;
-    clearTimeout(timeout); 
-    cleanupConnection();   
-    scheduleReconnect();
-};
+    ws.onerror = () => {
+        if (state.currentSessionID !== sessionID) return;
+        clearTimeout(timeout); 
+        cleanupConnection();   
+        scheduleReconnect();
+    };
 
     ws.onclose = () => {
-    if (state.currentSessionID !== sessionID) return;
-    clearTimeout(timeout);
-    cleanupConnection();
-    scheduleReconnect();
-};
+        if (state.currentSessionID !== sessionID) return;
+        clearTimeout(timeout);
+        cleanupConnection();
+        scheduleReconnect();
+    };
 }
 
 function scheduleReconnect() {
@@ -264,6 +272,7 @@ function cleanupConnection() {
         state.ws = null;
     }
 }
+
 
 // ========================================
 // TITLE CHANGE (DDLC AESTHETIC)
