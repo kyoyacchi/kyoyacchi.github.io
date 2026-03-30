@@ -110,7 +110,7 @@ function renderPresence(data) {
 
         if (streaming) {
             activityText = "STREAMING " + streaming.name.toUpperCase();
-            colorClass = "text-purple-400"; // Assuming a Twitch/Streaming color
+            colorClass = "text-kyo-emerald";
         } else if (playing) {
             activityText = "PLAYING " + playing.name.toUpperCase();
             colorClass = "text-kyo-emerald";
