@@ -477,6 +477,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    
+    
+    
+    
+    
+    const monikaPopup2 = document.getElementById('monika-choice-popup');
+    const yesBtn = document.getElementById('monika-yes-btn');
+    const noBtn = document.getElementById('monika-no-btn');
+
+    if (window.location.href.includes('/DDLC')) {
+        if (monikaPopup2) {
+            monikaPopup2.classList.remove('hidden');
+        }
+    }
+
+    const makeChoice = () => {
+        monikaPopup2.classList.add('hidden');
+        
+        if (typeof toggleDDLCMode === 'function') {
+            toggleDDLCMode();
+        }
+    };
+
+    if (yesBtn && noBtn) {
+        yesBtn.addEventListener('click', makeChoice);
+        noBtn.addEventListener('click', makeChoice);
+    }
   //===//
   
   
