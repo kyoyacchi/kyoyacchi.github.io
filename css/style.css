@@ -1,9 +1,9 @@
 @font-face {
-        font-family: 'Riffic';
-        src: url('./RifficFree-Bold.ttf') format('truetype');
-        font-weight: bold;
-        font-style: normal;
-    }
+    font-family: 'Riffic';
+    src: url('https://files.catbox.moe/uggwbb.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
 
 body {
     background-color: #050505;
