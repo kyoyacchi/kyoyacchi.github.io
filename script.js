@@ -350,21 +350,14 @@ function toggleMenu() {
 
         // Normal menu behavior
         isMenuOpen = !isMenuOpen;
-        if (isMenuOpen) {
-            navOverlay.classList.add('open');
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-xmark');
-            icon.style.transform = 'rotate(90deg)';
-            document.body.style.overflow = 'hidden';
-            logo.classList.add('opacity-0', 'pointer-events-none');
-        } else {
-            navOverlay.classList.remove('open');
-            icon.classList.remove('fa-xmark');
-            icon.classList.add('fa-bars');
-            icon.style.transform = 'rotate(0deg)';
-            document.body.style.overflow = 'auto';
-            logo.classList.remove('opacity-0', 'pointer-events-none');
-        }
+navOverlay.classList.toggle('open', isMenuOpen);
+icon.classList.toggle('fa-bars', !isMenuOpen);
+icon.classList.toggle('fa-xmark', isMenuOpen);
+logo.classList.toggle('opacity-0', isMenuOpen);
+logo.classList.toggle('pointer-events-none', isMenuOpen);
+
+icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
     }
 
     menuBtn.addEventListener('click', toggleMenu);
