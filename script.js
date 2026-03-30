@@ -153,20 +153,27 @@ function connectLanyard() {
         renderPresence(cached);
     }
 
-    if (!hasPrefetched) {
+        if (!hasPrefetched) {
         hasPrefetched = true;
         const controller = new AbortController();
-        setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT || 5000);
+        const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT || 5000);
+
         fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: controller.signal })
             .then(r => r.json())
             .then(json => {
+                clearTimeout(timeoutId); 
                 if (json.success && json.data) {
                     setCache(json.data);
                     renderPresence(json.data);
                 }
             })
-            .catch(err => console.warn('Lanyard REST pre-fetch failed', err));
+            .catch(err => {
+                clearTimeout(timeoutId); 
+                const isTimeout = err.name === 'AbortError';
+                console.warn(`Lanyard REST pre-fetch failed: ${isTimeout ? 'Timeout' : err.message}`);
+            });
     }
+
 
     const sessionID = Date.now();
     state.currentSessionID = sessionID;
