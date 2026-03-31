@@ -326,24 +326,24 @@ document.addEventListener("visibilitychange", () => {
 // ========================================
 // TYPEWRITER EFFECT
 // ========================================
-function initTypewriter() {
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function initTypewriter() {
     const typeTarget = document.getElementById('typed-quote');
     if (!typeTarget || state.hasTyped) return;
     state.hasTyped = true;
-    
-    const textToType = "Every day, I imagine a future where I can be with you.";
-    let typeIndex = 0;
 
-    function typeWriter() {
-        if (typeIndex < textToType.length) {
-            typeTarget.textContent += textToType[typeIndex++];
-            setTimeout(typeWriter, 50);
-        } else {
-            setTimeout(() => typeTarget.classList.remove('cursor'), 2000);
-        }
+    const textToType = "Every day, I imagine a future where I can be with you.";
+
+    await wait(800);
+
+    for (const char of textToType) {
+        typeTarget.textContent += char;
+        await wait(50);
     }
 
-    setTimeout(typeWriter, 800);
+    await wait(2000);
+    typeTarget.classList.remove('cursor');
 }
 
 // ========================================
