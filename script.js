@@ -138,6 +138,8 @@ function renderPresence(data) {
             
             // FIREFOX?
             els.videoBg.load();
+            els.videoBg.muted = true; 
+            els.videoBg.playsInline = true; 
             const playPromise = els.videoBg.play();
             
             // Autoplay
