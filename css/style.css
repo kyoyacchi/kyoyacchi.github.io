@@ -226,6 +226,10 @@ body.is-glitching::after {
     mix-blend-mode: exclusion;
 }
 
+/* ========================================  
+   for firefox
+   ======================================== */  
+
 @keyframes ddlc-glitch {  
     0% { 
         transform: translate(0) scale(1); 
@@ -241,6 +245,7 @@ body.is-glitching::after {
     }  
     60% { 
         transform: translate(-10px, 5px) skewX(15deg) scale(1.05); 
+
         filter: invert(0) hue-rotate(0deg) contrast(1) drop-shadow(15px 0 0 red) drop-shadow(-15px 0 0 cyan); 
     }  
     80% { 
@@ -251,6 +256,23 @@ body.is-glitching::after {
         transform: translate(0) scale(1); 
         filter: invert(0) hue-rotate(0deg) contrast(1) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); 
     }  
+}
+
+@-moz-document url-prefix() {
+    /* no shake on firefox */
+    @keyframes ddlc-glitch {  
+        0% { filter: invert(0) hue-rotate(0deg) contrast(1) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }  
+        20% { filter: invert(1) hue-rotate(90deg) contrast(1) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }  
+        40% { filter: invert(0) hue-rotate(0deg) contrast(3) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }  
+        60% { filter: invert(0) hue-rotate(0deg) contrast(1) drop-shadow(15px 0 0 red) drop-shadow(-15px 0 0 cyan); }  
+        80% { filter: invert(1) hue-rotate(0deg) contrast(2) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }  
+        100% { filter: invert(0) hue-rotate(0deg) contrast(1) drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }  
+    }
+    
+    /*  */
+    body.is-glitching {
+        animation-duration: 0.25s !important;
+    }
 }
 
 /* ========================================
