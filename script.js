@@ -149,7 +149,6 @@ function renderPresence(data) {
         }
         els.videoBg?.classList.remove('hidden');
         els.imgBg?.classList.add('hidden');
-    }
     } else if (user.banner) {
         const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
         if (els.imgBg) els.imgBg.src = bannerUrl;
