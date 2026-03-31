@@ -127,15 +127,29 @@ function renderPresence(data) {
         els.activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : colorClass}`;
     }
 
-    // Background (Video/Banner/Fallback)
+// Background (Video/Banner/Fallback)
     const videoUrl = user.collectibles?.nameplate?.asset 
         ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm` 
         : null;
 
     if (videoUrl) {
-        if (els.videoBg && els.videoBg.src !== videoUrl) els.videoBg.src = videoUrl;
+        if (els.videoBg && els.videoBg.src !== videoUrl) {
+            els.videoBg.src = videoUrl;
+            
+            // FIREFOX?
+            els.videoBg.load();
+            const playPromise = els.videoBg.play();
+            
+            // Autoplay
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                   console.warn(error?.message || error) 
+                });
+            }
+        }
         els.videoBg?.classList.remove('hidden');
         els.imgBg?.classList.add('hidden');
+    }
     } else if (user.banner) {
         const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
         if (els.imgBg) els.imgBg.src = bannerUrl;
