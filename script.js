@@ -362,27 +362,26 @@ function initMenu() {
     let isMenuOpen = false;
 
 function toggleMenu() {
-        // If DDLC mode is active, override menu button to open Monika popup
-        if (document.body.classList.contains('ddlc-mode')) {
-            const monikaPopup = document.getElementById('monika-popup');
-            if (monikaPopup) {
-                monikaPopup.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-            return;
+    if (document.body.classList.contains('ddlc-mode')) {
+        const monikaPopup = document.getElementById('monika-popup');
+        if (monikaPopup) {
+            monikaPopup.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            enableZoomLock();
         }
-
-        // Normal menu behavior
-        isMenuOpen = !isMenuOpen;
-navOverlay.classList.toggle('open', isMenuOpen);
-icon.classList.toggle('fa-bars', !isMenuOpen);
-icon.classList.toggle('fa-xmark', isMenuOpen);
-logo.classList.toggle('opacity-0', isMenuOpen);
-logo.classList.toggle('pointer-events-none', isMenuOpen);
-
-icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+        return;
     }
+
+    isMenuOpen = !isMenuOpen;
+    navOverlay.classList.toggle('open', isMenuOpen);
+    icon.classList.toggle('fa-bars', !isMenuOpen);
+    icon.classList.toggle('fa-xmark', isMenuOpen);
+    logo.classList.toggle('opacity-0', isMenuOpen);
+    logo.classList.toggle('pointer-events-none', isMenuOpen);
+
+    icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+    document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+}
 
     menuBtn.addEventListener('click', toggleMenu);
 }
