@@ -393,10 +393,12 @@ function toggleMenu() {
 let isZoomLocked = false;
 
 function preventZoom(e) {
-    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+    const isZoomKey = (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0');
+    if ((e.ctrlKey || e.metaKey) && isZoomKey) {
         e.preventDefault();
     }
 }
+
 
 function preventWheelZoom(e) {
     if (e.ctrlKey) e.preventDefault();
