@@ -390,6 +390,8 @@ function toggleMenu() {
 // MONIKA POPUP
 // ========================================
 
+let isZoomLocked = false;
+
 function preventZoom(e) {
     if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
         e.preventDefault();
@@ -405,18 +407,23 @@ function preventTouchZoom(e) {
 }
 
 function enableZoomLock() {
-    document.addEventListener('keydown', preventZoom);
-    document.addEventListener('wheel', preventWheelZoom, { passive: false });
-    document.addEventListener('touchmove', preventTouchZoom, { passive: false });
-    document.addEventListener('touchstart', preventTouchZoom, { passive: false });
+    if (isZoomLocked) return;
+    isZoomLocked = true;
+    document.addEventListener('keydown', preventZoom, { capture: true });
+    document.addEventListener('wheel', preventWheelZoom, { capture: true, passive: false });
+    document.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
+    document.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
 }
 
 function disableZoomLock() {
-    document.removeEventListener('keydown', preventZoom);
-    document.removeEventListener('wheel', preventWheelZoom);
-    document.removeEventListener('touchmove', preventTouchZoom);
-    document.removeEventListener('touchstart', preventTouchZoom);
+    if (!isZoomLocked) return;
+    isZoomLocked = false;
+    document.removeEventListener('keydown', preventZoom, { capture: true });
+    document.removeEventListener('wheel', preventWheelZoom, { capture: true });
+    document.removeEventListener('touchmove', preventTouchZoom, { capture: true });
+    document.removeEventListener('touchstart', preventTouchZoom, { capture: true });
 }
+
 
 function initMonikaPopup() {
     const monikaHero = document.getElementById('monika-hero');
