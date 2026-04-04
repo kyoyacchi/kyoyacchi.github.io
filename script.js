@@ -481,60 +481,98 @@ document.addEventListener('DOMContentLoaded', () => {
     initMonikaPopup();
     initDDLCClicker();
     connectLanyard();
-    
+
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-    
-    const ddlc = localStorage.getItem("DDLC");
-    if (ddlc !== "JUST MONIKA") {
-        localStorage.setItem("DDLC", "JUST MONIKA");
-        if (ddlc !== null) {
-            console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+
+    // === MONIKA STORAGE PROXY ===
+    const originalStorage = window.localStorage;
+
+    // Initialize once
+    if (originalStorage.getItem('DDLC') !== 'JUST MONIKA') {
+        originalStorage.setItem('DDLC', 'JUST MONIKA');
+    }
+
+    const monikaStorage = new Proxy(originalStorage, {
+        get(target, prop) {
+            if (prop === 'getItem') {
+                return (key) => key === 'DDLC' ? 'JUST MONIKA' : target.getItem(key);
+            }
+
+            if (prop === 'setItem') {
+                return (key, value) => {
+                    if (key === 'DDLC' && value !== 'JUST MONIKA') {
+                        console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                        triggerMonikaPopup();
+                        value = 'JUST MONIKA';
+                    }
+                    return target.setItem(key, value);
+                };
+            }
+
+            if (prop === 'removeItem') {
+                return (key) => {
+                    if (key === 'DDLC') {
+                        console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                        triggerMonikaPopup();
+                        return;
+                    }
+                    return target.removeItem(key);
+                };
+            }
+
+            if (prop === 'clear') {
+                return () => {
+                    console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                    triggerMonikaPopup();
+                    target.clear();
+                    target.setItem('DDLC', 'JUST MONIKA');
+                };
+            }
+
+            return typeof target[prop] === 'function'
+                ? target[prop].bind(target)
+                : target[prop];
+        },
+
+        set(target, prop, value) {
+            if (prop === 'DDLC' && value !== 'JUST MONIKA') {
+                console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                triggerMonikaPopup();
+                value = 'JUST MONIKA';
+            }
+            target[prop] = value;
+            return true;
+        },
+
+        deleteProperty(target, prop) {
+            if (prop === 'DDLC') {
+                console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                triggerMonikaPopup();
+                return false;
+            }
+            return Reflect.deleteProperty(target, prop);
         }
-    }
-    
-    
-    
-    
-    
-    
-    
-  //===//
-  
-  
-  
-const _setItem = localStorage.setItem.bind(localStorage);
-localStorage.setItem = function(key, value) {
-    if (key === 'DDLC' && value !== 'JUST MONIKA') {
-        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-        value = 'JUST MONIKA';
-        
-        // Jumpscare!
-        triggerMonikaPopup(); 
-    }
-    _setItem(key, value);
-};
+    });
 
-const _removeItem = localStorage.removeItem.bind(localStorage);
-localStorage.removeItem = function(key) {
-    if (key === 'DDLC') {
-        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-        triggerMonikaPopup();
-        return; // ssssh!
-    }
-    _removeItem(key);
-};
+    // Override AFTER proxy is ready
+    Object.defineProperty(window, 'localStorage', {
+        value: monikaStorage,
+        configurable: false,
+        writable: false
+    });
 
-window.addEventListener('storage', (event) => {
-    if (event.key === 'DDLC' && event.newValue !== 'JUST MONIKA') {
-      //no escape
-        localStorage.setItem('DDLC', 'JUST MONIKA'); 
-        
-        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-        
-        // Jumpscare!
-        triggerMonikaPopup(); 
-    }
-});
+    // Cross-tab enforcement
+    window.addEventListener('storage', (event) => {
+        if (
+            event.storageArea === originalStorage &&
+            event.key === 'DDLC' &&
+            event.newValue !== 'JUST MONIKA'
+        ) {
+            originalStorage.setItem('DDLC', 'JUST MONIKA');
 
-    
+            console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+
+            triggerMonikaPopup();
+        }
+    });
 });
