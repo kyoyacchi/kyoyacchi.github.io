@@ -390,6 +390,35 @@ document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
 // ========================================
 // MONIKA POPUP
 // ========================================
+
+function preventZoom(e) {
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+        e.preventDefault();
+    }
+}
+
+function preventWheelZoom(e) {
+    if (e.ctrlKey) e.preventDefault();
+}
+
+function preventTouchZoom(e) {
+    if (e.touches.length > 1) e.preventDefault();
+}
+
+function enableZoomLock() {
+    document.addEventListener('keydown', preventZoom);
+    document.addEventListener('wheel', preventWheelZoom, { passive: false });
+    document.addEventListener('touchmove', preventTouchZoom, { passive: false });
+    document.addEventListener('touchstart', preventTouchZoom, { passive: false });
+}
+
+function disableZoomLock() {
+    document.removeEventListener('keydown', preventZoom);
+    document.removeEventListener('wheel', preventWheelZoom);
+    document.removeEventListener('touchmove', preventTouchZoom);
+    document.removeEventListener('touchstart', preventTouchZoom);
+}
+
 function initMonikaPopup() {
     const monikaHero = document.getElementById('monika-hero');
     const monikaPopup = document.getElementById('monika-popup');
@@ -400,11 +429,13 @@ function initMonikaPopup() {
     monikaHero.addEventListener('click', () => {
         monikaPopup.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
+        enableZoomLock();
     });
 
     monikaOkBtn.addEventListener('click', () => {
         monikaPopup.classList.add('hidden');
         document.body.style.overflow = 'auto';
+        disableZoomLock();
     });
 }
 
@@ -414,6 +445,7 @@ function triggerMonikaPopup() {
     if (!monikaPopup) return;
     monikaPopup.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    enableZoomLock();
 }
 // ========================================
 // DDLC MODE TRIGGERS & GLITCH LOGIC
