@@ -31,6 +31,7 @@ function getElements() {
     DOM.nameEl = document.getElementById('d-global-name');
     DOM.userEl = document.getElementById('d-username');
     DOM.activityEl = document.getElementById('d-activity');
+    DOM.activityContainer = document.getElementById('d-activity-container');
     DOM.statusInd = document.getElementById('d-status-indicator');
     DOM.videoBg = document.getElementById('d-bg-video');
     DOM.imgBg = document.getElementById('d-bg-image');
@@ -102,30 +103,45 @@ function renderPresence(data) {
     let activityText = "OFFLINE";
     let colorClass = "text-white";
 
+// Activity Parsing
     if (status !== 'offline') {
         const activities = data.activities || [];
         const playing = activities.find(a => a.type === 0);
         const streaming = activities.find(a => a.type === 1);
         const listening = activities.find(a => a.type === 2);
 
+        let activityText = "OFFLINE";
+        let isSpecial = false;
+
         if (streaming) {
             activityText = "STREAMING " + streaming.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
+            isSpecial = true;
         } else if (playing) {
             activityText = "PLAYING " + playing.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
+            isSpecial = true;
         } else if (listening) {
             activityText = "LISTENING TO " + listening.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
+            isSpecial = true;
         } else {
             activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
         }
+
+        if (els.activityEl) {
+            els.activityEl.textContent = activityText;
+            const baseClasses = "inline-block text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg bg-black/50 border backdrop-blur-md max-w-full whitespace-normal break-words leading-relaxed";
+            
+            if (isSpecial) {
+                els.activityEl.className = `${baseClasses} text-kyo-emerald border-kyo-emerald/30`;
+            } else {
+                els.activityEl.className = `${baseClasses} text-white border-white/10`;
+            }
+        }
+        
+        if (els.activityContainer) els.activityContainer.classList.remove('hidden');
+    } else {
+        if (els.activityContainer) els.activityContainer.classList.add('hidden');
     }
 
-    if (els.activityEl) {
-        els.activityEl.textContent = activityText;
-        els.activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : colorClass}`;
-    }
 
 // Background (Video/Banner/Fallback)
     const videoUrl = user.collectibles?.nameplate?.asset 
