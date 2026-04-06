@@ -313,20 +313,19 @@ body.ddlc-mode #d-activity {
 }
 
 /* Skill Tags UI changes */
-body.ddlc-mode .bg-white\/5 {
-    background-color: #ffffff !important;
-    border: 4px solid #ffbde1 !important;
-    color: #000000 !important;
-    font-weight: bold;
-    box-shadow: 0 0 0 3px white !important;
-    border-radius: 0 !important;
-}
-body.ddlc-mode .bg-white\/5:hover {
-    background-color: #ffbde1 !important;
-    color: #ffffff !important;
-    border-color: #ff69b4 !important;
-    transform: scale(1.05);
-}
+body.ddlc-mode .skill-tag {
+            background-color: #ffffff !important;
+            border: 3px solid #ffbde1 !important;
+            color: #000000 !important;
+            font-weight: 700;
+            border-radius: 0 !important;
+        }
+        body.ddlc-mode .skill-tag:hover {
+            background-color: #ffbde1 !important;
+            color: #ffffff !important;
+            border-color: #ff69b4 !important;
+            transform: scale(1.05);
+        }
 
 /* Show DDLC Texts */
 body.ddlc-mode #just-monika-text { display: flex !important; }
