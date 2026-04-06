@@ -144,25 +144,15 @@ function renderPresence(data) {
         ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm` 
         : null;
 
-    if (videoUrl) {
-        if (els.videoBg && els.videoBg.src !== videoUrl) {
-            els.videoBg.src = videoUrl;
-            
-            // FIREFOX?
-            els.videoBg.load();
-            els.videoBg.muted = true; 
-            els.videoBg.playsInline = true; 
-            const playPromise = els.videoBg.play();
-            
-            // Autoplay
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                   console.warn(error?.message || error) 
-                });
-            }
-        }
-        els.videoBg?.classList.remove('hidden');
-        els.imgBg?.classList.add('hidden');
+if (videoUrl) {
+    if (els.videoBg && els.videoBg.src !== videoUrl) {
+        els.videoBg.src = videoUrl;
+        els.videoBg.muted = true;
+        els.videoBg.playsInline = true;
+        els.videoBg.play()?.catch(e => console.warn(e?.message || e));
+    }
+    els.videoBg?.classList.remove('hidden');
+    els.imgBg?.classList.add('hidden');
     } else if (user.banner) {
         const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
         if (els.imgBg) els.imgBg.src = bannerUrl;
