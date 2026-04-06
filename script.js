@@ -512,20 +512,18 @@ function initDDLCClicker() {
 }
 
 //// JUST MONIKA //////
+
 function initJustM() {
   const STORAGE_KEY = 'monika-music-playing';
   const heroElement = document.getElementById('monika-hero');
 
-
   const setupMusicPlayer = () => {
-    // 1. FontAwesome check
     if (!document.querySelector('link[href*="font-awesome"]')) {
       const fa = document.createElement('link');
       fa.rel = 'stylesheet';
       fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
       document.head.appendChild(fa);
     }
-
 
     const musicBtn = document.createElement('button');
     musicBtn.id = 'monika-music-btn';
@@ -536,10 +534,9 @@ function initJustM() {
       borderRadius: '50%', backgroundColor: '#1f2937', color: '#ffffff', border: 'none',
       cursor: 'pointer', fontSize: '22px', zIndex: '9999', transition: 'all 0.4s ease-in-out',
       boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)', display: 'none', alignItems: 'center',
-      justifyContent: 'center', opacity: '0.5'
+      justifyContent: 'center', opacity: '0.5', touchAction: 'none'
     });
     document.body.appendChild(musicBtn);
-
 
     const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
     audio.loop = true;
@@ -551,7 +548,6 @@ function initJustM() {
         title: 'Just Monika.', artist: 'Doki Doki Literature Club! OST', album: 'DDLC'
       });
     }
-
 
     let fadeInterval;
     const fadeAudio = (target, duration = 400, cb) => {
@@ -573,7 +569,6 @@ function initJustM() {
       }, interval);
     };
 
-
     const updateUI = (playing) => {
       musicBtn.style.color = playing ? '#50C878' : '#ffffff';
       musicBtn.style.boxShadow = playing ? '0 0 8px #50C878' : '0 0 10px rgba(255,255,255,0.1)';
@@ -586,20 +581,66 @@ function initJustM() {
       }
     };
 
-
     audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
     audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
 
     musicBtn.addEventListener('mouseenter', () => musicBtn.style.opacity = '1');
     musicBtn.addEventListener('mouseleave', () => musicBtn.style.opacity = audio.paused ? '0.5' : '1');
 
-    musicBtn.addEventListener('click', async () => {
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    musicBtn.addEventListener('touchstart', (e) => {
+      isDragging = false;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      
+      const rect = musicBtn.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      musicBtn.style.bottom = 'auto';
+      musicBtn.style.right = 'auto';
+      musicBtn.style.left = initialLeft + 'px';
+      musicBtn.style.top = initialTop + 'px';
+      musicBtn.style.transition = 'none';
+    }, { passive: true });
+
+    musicBtn.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+
+      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+        isDragging = true;
+        if (e.cancelable) e.preventDefault();
+        
+        let newLeft = initialLeft + deltaX;
+        let newTop = initialTop + deltaY;
+
+        newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - musicBtn.offsetWidth));
+        newTop = Math.max(0, Math.min(newTop, window.innerHeight - musicBtn.offsetHeight));
+
+        musicBtn.style.left = newLeft + 'px';
+        musicBtn.style.top = newTop + 'px';
+      }
+    }, { passive: false });
+
+    musicBtn.addEventListener('touchend', () => {
+      musicBtn.style.transition = 'all 0.4s ease-in-out';
+      if (isDragging) {
+        setTimeout(() => { isDragging = false; }, 50);
+      }
+    });
+
+    musicBtn.addEventListener('click', async (e) => {
+      if (isDragging) return;
       try {
         if (!audio.paused) fadeAudio(0, 400, () => audio.pause());
         else { await audio.play(); fadeAudio(0.4); }
       } catch (err) { console.error("Playback blocked:", err); }
     });
-
 
     musicBtn._audio = audio;
 
@@ -613,20 +654,13 @@ function initJustM() {
     return musicBtn;
   };
 
-  // ==========================================
-  // LOGIC
-  // ==========================================
-
-
   if (localStorage.getItem(STORAGE_KEY) === '1') {
     setupMusicPlayer();
   }
 
-
   if (heroElement) {
     heroElement.addEventListener('click', () => {
       let btn = document.getElementById('monika-music-btn');
-
 
       if (!btn) {
         btn = setupMusicPlayer();
@@ -634,13 +668,13 @@ function initJustM() {
 
       btn.style.display = 'flex';
 
-
       if (btn._audio && btn._audio.paused) {
         btn.click();
       }
     });
   }
 }
+
 
 ///
 
