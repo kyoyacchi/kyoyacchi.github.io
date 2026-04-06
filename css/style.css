@@ -3,7 +3,7 @@
     src: url('../RifficFree-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
-    font-display: swap;
+    font-display: block;
 }
 
 body {
