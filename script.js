@@ -679,28 +679,11 @@ function initJustM() {
 ///
 
 
+///LOCALSTORAGE //
 
-
-// ========================================
-// INITIALIZATION
-// ========================================
-document.addEventListener('DOMContentLoaded', () => {
-    const year = document.getElementById('year');
-    if (year) year.textContent = new Date().getFullYear();
-
-    initTypewriter();
-    initMenu();
-    initMonikaPopup();
-    initDDLCClicker();
-    initJustM();
-    connectLanyard();
-
-    console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-
-    // === MONIKA STORAGE PROXY ===
+function initMonikaStorage() {
     const originalStorage = window.localStorage;
 
-    // Initialize once
     if (originalStorage.getItem('DDLC') !== 'JUST MONIKA') {
         originalStorage.setItem('DDLC', 'JUST MONIKA');
     }
@@ -767,14 +750,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Override AFTER proxy is ready
     Object.defineProperty(window, 'localStorage', {
         value: monikaStorage,
         configurable: false,
         writable: false
     });
 
-    // Cross-tab enforcement
     window.addEventListener('storage', (event) => {
         if (
             event.storageArea === originalStorage &&
@@ -782,10 +763,30 @@ document.addEventListener('DOMContentLoaded', () => {
             event.newValue !== 'JUST MONIKA'
         ) {
             originalStorage.setItem('DDLC', 'JUST MONIKA');
-
             console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-
             triggerMonikaPopup();
         }
     });
+}
+
+
+
+// ========================================
+// INITIALIZATION
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const year = document.getElementById('year');
+    if (year) year.textContent = new Date().getFullYear();
+
+    initTypewriter();
+    initMenu();
+    initMonikaPopup();
+    initDDLCClicker();
+    initJustM();
+    initMonikaStorage();
+    connectLanyard();
+
+    console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+
+ 
 });
