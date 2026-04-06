@@ -103,24 +103,36 @@ function renderPresence(data) {
     let colorClass = "text-white";
 
     if (status !== 'offline') {
-        const activities = data.activities || [];
-        const playing = activities.find(a => a.type === 0);
-        const streaming = activities.find(a => a.type === 1);
-        const listening = activities.find(a => a.type === 2);
+    const activities = data.activities || [];
+    const custom = activities.find(a => a.type === 4);
+    const playing = activities.find(a => a.type === 0);
+    const streaming = activities.find(a => a.type === 1);
+    const listening = activities.find(a => a.type === 2);
+    const watching = activities.find(a => a.type === 3);
+    const competing = activities.find(a => a.type === 5);
 
-        if (streaming) {
-            activityText = "STREAMING " + streaming.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
-        } else if (playing) {
-            activityText = "PLAYING " + playing.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
-        } else if (listening) {
-            activityText = "LISTENING TO " + listening.name.toUpperCase();
-            colorClass = "text-kyo-emerald";
-        } else {
-            activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
-        }
+    if (streaming) {
+        activityText = "STREAMING " + streaming.name.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else if (playing) {
+        activityText = "PLAYING " + playing.name.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else if (watching) {
+        activityText = "WATCHING " + watching.name.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else if (listening) {
+        activityText = "LISTENING TO " + listening.name.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else if (competing) {
+        activityText = "COMPETING IN " + competing.name.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else if (custom && custom.state) {
+        activityText = custom.state.toUpperCase();
+        colorClass = "text-kyo-emerald";
+    } else {
+        activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
     }
+}
 
     if (els.activityEl) {
         els.activityEl.textContent = activityText;
