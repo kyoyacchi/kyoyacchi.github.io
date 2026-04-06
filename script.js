@@ -511,6 +511,142 @@ function initDDLCClicker() {
     }
 }
 
+//// JUST MONIKA //////
+function initJustM() {
+  const STORAGE_KEY = 'monika-music-playing';
+  const heroElement = document.getElementById('monika-hero');
+
+
+  const setupMusicPlayer = () => {
+    // 1. FontAwesome check
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+      const fa = document.createElement('link');
+      fa.rel = 'stylesheet';
+      fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+      document.head.appendChild(fa);
+    }
+
+
+    const musicBtn = document.createElement('button');
+    musicBtn.id = 'monika-music-btn';
+    musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
+    
+    Object.assign(musicBtn.style, {
+      position: 'fixed', bottom: '30px', right: '30px', width: '55px', height: '55px',
+      borderRadius: '50%', backgroundColor: '#1f2937', color: '#ffffff', border: 'none',
+      cursor: 'pointer', fontSize: '22px', zIndex: '9999', transition: 'all 0.4s ease-in-out',
+      boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)', display: 'none', alignItems: 'center',
+      justifyContent: 'center', opacity: '0.5'
+    });
+    document.body.appendChild(musicBtn);
+
+
+    const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
+    audio.loop = true;
+    audio.volume = 0;
+    audio.preload = 'auto';
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Just Monika.', artist: 'Doki Doki Literature Club! OST', album: 'DDLC'
+      });
+    }
+
+
+    let fadeInterval;
+    const fadeAudio = (target, duration = 400, cb) => {
+      clearInterval(fadeInterval);
+      const step = 0.05;
+      const steps = Math.abs(target - audio.volume) / step;
+      if (steps === 0) return cb?.();
+
+      const interval = duration / steps;
+      fadeInterval = setInterval(() => {
+        if (audio.volume < target) audio.volume = Math.min(audio.volume + step, target);
+        else audio.volume = Math.max(audio.volume - step, target);
+
+        if (Math.abs(audio.volume - target) < 0.01) {
+          audio.volume = target;
+          clearInterval(fadeInterval);
+          cb?.();
+        }
+      }, interval);
+    };
+
+
+    const updateUI = (playing) => {
+      musicBtn.style.color = playing ? '#50C878' : '#ffffff';
+      musicBtn.style.boxShadow = playing ? '0 0 8px #50C878' : '0 0 10px rgba(255,255,255,0.1)';
+      musicBtn.style.opacity = playing ? '1' : '0.5';
+      document.title = playing ? 'Just Monika.' : '...';
+
+      if (heroElement) {
+        heroElement.style.boxShadow = playing ? '0 0 20px #50C878' : '0 0 20px rgba(0,0,0,0.5)';
+        heroElement.style.borderColor = playing ? '#50C878' : 'rgba(255,255,255,0.1)';
+      }
+    };
+
+
+    audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
+    audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
+
+    musicBtn.addEventListener('mouseenter', () => musicBtn.style.opacity = '1');
+    musicBtn.addEventListener('mouseleave', () => musicBtn.style.opacity = audio.paused ? '0.5' : '1');
+
+    musicBtn.addEventListener('click', async () => {
+      try {
+        if (!audio.paused) fadeAudio(0, 400, () => audio.pause());
+        else { await audio.play(); fadeAudio(0.4); }
+      } catch (err) { console.error("Playback blocked:", err); }
+    });
+
+
+    musicBtn._audio = audio;
+
+    if (localStorage.getItem(STORAGE_KEY) === '1') {
+      musicBtn.style.display = 'flex';
+      document.addEventListener('click', () => {
+        if (audio.paused) audio.play().then(() => fadeAudio(0.4)).catch(()=>{});
+      }, { once: true });
+    }
+
+    return musicBtn;
+  };
+
+  // ==========================================
+  // LOGIC
+  // ==========================================
+
+
+  if (localStorage.getItem(STORAGE_KEY) === '1') {
+    setupMusicPlayer();
+  }
+
+
+  if (heroElement) {
+    heroElement.addEventListener('click', () => {
+      let btn = document.getElementById('monika-music-btn');
+
+
+      if (!btn) {
+        btn = setupMusicPlayer();
+      }
+
+      btn.style.display = 'flex';
+
+
+      if (btn._audio && btn._audio.paused) {
+        btn.click();
+      }
+    });
+  }
+}
+
+///
+
+
+
+
 // ========================================
 // INITIALIZATION
 // ========================================
@@ -522,6 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMenu();
     initMonikaPopup();
     initDDLCClicker();
+    initJustM();
     connectLanyard();
 
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
