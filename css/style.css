@@ -59,6 +59,15 @@ footer {
     user-select: text;
 }
 
+#d-global-name:empty::after {
+  content: "";
+  display: inline-block;
+  width: 100px;
+  height: 1em;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
 /* Subtle Grain/Noise Effect */
 body::before {
     content: "";
