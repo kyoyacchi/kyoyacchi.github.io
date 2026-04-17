@@ -762,7 +762,7 @@ function initMonikaStorage() {
     });
 }
 
-function footerHeartAni() {
+function initFooterHeart() {
     const heart = document.getElementById("footer-heart");
     if (!heart) return;
 
@@ -777,6 +777,7 @@ function footerHeartAni() {
 
     heart.addEventListener("mouseenter", () => {
         if (interval) return;
+        beat();
         interval = setInterval(beat, 400);
     });
 
@@ -800,8 +801,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDDLCClicker();
     initJustM();
     initMonikaStorage();
+    initFooterHeart();
     connectLanyard();
-    footerHeartAni();
 
     logMonika();
 });
