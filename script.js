@@ -762,6 +762,31 @@ function initMonikaStorage() {
     });
 }
 
+function footerHeartAni() {
+    const heart = document.getElementById("footer-heart");
+    if (!heart) return;
+
+    let interval = null;
+
+    function beat() {
+        heart.style.transform = "scale(1.15)";
+        setTimeout(() => {
+            heart.style.transform = "scale(1)";
+        }, 180);
+    }
+
+    heart.addEventListener("mouseenter", () => {
+        if (interval) return;
+        interval = setInterval(beat, 400);
+    });
+
+    heart.addEventListener("mouseleave", () => {
+        clearInterval(interval);
+        interval = null;
+        heart.style.transform = "scale(1)";
+    });
+}
+
 // ========================================
 // INITIALIZATION
 // ========================================
@@ -776,6 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initJustM();
     initMonikaStorage();
     connectLanyard();
+    footerHeartAni();
 
     logMonika();
 });
