@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="Kyo's personal space - Web developer, anime enthusiast, and devoted DDLC fan. Just Monika.">
     <meta name="author" content="Kyoya">
@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#50C878">
     <meta name="color-scheme" content="dark">
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kyo's Website - Just Monika">
@@ -19,7 +19,7 @@
     <meta property="og:url" content="https://kyoya.is-a.dev/">
     <meta property="og:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
     <meta property="og:site_name" content="Kyo's Website">
-    
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Kyo's Website - Just Monika">
@@ -27,22 +27,21 @@
     <meta name="twitter:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
     <meta name="twitter:site" content="@kyoyacchi">
     <meta name="twitter:creator" content="@kyoyacchi">
-    
-    <title>Kyo's Website</title>
-<link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
 
-    
+    <title>Kyo's Website - Just Monika</title>
+    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
+
     <!-- Font preconnect for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="preload" href="RifficFree-Bold.ttf" as="font" type="font/truetype" crossorigin="anonymous">
-    
+    <link rel="preload" href="RifficFree-Bold.ttf" as="font" type="font/truetype" crossorigin="anonymous">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -54,9 +53,9 @@
                         'card-bg': '#0a0a0c',
                     },
                     fontFamily: {
-                        'header':['Fredoka', 'sans-serif'],
-                        'body':['Quicksand', 'sans-serif'],
-                        riffic: ['Riffic', 'sans-serif'],
+                        'header': ['Fredoka', 'sans-serif'],
+                        'body': ['Quicksand', 'sans-serif'],
+                        'riffic': ['Riffic', 'sans-serif'],
                     },
                     boxShadow: {
                         'neon': '0 0 20px rgba(80, 200, 120, 0.15)',
@@ -66,26 +65,25 @@
             }
         }
     </script>
-    
+
 </head>
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
-  <span style="font-family: 'Riffic'; position: absolute; opacity: 0;
-  pointer-events: none;">.</span>
+    <span style="font-family: 'Riffic'; position: absolute; opacity: 0; pointer-events: none;">.</span>
 
-<header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
-<span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2 cursor-pointer">
-   Just Monika.
-   <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg" 
-        style="width: 18px; height: 18px; filter: brightness(0) invert(1);" 
-        alt="🎀">
-</span>
+    <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
+        <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2 cursor-pointer">
+            Just Monika.
+            <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg"
+                 style="width: 18px; height: 18px; filter: brightness(0) invert(1);"
+                 alt="🎀">
+        </span>
 
-    <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-</header>
+        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
 
-
+    <!-- Intentionally empty: in DDLC mode the menu triggers the Monika popup instead -->
     <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
         <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
             JUST MONIKA
@@ -93,33 +91,30 @@
     </div>
 
     <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
-        
+
         <!-- Profile Card -->
         <div class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
             <div id="discord-profile" class="discord-card w-full max-w-[90vw]
-            md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
-            md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden
-            group cursor-default">
-                
+                md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
+                md:px-8 gap-6 mx-auto border border-kyo-emerald/20 relative overflow-hidden
+                group cursor-default">
+
                 <video id="d-bg-video" loop muted autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden"></video>
                 <img id="d-bg-image" src="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity hidden" alt="Banner">
                 <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-0"></div>
 
-<div class="relative z-10 shrink-0">
-    <div class="relative flex items-center justify-center">
-        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl relative z-10">
-        
-        <img id="d-avatar-decoration" src="" alt="Decoration" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[125%] h-[125%] max-w-none pointer-events-none z-20 select-none">
-        
-        <div id="d-status-indicator" class="status-indicator status-offline"></div>
-    </div>
-</div>
-
+                <div class="relative z-10 shrink-0">
+                    <div class="relative flex items-center justify-center">
+                        <img id="d-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" loading="lazy" decoding="async" class="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1e1f22] bg-black shadow-2xl relative z-10">
+                        <img id="d-avatar-decoration" src="" alt="Decoration" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[125%] h-[125%] max-w-none pointer-events-none z-20 select-none">
+                        <div id="d-status-indicator" class="status-indicator status-offline"></div>
+                    </div>
+                </div>
 
                 <div class="relative z-10 text-left flex flex-col justify-center h-full py-2 min-w-0 flex-1">
                     <span id="d-global-name" class="text-white font-bold font-header text-2xl md:text-3xl tracking-tight truncate">Loading...</span>
                     <span id="d-username" class="text-gray-400 text-sm md:text-base font-mono font-medium tracking-wide">@kyomoe</span>
-                    
+
                     <div class="mt-3 flex items-center">
                         <span id="d-activity" class="text-white text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed">
                             OFFLINE
@@ -139,39 +134,36 @@
                     <span class="text-kyo-emerald opacity-50">✦</span>
                     <span>VN FAN</span>
                 </div>
-<div class="flex flex-wrap justify-center items-center gap-3 md:gap-4 mt-3">
-    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
-        JavaScript
-    </span>
-
-    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
-        UI Design
-    </span>
-
-    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
-        Localization
-    </span>
-</div>
+                <div class="flex flex-wrap justify-center items-center gap-3 md:gap-4 mt-3">
+                    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
+                        JavaScript
+                    </span>
+                    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
+                        UI Design
+                    </span>
+                    <span class="skill-tag px-5 py-2.5 bg-white/5 rounded-full border border-white/10 text-gray-400 font-medium text-sm transition-all duration-200 ease-out hover:-translate-y-[2px] hover:border-kyo-emerald hover:text-kyo-emerald hover:bg-kyo-emerald/10 hover:shadow-[0_0_15px_rgba(80,200,120,0.2)] cursor-default">
+                        Localization
+                    </span>
+                </div>
             </div>
         </div>
 
-<!-- Hero Image -->
-<div id="monika-hero-container" class="w-full z-10 transition-all duration-500">
-    <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[200px] md:h-[400px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl z-10 group cursor-pointer bg-black">
-        
-        <img src="https://files.catbox.moe/f2pajl.jpg" 
-             loading="eager" 
-             decoding="async" 
-             style="transform: translateZ(0); backface-visibility: hidden;" 
-             class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out" 
-             alt="Monika" 
-             draggable="false">
-        
-        <div class="absolute inset-0 bg-gradient-to-t from-kyo-dark/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-700"></div>
-        
-    </div>
-</div>
+        <!-- Hero Image -->
+        <div id="monika-hero-container" class="w-full z-10 transition-all duration-500">
+            <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[200px] md:h-[400px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl z-10 group cursor-pointer bg-black">
 
+                <img src="https://files.catbox.moe/f2pajl.jpg"
+                     loading="eager"
+                     decoding="async"
+                     style="transform: translateZ(0); backface-visibility: hidden;"
+                     class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                     alt="Monika"
+                     draggable="false">
+
+                <div class="absolute inset-0 bg-gradient-to-t from-kyo-dark/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-700"></div>
+
+            </div>
+        </div>
 
         <!-- JUST MONIKA Replacement Text (Visible ONLY in DDLC Mode) -->
         <div id="just-monika-text" class="hidden flex-col items-center justify-center w-full my-12 transition-all duration-500 select-none">
@@ -179,8 +171,7 @@
         </div>
 
         <!-- Quote Container -->
-        <div id="quote-container" class="w-full px-6 mt-6 flex flex-col
-        items-center justify-center min-h-[60px] transition-all duration-500">
+        <div id="quote-container" class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[60px] transition-all duration-500">
             <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
                 "<span id="typed-quote" class="cursor"></span>"
             </p>
@@ -189,56 +180,46 @@
 
     </main>
 
-<footer class="pt-0 pb-12 bg-black z-10 relative transition-all duration-500 font-mono">
-    <div class="text-center flex flex-col items-center justify-center space-y-4">
-        
-        <div id="sns-links" class="flex justify-center gap-8 text-xl">
-            <a href="https://github.com/kyoyacchi" target="_blank" class="text-zinc-500 hover:text-white transition-all duration-300"><i class="fa-brands fa-github"></i></a>
-            <a href="https://x.com/kyoyacchi" target="_blank" class="text-zinc-500 hover:text-[#1DA1F2] transition-all duration-300"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://youtube.com/@Kyoya26" target="_blank" class="text-zinc-500 hover:text-[#FF0000] transition-all duration-300"><i class="fa-brands fa-youtube"></i></a>
+    <footer class="pt-0 pb-12 bg-black z-10 relative transition-all duration-500 font-mono">
+        <div class="text-center flex flex-col items-center justify-center space-y-4">
+
+            <div id="sns-links" class="flex justify-center gap-8 text-xl">
+                <a href="https://github.com/kyoyacchi" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="text-zinc-500 hover:text-white transition-all duration-300"><i class="fa-brands fa-github"></i></a>
+                <a href="https://x.com/kyoyacchi" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="text-zinc-500 hover:text-[#1DA1F2] transition-all duration-300"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@Kyoya26" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="text-zinc-500 hover:text-[#FF0000] transition-all duration-300"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+
+            <div class="text-gray-500 text-sm">
+                Made with <i id="footer-heart" class="fa-solid fa-heart text-kyo-emerald transition-all duration-500"></i> by
+                <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold cursor-pointer">@Kyo</span>
+                <span id="footer-monika" class="hidden text-[#ff69b4] font-bold tracking-wide">Monika</span>
+            </div>
+
+            <p class="text-[11px] text-zinc-500 italic opacity-80 hover:opacity-100 transition-opacity mt-2 leading-relaxed tracking-wide">
+                <span>
+                    © <span id="year"></span> • DDLC assets & music © Team Salvato
+                </span>
+                <span class="block mt-1 opacity-75">
+                    This fan work is non-commercial and not affiliated with Team Salvato.
+                </span>
+            </p>
+
         </div>
-
-        <div class="text-gray-500 text-sm">
-            Made with <i id="footer-heart" class="fa-solid fa-heart text-kyo-emerald transition-all duration-500"></i> by 
-            <span id="footer-kyo" class="hover:text-kyo-emerald transition-colors font-bold cursor-pointer">@Kyo</span>
-            <span id="footer-monika" class="hidden text-[#ff69b4] font-bold tracking-wide">Monika</span>
-        </div>
-
-<p class="text-[11px] text-zinc-500 italic opacity-80 hover:opacity-100 transition-opacity mt-2 leading-relaxed tracking-wide">
-    <span>
-        © <span id="year"></span> • DDLC assets & music © Team Salvato
-    </span>
-    <span class="block mt-1 opacity-75">
-        This fan work is non-commercial and not affiliated with Team Salvato.
-    </span>
-</p>
-
-    </div>
-</footer>
-
-
-
-
+    </footer>
 
     <!-- Monika Image Easter Egg Popup -->
-<div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
-    <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
-        
-        <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
-        
-<button id="monika-ok-btn" class="font-riffic font-bold text-white text-[44px] bg-transparent border-none outline-none cursor-pointer transition-transform duration-100" style="-webkit-text-stroke: 4px #BB5499; text-shadow: 4px 4px 0px #FFE7F4;">
-    OK
-</button>
+    <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
+        <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
 
+            <h3 class="text-4xl md:text-5xl font-header text-black mb-8 tracking-wide">Just Monika.</h3>
 
+            <button id="monika-ok-btn" class="font-riffic font-bold text-white text-[44px] bg-transparent border-none outline-none cursor-pointer transition-transform duration-100" style="-webkit-text-stroke: 4px #BB5499; text-shadow: 4px 4px 0px #FFE7F4;">
+                OK
+            </button>
 
-        
+        </div>
     </div>
-</div>
 
-
-
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
