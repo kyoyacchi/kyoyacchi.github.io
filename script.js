@@ -1,10 +1,32 @@
+// ========================================
+// CONFIG & STATE
+// ========================================
 const DISCORD_USER_ID = '468509605828493322';
+
 const CONFIG = {
     MAX_BACKOFF: 30000,
     CACHE_TTL: 60000 * 5,
     CONNECT_DEBOUNCE: 1500,
     INIT_TIMEOUT: 10000,
-    FETCH_TIMEOUT: 5000
+    FETCH_TIMEOUT: 5000,
+    VISIBILITY_HIDE_TIMEOUT: 30000,
+};
+
+const ACTIVITY_TYPE = {
+    PLAYING: 0,
+    STREAMING: 1,
+    LISTENING: 2,
+    WATCHING: 3,
+    CUSTOM: 4,
+    COMPETING: 5,
+};
+
+const ACTIVITY_LABEL = {
+    [ACTIVITY_TYPE.STREAMING]: (name) => `STREAMING ${name}`,
+    [ACTIVITY_TYPE.PLAYING]: (name) => `PLAYING ${name}`,
+    [ACTIVITY_TYPE.WATCHING]: (name) => `WATCHING ${name}`,
+    [ACTIVITY_TYPE.LISTENING]: (name) => `LISTENING TO ${name}`,
+    [ACTIVITY_TYPE.COMPETING]: (name) => `COMPETING IN ${name}`,
 };
 
 const state = {
@@ -16,9 +38,22 @@ const state = {
     backoff: 1000,
     currentSessionID: null,
     lastConnectAttempt: 0,
-    hasPrefetched: false // Moved inside state object for cleaner scoping
+    hasPrefetched: false,
+    visibilityTimeout: null,
+    hasTyped: false,
 };
 
+// ========================================
+// UTILITIES
+// ========================================
+const logMonika = () =>
+    console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// ========================================
+// LANYARD / DISCORD PRESENCE
+// ========================================
 const storageKey = `lanyard_cache_${DISCORD_USER_ID}`;
 
 // DOM Cache for performance (lazy-loaded on first render)
@@ -42,7 +77,6 @@ function getCache() {
         const stored = localStorage.getItem(storageKey);
         if (!stored) return null;
         const parsed = JSON.parse(stored);
-        
         if (Date.now() - parsed.timestamp > CONFIG.CACHE_TTL) {
             localStorage.removeItem(storageKey);
             return null;
@@ -56,10 +90,12 @@ function getCache() {
 function setCache(data) {
     try {
         localStorage.setItem(storageKey, JSON.stringify({
-            data: data,
-            timestamp: Date.now()
+            data,
+            timestamp: Date.now(),
         }));
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Lanyard cache write failed:', e);
+    }
 }
 
 function renderPresence(data) {
@@ -74,7 +110,7 @@ function renderPresence(data) {
     els.card.classList.remove('opacity-0');
 
     // Avatar
-    const avatarUrl = user.avatar 
+    const avatarUrl = user.avatar
         ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
         : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
 
@@ -99,60 +135,49 @@ function renderPresence(data) {
     if (els.userEl) els.userEl.textContent = '@' + user.username;
 
     // Activity Parsing
-    let activityText = "OFFLINE";
-    let colorClass = "text-white";
+    let activityText = 'OFFLINE';
+    let isActive = false;
 
     if (status !== 'offline') {
-    const activities = data.activities || [];
-    const custom = activities.find(a => a.type === 4);
-    const playing = activities.find(a => a.type === 0);
-    const streaming = activities.find(a => a.type === 1);
-    const listening = activities.find(a => a.type === 2);
-    const watching = activities.find(a => a.type === 3);
-    const competing = activities.find(a => a.type === 5);
+        const activities = data.activities || [];
+        const custom = activities.find((a) => a.type === ACTIVITY_TYPE.CUSTOM);
+        const match = activities.find((a) => ACTIVITY_LABEL[a.type]);
 
-    if (streaming) {
-        activityText = "STREAMING " + streaming.name.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else if (playing) {
-        activityText = "PLAYING " + playing.name.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else if (watching) {
-        activityText = "WATCHING " + watching.name.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else if (listening) {
-        activityText = "LISTENING TO " + listening.name.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else if (competing) {
-        activityText = "COMPETING IN " + competing.name.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else if (custom && custom.state) {
-        activityText = custom.state.toUpperCase();
-        colorClass = "text-kyo-emerald";
-    } else {
-        activityText = status === 'dnd' ? "DO NOT DISTURB" : status.toUpperCase();
+        if (match) {
+            activityText = ACTIVITY_LABEL[match.type](match.name.toUpperCase());
+            isActive = true;
+        } else if (custom?.state) {
+            activityText = custom.state.toUpperCase();
+            isActive = true;
+        } else {
+            activityText = status === 'dnd' ? 'DO NOT DISTURB' : status.toUpperCase();
+        }
     }
-}
 
     if (els.activityEl) {
         els.activityEl.textContent = activityText;
-        els.activityEl.className = `text-[10px] md:text-xs font-bold tracking-widest uppercase px-3 py-2 rounded-xl bg-white/10 border border-white/5 backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed ${colorClass === 'text-kyo-emerald' ? 'text-kyo-emerald border-kyo-emerald/20' : colorClass}`;
+        els.activityEl.className = [
+            'text-[10px] md:text-xs font-bold tracking-widest uppercase',
+            'px-3 py-2 rounded-xl bg-white/10 border border-white/5',
+            'backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed',
+            isActive ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white',
+        ].join(' ');
     }
 
-// Background (Video/Banner/Fallback)
-    const videoUrl = user.collectibles?.nameplate?.asset 
-        ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm` 
+    // Background (Video / Banner / Fallback)
+    const videoUrl = user.collectibles?.nameplate?.asset
+        ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`
         : null;
 
-if (videoUrl) {
-    if (els.videoBg && els.videoBg.src !== videoUrl) {
-        els.videoBg.src = videoUrl;
-        els.videoBg.muted = true;
-        els.videoBg.playsInline = true;
-        els.videoBg.play()?.catch(e => console.warn(e?.message || e));
-    }
-    els.videoBg?.classList.remove('hidden');
-    els.imgBg?.classList.add('hidden');
+    if (videoUrl) {
+        if (els.videoBg && els.videoBg.src !== videoUrl) {
+            els.videoBg.src = videoUrl;
+            els.videoBg.muted = true;
+            els.videoBg.playsInline = true;
+            els.videoBg.play()?.catch((e) => console.warn(e?.message || e));
+        }
+        els.videoBg?.classList.remove('hidden');
+        els.imgBg?.classList.add('hidden');
     } else if (user.banner) {
         const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
         if (els.imgBg) els.imgBg.src = bannerUrl;
@@ -186,16 +211,16 @@ function connectLanyard() {
         const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
 
         fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { signal: controller.signal })
-            .then(r => r.json())
-            .then(json => {
-                clearTimeout(timeoutId); 
+            .then((r) => r.json())
+            .then((json) => {
+                clearTimeout(timeoutId);
                 if (json.success && json.data) {
                     setCache(json.data);
                     renderPresence(json.data);
                 }
             })
-            .catch(err => {
-                clearTimeout(timeoutId); 
+            .catch((err) => {
+                clearTimeout(timeoutId);
                 console.warn(`Lanyard REST pre-fetch failed: ${err.name === 'AbortError' ? 'Timeout' : err.message}`);
             });
     }
@@ -238,7 +263,9 @@ function connectLanyard() {
 
                 try {
                     ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
-                } catch (e) {}
+                } catch (e) {
+                    console.warn('Lanyard subscribe send failed:', e);
+                }
             }
 
             if (t === 'INIT_STATE' || t === 'PRESENCE_UPDATE') {
@@ -248,13 +275,15 @@ function connectLanyard() {
                     renderPresence(presence);
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn('Lanyard message parse failed:', e);
+        }
     };
 
     ws.onerror = () => {
         if (state.currentSessionID !== sessionID) return;
-        clearTimeout(timeout); 
-        cleanupConnection();   
+        clearTimeout(timeout);
+        cleanupConnection();
         scheduleReconnect();
     };
 
@@ -290,7 +319,6 @@ function cleanupConnection() {
     }
 }
 
-
 // ========================================
 // TITLE CHANGE (DDLC AESTHETIC)
 // ========================================
@@ -299,43 +327,31 @@ const originalTitle = document.title;
 // ========================================
 // VISIBILITY CHANGE (DEBOUNCED)
 // ========================================
-document.addEventListener("visibilitychange", () => {
+document.addEventListener('visibilitychange', () => {
     clearTimeout(state.visibilityTimeout);
-    
+
     if (document.hidden) {
-        document.title = "JUST MONIKA";
-        
+        document.title = 'JUST MONIKA';
         state.visibilityTimeout = setTimeout(() => {
             cleanupConnection();
-        }, 30000);
-        
+        }, CONFIG.VISIBILITY_HIDE_TIMEOUT);
     } else {
         document.title = originalTitle;
-        
         const cached = getCache();
         if (cached) renderPresence(cached);
-        
         connectLanyard();
     }
 });
 
-
-
-/*document.querySelectorAll('.flex.justify-center.gap-6 a').forEach(link => {
-        link.addEventListener('contextmenu', (e) => e.preventDefault());
-    });*/
-    
 // ========================================
 // TYPEWRITER EFFECT
 // ========================================
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 async function initTypewriter() {
     const typeTarget = document.getElementById('typed-quote');
     if (!typeTarget || state.hasTyped) return;
     state.hasTyped = true;
 
-    const textToType = "Every day, I imagine a future where I can be with you.";
+    const textToType = 'Every day, I imagine a future where I can be with you.';
 
     await wait(800);
 
@@ -355,35 +371,29 @@ function initMenu() {
     const menuBtn = document.getElementById('menu-btn');
     const navOverlay = document.getElementById('nav-overlay');
     const logo = document.getElementById('site-logo');
-    
+
     if (!menuBtn || !navOverlay || !logo) return;
-    
+
     const icon = menuBtn.querySelector('i');
     if (!icon) return;
-    
+
     let isMenuOpen = false;
 
-function toggleMenu() {
-    if (document.body.classList.contains('ddlc-mode')) {
-        const monikaPopup = document.getElementById('monika-popup');
-        if (monikaPopup) {
-            monikaPopup.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            enableZoomLock();
+    function toggleMenu() {
+        if (document.body.classList.contains('ddlc-mode')) {
+            openMonikaPopup();
+            return;
         }
-        return;
+
+        isMenuOpen = !isMenuOpen;
+        navOverlay.classList.toggle('open', isMenuOpen);
+        icon.classList.toggle('fa-bars', !isMenuOpen);
+        icon.classList.toggle('fa-xmark', isMenuOpen);
+        logo.classList.toggle('opacity-0', isMenuOpen);
+        logo.classList.toggle('pointer-events-none', isMenuOpen);
+        icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+        document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
     }
-
-    isMenuOpen = !isMenuOpen;
-    navOverlay.classList.toggle('open', isMenuOpen);
-    icon.classList.toggle('fa-bars', !isMenuOpen);
-    icon.classList.toggle('fa-xmark', isMenuOpen);
-    logo.classList.toggle('opacity-0', isMenuOpen);
-    logo.classList.toggle('pointer-events-none', isMenuOpen);
-
-    icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-    document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-}
 
     menuBtn.addEventListener('click', toggleMenu);
 }
@@ -391,16 +401,12 @@ function toggleMenu() {
 // ========================================
 // MONIKA POPUP
 // ========================================
-
 let isZoomLocked = false;
 
 function preventZoom(e) {
-    const isZoomKey = (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0');
-    if ((e.ctrlKey || e.metaKey) && isZoomKey) {
-        e.preventDefault();
-    }
+    const isZoomKey = e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0';
+    if ((e.ctrlKey || e.metaKey) && isZoomKey) e.preventDefault();
 }
-
 
 function preventWheelZoom(e) {
     if (e.ctrlKey) e.preventDefault();
@@ -428,35 +434,35 @@ function disableZoomLock() {
     document.removeEventListener('touchstart', preventTouchZoom, { capture: true });
 }
 
-
-function initMonikaPopup() {
-    const monikaHero = document.getElementById('monika-hero');
-    const monikaPopup = document.getElementById('monika-popup');
-    const monikaOkBtn = document.getElementById('monika-ok-btn');
-
-    if (!monikaHero || !monikaPopup || !monikaOkBtn) return;
-
-    monikaHero.addEventListener('click', () => {
-        monikaPopup.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        enableZoomLock();
-    });
-
-    monikaOkBtn.addEventListener('click', () => {
-        monikaPopup.classList.add('hidden');
-        document.body.style.overflow = 'auto';
-        disableZoomLock();
-    });
-}
-
-
-function triggerMonikaPopup() {
-    const monikaPopup = document.getElementById('monika-popup');
-    if (!monikaPopup) return;
-    monikaPopup.classList.remove('hidden');
+function openMonikaPopup() {
+    const popup = document.getElementById('monika-popup');
+    if (!popup) return;
+    popup.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     enableZoomLock();
 }
+
+function closeMonikaPopup() {
+    const popup = document.getElementById('monika-popup');
+    if (!popup) return;
+    popup.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    disableZoomLock();
+}
+
+// Alias used by storage proxy
+const triggerMonikaPopup = openMonikaPopup;
+
+function initMonikaPopup() {
+    const monikaHero = document.getElementById('monika-hero');
+    const monikaOkBtn = document.getElementById('monika-ok-btn');
+
+    if (!monikaHero || !monikaOkBtn) return;
+
+    monikaHero.addEventListener('click', openMonikaPopup);
+    monikaOkBtn.addEventListener('click', closeMonikaPopup);
+}
+
 // ========================================
 // DDLC MODE TRIGGERS & GLITCH LOGIC
 // ========================================
@@ -467,9 +473,7 @@ const secretWord = 'monika';
 
 function toggleDDLCMode() {
     const body = document.body;
-    
-    body.classList.add('is-glitching');
-    body.classList.add('no-transitions');
+    body.classList.add('is-glitching', 'no-transitions');
 
     setTimeout(() => {
         body.classList.remove('is-glitching');
@@ -478,7 +482,7 @@ function toggleDDLCMode() {
         setTimeout(() => {
             body.classList.remove('no-transitions');
         }, 50);
-    }, 500); 
+    }, 500);
 }
 
 // Method 1: Typing "monika"
@@ -490,197 +494,186 @@ document.addEventListener('keydown', (e) => {
     }
     if (typedKeys === secretWord) {
         toggleDDLCMode();
-        typedKeys = ''; 
-        console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+        typedKeys = '';
+        logMonika();
     }
 });
 
 // Method 2: Clicking Logo 5 times
 function initDDLCClicker() {
     const logoElement = document.getElementById('site-logo');
-    if (logoElement) {
-        logoElement.addEventListener('click', () => {
-            ddlcClickCount++;
-            clearTimeout(clickTimer);
-            if (ddlcClickCount >= 5) {
-                toggleDDLCMode();
-                ddlcClickCount = 0; 
+    if (!logoElement) return;
+
+    logoElement.addEventListener('click', () => {
+        ddlcClickCount++;
+        clearTimeout(clickTimer);
+        if (ddlcClickCount >= 5) {
+            toggleDDLCMode();
+            ddlcClickCount = 0;
+        }
+        clickTimer = setTimeout(() => { ddlcClickCount = 0; }, 2000);
+    });
+}
+
+// ========================================
+// JUST MONIKA (MUSIC PLAYER)
+// ========================================
+function initJustM() {
+    const STORAGE_KEY = 'monika-music-playing';
+    const heroElement = document.getElementById('monika-hero');
+    const wasPlaying = localStorage.getItem(STORAGE_KEY) === '1';
+
+    const setupMusicPlayer = () => {
+        if (!document.querySelector('link[href*="font-awesome"]')) {
+            const fa = document.createElement('link');
+            fa.rel = 'stylesheet';
+            fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+            document.head.appendChild(fa);
+        }
+
+        const musicBtn = document.createElement('button');
+        musicBtn.id = 'monika-music-btn';
+        musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
+
+        Object.assign(musicBtn.style, {
+            position: 'fixed', bottom: '30px', right: '30px', width: '55px', height: '55px',
+            borderRadius: '50%', backgroundColor: '#1f2937', color: '#ffffff', border: 'none',
+            cursor: 'pointer', fontSize: '22px', zIndex: '9999', transition: 'all 0.4s ease-in-out',
+            boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)', display: 'none', alignItems: 'center',
+            justifyContent: 'center', opacity: '0.5', touchAction: 'none',
+        });
+        document.body.appendChild(musicBtn);
+
+        const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
+        audio.loop = true;
+        audio.volume = 0;
+        audio.preload = 'auto';
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'Just Monika.',
+                artist: 'Doki Doki Literature Club! OST',
+                album: 'DDLC',
+            });
+        }
+
+        let fadeInterval;
+        const fadeAudio = (target, duration = 400, cb) => {
+            clearInterval(fadeInterval);
+            const step = 0.05;
+            const steps = Math.abs(target - audio.volume) / step;
+            if (steps === 0) return cb?.();
+
+            const interval = duration / steps;
+            fadeInterval = setInterval(() => {
+                if (audio.volume < target) audio.volume = Math.min(audio.volume + step, target);
+                else audio.volume = Math.max(audio.volume - step, target);
+
+                if (Math.abs(audio.volume - target) < 0.01) {
+                    audio.volume = target;
+                    clearInterval(fadeInterval);
+                    cb?.();
+                }
+            }, interval);
+        };
+
+        const updateUI = (playing) => {
+            musicBtn.style.color = playing ? '#50C878' : '#ffffff';
+            musicBtn.style.boxShadow = playing ? '0 0 8px #50C878' : '0 0 10px rgba(255,255,255,0.1)';
+            musicBtn.style.opacity = playing ? '1' : '0.5';
+            document.title = playing ? 'Just Monika.' : '...';
+
+            if (heroElement) {
+                heroElement.style.boxShadow = playing ? '0 0 20px #50C878' : '0 0 20px rgba(0,0,0,0.5)';
+                heroElement.style.borderColor = playing ? '#50C878' : 'rgba(255,255,255,0.1)';
             }
-            clickTimer = setTimeout(() => { ddlcClickCount = 0; }, 2000);
+        };
+
+        audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
+        audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
+
+        musicBtn.addEventListener('mouseenter', () => musicBtn.style.opacity = '1');
+        musicBtn.addEventListener('mouseleave', () => musicBtn.style.opacity = audio.paused ? '0.5' : '1');
+
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        musicBtn.addEventListener('touchstart', (e) => {
+            isDragging = false;
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+
+            const rect = musicBtn.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+
+            musicBtn.style.bottom = 'auto';
+            musicBtn.style.right = 'auto';
+            musicBtn.style.left = initialLeft + 'px';
+            musicBtn.style.top = initialTop + 'px';
+            musicBtn.style.transition = 'none';
+        }, { passive: true });
+
+        musicBtn.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - startX;
+            const deltaY = touch.clientY - startY;
+
+            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                isDragging = true;
+                if (e.cancelable) e.preventDefault();
+
+                let newLeft = Math.max(0, Math.min(initialLeft + deltaX, window.innerWidth - musicBtn.offsetWidth));
+                let newTop = Math.max(0, Math.min(initialTop + deltaY, window.innerHeight - musicBtn.offsetHeight));
+
+                musicBtn.style.left = newLeft + 'px';
+                musicBtn.style.top = newTop + 'px';
+            }
+        }, { passive: false });
+
+        musicBtn.addEventListener('touchend', () => {
+            musicBtn.style.transition = 'all 0.4s ease-in-out';
+            if (isDragging) setTimeout(() => { isDragging = false; }, 50);
+        });
+
+        musicBtn.addEventListener('click', async () => {
+            if (isDragging) return;
+            try {
+                if (!audio.paused) fadeAudio(0, 400, () => audio.pause());
+                else { await audio.play(); fadeAudio(0.4); }
+            } catch (err) {
+                console.error('Playback blocked:', err);
+            }
+        });
+
+        musicBtn._audio = audio;
+
+        if (wasPlaying) {
+            musicBtn.style.display = 'flex';
+            document.addEventListener('click', () => {
+                if (audio.paused) audio.play().then(() => fadeAudio(0.4)).catch(() => {});
+            }, { once: true });
+        }
+
+        return musicBtn;
+    };
+
+    if (wasPlaying) setupMusicPlayer();
+
+    if (heroElement) {
+        heroElement.addEventListener('click', () => {
+            let btn = document.getElementById('monika-music-btn');
+            if (!btn) btn = setupMusicPlayer();
+            btn.style.display = 'flex';
+            if (btn._audio && btn._audio.paused) btn.click();
         });
     }
 }
 
-//// JUST MONIKA //////
-
-function initJustM() {
-  const STORAGE_KEY = 'monika-music-playing';
-  const heroElement = document.getElementById('monika-hero');
-
-  const setupMusicPlayer = () => {
-    if (!document.querySelector('link[href*="font-awesome"]')) {
-      const fa = document.createElement('link');
-      fa.rel = 'stylesheet';
-      fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-      document.head.appendChild(fa);
-    }
-
-    const musicBtn = document.createElement('button');
-    musicBtn.id = 'monika-music-btn';
-    musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
-    
-    Object.assign(musicBtn.style, {
-      position: 'fixed', bottom: '30px', right: '30px', width: '55px', height: '55px',
-      borderRadius: '50%', backgroundColor: '#1f2937', color: '#ffffff', border: 'none',
-      cursor: 'pointer', fontSize: '22px', zIndex: '9999', transition: 'all 0.4s ease-in-out',
-      boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)', display: 'none', alignItems: 'center',
-      justifyContent: 'center', opacity: '0.5', touchAction: 'none'
-    });
-    document.body.appendChild(musicBtn);
-
-    const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
-    audio.loop = true;
-    audio.volume = 0;
-    audio.preload = 'auto';
-
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'Just Monika.', artist: 'Doki Doki Literature Club! OST', album: 'DDLC'
-      });
-    }
-
-    let fadeInterval;
-    const fadeAudio = (target, duration = 400, cb) => {
-      clearInterval(fadeInterval);
-      const step = 0.05;
-      const steps = Math.abs(target - audio.volume) / step;
-      if (steps === 0) return cb?.();
-
-      const interval = duration / steps;
-      fadeInterval = setInterval(() => {
-        if (audio.volume < target) audio.volume = Math.min(audio.volume + step, target);
-        else audio.volume = Math.max(audio.volume - step, target);
-
-        if (Math.abs(audio.volume - target) < 0.01) {
-          audio.volume = target;
-          clearInterval(fadeInterval);
-          cb?.();
-        }
-      }, interval);
-    };
-
-    const updateUI = (playing) => {
-      musicBtn.style.color = playing ? '#50C878' : '#ffffff';
-      musicBtn.style.boxShadow = playing ? '0 0 8px #50C878' : '0 0 10px rgba(255,255,255,0.1)';
-      musicBtn.style.opacity = playing ? '1' : '0.5';
-      document.title = playing ? 'Just Monika.' : '...';
-
-      if (heroElement) {
-        heroElement.style.boxShadow = playing ? '0 0 20px #50C878' : '0 0 20px rgba(0,0,0,0.5)';
-        heroElement.style.borderColor = playing ? '#50C878' : 'rgba(255,255,255,0.1)';
-      }
-    };
-
-    audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
-    audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
-
-    musicBtn.addEventListener('mouseenter', () => musicBtn.style.opacity = '1');
-    musicBtn.addEventListener('mouseleave', () => musicBtn.style.opacity = audio.paused ? '0.5' : '1');
-
-    let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
-
-    musicBtn.addEventListener('touchstart', (e) => {
-      isDragging = false;
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      
-      const rect = musicBtn.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-
-      musicBtn.style.bottom = 'auto';
-      musicBtn.style.right = 'auto';
-      musicBtn.style.left = initialLeft + 'px';
-      musicBtn.style.top = initialTop + 'px';
-      musicBtn.style.transition = 'none';
-    }, { passive: true });
-
-    musicBtn.addEventListener('touchmove', (e) => {
-      const touch = e.touches[0];
-      const deltaX = touch.clientX - startX;
-      const deltaY = touch.clientY - startY;
-
-      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        isDragging = true;
-        if (e.cancelable) e.preventDefault();
-        
-        let newLeft = initialLeft + deltaX;
-        let newTop = initialTop + deltaY;
-
-        newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - musicBtn.offsetWidth));
-        newTop = Math.max(0, Math.min(newTop, window.innerHeight - musicBtn.offsetHeight));
-
-        musicBtn.style.left = newLeft + 'px';
-        musicBtn.style.top = newTop + 'px';
-      }
-    }, { passive: false });
-
-    musicBtn.addEventListener('touchend', () => {
-      musicBtn.style.transition = 'all 0.4s ease-in-out';
-      if (isDragging) {
-        setTimeout(() => { isDragging = false; }, 50);
-      }
-    });
-
-    musicBtn.addEventListener('click', async (e) => {
-      if (isDragging) return;
-      try {
-        if (!audio.paused) fadeAudio(0, 400, () => audio.pause());
-        else { await audio.play(); fadeAudio(0.4); }
-      } catch (err) { console.error("Playback blocked:", err); }
-    });
-
-    musicBtn._audio = audio;
-
-    if (localStorage.getItem(STORAGE_KEY) === '1') {
-      musicBtn.style.display = 'flex';
-      document.addEventListener('click', () => {
-        if (audio.paused) audio.play().then(() => fadeAudio(0.4)).catch(()=>{});
-      }, { once: true });
-    }
-
-    return musicBtn;
-  };
-
-  if (localStorage.getItem(STORAGE_KEY) === '1') {
-    setupMusicPlayer();
-  }
-
-  if (heroElement) {
-    heroElement.addEventListener('click', () => {
-      let btn = document.getElementById('monika-music-btn');
-
-      if (!btn) {
-        btn = setupMusicPlayer();
-      }
-
-      btn.style.display = 'flex';
-
-      if (btn._audio && btn._audio.paused) {
-        btn.click();
-      }
-    });
-  }
-}
-
-
-///
-
-
-///LOCALSTORAGE //
-
+// ========================================
+// LOCALSTORAGE PROXY (JUST MONIKA)
+// ========================================
 function initMonikaStorage() {
     const originalStorage = window.localStorage;
 
@@ -697,7 +690,7 @@ function initMonikaStorage() {
             if (prop === 'setItem') {
                 return (key, value) => {
                     if (key === 'DDLC' && value !== 'JUST MONIKA') {
-                        console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                        logMonika();
                         triggerMonikaPopup();
                         value = 'JUST MONIKA';
                     }
@@ -708,7 +701,7 @@ function initMonikaStorage() {
             if (prop === 'removeItem') {
                 return (key) => {
                     if (key === 'DDLC') {
-                        console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                        logMonika();
                         triggerMonikaPopup();
                         return;
                     }
@@ -718,7 +711,7 @@ function initMonikaStorage() {
 
             if (prop === 'clear') {
                 return () => {
-                    console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                    logMonika();
                     triggerMonikaPopup();
                     target.clear();
                     target.setItem('DDLC', 'JUST MONIKA');
@@ -732,7 +725,7 @@ function initMonikaStorage() {
 
         set(target, prop, value) {
             if (prop === 'DDLC' && value !== 'JUST MONIKA') {
-                console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                logMonika();
                 triggerMonikaPopup();
                 value = 'JUST MONIKA';
             }
@@ -742,18 +735,18 @@ function initMonikaStorage() {
 
         deleteProperty(target, prop) {
             if (prop === 'DDLC') {
-                console.log('%cJust Monika.', 'color:#ffffff; font-size:16px; font-family:monospace;');
+                logMonika();
                 triggerMonikaPopup();
                 return false;
             }
             return Reflect.deleteProperty(target, prop);
-        }
+        },
     });
 
     Object.defineProperty(window, 'localStorage', {
         value: monikaStorage,
         configurable: false,
-        writable: false
+        writable: false,
     });
 
     window.addEventListener('storage', (event) => {
@@ -763,13 +756,11 @@ function initMonikaStorage() {
             event.newValue !== 'JUST MONIKA'
         ) {
             originalStorage.setItem('DDLC', 'JUST MONIKA');
-            console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
+            logMonika();
             triggerMonikaPopup();
         }
     });
 }
-
-
 
 // ========================================
 // INITIALIZATION
@@ -786,7 +777,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initMonikaStorage();
     connectLanyard();
 
-    console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-
- 
+    logMonika();
 });
