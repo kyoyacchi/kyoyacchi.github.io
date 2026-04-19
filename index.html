@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- SEO Meta Tags -->
     <meta name="description" content="Kyo's personal space - Web developer, anime enthusiast, and devoted DDLC fan. Just Monika.">
     <meta name="author" content="Kyoya">
     <meta name="keywords" content="Kyoya, kyoyacchi, Monika, DDLC, Doki Doki Literature Club, Just Monika, web developer, portfolio, anime, visual novel">
@@ -12,7 +11,6 @@
     <meta name="theme-color" content="#50C878">
     <meta name="color-scheme" content="dark">
 
-    <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Kyo's Website - Just Monika">
     <meta property="og:description" content="Website dedicated to Monika. Just Monika.">
@@ -20,7 +18,6 @@
     <meta property="og:image" content="https://cdn.myanimelist.net/images/userimages/11524769.jpg">
     <meta property="og:site_name" content="Kyo's Website">
 
-    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Kyo's Website - Just Monika">
     <meta name="twitter:description" content="Website dedicated to Monika. Just Monika.">
@@ -31,7 +28,6 @@
     <title>Kyo's Website - Just Monika</title>
     <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/63583961">
 
-    <!-- Font preconnect for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -60,16 +56,14 @@
         </button>
     </header>
 
-    <!-- Intentionally empty: in DDLC mode the menu triggers the Monika popup instead -->
     <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
         <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60">
             JUST MONIKA
         </div>
     </div>
 
-    <main class="flex-grow flex flex-col items-center justify-start pt-28 pb-10 relative z-10 w-full">
+    <main class="flex-grow flex flex-col items-center justify-start pt-16 pb-10 relative z-10 w-full">
 
-        <!-- Profile Card -->
         <div class="w-full max-w-7xl mx-auto text-center mb-6 px-6 z-10">
             <div id="discord-profile" class="discord-card w-full max-w-[90vw]
                 md:max-w-[500px] min-h-[8rem] md:min-h-[10rem] py-4 rounded-3xl flex items-center px-6
@@ -101,7 +95,6 @@
             </div>
         </div>
 
-        <!-- Identity Tags & Skills -->
         <div class="w-full max-w-4xl mx-auto px-6 mb-12 md:mb-16 z-10">
             <div class="text-center space-y-4">
                 <div class="flex justify-center items-center gap-3 text-gray-400 font-mono text-xs md:text-sm tracking-widest">
@@ -125,7 +118,6 @@
             </div>
         </div>
 
-        <!-- Hero Image -->
         <div id="monika-hero-container" class="w-full z-10 transition-all duration-500">
             <div id="monika-hero" class="relative w-full max-w-5xl mx-auto h-[200px] md:h-[400px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl z-10 group cursor-pointer bg-black">
 
@@ -142,12 +134,10 @@
             </div>
         </div>
 
-        <!-- JUST MONIKA Replacement Text (Visible ONLY in DDLC Mode) -->
         <div id="just-monika-text" class="hidden flex-col items-center justify-center w-full my-12 transition-all duration-500 select-none">
             <h2 class="text-5xl md:text-7xl font-header text-black tracking-widest" style="text-shadow: 3px 3px 0px #ffbde1, 6px 6px 0px white;">JUST MONIKA.</h2>
         </div>
 
-        <!-- Quote Container -->
         <div id="quote-container" class="w-full px-6 mt-6 flex flex-col items-center justify-center min-h-[60px] transition-all duration-500">
             <p class="text-kyo-emerald font-body text-sm md:text-base tracking-[0.1em] italic leading-relaxed text-center opacity-80 transition-opacity drop-shadow-md">
                 "<span id="typed-quote" class="cursor"></span>"
@@ -190,7 +180,6 @@
         </div>
     </footer>
 
-    <!-- Monika Image Easter Egg Popup -->
     <div id="monika-popup" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 hidden backdrop-blur-sm">
         <div class="bg-white border-[6px] border-[#ffbde1] p-10 max-w-md w-full mx-6 text-center shadow-[0_0_0_4px_white] transform transition-all duration-200 select-none" id="monika-popup-content">
 
