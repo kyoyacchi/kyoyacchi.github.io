@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../index.html";
 
 @theme {
   --color-kyo-emerald: #50C878;
