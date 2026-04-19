@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-kyo-emerald: #50C878;
+  --color-kyo-purple: #800080;
+  --color-dark-bg: #050505;
+  --color-card-bg: #0a0a0c;
+
+  
+  --font-header: "Fredoka", sans-serif;
+  --font-body: "Quicksand", sans-serif;
+  --font-riffic: "Riffic", sans-serif;
+
+  
+  --shadow-neon: 0 0 20px rgba(80, 200, 120, 0.15);
+  --shadow-neon-purple: 0 0 20px rgba(128, 0, 128, 0.2);
+}
