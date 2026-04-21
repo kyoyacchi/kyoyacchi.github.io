@@ -48,7 +48,7 @@ const state = {
 // ========================================
 const logMonika = () =>
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
-const logMonikaASCII = () => {
+//const logMonikaASCII = () => {
   const ascii = `**************-+%**:-*##%##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@%%%%@%%%%%%%%%%%%%%%%%%%%##%%%%%%%%%####
 ***********==%%%%-:-*#####%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@%%%%%%%%%%%%%%%%%%%%%%%%####%%%%%%%%%#
 ********=-#%%%#*::-**#####%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@%@%%%%%%%%%%%%%%%%%%%%%#####%%%%%%%%
@@ -869,6 +869,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initFooterHeart();
     connectLanyard();
 
-    logMonikaASCII();
+ //   logMonikaASCII();
     logMonika();
 });
