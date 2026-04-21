@@ -368,6 +368,54 @@ async function initTypewriter() {
     typeTarget.classList.remove('cursor');
 }
 
+
+let navTypingTimeout;
+
+function playNavTyping() {
+    const textEl = document.getElementById('nav-monika-text');
+    if (!textEl) return;
+
+    clearTimeout(navTypingTimeout);
+    textEl.textContent = "";
+
+    const texts = ["JUST MONIKA.", "JUST MONIKA. OK."];
+    let textIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+
+    function type() {
+        const currentText = texts[textIdx];
+
+        if (isDeleting) {
+            textEl.textContent = currentText.substring(0, charIdx - 1);
+            charIdx--;
+        } else {
+            textEl.textContent = currentText.substring(0, charIdx + 1);
+            charIdx++;
+        }
+
+        let speed = isDeleting ? 40 : 120;
+
+        if (!isDeleting && charIdx === currentText.length) {
+            speed = 1500;
+            
+            if (textIdx === 0) {
+                isDeleting = true;
+            } else {
+                return;
+            }
+        } else if (isDeleting && charIdx === 0) {
+            isDeleting = false;
+            textIdx++;
+            speed = 500;
+        }
+
+        navTypingTimeout = setTimeout(type, speed);
+    }
+
+    type();
+}
+
 // ========================================
 // MENU TOGGLE
 // ========================================
@@ -397,6 +445,14 @@ function initMenu() {
         logo.classList.toggle('pointer-events-none', isMenuOpen);
         icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
         document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+        
+        if (isMenuOpen) {
+            playNavTyping();
+        } else {
+            clearTimeout(navTypingTimeout);
+            const textEl = document.getElementById('nav-monika-text');
+            if (textEl) textEl.textContent = "";
+        }
     }
 
     menuBtn.addEventListener('click', toggleMenu);
