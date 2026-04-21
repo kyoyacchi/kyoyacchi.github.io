@@ -104,7 +104,7 @@ const logMonikaASCII = () => {
 #%%%%%#%%%%%%%%%%%-:+********#%%%%%%%%%#######%%%%%@@@@@%%#######@%%%%%@%%*********#%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%.-+********#%%%%%%%%%@#####%%%%@@@@@@@@@%#####%%%%%%%@%%*********##@%%%%%%%%%%%@%%
 `,
-    "color: #ff69b4; font-family: monospace; font-size: 8px; line-height: 1.1;"
+    "color: #ff69b4; font-family: monospace; font-size: 10px; font-weight: bold; line-height: 10px; white-space: pre;"
   );
 };
 
