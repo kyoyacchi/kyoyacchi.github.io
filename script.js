@@ -497,7 +497,7 @@ function disableZoomLock() {
 function openMonikaPopup() {
     const popup = document.getElementById('monika-popup');
     if (!popup) return;
-    popup.classList.remove('hidden');
+    popup.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     enableZoomLock();
 }
@@ -505,7 +505,7 @@ function openMonikaPopup() {
 function closeMonikaPopup() {
     const popup = document.getElementById('monika-popup');
     if (!popup) return;
-    popup.classList.add('hidden');
+    popup.style.display = 'none';
     document.body.style.overflow = 'auto';
     disableZoomLock();
 }
