@@ -442,6 +442,4 @@ body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !importa
     display: inline-block;
 }
 
-#monika-ok-btn:active {
-    transform: scale(0.95);
-}
+
