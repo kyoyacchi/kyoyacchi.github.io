@@ -110,39 +110,31 @@ function renderPresence(data) {
 
     const user = data.discord_user;
     const status = data.discord_status || 'offline';
+    const isHijacked = document.body.classList.contains('ddlc-mode');
 
     els.card.classList.remove('opacity-0');
 
-    // Avatar
     const avatarUrl = user.avatar
-        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
-        : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png`;
+        ? `https://wsrv.nl/?url=https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256&output=webp`
+        : `https://wsrv.nl/?url=https://cdn.discordapp.com/embed/avatars/0.png&output=webp`;
 
     if (els.avatarEl && els.avatarEl.src !== avatarUrl) els.avatarEl.src = avatarUrl;
 
-    // Avatar Decoration
-    if (els.decorationEl) {
-        const decoAsset = user.avatar_decoration_data?.asset;
-        if (status !== 'offline' && decoAsset) {
-            const decoUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${decoAsset}.png`;
-            if (els.decorationEl.src !== decoUrl) els.decorationEl.src = decoUrl;
-            els.decorationEl.classList.remove('hidden');
-        } else {
-            els.decorationEl.classList.add('hidden');
-            els.decorationEl.src = '';
-        }
+    if (els.statusInd) els.statusInd.className = `status-indicator status-${isHijacked ? 'dnd' : status}`;
+    
+    if (els.nameEl) {
+        els.nameEl.textContent = isHijacked ? 'Monika' : (user.global_name || user.username);
+        els.nameEl.style.color = isHijacked ? '#ffbde1' : ''; 
+    }
+    
+    if (els.userEl) {
+        els.userEl.textContent = isHijacked ? '@Monika' : ('@' + user.username);
     }
 
-    // Basic Info
-    if (els.statusInd) els.statusInd.className = `status-indicator status-${status}`;
-    if (els.nameEl) els.nameEl.textContent = user.global_name || user.username;
-    if (els.userEl) els.userEl.textContent = '@' + user.username;
+    let activityText = isHijacked ? 'JUST MONIKA.' : 'OFFLINE';
+    let isActive = isHijacked;
 
-    // Activity Parsing
-    let activityText = 'OFFLINE';
-    let isActive = false;
-
-    if (status !== 'offline') {
+    if (!isHijacked && status !== 'offline') {
         const activities = data.activities || [];
         const custom = activities.find((a) => a.type === ACTIVITY_TYPE.CUSTOM);
         const match = activities.find((a) => ACTIVITY_LABEL[a.type]);
@@ -164,38 +156,11 @@ function renderPresence(data) {
             'text-[10px] md:text-xs font-bold tracking-widest uppercase',
             'px-3 py-2 rounded-xl bg-white/10 border border-white/5',
             'backdrop-blur-md whitespace-normal break-words w-fit max-w-full leading-relaxed',
-            isActive ? 'text-kyo-emerald border-kyo-emerald/20' : 'text-white',
+            isActive ? (isHijacked ? 'text-[#ffbde1] border-[#ffbde1]/20' : 'text-kyo-emerald border-kyo-emerald/20') : 'text-white',
         ].join(' ');
     }
-
-    // Background (Video / Banner / Fallback)
-    const videoUrl = user.collectibles?.nameplate?.asset
-        ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`
-        : null;
-
-    if (videoUrl) {
-        if (els.videoBg && els.videoBg.src !== videoUrl) {
-            els.videoBg.src = videoUrl;
-            els.videoBg.muted = true;
-            els.videoBg.playsInline = true;
-            els.videoBg.play()?.catch((e) => console.warn(e?.message || e));
-        }
-        els.videoBg?.classList.remove('hidden');
-        els.imgBg?.classList.add('hidden');
-    } else if (user.banner) {
-        const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
-        if (els.imgBg) els.imgBg.src = bannerUrl;
-        els.imgBg?.classList.remove('hidden');
-        els.videoBg?.classList.add('hidden');
-    } else {
-        if (els.imgBg) {
-            els.imgBg.style.background = '#50c878';
-            els.imgBg.src = '';
-        }
-        els.imgBg?.classList.remove('hidden');
-        els.videoBg?.classList.add('hidden');
-    }
 }
+
 
 function connectLanyard() {
     const now = Date.now();
@@ -538,6 +503,9 @@ function toggleDDLCMode() {
     setTimeout(() => {
         body.classList.remove('is-glitching');
         body.classList.toggle('ddlc-mode');
+
+        const cached = getCache();
+        if (cached) renderPresence(cached);
 
         setTimeout(() => {
             body.classList.remove('no-transitions');
