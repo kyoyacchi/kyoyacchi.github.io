@@ -354,3 +354,40 @@ body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !importa
 #footer-heart {
     transition: transform 0.2s ease-out;
 }
+
+/* ========================================
+   MUSIC PLAYER
+   ======================================== */
+.monika-music-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: #1f2937;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    z-index: 9999;
+    transition: all 0.4s ease-in-out;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    display: none; /* Toggled to flex in JS */
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+    touch-action: none;
+}
+
+/* Let CSS handle the hover state instead of JS event listeners */
+.monika-music-btn:hover {
+    opacity: 1;
+}
+
+/* Active state toggled via JS */
+.monika-music-btn.playing {
+    color: #50C878;
+    box-shadow: 0 0 8px #50C878;
+    opacity: 1;
+}
