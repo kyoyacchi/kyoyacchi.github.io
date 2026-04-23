@@ -583,25 +583,13 @@ function initJustM() {
     const heroElement = document.getElementById('monika-hero');
     const wasPlaying = localStorage.getItem(STORAGE_KEY) === '1';
 
-    const setupMusicPlayer = () => {
-        if (!document.querySelector('link[href*="font-awesome"]')) {
-            const fa = document.createElement('link');
-            fa.rel = 'stylesheet';
-            fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-            document.head.appendChild(fa);
-        }
+const setupMusicPlayer = () => {
+        // Note: FontAwesome script loading removed
 
         const musicBtn = document.createElement('button');
         musicBtn.id = 'monika-music-btn';
+        musicBtn.className = 'monika-music-btn'; // Assigned the new CSS class
         musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
-
-        Object.assign(musicBtn.style, {
-            position: 'fixed', bottom: '30px', right: '30px', width: '55px', height: '55px',
-            borderRadius: '50%', backgroundColor: '#1f2937', color: '#ffffff', border: 'none',
-            cursor: 'pointer', fontSize: '22px', zIndex: '9999', transition: 'all 0.4s ease-in-out',
-            boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)', display: 'none', alignItems: 'center',
-            justifyContent: 'center', opacity: '0.5', touchAction: 'none',
-        });
         document.body.appendChild(musicBtn);
 
         const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
@@ -636,12 +624,11 @@ function initJustM() {
                 }
             }, interval);
         };
-
+const orijinalTitle = document.title;
         const updateUI = (playing) => {
-            musicBtn.style.color = playing ? '#50C878' : '#ffffff';
-            musicBtn.style.boxShadow = playing ? '0 0 8px #50C878' : '0 0 10px rgba(255,255,255,0.1)';
-            musicBtn.style.opacity = playing ? '1' : '0.5';
-            document.title = playing ? 'Just Monika.' : '...';
+            // Replaced inline styles with a simple class toggle
+            musicBtn.classList.toggle('playing', playing);
+            document.title = playing ? 'Just Monika.' : orijinalTitle
 
             if (heroElement) {
                 heroElement.style.boxShadow = playing ? '0 0 20px #50C878' : '0 0 20px rgba(0,0,0,0.5)';
@@ -652,8 +639,7 @@ function initJustM() {
         audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
         audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
 
-        musicBtn.addEventListener('mouseenter', () => musicBtn.style.opacity = '1');
-        musicBtn.addEventListener('mouseleave', () => musicBtn.style.opacity = audio.paused ? '0.5' : '1');
+        // JS hover event listeners were deleted here since CSS handles it now
 
         let isDragging = false;
         let startX, startY, initialLeft, initialTop;
@@ -675,6 +661,8 @@ function initJustM() {
             musicBtn.style.transition = 'none';
         }, { passive: true });
 
+        // Wrapped in requestAnimationFrame for buttery smooth dragging
+        let dragRAF;
         musicBtn.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
             const deltaX = touch.clientX - startX;
@@ -684,11 +672,14 @@ function initJustM() {
                 isDragging = true;
                 if (e.cancelable) e.preventDefault();
 
-                let newLeft = Math.max(0, Math.min(initialLeft + deltaX, window.innerWidth - musicBtn.offsetWidth));
-                let newTop = Math.max(0, Math.min(initialTop + deltaY, window.innerHeight - musicBtn.offsetHeight));
+                cancelAnimationFrame(dragRAF);
+                dragRAF = requestAnimationFrame(() => {
+                    let newLeft = Math.max(0, Math.min(initialLeft + deltaX, window.innerWidth - musicBtn.offsetWidth));
+                    let newTop = Math.max(0, Math.min(initialTop + deltaY, window.innerHeight - musicBtn.offsetHeight));
 
-                musicBtn.style.left = newLeft + 'px';
-                musicBtn.style.top = newTop + 'px';
+                    musicBtn.style.left = newLeft + 'px';
+                    musicBtn.style.top = newTop + 'px';
+                });
             }
         }, { passive: false });
 
