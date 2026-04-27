@@ -560,10 +560,11 @@ const setupMusicPlayer = () => {
         musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
         document.body.appendChild(musicBtn);
 
-        const audio = new Audio('https://files.catbox.moe/or6fpo.opus');
-        audio.loop = true;
-        audio.volume = 0;
-        audio.preload = 'auto';
+const audio = new Audio('./assets/just_monika.opus');
+audio.loop = true;
+audio.volume = 0;
+
+
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
