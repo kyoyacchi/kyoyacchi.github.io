@@ -49,10 +49,6 @@ const state = {
 const logMonika = () =>
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
 
-
-
-
-
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // ========================================
@@ -551,20 +547,16 @@ function initJustM() {
     const heroElement = document.getElementById('monika-hero');
     const wasPlaying = localStorage.getItem(STORAGE_KEY) === '1';
 
-const setupMusicPlayer = () => {
-        // Note: FontAwesome script loading removed
-
+    const setupMusicPlayer = () => {
         const musicBtn = document.createElement('button');
         musicBtn.id = 'monika-music-btn';
-        musicBtn.className = 'monika-music-btn'; // Assigned the new CSS class
+        musicBtn.className = 'monika-music-btn';
         musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
         document.body.appendChild(musicBtn);
 
-const audio = new Audio('./assets/just_monika.opus');
-audio.loop = true;
-audio.volume = 0;
-
-
+        const audio = new Audio('./assets/just_monika.opus');
+        audio.loop = true;
+        audio.volume = 0;
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
@@ -593,11 +585,14 @@ audio.volume = 0;
                 }
             }, interval);
         };
-const orijinalTitle = document.title;
+
+        // FIX 1: Removed duplicate `orijinalTitle` declaration.
+        // `originalTitle` is already captured at module scope above the visibilitychange listener,
+        // so we reuse that instead of re-capturing document.title here (which could differ
+        // if visibilitychange already changed it to 'JUST MONIKA' before this runs).
         const updateUI = (playing) => {
-            // Replaced inline styles with a simple class toggle
             musicBtn.classList.toggle('playing', playing);
-            document.title = playing ? 'Just Monika.' : orijinalTitle
+            document.title = playing ? 'Just Monika.' : originalTitle;
 
             if (heroElement) {
                 heroElement.style.boxShadow = playing ? '0 0 20px #50C878' : '0 0 20px rgba(0,0,0,0.5)';
@@ -608,10 +603,12 @@ const orijinalTitle = document.title;
         audio.addEventListener('play', () => { localStorage.setItem(STORAGE_KEY, '1'); updateUI(true); });
         audio.addEventListener('pause', () => { localStorage.setItem(STORAGE_KEY, '0'); updateUI(false); });
 
-        // JS hover event listeners were deleted here since CSS handles it now
-
         let isDragging = false;
         let startX, startY, initialLeft, initialTop;
+        // FIX 2: Declared dragRAF at the correct scope so touchend can cancel it.
+        // Previously it was declared inside touchmove, making it inaccessible to touchend,
+        // which meant a queued animation frame could still fire after the finger lifted.
+        let dragRAF;
 
         musicBtn.addEventListener('touchstart', (e) => {
             isDragging = false;
@@ -630,8 +627,6 @@ const orijinalTitle = document.title;
             musicBtn.style.transition = 'none';
         }, { passive: true });
 
-        // Wrapped in requestAnimationFrame for buttery smooth dragging
-        let dragRAF;
         musicBtn.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
             const deltaX = touch.clientX - startX;
@@ -653,6 +648,7 @@ const orijinalTitle = document.title;
         }, { passive: false });
 
         musicBtn.addEventListener('touchend', () => {
+            cancelAnimationFrame(dragRAF); // FIX 2: Cancel any pending frame on finger lift
             musicBtn.style.transition = 'all 0.4s ease-in-out';
             if (isDragging) setTimeout(() => { isDragging = false; }, 50);
         });
@@ -823,7 +819,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initMonikaStorage();
     initFooterHeart();
     connectLanyard();
-
 
     logMonika();
 });
