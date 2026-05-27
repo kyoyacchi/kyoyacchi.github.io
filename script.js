@@ -35,7 +35,7 @@ const state = {
     isConnecting: false,
     reconnectTimer: null,
     heartbeatInterval: null,
-    backoff: 1000,
+    backoff: 2000,
     currentSessionID: null,
     lastConnectAttempt: 0,
     hasPrefetched: false,
@@ -261,6 +261,7 @@ function connectLanyard() {
 }
 
 function scheduleReconnect() {
+    if (document.hidden) return;
     if (state.reconnectTimer) return;
     const jitter = Math.floor(Math.random() * 1000);
     const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
