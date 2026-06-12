@@ -8,6 +8,12 @@
 
 body {
     background-color: #050505;
+    background-image: 
+        radial-gradient(circle at 35% 40%, rgba(80, 200, 120, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 65% 60%, rgba(128, 0, 128, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(255, 105, 180, 0.1) 0%, transparent 70%);
+    background-attachment: fixed;
+    
     color: #e0e0e0;
     font-family: 'Quicksand', sans-serif;
     overflow-x: hidden;
