@@ -688,15 +688,29 @@ function initJustM() {
     }
 
 
-//const musicBtn = document.querySelector('.monika-music-btn');
+
+
+const musicBtn = document.querySelector('.monika-music-btn');
 
 if (musicBtn) {
-    musicBtn.addEventListener('dblclick', function() {
-        this.classList.add('delete-icon-anim');
-        
+    let lastTap = 0;
+
+    function triggerDelete() {
+        musicBtn.classList.add('delete-icon-anim');
         setTimeout(() => {
-            this.style.display = 'none';
+            musicBtn.style.display = 'none';
         }, 400);
+    }
+
+    musicBtn.addEventListener('dblclick', triggerDelete);
+
+    musicBtn.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+            e.preventDefault();
+            triggerDelete();
+        }
+        lastTap = now;
     });
 }
     
