@@ -587,10 +587,6 @@ function initJustM() {
             }, interval);
         };
 
-        // FIX 1: Removed duplicate `orijinalTitle` declaration.
-        // `originalTitle` is already captured at module scope above the visibilitychange listener,
-        // so we reuse that instead of re-capturing document.title here (which could differ
-        // if visibilitychange already changed it to 'JUST MONIKA' before this runs).
         const updateUI = (playing) => {
             musicBtn.classList.toggle('playing', playing);
             document.title = playing ? 'Just Monika.' : originalTitle;
@@ -606,10 +602,20 @@ function initJustM() {
 
         let isDragging = false;
         let startX, startY, initialLeft, initialTop;
-        // FIX 2: Declared dragRAF at the correct scope so touchend can cancel it.
-        // Previously it was declared inside touchmove, making it inaccessible to touchend,
-        // which meant a queued animation frame could still fire after the finger lifted.
         let dragRAF;
+        let lastTap = 0;
+
+        const triggerDelete = () => {
+            if (!audio.paused) {
+                fadeAudio(0, 400, () => audio.pause());
+            }
+            musicBtn.classList.add('delete-icon-anim');
+            setTimeout(() => {
+                musicBtn.style.display = 'none';
+            }, 400);
+        };
+
+        musicBtn.addEventListener('dblclick', triggerDelete);
 
         musicBtn.addEventListener('touchstart', (e) => {
             isDragging = false;
@@ -648,10 +654,20 @@ function initJustM() {
             }
         }, { passive: false });
 
-        musicBtn.addEventListener('touchend', () => {
-            cancelAnimationFrame(dragRAF); // FIX 2: Cancel any pending frame on finger lift
+        musicBtn.addEventListener('touchend', (e) => {
+            cancelAnimationFrame(dragRAF);
             musicBtn.style.transition = 'all 0.4s ease-in-out';
-            if (isDragging) setTimeout(() => { isDragging = false; }, 50);
+
+            if (isDragging) {
+                setTimeout(() => { isDragging = false; }, 50);
+            } else {
+                const now = Date.now();
+                if (now - lastTap < 300) {
+                    e.preventDefault();
+                    triggerDelete();
+                }
+                lastTap = now;
+            }
         });
 
         musicBtn.addEventListener('click', async () => {
@@ -686,35 +702,8 @@ function initJustM() {
             if (btn._audio && btn._audio.paused) btn.click();
         });
     }
-
-
-
-
-const musicBtn = document.querySelector('.monika-music-btn');
-
-if (musicBtn) {
-    let lastTap = 0;
-
-    function triggerDelete() {
-        musicBtn.classList.add('delete-icon-anim');
-        setTimeout(() => {
-            musicBtn.style.display = 'none';
-        }, 400);
-    }
-
-    musicBtn.addEventListener('dblclick', triggerDelete);
-
-    musicBtn.addEventListener('touchend', function(e) {
-        const now = Date.now();
-        if (now - lastTap < 300) {
-            e.preventDefault();
-            triggerDelete();
-        }
-        lastTap = now;
-    });
 }
-    
-}
+
 
 // ========================================
 // LOCALSTORAGE PROXY (JUST MONIKA)
