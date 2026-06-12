@@ -686,6 +686,20 @@ function initJustM() {
             if (btn._audio && btn._audio.paused) btn.click();
         });
     }
+
+
+//const musicBtn = document.querySelector('.monika-music-btn');
+
+if (musicBtn) {
+    musicBtn.addEventListener('dblclick', function() {
+        this.classList.add('delete-icon-anim');
+        
+        setTimeout(() => {
+            this.style.display = 'none';
+        }, 400);
+    });
+}
+    
 }
 
 // ========================================
