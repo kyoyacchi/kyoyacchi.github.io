@@ -469,3 +469,10 @@ body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !importa
 }
 
 
+
+.delete-icon-anim {
+    transform: scale(0) rotate(180deg) !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+}
