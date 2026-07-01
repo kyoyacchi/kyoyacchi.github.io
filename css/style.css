@@ -442,7 +442,7 @@ body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !importa
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 4px white;
+ /*   box-shadow: 0 0 0 4px white;*/
     user-select: none;
 }
 
