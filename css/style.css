@@ -433,7 +433,7 @@ body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !importa
 }
 
 #monika-popup-content {
-    background-color: #ffffff;
+    background-color: #ffe4f3;
     border: 6px solid #ffbde1;
     padding: 2.5rem;
     width: 90%; /* Safely contains the box without needing margins */
