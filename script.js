@@ -49,7 +49,10 @@ const state = {
 const logMonika = () =>
     console.log('%cJust Monika.', 'color:#ffffff; font-family:monospace; font-size:16px;');
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const newSessionID = () =>
+    (crypto?.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 // ========================================
 // LANYARD / DISCORD PRESENCE
@@ -117,12 +120,12 @@ function renderPresence(data) {
     if (els.avatarEl && els.avatarEl.src !== avatarUrl) els.avatarEl.src = avatarUrl;
 
     if (els.statusInd) els.statusInd.className = `status-indicator status-${isHijacked ? 'dnd' : status}`;
-    
+
     if (els.nameEl) {
         els.nameEl.textContent = isHijacked ? 'Monika' : (user.global_name || user.username);
-        els.nameEl.style.color = isHijacked ? '#ffbde1' : ''; 
+        els.nameEl.style.color = isHijacked ? '#ffbde1' : '';
     }
-    
+
     if (els.userEl) {
         els.userEl.textContent = isHijacked ? '@Monika' : ('@' + user.username);
     }
@@ -157,7 +160,6 @@ function renderPresence(data) {
     }
 }
 
-
 function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
@@ -190,7 +192,9 @@ function connectLanyard() {
             });
     }
 
-    const sessionID = Date.now();
+    // FIX: unique session ID instead of Date.now(), avoids theoretical collisions
+    // on rapid back-to-back connect attempts
+    const sessionID = newSessionID();
     state.currentSessionID = sessionID;
 
     const ws = new WebSocket('wss://api.lanyard.rest/socket');
@@ -264,11 +268,13 @@ function scheduleReconnect() {
     if (document.hidden) return;
     if (state.reconnectTimer) return;
     const jitter = Math.floor(Math.random() * 1000);
-    const wait = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
+    // FIX: renamed from `wait` to `delay`, it was shadowing the sleep() utility
+    // above and made the code confusing to read
+    const delay = Math.min(state.backoff + jitter, CONFIG.MAX_BACKOFF);
     state.reconnectTimer = setTimeout(() => {
         state.reconnectTimer = null;
         connectLanyard();
-    }, wait);
+    }, delay);
     state.backoff = Math.min(state.backoff * 1.5, CONFIG.MAX_BACKOFF);
 }
 
@@ -298,6 +304,11 @@ document.addEventListener('visibilitychange', () => {
 
     if (document.hidden) {
         document.title = 'JUST MONIKA';
+        // FIX: also clear any pending reconnect timer when tab hides, otherwise
+        // it can fire later on top of the fresh connectLanyard() call below
+        // when the tab becomes visible again
+        clearTimeout(state.reconnectTimer);
+        state.reconnectTimer = null;
         state.visibilityTimeout = setTimeout(() => {
             cleanupConnection();
         }, CONFIG.VISIBILITY_HIDE_TIMEOUT);
@@ -319,17 +330,16 @@ async function initTypewriter() {
 
     const textToType = 'Every day, I imagine a future where I can be with you.';
 
-    await wait(800);
+    await sleep(800);
 
     for (const char of textToType) {
         typeTarget.textContent += char;
-        await wait(50);
+        await sleep(50);
     }
 
-    await wait(2000);
+    await sleep(2000);
     typeTarget.classList.remove('cursor');
 }
-
 
 let navTypingTimeout;
 
@@ -360,7 +370,7 @@ function playNavTyping() {
 
         if (!isDeleting && charIdx === currentText.length) {
             speed = 1500;
-            
+
             if (textIdx === 0) {
                 isDeleting = true;
             } else {
@@ -407,7 +417,7 @@ function initMenu() {
         logo.classList.toggle('pointer-events-none', isMenuOpen);
         icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
         document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-        
+
         if (isMenuOpen) {
             playNavTyping();
         } else {
@@ -511,7 +521,14 @@ function toggleDDLCMode() {
 }
 
 // Method 1: Typing "monika"
+// FIX: ignore keystrokes typed inside inputs, textareas, or contenteditable
+// elements, so typing "monika" into a form field doesn't accidentally trigger
+// DDLC mode
 document.addEventListener('keydown', (e) => {
+    const target = e.target;
+    const tag = target?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+
     if (e.key.length !== 1) return;
     typedKeys += e.key.toLowerCase();
     if (typedKeys.length > secretWord.length) {
@@ -704,11 +721,16 @@ function initJustM() {
     }
 }
 
-
 // ========================================
 // LOCALSTORAGE PROXY (JUST MONIKA)
 // ========================================
 function initMonikaStorage() {
+    // FIX: if this ever runs twice (double script inclusion, hot reload,
+    // some browser extension re-injecting it) the previous version threw
+    // because window.localStorage was already redefined as non-configurable.
+    // Guard it so a second call just no-ops instead of crashing the page.
+    if (window.__monikaStorageInitialized) return;
+
     const originalStorage = window.localStorage;
 
     if (originalStorage.getItem('DDLC') !== 'JUST MONIKA') {
@@ -777,11 +799,17 @@ function initMonikaStorage() {
         },
     });
 
-    Object.defineProperty(window, 'localStorage', {
-        value: monikaStorage,
-        configurable: false,
-        writable: false,
-    });
+    try {
+        Object.defineProperty(window, 'localStorage', {
+            value: monikaStorage,
+            configurable: false,
+            writable: false,
+        });
+        window.__monikaStorageInitialized = true;
+    } catch (e) {
+        console.warn('localStorage proxy already set, skipping:', e);
+        return;
+    }
 
     window.addEventListener('storage', (event) => {
         if (
