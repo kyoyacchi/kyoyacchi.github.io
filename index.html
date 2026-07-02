@@ -42,25 +42,24 @@
 <body class="selection:bg-kyo-emerald selection:text-black min-h-screen flex flex-col">
     <span style="font-family: 'Riffic'; position: absolute; opacity: 0; pointer-events: none;">.</span>
 
-    <header class="absolute w-full top-0 left-0 p-8 flex justify-between items-center z-50 mix-blend-difference">
+    <header class="absolute w-full top-0 left-0 p-8 flex justify-start items-center z-50 mix-blend-difference">
         <span id="site-logo" class="text-base md:text-lg font-mono tracking-widest text-white/60 transition-all duration-300 flex items-center gap-2 cursor-pointer">
             Just Monika.
             <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f380.svg"
                  style="width: 18px; height: 18px; filter: brightness(0) invert(1);"
                  alt="🎀">
         </span>
-
-        <button id="menu-btn" class="text-3xl text-white hover:text-kyo-emerald transition-colors duration-300 focus:outline-none p-2" aria-label="Menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
     </header>
 
-    <div id="nav-overlay" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 backdrop-blur-3xl">
-        <div class="absolute bottom-12 text-kyo-emerald font-mono tracking-widest text-sm opacity-60 flex items-center">
-            <span id="nav-monika-text"></span><span class="cursor"></span>
+    <div id="corruption-flash"></div>
+
+    <div id="monika-dialogue" class="hidden">
+        <div id="monika-dialogue-box">
+            <div id="monika-dialogue-name">Monika</div>
+            <p id="monika-dialogue-text"><span id="monika-dialogue-typed"></span><span class="cursor"></span></p>
+            <div id="monika-dialogue-hint">click to continue</div>
         </div>
     </div>
-
 
     <main class="flex-grow flex flex-col items-center justify-start pt-16 pb-10 relative z-10 w-full">
 
