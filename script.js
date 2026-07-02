@@ -432,11 +432,51 @@ function toggleDDLCMode() {
         if (isNowActive) {
             startCorruptionBursts();
             startMonikaDialogue();
+            zalgoifyTags();
         } else {
             stopCorruptionBursts();
             hideMonikaDialogue();
+            restoreTags();
         }
     }, 500);
+}
+
+// ========================================
+// ZALGO TAGS (identity/skill tags corrupt in DDLC mode)
+// ========================================
+const zalgoMarks = ['\u0300', '\u0301', '\u0304', '\u0308', '\u030c', '\u0315', '\u0323', '\u0327', '\u0336', '\u0347'];
+
+function zalgofy(text, intensity = 3) {
+    return text.split('').map(ch => {
+        if (ch === ' ') return ch;
+        let out = ch;
+        const marks = 1 + Math.floor(Math.random() * intensity);
+        for (let i = 0; i < marks; i++) {
+            out += zalgoMarks[Math.floor(Math.random() * zalgoMarks.length)];
+        }
+        return out;
+    }).join('');
+}
+
+function zalgoifyTags() {
+    const spans = document.querySelectorAll('#identity-tags span, #skill-tags span.skill-tag');
+    spans.forEach(span => {
+        if (!span.dataset.original) {
+            span.dataset.original = span.textContent;
+        }
+        span.textContent = zalgofy(span.dataset.original);
+        span.classList.add('zalgo-corrupted');
+    });
+}
+
+function restoreTags() {
+    const spans = document.querySelectorAll('#identity-tags span, #skill-tags span.skill-tag');
+    spans.forEach(span => {
+        if (span.dataset.original) {
+            span.textContent = span.dataset.original;
+        }
+        span.classList.remove('zalgo-corrupted');
+    });
 }
 
 // ========================================
