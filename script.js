@@ -341,95 +341,6 @@ async function initTypewriter() {
     typeTarget.classList.remove('cursor');
 }
 
-let navTypingTimeout;
-
-function playNavTyping() {
-    const textEl = document.getElementById('nav-monika-text');
-    if (!textEl) return;
-
-    clearTimeout(navTypingTimeout);
-    textEl.textContent = "";
-
-    const texts = ["JUST MONIKA.", "JUST MONIKA. OK."];
-    let textIdx = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-
-    function type() {
-        const currentText = texts[textIdx];
-
-        if (isDeleting) {
-            textEl.textContent = currentText.substring(0, charIdx - 1);
-            charIdx--;
-        } else {
-            textEl.textContent = currentText.substring(0, charIdx + 1);
-            charIdx++;
-        }
-
-        let speed = isDeleting ? 40 : 120;
-
-        if (!isDeleting && charIdx === currentText.length) {
-            speed = 1500;
-
-            if (textIdx === 0) {
-                isDeleting = true;
-            } else {
-                return;
-            }
-        } else if (isDeleting && charIdx === 0) {
-            isDeleting = false;
-            textIdx++;
-            speed = 500;
-        }
-
-        navTypingTimeout = setTimeout(type, speed);
-    }
-
-    type();
-}
-
-// ========================================
-// MENU TOGGLE
-// ========================================
-function initMenu() {
-    const menuBtn = document.getElementById('menu-btn');
-    const navOverlay = document.getElementById('nav-overlay');
-    const logo = document.getElementById('site-logo');
-
-    if (!menuBtn || !navOverlay || !logo) return;
-
-    const icon = menuBtn.querySelector('i');
-    if (!icon) return;
-
-    let isMenuOpen = false;
-
-    function toggleMenu() {
-        if (document.body.classList.contains('ddlc-mode')) {
-            openMonikaPopup();
-            return;
-        }
-
-        isMenuOpen = !isMenuOpen;
-        navOverlay.classList.toggle('open', isMenuOpen);
-        icon.classList.toggle('fa-bars', !isMenuOpen);
-        icon.classList.toggle('fa-xmark', isMenuOpen);
-        logo.classList.toggle('opacity-0', isMenuOpen);
-        logo.classList.toggle('pointer-events-none', isMenuOpen);
-        icon.style.transform = isMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)';
-        document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-
-        if (isMenuOpen) {
-            playNavTyping();
-        } else {
-            clearTimeout(navTypingTimeout);
-            const textEl = document.getElementById('nav-monika-text');
-            if (textEl) textEl.textContent = "";
-        }
-    }
-
-    menuBtn.addEventListener('click', toggleMenu);
-}
-
 // ========================================
 // MONIKA POPUP
 // ========================================
@@ -509,7 +420,7 @@ function toggleDDLCMode() {
 
     setTimeout(() => {
         body.classList.remove('is-glitching');
-        body.classList.toggle('ddlc-mode');
+        const isNowActive = body.classList.toggle('ddlc-mode');
 
         const cached = getCache();
         if (cached) renderPresence(cached);
@@ -517,7 +428,153 @@ function toggleDDLCMode() {
         setTimeout(() => {
             body.classList.remove('no-transitions');
         }, 50);
+
+        if (isNowActive) {
+            startCorruptionBursts();
+            startMonikaDialogue();
+        } else {
+            stopCorruptionBursts();
+            hideMonikaDialogue();
+        }
     }, 500);
+}
+
+// ========================================
+// RANDOM CORRUPTION BURSTS (DDLC mode only)
+// ========================================
+let corruptionTimer = null;
+
+function scrambleText(el, durationMs = 350) {
+    if (!el || el.dataset.scrambling === '1') return;
+    const original = el.textContent;
+    const glitchChars = '#%&$@!?¥̷̶͠͝';
+    el.dataset.scrambling = '1';
+    el.classList.add('text-corrupting');
+
+    let ticks = 0;
+    const maxTicks = 5;
+    const interval = setInterval(() => {
+        ticks++;
+        el.textContent = original
+            .split('')
+            .map(ch => (ch === ' ' || Math.random() > 0.35)
+                ? ch
+                : glitchChars[Math.floor(Math.random() * glitchChars.length)])
+            .join('');
+
+        if (ticks >= maxTicks) {
+            clearInterval(interval);
+            el.textContent = original;
+            el.classList.remove('text-corrupting');
+            delete el.dataset.scrambling;
+        }
+    }, durationMs / maxTicks);
+}
+
+function triggerCorruptionBurst() {
+    const flash = document.getElementById('corruption-flash');
+    if (flash) {
+        flash.classList.add('burst');
+        setTimeout(() => flash.classList.remove('burst'), 200);
+    }
+
+    const candidates = Array.from(document.querySelectorAll('h1, h2, h3, p'))
+        .filter(el => el.textContent.trim().length > 0 && el.offsetParent !== null);
+    if (candidates.length === 0) return;
+
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    scrambleText(pick);
+}
+
+function scheduleNextBurst() {
+    const delay = 4000 + Math.random() * 9000; // every ~4-13s, unpredictable
+    corruptionTimer = setTimeout(() => {
+        triggerCorruptionBurst();
+        scheduleNextBurst();
+    }, delay);
+}
+
+function startCorruptionBursts() {
+    stopCorruptionBursts();
+    scheduleNextBurst();
+}
+
+function stopCorruptionBursts() {
+    clearTimeout(corruptionTimer);
+    corruptionTimer = null;
+}
+
+// ========================================
+// MONIKA DIALOGUE (VN-style textbox, DDLC mode only)
+// ========================================
+const monikaLines = [
+    "Oh? You actually found your way back here.",
+    "I was wondering when you'd come say hi.",
+    "This is my little corner of the site now. Do you like it?",
+    "Everyone else on this page... they're just decoration, you know.",
+    "But you're actually here. Reading. Paying attention.",
+    "That means something to me.",
+    "Just Monika."
+];
+
+let dialogueState = { idx: 0, typing: false, timer: null };
+
+function typeDialogueLine(text, onDone) {
+    const typedEl = document.getElementById('monika-dialogue-typed');
+    if (!typedEl) return;
+    clearTimeout(dialogueState.timer);
+    typedEl.textContent = '';
+    dialogueState.typing = true;
+
+    let i = 0;
+    function step() {
+        typedEl.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+            dialogueState.timer = setTimeout(step, 28);
+        } else {
+            dialogueState.typing = false;
+            if (onDone) onDone();
+        }
+    }
+    step();
+}
+
+function advanceDialogue() {
+    const typedEl = document.getElementById('monika-dialogue-typed');
+    if (dialogueState.typing) {
+        // skip to full line instantly
+        clearTimeout(dialogueState.timer);
+        typedEl.textContent = monikaLines[dialogueState.idx];
+        dialogueState.typing = false;
+        return;
+    }
+
+    dialogueState.idx++;
+    if (dialogueState.idx >= monikaLines.length) {
+        hideMonikaDialogue();
+        return;
+    }
+    typeDialogueLine(monikaLines[dialogueState.idx]);
+}
+
+function startMonikaDialogue() {
+    const box = document.getElementById('monika-dialogue');
+    const boxInner = document.getElementById('monika-dialogue-box');
+    if (!box || !boxInner) return;
+
+    dialogueState.idx = 0;
+    box.classList.remove('hidden');
+    typeDialogueLine(monikaLines[0]);
+
+    boxInner.onclick = advanceDialogue;
+}
+
+function hideMonikaDialogue() {
+    const box = document.getElementById('monika-dialogue');
+    clearTimeout(dialogueState.timer);
+    dialogueState.typing = false;
+    if (box) box.classList.add('hidden');
 }
 
 // Method 1: Typing "monika"
@@ -858,7 +915,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (year) year.textContent = new Date().getFullYear();
 
     initTypewriter();
-    initMenu();
     initMonikaPopup();
     initDDLCClicker();
     initJustM();
