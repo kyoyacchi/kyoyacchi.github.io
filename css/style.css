@@ -362,6 +362,19 @@ body.ddlc-mode header { mix-blend-mode: normal !important; }
 body.ddlc-mode #site-logo { color: #ff69b4 !important; font-weight: bold; text-shadow: 2px 2px 0px white; }
 body.ddlc-mode #site-logo img { filter: brightness(0) invert(1) drop-shadow(2px 2px 0px #ff69b4) !important; opacity: 1 !important; }
 body.ddlc-mode footer { background: transparent !important; }
+
+/* Identity/skill tags corrupt into zalgo while in DDLC mode */
+#identity-tags span.zalgo-corrupted,
+#skill-tags span.zalgo-corrupted {
+    color: #ff2f92 !important;
+    text-shadow: 1px 0 0 rgba(0,255,220,0.5), -1px 0 0 rgba(255,0,120,0.5);
+    animation: zalgo-tremble 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes zalgo-tremble {
+    from { transform: translate(0, 0) rotate(-0.5deg); }
+    to   { transform: translate(0.5px, -1px) rotate(0.5deg); }
+}
 body.ddlc-mode footer .text-gray-500 { color: #888888 !important; font-weight: bold; }
 body.ddlc-mode ::selection { background-color: rgba(255, 105, 180, 0.4) !important; color: #000000 !important; }
 
