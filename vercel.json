@@ -1,6 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/m", "destination": "/index.html" },
     { "source": "/monika", "destination": "/index.html" },
