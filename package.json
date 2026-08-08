@@ -2,9 +2,11 @@
   "name": "kyoyacchi.github.io",
   "version": "1.0.0",
   "description": "will edit here for later.",
-  "main": "script.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -13,13 +15,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/kyoyacchi/kyoyacchi.github.io/issues"
   },
   "homepage": "https://github.com/kyoyacchi/kyoyacchi.github.io#readme",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.2.2",
-    "tailwindcss": "^4.2.2"
+    "@tailwindcss/vite": "^4.2.2",
+    "tailwindcss": "^4.2.2",
+    "vite": "^6.3.5"
   }
 }
