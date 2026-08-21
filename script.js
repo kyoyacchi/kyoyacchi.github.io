@@ -163,9 +163,8 @@ function renderPresence(data) {
 function connectLanyard() {
     const now = Date.now();
     if (now - state.lastConnectAttempt < CONFIG.CONNECT_DEBOUNCE) return;
-    state.lastConnectAttempt = now;
-
     if (state.isConnecting || state.isConnected) return;
+    state.lastConnectAttempt = now;
     state.isConnecting = true;
 
     const cached = getCache();
@@ -773,6 +772,11 @@ function initJustM() {
             musicBtn.style.transition = 'all 0.4s ease-in-out';
 
             if (isDragging) {
+                const rect = musicBtn.getBoundingClientRect();
+                musicBtn.style.right = (window.innerWidth - rect.right) + 'px';
+                musicBtn.style.bottom = (window.innerHeight - rect.bottom) + 'px';
+                musicBtn.style.left = 'auto';
+                musicBtn.style.top = 'auto';
                 setTimeout(() => { isDragging = false; }, 50);
             } else {
                 const now = Date.now();
@@ -954,11 +958,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const year = document.getElementById('year');
     if (year) year.textContent = new Date().getFullYear();
 
+    initMonikaStorage();
     initTypewriter();
     initMonikaPopup();
     initDDLCClicker();
     initJustM();
-    initMonikaStorage();
     initFooterHeart();
     connectLanyard();
 
