@@ -158,6 +158,37 @@ function renderPresence(data) {
             isActive ? (isHijacked ? 'text-[#ffbde1] border-[#ffbde1]/20' : 'text-kyo-emerald border-kyo-emerald/20') : 'text-white',
         ].join(' ');
     }
+
+    const videoUrl = user.collectibles?.nameplate?.asset
+        ? `https://cdn.discordapp.com/assets/collectibles/${user.collectibles.nameplate.asset}asset.webm`
+        : null;
+
+    if (videoUrl) {
+        if (els.videoBg && els.videoBg.src !== videoUrl) {
+            els.videoBg.src = videoUrl;
+            els.videoBg.load();
+            els.videoBg.muted = true;
+            els.videoBg.playsInline = true;
+            const playPromise = els.videoBg.play();
+            if (playPromise !== undefined) {
+                playPromise.catch((error) => console.warn(error?.message || error));
+            }
+        }
+        els.videoBg?.classList.remove('hidden');
+        els.imgBg?.classList.add('hidden');
+    } else if (user.banner) {
+        const bannerUrl = `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${user.banner.startsWith('a_') ? 'gif' : 'png'}?size=1024`;
+        if (els.imgBg) els.imgBg.src = bannerUrl;
+        els.imgBg?.classList.remove('hidden');
+        els.videoBg?.classList.add('hidden');
+    } else {
+        if (els.imgBg) {
+            els.imgBg.style.background = '#50c878';
+            els.imgBg.src = '';
+        }
+        els.imgBg?.classList.remove('hidden');
+        els.videoBg?.classList.add('hidden');
+    }
 }
 
 function connectLanyard() {
